@@ -823,101 +823,112 @@
     </div>
   </footer>
 
-  <!-- ================= INCLUDED DRAWER & MODALS ================= -->
+    <!-- ================= INTERACTIVE BOOKING DRAWER (MOBILE & DESKTOP OPTIMIZED) ================= -->
   <div id="booking-drawer" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/80 backdrop-blur-sm "></div>
-    <div class="absolute right-0 top-0 bottom-0 w-full max-w-xl bg-brand-dark border-l border-white/10 shadow-2xl p-6 sm:p-8 overflow-y-auto  transform translate-x-full transition-transform duration-300 flex flex-col justify-between" id="drawer-panel">
-      <div>
-        <div class="flex items-center justify-between border-b border-white/10 pb-5">
-          <div class="flex items-center gap-2.5">
-            <span class="h-9 w-9 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black">🏓</span>
-            <div>
-              <h3 class="text-lg font-black uppercase tracking-tight text-white">Court Reservation</h3>
-              <p class="text-[11px] text-slate-400">Automated HitPay GCash Checkout</p>
-            </div>
+    <!-- Backdrop -->
+    <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    
+    <!-- Slide-Over Panel (Full screen on mobile, max-w-xl on desktop) -->
+    <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-xl bg-brand-dark border-l border-white/10 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="drawer-panel">
+      
+      <!-- Drawer Header (Fixed) -->
+      <div class="flex-shrink-0 px-4 sm:px-6 py-4 border-b border-white/10 flex items-center justify-between bg-brand-dark/95 backdrop-blur-md">
+        <div class="flex items-center gap-2.5">
+          <span class="h-9 w-9 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-lg flex-shrink-0">🏓</span>
+          <div>
+            <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Court Reservation</h3>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1">Automated HitPay GCash Checkout</p>
           </div>
-          <button onclick="closeBookingDrawer()" class="h-8 w-8 rounded-full bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-sm">✕</button>
         </div>
+        <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95" aria-label="Close reservation drawer">✕</button>
+      </div>
 
-        <div class="mt-6">
+      <!-- Drawer Body (Scrollable with touch momentum) -->
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-5 overscroll-contain touch-scroll">
+        
+        <!-- Step 1: Select Court -->
+        <div>
           <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">1. Select Court</label>
           <div class="grid grid-cols-2 gap-2" id="drawer-court-buttons">
-            <button onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left">
+            <button onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left transition">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 01</span>
               <span class="text-xs font-black text-brand-lime">Indoor Championship</span>
             </button>
-            <button onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+            <button onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 02</span>
               <span class="text-xs font-black text-white">Indoor Tournament</span>
             </button>
-            <button onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+            <button onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 03</span>
               <span class="text-xs font-black text-white">Covered Outdoor</span>
             </button>
-            <button onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+            <button onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 04</span>
               <span class="text-xs font-black text-white">Pro Training Court</span>
             </button>
           </div>
         </div>
 
-        <div class="mt-6">
+        <!-- Step 2: Pick Hour -->
+        <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-black uppercase tracking-wider text-slate-400">2. Pick Hour</label>
             <span class="text-[10px] font-mono text-brand-lime" id="drawer-rate-badge">Regular: ₱400/hr</span>
           </div>
-          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1" id="drawer-slot-buttons"></div>
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1 touch-scroll" id="drawer-slot-buttons"></div>
         </div>
 
-        <div class="mt-6">
+        <!-- Step 3: Players Stepper -->
+        <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-black uppercase tracking-wider text-slate-400">3. Players Count</label>
-            <span class="text-[10px] text-slate-400">Up to 6 included (+₱100/player over 6)</span>
+            <span class="text-[10px] text-slate-400">Up to 6 included (+₱100/pax over 6)</span>
           </div>
           <div class="flex items-center gap-3 bg-brand-card border border-white/10 p-2 rounded-2xl w-fit">
-            <button onclick="changePlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20">-</button>
+            <button onclick="changePlayers(-1)" class="w-10 h-10 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-lg flex items-center justify-center">-</button>
             <span id="player-count" class="font-mono font-black text-lg text-brand-lime px-2">4</span>
             <span class="text-xs text-slate-400">Players</span>
-            <button onclick="changePlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20">+</button>
+            <button onclick="changePlayers(1)" class="w-10 h-10 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-lg flex items-center justify-center">+</button>
           </div>
         </div>
 
-        <div class="mt-6">
+        <!-- Step 4: Add-ons & Equipment -->
+        <div>
           <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">4. Add-ons &amp; Gear</label>
           <div class="space-y-2">
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
               <span class="text-xs font-bold text-white">🏓 Carbon Fiber Paddle (+₱100)</span>
               <input type="checkbox" id="rent-paddle" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
               <span class="text-xs font-bold text-white">🎾 Training Ball Bucket (50 pcs) (+₱100)</span>
               <input type="checkbox" id="rent-balls" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
               <span class="text-xs font-bold text-white">🤖 Ball Machine (1 Hour) (+₱100)</span>
               <input type="checkbox" id="rent-machine" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
           </div>
         </div>
 
-        <div class="mt-6 space-y-3">
+        <!-- Step 5: Guest Information -->
+        <div class="space-y-3">
           <label class="block text-xs font-black uppercase tracking-wider text-slate-400">5. Guest Information</label>
-          <input type="text" id="cust-name" placeholder="Full Name" value="Dexter Lim" class="w-full bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
-          <div class="grid grid-cols-2 gap-2">
-            <input type="tel" id="cust-phone" placeholder="+63 9XX XXX XXXX" value="+63 999 883 2346" class="bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
-            <input type="email" id="cust-email" placeholder="Email Address" value="player@pfrally.ph" class="bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
+          <input type="text" id="cust-name" placeholder="Full Name" value="Dexter Lim" class="w-full bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="tel" id="cust-phone" placeholder="+63 9XX XXX XXXX" value="+63 999 883 2346" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+            <input type="email" id="cust-email" placeholder="Email Address" value="player@pfrally.ph" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
           </div>
         </div>
-              <!-- Step 6: Payment Terms & Facility Rules -->
-        <div class="mt-6 p-4 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2.5">
+
+        <!-- Step 6: Payment Terms & Rules -->
+        <div class="p-4 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2.5">
           <label class="flex items-start gap-2.5 cursor-pointer">
             <input type="checkbox" id="accept-terms" checked class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
             <span class="text-xs text-slate-300 leading-snug">
               I agree to the <button type="button" onclick="toggleTermsDetails()" class="text-brand-lime font-bold underline">Payment Terms, 48h Reschedule &amp; Rules</button>
             </span>
           </label>
-
-          <!-- Collapsible Terms Details -->
           <div id="terms-details" class="text-[11px] text-slate-400 space-y-1.5 pt-2 border-t border-white/10 leading-relaxed font-medium">
             <p>● <b class="text-white">Non-Refundable:</b> Payment is final upon HitPay/GCash confirmation.</p>
             <p>● <b class="text-white">48-Hour Rescheduling:</b> Move your session once if requested &ge; 48 hours in advance.</p>
@@ -925,7 +936,6 @@
             <p>● <b class="text-white">Player Surcharge:</b> 6 players included; +₱100/player above 6.</p>
           </div>
         </div>
-      </div>
 
       </div>
 
@@ -942,49 +952,56 @@
           <span>Pay Instantly with GCash</span> ⚡
         </button>
       </div>
+
     </div>
   </div>
 
-  <!-- HitPay Modal -->
+  <!-- HitPay Modal (Mobile Scaled) -->
   <div id="hitpay-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeHitPayModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-    <div class="relative z-10 w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/30 p-6 shadow-2xl text-center">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lime/10 text-brand-lime border border-brand-lime/20 text-xs font-bold mb-4">
+    <div class="relative z-10 w-[94%] sm:w-full max-w-md max-h-[88dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/30 p-5 sm:p-7 shadow-2xl text-center touch-scroll">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lime/10 text-brand-lime border border-brand-lime/20 text-xs font-bold mb-3">
         <span>⚡ HitPay Gateway</span> • <span>Automated Webhook</span>
       </div>
-      <h3 class="text-xl font-black uppercase tracking-tight text-white">Scan with GCash / QR Ph</h3>
-      <div class="my-6 p-4 rounded-2xl bg-white max-w-[220px] mx-auto shadow-xl">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HITPAY-INDEX" alt="QR Code" class="w-full h-auto">
+      <h3 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white">Scan with GCash / QR Ph</h3>
+      <p class="text-xs text-slate-400 mt-1">Point your GCash or Maya camera to complete payment instantly.</p>
+      <div class="my-5 p-3.5 rounded-2xl bg-white max-w-[200px] mx-auto shadow-xl">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HITPAY-GCASH-PFRALLY" alt="QR Code" class="w-full h-auto">
       </div>
-      <div class="bg-brand-black/60 rounded-xl p-3 border border-white/10 text-left text-xs space-y-1 mb-6 font-mono">
+      <div class="bg-brand-black/60 rounded-xl p-3 border border-white/10 text-left text-xs space-y-1 mb-5 font-mono">
         <div class="flex justify-between text-slate-400"><span>Merchant:</span> <span class="text-white">P&amp;F Rally Ground</span></div>
         <div class="flex justify-between text-slate-400"><span>Court:</span> <span id="hitpay-modal-court" class="text-brand-lime">Court 01</span></div>
         <div class="flex justify-between text-slate-400"><span>Amount:</span> <span id="hitpay-modal-amount" class="text-brand-lime font-bold">₱400.00</span></div>
       </div>
-      <button onclick="simulateSuccessfulPayment()" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition">
+      <button onclick="simulateSuccessfulPayment()" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition active:scale-95">
         Simulate Successful GCash Payment (Test)
       </button>
+      <button onclick="closeHitPayModal()" class="mt-3 text-xs text-slate-500 hover:text-white font-bold">Cancel</button>
     </div>
   </div>
 
-  <!-- Match Pass Modal -->
+  <!-- Match Pass Modal (Mobile Scaled) -->
   <div id="match-pass-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeMatchPassModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-    <div class="relative z-10 w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/40 p-6 sm:p-8 shadow-2xl text-center">
-      <div class="h-12 w-12 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl mx-auto mb-4">✓</div>
-      <span class="text-[10px] font-black uppercase tracking-widest text-brand-lime block">MATCH PASS ISSUED</span>
-      <h3 class="text-2xl font-black uppercase tracking-tight text-white mt-1">Digital Match Pass</h3>
-      <p class="text-xs text-slate-400 mt-1">Ref: <span id="pass-ref" class="text-white font-mono font-bold">PF-84920</span></p>
-      <div class="my-6 rounded-2xl bg-brand-black border border-white/10 p-5 text-left text-xs space-y-3">
+    <div class="relative z-10 w-[94%] sm:w-full max-w-md max-h-[88dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/40 p-5 sm:p-7 shadow-2xl text-center ticket-edge touch-scroll">
+      <div class="h-11 w-11 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-xl mx-auto mb-3 shadow-lg shadow-brand-lime/25">✓</div>
+      <span class="text-[10px] font-black uppercase tracking-widest text-brand-lime block">MATCH PASS ISSUED &amp; VERIFIED</span>
+      <h3 class="text-xl sm:text-2xl font-black uppercase tracking-tight text-white mt-1">Digital Match Pass</h3>
+      <p class="text-xs text-slate-400 mt-0.5">Ref: <span id="pass-ref" class="text-white font-mono font-bold">PF-84920</span></p>
+      
+      <div class="my-5 rounded-2xl bg-brand-black border border-white/10 p-4 text-left text-xs space-y-2.5 font-sans">
         <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Guest</span><span id="pass-name" class="font-bold text-white">Dexter Lim</span></div>
         <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Court Reserved</span><span id="pass-court" class="font-bold text-brand-lime">Court 01</span></div>
         <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Schedule</span><span id="pass-time" class="font-bold text-white">Today • 06:00 PM</span></div>
         <div class="flex justify-between items-center"><span class="text-slate-400">Status</span><span class="text-brand-lime font-bold">● PAID &amp; CONFIRMED</span></div>
       </div>
+
       <div class="space-y-2">
-        <button onclick="downloadCalendarInvite()" class="w-full py-3 rounded-xl bg-white/10 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2">📅 Add to Google / Apple Calendar</button>
+        <button onclick="downloadCalendarInvite()" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-white/10 transition active:scale-95">
+          <span>📅 Add to Google / Apple Calendar</span>
+        </button>
       </div>
-      <button onclick="closeMatchPassModal()" class="mt-4 text-xs font-bold text-slate-500 hover:text-white">Close</button>
+      <button onclick="closeMatchPassModal()" class="mt-4 text-xs font-bold text-slate-500 hover:text-white">Close Window</button>
     </div>
   </div>
 
