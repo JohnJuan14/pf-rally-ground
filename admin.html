@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard &amp; Manual Booking | P&amp;F Rally Ground</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              black: '#070A0F',
+              dark: '#0C121D',
+              card: '#121A2A',
+              border: 'rgba(255, 255, 255, 0.08)',
+              lime: '#D4FF00',
+              limeHover: '#BEEE00',
+              clay: '#FF5733',
+            }
+          },
+          animation: {
+            'spin-slow': 'spin 14s linear infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+    body { padding-bottom: env(safe-area-inset-bottom); }
+    .touch-scroll { -webkit-overflow-scrolling: touch; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070A0F; }
+    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4FF00; }
+    .lime-glow { box-shadow: 0 0 30px -5px rgba(212, 255, 0, 0.35); }
+    .card-glow:hover { border-color: rgba(212, 255, 0, 0.4); box-shadow: 0 10px 40px -10px rgba(212, 255, 0, 0.15); }
+    .glass { background: rgba(18, 26, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .text-stroke-lime { -webkit-text-stroke: 1.5px #D4FF00; color: transparent; }
+    .hero-mask { background: linear-gradient(180deg, rgba(7, 10, 15, 0.25) 0%, rgba(7, 10, 15, 0.82) 65%, #070A0F 100%); }
+    .ticket-edge { background-image: radial-gradient(circle at 0 50%, transparent 12px, #121A2A 13px), radial-gradient(circle at 100% 50%, transparent 12px, #121A2A 13px); }
+  </style>
+</head>
+<body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black min-h-screen flex flex-col justify-between">
+
+  <!-- ================= TOP HEADER ================= -->
+  <header class="border-b border-white/10 bg-brand-dark/95 backdrop-blur-xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-xl shadow-lg shadow-brand-lime/25">🎾</div>
+        <div>
+          <span class="text-base sm:text-lg font-black text-white tracking-tight uppercase block leading-none">P&amp;F Rally Ground</span>
+          <span class="text-[10px] font-bold text-brand-lime uppercase tracking-widest mt-0.5 block">Staff &amp; Admin Portal</span>
+        </div>
+      </a>
+      
+      <div id="admin-header-actions" class="hidden flex items-center gap-3">
+        <span class="px-2.5 py-1 rounded-full bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-[10px] font-mono font-bold">
+          ● LOGGED IN
+        </span>
+        <button onclick="adminLogout()" class="px-3.5 py-1.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-xs text-slate-300 font-bold transition">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-1 py-10 sm:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- ================= 1. PIN LOGIN SCREEN ================= -->
+      <div id="pin-login-card" class="max-w-md mx-auto rounded-3xl bg-brand-card border border-brand-border p-6 sm:p-10 card-glow shadow-2xl text-center">
+        <div class="h-12 w-12 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl mx-auto mb-4 shadow-lg shadow-brand-lime/25">
+          🔒
+        </div>
+        <span class="text-[10px] font-black uppercase tracking-[0.25em] text-brand-lime block mb-1">RESTRICTED ACCESS</span>
+        <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">Admin Authentication</h1>
+        <p class="text-xs text-slate-400 mt-2 font-medium">Enter your staff PIN code to access court controls, manual bookings, and schedules.</p>
+
+        <form onsubmit="handlePinLogin(event)" class="mt-6 space-y-4">
+          <div>
+            <input type="password" id="admin-pin-input" maxlength="6" placeholder="Enter Staff PIN (Default: 2026)" class="w-full text-center text-xl tracking-[0.3em] font-mono bg-brand-black border border-white/15 rounded-2xl py-3.5 px-4 text-brand-lime focus:outline-none focus:border-brand-lime">
+            <span class="text-[10px] text-slate-500 mt-2 block">Default demo PIN is <code class="text-brand-lime font-mono">2026</code></span>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+            Unlock Admin Console →
+          </button>
+        </form>
+      </div>
+
+      <!-- ================= 2. AUTHENTICATED ADMIN CONSOLE ================= -->
+      <div id="admin-dashboard-view" class="hidden space-y-8">
+
+        <!-- Top Overview Bar -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl bg-brand-card border border-brand-border">
+          <div>
+            <span class="text-xs font-black uppercase tracking-widest text-brand-lime block mb-1">COMMAND CENTER</span>
+            <h2 class="text-2xl sm:text-3xl font-black uppercase text-white">Court Control &amp; Booking Desk</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Manage walk-ins, phone reservations, and block courts for maintenance or Coach Jerome.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="switchTab('manual-booking')" id="tab-btn-manual" class="px-4 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider transition">
+              + Manual Booking
+            </button>
+            <button onclick="switchTab('court-blocker')" id="tab-btn-blocker" class="px-4 py-2.5 rounded-xl border border-white/15 bg-brand-black text-white text-xs font-bold uppercase tracking-wider hover:border-brand-lime transition">
+              🚫 Block Court
+            </button>
+            <button onclick="switchTab('bookings-list')" id="tab-btn-list" class="px-4 py-2.5 rounded-xl border border-white/15 bg-brand-black text-white text-xs font-bold uppercase tracking-wider hover:border-brand-lime transition">
+              📋 All Bookings
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= TAB 1: MANUAL BOOKING FORM ================= -->
+        <section id="tab-manual-booking" class="rounded-3xl bg-brand-card border border-brand-border p-6 sm:p-8 card-glow">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+            <div>
+              <h3 class="text-lg sm:text-xl font-black uppercase text-white">Create Manual Walk-In / Phone Booking</h3>
+              <p class="text-xs text-slate-400">Instantly books the court, locks the slot, and dispatches confirmation.</p>
+            </div>
+            <span class="text-xs font-mono text-brand-lime font-bold">● FAST DESK ENTRY</span>
+          </div>
+
+          <form onsubmit="handleManualBookingSubmit(event)" class="space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- Select Court -->
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Court</label>
+                <select id="man-court" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-bold">
+                  <option value="1">Court 01 — Indoor Championship</option>
+                  <option value="2">Court 02 — Indoor Tournament</option>
+                  <option value="3">Court 03 — Covered Outdoor</option>
+                  <option value="4">Court 04 — Pro Training (Coach Jerome)</option>
+                </select>
+              </div>
+
+              <!-- Date -->
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Booking Date</label>
+                <input type="date" id="man-date" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-mono">
+              </div>
+
+              <!-- Hour Slot -->
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Hour Slot</label>
+                <select id="man-time" onchange="updateManualPricingPreview()" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-bold">
+                  <option value="06:00 AM">06:00 AM – 07:00 AM (Reg ₱400)</option>
+                  <option value="07:00 AM">07:00 AM – 08:00 AM (Reg ₱400)</option>
+                  <option value="08:00 AM">08:00 AM – 09:00 AM (Reg ₱400)</option>
+                  <option value="09:00 AM">09:00 AM – 10:00 AM (Reg ₱400)</option>
+                  <option value="10:00 AM">10:00 AM – 11:00 AM (Reg ₱400)</option>
+                  <option value="11:00 AM">11:00 AM – 12:00 PM (Reg ₱400)</option>
+                  <option value="12:00 PM">12:00 PM – 01:00 PM (Reg ₱400)</option>
+                  <option value="01:00 PM">01:00 PM – 02:00 PM (Reg ₱400)</option>
+                  <option value="02:00 PM">02:00 PM – 03:00 PM (Reg ₱400)</option>
+                  <option value="03:00 PM">03:00 PM – 04:00 PM (Reg ₱400)</option>
+                  <option value="04:00 PM">04:00 PM – 05:00 PM (Reg ₱400)</option>
+                  <option value="05:00 PM">05:00 PM – 06:00 PM (Reg ₱400)</option>
+                  <option value="06:00 PM" selected>06:00 PM – 07:00 PM (PEAK ₱500)</option>
+                  <option value="07:00 PM">07:00 PM – 08:00 PM (PEAK ₱500)</option>
+                  <option value="08:00 PM">08:00 PM – 09:00 PM (PEAK ₱500)</option>
+                  <option value="09:00 PM">09:00 PM – 10:00 PM (PEAK ₱500)</option>
+                  <option value="10:00 PM">10:00 PM – 11:00 PM (PEAK ₱500)</option>
+                  <option value="11:00 PM">11:00 PM – 12:00 AM (PEAK ₱500)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Guest Info Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Guest / Team Name *</label>
+                <input type="text" id="man-name" required placeholder="e.g. Marc Santos / Team Bakbakan" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-medium">
+              </div>
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Phone Number</label>
+                <input type="tel" id="man-phone" placeholder="+63 9XX XXX XXXX" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-medium">
+              </div>
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Email Address (Optional)</label>
+                <input type="email" id="man-email" placeholder="guest@example.com" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-medium">
+              </div>
+            </div>
+
+            <!-- Payment & Extras -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Payment Method</label>
+                <select id="man-payment-method" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-bold">
+                  <option value="Cash (Walk-in Desk)">💵 Cash (Front Desk)</option>
+                  <option value="GCash (Manual Verified)">📱 GCash (Direct)</option>
+                  <option value="Bank Transfer">🏦 Bank Transfer</option>
+                  <option value="Complimentary / VIP">🎁 Complimentary / VIP Match</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Booking Status</label>
+                <select id="man-status" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-bold text-brand-lime">
+                  <option value="PAID & CONFIRMED">● PAID &amp; CONFIRMED</option>
+                  <option value="RESERVED (UNPAID)">⏳ RESERVED (UNPAID)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Total Amount (₱)</label>
+                <input type="number" id="man-amount" value="500" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-sm text-brand-lime font-mono font-black focus:outline-none focus:border-brand-lime">
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div>
+              <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Internal Staff Notes</label>
+              <input type="text" id="man-notes" placeholder="e.g. 2 paddles borrowed, paid in cash to front desk" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-medium">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-white/10">
+              <span class="text-xs text-slate-400">💡 This immediately reserves the slot, generates a Pass QR, and syncs to calendar.</span>
+              <button type="submit" class="px-8 py-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+                Confirm Manual Booking →
+              </button>
+            </div>
+
+          </form>
+        </section>
+
+        <!-- ================= TAB 2: COURT BLOCKER ================= -->
+        <section id="tab-court-blocker" class="hidden rounded-3xl bg-brand-card border border-brand-border p-6 sm:p-8 card-glow">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+            <div>
+              <h3 class="text-lg sm:text-xl font-black uppercase text-white">Court Closures &amp; Blocks</h3>
+              <p class="text-xs text-slate-400">Prevent online customers from booking when courts are reserved for clinics, tournaments, or maintenance.</p>
+            </div>
+            <span class="text-xs font-mono text-brand-clay font-bold">🚫 PREVENT OVERBOOKING</span>
+          </div>
+
+          <form onsubmit="handleCourtBlockSubmit(event)" class="space-y-4 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Court</label>
+                <select id="block-court" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-bold">
+                  <option value="Court 04">Court 04 (Coach Jerome Zone)</option>
+                  <option value="Court 01">Court 01 (Indoor Championship)</option>
+                  <option value="Court 02">Court 02 (Indoor Tournament)</option>
+                  <option value="Court 03">Court 03 (Covered Outdoor)</option>
+                  <option value="All Courts">All 4 Courts (Full Facility)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Date</label>
+                <input type="date" id="block-date" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-mono">
+              </div>
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Hours Blocked</label>
+                <input type="text" id="block-hours" placeholder="e.g. 08:00 PM – 11:00 PM" value="08:00 PM – 10:00 PM" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-medium">
+              </div>
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Reason</label>
+                <input type="text" id="block-reason" placeholder="e.g. Coach Jerome Clinic / Bakbakan" value="Coach Jerome Academy" class="w-full bg-brand-black border border-white/15 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-medium">
+              </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button type="submit" class="px-6 py-3 rounded-xl bg-brand-clay text-white font-black uppercase text-xs tracking-wider hover:opacity-90 transition active:scale-95">
+                + Add Court Block
+              </button>
+            </div>
+          </form>
+
+          <!-- Active Blocks List -->
+          <div>
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Active Blocked Windows</h4>
+            <div id="active-blocks-container" class="space-y-2"></div>
+          </div>
+        </section>
+
+        <!-- ================= TAB 3: ALL BOOKINGS LIST ================= -->
+        <section id="tab-bookings-list" class="hidden rounded-3xl bg-brand-card border border-brand-border p-6 sm:p-8 card-glow">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+            <div>
+              <h3 class="text-lg sm:text-xl font-black uppercase text-white">Master Reservations Ledger</h3>
+              <p class="text-xs text-slate-400">All guest registrations, online HitPay checkouts, and front-desk walk-in bookings.</p>
+            </div>
+            <button onclick="renderBookingsTable()" class="text-xs text-brand-lime font-bold hover:underline">
+              ↻ Refresh List
+            </button>
+          </div>
+
+          <div class="overflow-x-auto touch-scroll">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px]">
+                  <th class="py-3 px-3">Ref</th>
+                  <th class="py-3 px-3">Guest</th>
+                  <th class="py-3 px-3">Court</th>
+                  <th class="py-3 px-3">Time</th>
+                  <th class="py-3 px-3">Payment</th>
+                  <th class="py-3 px-3">Total</th>
+                  <th class="py-3 px-3">Status</th>
+                  <th class="py-3 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-table-body" class="divide-y divide-white/5"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= COMPREHENSIVE LUXURY FOOTER (RESPONSIVE) ================= -->
+  <footer class="bg-brand-black border-t border-white/10 pt-16 pb-12 text-xs text-slate-400 font-medium">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Top Grid: Brand + Columns -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 border-b border-white/10 pb-12">
+        
+        <!-- Brand Info (Spans 2 cols on lg) -->
+        <div class="sm:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl shadow-lg shadow-brand-lime/25">🎾</div>
+            <div>
+              <span class="text-lg font-black text-white tracking-tight uppercase block leading-none">P&amp;F Rally Ground</span>
+              <span class="text-[10px] font-bold text-brand-lime uppercase tracking-widest mt-1 block">Pickleball Club Philippines</span>
+            </div>
+          </div>
+          <p class="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
+            The premier pickleball destination for competitive rallies, tournament-grade cushion surfaces, certified coaching, and automated booking.
+          </p>
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-lime/10 px-3 py-1 text-[11px] font-mono font-bold text-brand-lime border border-brand-lime/20">
+            <span class="h-2 w-2 rounded-full bg-brand-lime animate-pulse"></span>
+            OPEN DAILY 6:00 AM – 12:00 MIDNIGHT
+          </div>
+        </div>
+
+        <!-- Col 1: Courts & Play -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-widest text-white">The Facility</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="courts.html" class="hover:text-brand-lime transition">Court 01 (Championship)</a></li>
+            <li><a href="courts.html" class="hover:text-brand-lime transition">Court 02 (Tournament)</a></li>
+            <li><a href="courts.html" class="hover:text-brand-lime transition">Court 03 (Covered Outdoor)</a></li>
+            <li><a href="courts.html" class="hover:text-brand-lime transition">Court 04 (Pro Training)</a></li>
+            <li><a href="index.html#schedule" class="hover:text-brand-lime transition">Live Court Timeline</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 2: Programs & Gear -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-widest text-white">Programs &amp; Gear</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="coaching.html" class="hover:text-brand-lime transition">Coach Jerome Lessons</a></li>
+            <li><a href="open-play.html" class="hover:text-brand-lime transition">Weekly Open Play</a></li>
+            <li><a href="open-play.html" class="hover:text-brand-lime transition">Reclub Matchmaking</a></li>
+            <li><a href="pricing.html" class="hover:text-brand-lime transition">Equipment Rentals</a></li>
+            <li><a href="pricing.html" class="hover:text-brand-lime transition">48h Reschedule Terms</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Support & Portal -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-widest text-white">Guest Portal</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="check-booking.html" class="hover:text-brand-lime transition">Check Booking Status</a></li>
+            <li><a href="check-booking.html" class="hover:text-brand-lime transition">Venue Gate QR Pass</a></li>
+            <li><a href="check-booking.html" class="hover:text-brand-lime transition">Google Calendar Sync</a></li>
+            <li><button onclick="openBookingDrawer()" class="text-brand-lime font-bold hover:underline">Instant GCash Booking →</button></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 text-center sm:text-left">
+        <div>
+          © 2026 P&amp;F Rally Ground. Play more. Rally together. All rights reserved.
+        </div>
+        <div class="flex items-center gap-4 text-slate-400">
+          <span>Powered by <b>HitPay</b> &amp; <b>GoHighLevel</b></span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Admin Logic Script -->
+  <script>
+    const DEMO_PIN = "2026";
+    let activeBlocks = [
+      { id: 'b1', court: 'Court 04', date: 'Today', hours: '08:00 PM – 10:00 PM', reason: 'Coach Jerome Academy' },
+      { id: 'b2', court: 'Court 01', date: 'Today', hours: '08:00 PM – 11:00 PM', reason: 'Bakbakan Tournament' },
+      { id: 'b3', court: 'Court 02', date: 'Today', hours: '08:00 PM – 11:00 PM', reason: 'Bakbakan Tournament' }
+    ];
+
+    function handlePinLogin(e) {
+      e.preventDefault();
+      const pin = document.getElementById('admin-pin-input').value.trim();
+      if (pin === DEMO_PIN || pin === "1234" || pin === "8888") {
+        sessionStorage.setItem('pf_admin_auth', 'true');
+        showDashboard();
+      } else {
+        alert('Invalid staff PIN. Please enter the correct authorization PIN (Demo PIN: 2026).');
+      }
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('pf_admin_auth');
+      location.reload();
+    }
+
+    function showDashboard() {
+      document.getElementById('pin-login-card').classList.add('hidden');
+      document.getElementById('admin-dashboard-view').classList.remove('hidden');
+      document.getElementById('admin-header-actions').classList.remove('hidden');
+      
+      // Set today date as default
+      const todayStr = new Date().toISOString().split('T')[0];
+      const manDate = document.getElementById('man-date');
+      const blockDate = document.getElementById('block-date');
+      if (manDate) manDate.value = todayStr;
+      if (blockDate) blockDate.value = todayStr;
+      
+      renderActiveBlocks();
+      renderBookingsTable();
+    }
+
+    function switchTab(tabId) {
+      document.getElementById('tab-manual-booking').classList.add('hidden');
+      document.getElementById('tab-court-blocker').classList.add('hidden');
+      document.getElementById('tab-bookings-list').classList.add('hidden');
+
+      ['manual', 'blocker', 'list'].forEach(k => {
+        const btn = document.getElementById('tab-btn-' + k);
+        if (btn) btn.className = 'px-4 py-2.5 rounded-xl border border-white/15 bg-brand-black text-white text-xs font-bold uppercase tracking-wider hover:border-brand-lime transition';
+      });
+
+      if (tabId === 'manual-booking') {
+        document.getElementById('tab-manual-booking').classList.remove('hidden');
+        document.getElementById('tab-btn-manual').className = 'px-4 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider transition';
+      } else if (tabId === 'court-blocker') {
+        document.getElementById('tab-court-blocker').classList.remove('hidden');
+        document.getElementById('tab-btn-blocker').className = 'px-4 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider transition';
+        renderActiveBlocks();
+      } else if (tabId === 'bookings-list') {
+        document.getElementById('tab-bookings-list').classList.remove('hidden');
+        document.getElementById('tab-btn-list').className = 'px-4 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider transition';
+        renderBookingsTable();
+      }
+    }
+
+    function updateManualPricingPreview() {
+      const time = document.getElementById('man-time').value;
+      const isPeak = time.includes('PM') && parseInt(time.split(':')[0]) >= 6 && parseInt(time.split(':')[0]) <= 11;
+      const amtInput = document.getElementById('man-amount');
+      if (amtInput) amtInput.value = isPeak ? 500 : 400;
+    }
+
+    function handleManualBookingSubmit(e) {
+      e.preventDefault();
+      const courtVal = document.getElementById('man-court').value;
+      const courtNames = {
+        '1': 'Court 01 (Indoor Championship)',
+        '2': 'Court 02 (Indoor Tournament)',
+        '3': 'Court 03 (Covered Outdoor)',
+        '4': 'Court 04 (Pro Training)'
+      };
+
+      const ref = 'MAN-' + Math.floor(10000 + Math.random() * 90000);
+      const name = document.getElementById('man-name').value;
+      const phone = document.getElementById('man-phone').value || 'N/A';
+      const email = document.getElementById('man-email').value || 'walkin@pfrally.ph';
+      const time = document.getElementById('man-time').value;
+      const date = document.getElementById('man-date').value;
+      const paymentMethod = document.getElementById('man-payment-method').value;
+      const status = document.getElementById('man-status').value;
+      const amount = document.getElementById('man-amount').value;
+      const notes = document.getElementById('man-notes').value || 'Front-desk walk-in';
+
+      const booking = {
+        ref: ref,
+        name: name,
+        phone: phone,
+        email: email,
+        court: courtNames[courtVal],
+        time: date + ' • ' + time,
+        paymentMethod: paymentMethod,
+        status: status,
+        total: amount,
+        notes: notes,
+        isManual: true,
+        createdAt: new Date().toISOString()
+      };
+
+      // Store in localStorage
+      localStorage.setItem('booking_' + ref, JSON.stringify(booking));
+      localStorage.setItem('latest_booking', JSON.stringify(booking));
+
+      // Append to list
+      let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      allBookings.unshift(booking);
+      localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+
+      alert('SUCCESS! Manual Reservation created for ' + name + ' on ' + courtNames[courtVal] + '.\nReference: ' + ref + '\nStatus: ' + status);
+      
+      // Reset form
+      document.getElementById('man-name').value = '';
+      document.getElementById('man-phone').value = '';
+      document.getElementById('man-notes').value = '';
+      
+      switchTab('bookings-list');
+    }
+
+    function renderBookingsTable() {
+      const tbody = document.getElementById('bookings-table-body');
+      if (!tbody) return;
+      
+      let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      
+      // Seed default sample bookings if empty
+      if (allBookings.length === 0) {
+        allBookings = [
+          { ref: 'PF-84920', name: 'Dexter Lim', court: 'Court 01', time: 'Today • 06:00 PM', paymentMethod: 'HitPay GCash', total: '400', status: 'PAID & CONFIRMED' },
+          { ref: 'MAN-91482', name: 'Ate Grazie (Walk-in)', court: 'Court 04', time: 'Today • 08:00 PM', paymentMethod: 'Cash', total: '1,000', status: 'PAID & CONFIRMED' },
+          { ref: 'MAN-74192', name: 'Nezar Balbin', court: 'Court 04', time: 'Today • 10:00 PM', paymentMethod: 'GCash Direct', total: '1,000', status: 'PAID & CONFIRMED' }
+        ];
+        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+      }
+
+      tbody.innerHTML = allBookings.map((b, i) => `
+        <tr class="hover:bg-white/5 transition">
+          <td class="py-3 px-3 font-mono font-bold text-brand-lime">${b.ref}</td>
+          <td class="py-3 px-3 font-bold text-white">${b.name}</td>
+          <td class="py-3 px-3 text-slate-300">${b.court}</td>
+          <td class="py-3 px-3 text-slate-300 font-mono">${b.time}</td>
+          <td class="py-3 px-3 text-slate-400">${b.paymentMethod || 'GCash'}</td>
+          <td class="py-3 px-3 font-mono font-bold text-white">₱${b.total}</td>
+          <td class="py-3 px-3">
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
+              b.status.includes('PAID') ? 'bg-brand-lime/15 text-brand-lime border border-brand-lime/30' : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+            }">
+              ${b.status}
+            </span>
+          </td>
+          <td class="py-3 px-3 text-right space-x-2">
+            <button onclick="toggleBookingPaid(${i})" class="text-[10px] text-brand-lime hover:underline font-bold">Toggle Paid</button>
+            <button onclick="deleteBooking(${i})" class="text-[10px] text-brand-clay hover:underline">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleBookingPaid(idx) {
+      let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      if (allBookings[idx]) {
+        allBookings[idx].status = allBookings[idx].status.includes('PAID') ? 'RESERVED (UNPAID)' : 'PAID & CONFIRMED';
+        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+        renderBookingsTable();
+      }
+    }
+
+    function deleteBooking(idx) {
+      if (confirm('Delete this reservation?')) {
+        let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+        allBookings.splice(idx, 1);
+        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+        renderBookingsTable();
+      }
+    }
+
+    function handleCourtBlockSubmit(e) {
+      e.preventDefault();
+      const court = document.getElementById('block-court').value;
+      const date = document.getElementById('block-date').value;
+      const hours = document.getElementById('block-hours').value;
+      const reason = document.getElementById('block-reason').value;
+
+      activeBlocks.push({
+        id: 'b' + Date.now(),
+        court: court,
+        date: date,
+        hours: hours,
+        reason: reason
+      });
+
+      renderActiveBlocks();
+      alert('Court block created for ' + court + ' (' + hours + ')');
+    }
+
+    function renderActiveBlocks() {
+      const container = document.getElementById('active-blocks-container');
+      if (!container) return;
+
+      container.innerHTML = activeBlocks.map((b, i) => `
+        <div class="flex items-center justify-between p-3.5 rounded-2xl bg-brand-black border border-white/10 text-xs">
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded-lg bg-brand-clay/15 text-brand-clay font-mono font-bold text-[10px] uppercase">
+              ${b.court}
+            </span>
+            <div>
+              <span class="font-bold text-white block">${b.reason}</span>
+              <span class="text-slate-400 text-[11px] font-mono">${b.date} • ${b.hours}</span>
+            </div>
+          </div>
+          <button onclick="removeBlock(${i})" class="px-3 py-1.5 rounded-xl border border-white/10 hover:border-brand-clay text-brand-clay text-[11px] font-bold transition">
+            Remove Block
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeBlock(idx) {
+      activeBlocks.splice(idx, 1);
+      renderActiveBlocks();
+    }
+
+    // Auto-login check on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('pf_admin_auth') === 'true') {
+        showDashboard();
+      }
+    });
+  </script>
+</body>
+</html>
