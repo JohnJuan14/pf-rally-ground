@@ -248,32 +248,106 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[#050E1D] text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
 
-  <!-- Header / Navigation -->
-  <header class="sticky top-0 z-40 bg-[#050E1D]/90 backdrop-blur-xl border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3.5 group">
-        <div class="w-12 h-12 rounded-2xl bg-white p-1 shadow-lg flex items-center justify-center transition group-hover:scale-105">
-          <img src="assets/logo.png" alt="P&F Rally Ground Logo" class="w-full h-full object-contain">
-        </div>
-        <div>
-          <span class="text-lg sm:text-xl font-black uppercase tracking-tight text-white block leading-none font-display">P&amp;F Rally Ground</span>
-          <span class="text-[10px] sm:text-xs text-brand-lime font-mono tracking-widest uppercase font-bold">Pickleball Club &bull; Daraga</span>
-        </div>
-      </a>
+    <!-- MOBILE & TABLET MENU BACKDROP CURTAIN -->
+  <div id="mobile-menu-backdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
-      <nav class="flex items-center gap-2 sm:gap-4">
-        <a href="book.html" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition lime-glow">Book</a>
-        <a href="check-booking.html" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 font-bold uppercase text-xs tracking-wider transition">My Booking</a>
-        <a href="admin/index.html" class="px-3.5 py-2 rounded-xl text-slate-400 hover:text-brand-lime hover:bg-white/5 font-bold uppercase text-xs tracking-wider transition flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span>Admin</span>
+  <!-- ================= UNIFIED TOP NAVIGATION BAR ================= -->
+  <header class="fixed top-0 left-0 right-0 w-full max-w-[100vw] z-50 transition-all duration-300 bg-white lg:bg-brand-black/95 border-b-2 border-slate-200 lg:border-b lg:border-brand-lime/20 shadow-lg lg:shadow-none lg:backdrop-blur-xl">
+    <!-- Official Logo Court Color Stripe -->
+    <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
+    <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-3">
+      
+      <!-- Official Brand Logo + Club Name (Connected to Admin Login Portal) -->
+      <div class="flex items-center gap-2.5 flex-shrink-0">
+        <a href="index.html" class="group flex-shrink-0" aria-label="P&amp;F Rally Ground Home">
+          <img src="assets/logo.png" alt="P&amp;F Rally Ground Official Logo" class="h-11 w-11 sm:h-14 sm:w-14 rounded-xl object-contain bg-white p-0.5 shadow-md border border-slate-200 lg:border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
+        </a>
+        <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left focus:outline-none">
+          <span class="text-sm sm:text-base font-black uppercase tracking-tight text-[#050E1D] lg:text-white group-hover:text-[#0E8A2D] lg:group-hover:text-brand-lime transition-colors block leading-none font-display">P&amp;F Rally Ground</span>
+          <span class="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-[#0E8A2D] lg:text-brand-lime block mt-0.5">Pickleball Club &bull; Daraga</span>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 text-[11px] xl:text-xs uppercase tracking-wider flex-shrink-0">
+        <a href="index.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Home</a>
+        <a href="courts.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Courts</a>
+        <a href="index.html#schedule" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">Schedule</a>
+        <a href="pricing.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Rates &amp; Gear</a>
+        <span class="h-3.5 w-px bg-white/15 mx-1"></span>
+        <a href="check-booking.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">
+          <svg class="w-3.5 h-3.5 text-brand-lime flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+          <span>My Booking</span>
         </a>
       </nav>
+
+      <!-- Right Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+        
+        <!-- Live Cart Button -->
+        <button type="button" onclick="toggleCartDrawer()" class="whitespace-nowrap h-10 px-3 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#050E1D] lg:border-brand-lime/30 text-white flex items-center gap-1.5 sm:gap-2 transition active:scale-95 shadow-md relative flex-shrink-0" title="View Reservation Cart">
+          <svg class="w-4 h-4 text-[#9BE600] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span class="hidden sm:inline text-xs font-bold uppercase tracking-wider">Cart</span>
+          <span id="header-cart-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-black flex items-center justify-center leading-none">0</span>
+        </button>
+
+        <!-- Book Court CTA -->
+        <button type="button" onclick="openBookingDrawer()" class="whitespace-nowrap btn-sheen h-10 px-3.5 sm:px-4 xl:px-5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] border-2 border-[#050E1D]/15 lg:border-transparent font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 shadow-md flex-shrink-0">
+          <span>Book Court</span>
+          <svg class="hidden sm:inline-block w-3.5 h-3.5 arrow-nudge flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+
+        <!-- Mobile & Tablet Menu Toggle -->
+        <button type="button" onclick="toggleMobileMenu()" class="lg:hidden w-10 h-10 rounded-xl bg-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] border border-[#050E1D] flex items-center justify-center transition active:scale-95 shadow-md flex-shrink-0" aria-label="Toggle navigation menu">
+          <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile & Tablet Crisp White Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-4 sm:px-6 py-5 space-y-4 text-xs font-black uppercase tracking-wider max-h-[calc(100dvh-4.25rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
+      <div class="space-y-1.5">
+        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">COURTS &amp; SCHEDULE</span>
+        <a href="index.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
+          <span>Home Overview</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
+        </a>
+        <a href="courts.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
+          <span>Courts &amp; Specs (01–04)</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
+        </a>
+        <a href="index.html#schedule" onclick="toggleMobileMenu()" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
+          <span>Live Court Schedule</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
+        </a>
+      </div>
+
+      <div class="space-y-1.5 pt-3 border-t border-slate-200">
+        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">RATES &amp; GEAR</span>
+        <a href="pricing.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
+          <span>Rates &amp; Equipment Inventory</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
+        </a>
+      </div>
+
+      <div class="space-y-1.5 pt-3 border-t border-slate-200">
+        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">GUEST &amp; STAFF PORTALS</span>
+        <a href="check-booking.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
+          <span>My Booking Pass &amp; Lookup</span>
+          <span class="text-[#0E8A2D] font-mono font-black">→</span>
+        </a>
+        <a href="/admin/" onclick="return openAdminPortal(event)" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] hover:bg-[#0E2240] text-white font-black transition mt-1 shadow-md">
+          <span>Admin &amp; POS Portal</span>
+          <span class="text-[#9BE600] font-mono font-black">↗</span>
+        </a>
+      </div>
+      
+      <div class="p-3.5 rounded-2xl bg-slate-100 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[10px] text-[#050E1D] font-extrabold">
+        <span>Doña Maria Subd., Daraga, Albay</span>
+        <span class="text-[#0E8A2D] font-mono font-black">Open Daily 6AM – 12AM</span>
+      </div>
     </div>
   </header>
 
   <!-- Main Booking Page Content -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12">
     
     <!-- Hero Banner (Scraped Exactly from https://pf-rally-ground.vercel.app/book) -->
     <div class="mb-10 text-center sm:text-left">
@@ -628,7 +702,7 @@
                       <b class="text-sm font-mono text-white font-bold">0999 883 2346</b>
                       <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime/20 text-brand-lime hover:bg-brand-lime hover:text-brand-black font-mono font-bold text-[10px] uppercase transition">Copy</button>
                     </div>
-                    <span class="text-[10px] text-slate-400 block">Name: <b>KA******E L.</b></span>
+                    <span class="text-[10px] text-slate-400 block">Name: <b>KATHERINE LIM</b></span>
                   </div>
                 </div>
               </div>
@@ -760,14 +834,603 @@
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="bg-brand-black border-t border-brand-lime/20 text-xs text-slate-300 font-medium py-10 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-      <p class="font-display font-bold uppercase tracking-wider text-white">P&amp;F Rally Ground Pickleball Club &bull; Daraga, Albay</p>
-      <p class="text-[11px] text-slate-400">Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, Albay &bull; 0999 883 2346</p>
-      <p class="text-[10px] text-slate-500 font-mono pt-2">&copy; 2026 P&amp;F Rally Ground. All rights reserved.</p>
+    <!-- ================= UNIFIED MOBILE-FIRST LUXURY FOOTER ================= -->
+  <footer class="bg-brand-black border-t border-brand-lime/20 text-xs text-slate-300 font-medium relative z-10 overflow-hidden">
+    <!-- Top Court Accent Line -->
+    <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8 sm:pt-14 sm:pb-12">
+      
+      <!-- Responsive Grid: Clean Stack/2-Col on Mobile, 12-Col on Desktop -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 border-b border-white/10 pb-8 sm:pb-12">
+        
+        <!-- Col 1 (Span 4 on Desktop): Official Logo & Venue Info -->
+        <div class="sm:col-span-2 lg:col-span-4 space-y-3.5">
+          <div class="inline-flex items-center gap-3">
+            <a href="index.html" class="group flex-shrink-0">
+              <img src="assets/logo.png" alt="P&amp;F Rally Ground Official Logo" class="h-14 w-14 rounded-2xl object-contain bg-white p-1 shadow-lg border border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
+            </a>
+            <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left">
+              <span class="text-base sm:text-lg font-black text-white group-hover:text-brand-lime transition-colors tracking-tight uppercase block leading-none font-display">P&amp;F Rally Ground</span>
+              <span class="text-[10px] font-mono font-bold text-brand-lime uppercase tracking-widest mt-1 block">Pickleball Club &bull; Daraga</span>
+            </a>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay. Home of 4 championship cushion acrylic courts, pro equipment rentals, and verified online court booking.
+          </p>
+          <div class="flex flex-wrap gap-2 text-[11px] font-mono pt-1">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-lime/15 px-3 py-1 font-bold text-brand-lime border border-brand-lime/30">
+              <span class="h-2 w-2 rounded-full bg-brand-lime animate-pulse"></span>
+              6:00 AM – 12:00 AM
+            </span>
+            <a href="tel:09998832346" class="inline-flex items-center gap-1.5 rounded-full bg-brand-card hover:bg-white/10 px-3 py-1 text-white border border-white/15 font-bold transition">
+              0999 883 2346
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile 2-Column Wrapper for Navigation Links -->
+        <div class="sm:col-span-2 lg:col-span-5 grid grid-cols-2 gap-4 sm:gap-8">
+          <!-- Courts & Play -->
+          <div class="space-y-2.5">
+            <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Courts &amp; Play</h4>
+            <ul class="space-y-2 text-xs leading-snug">
+              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 01 • Championship</a></li>
+              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 02 • Tournament</a></li>
+              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 03 • Covered</a></li>
+              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 04 • Pro Training</a></li>
+              <li><a href="index.html#schedule" class="text-brand-lime font-bold hover:underline block pt-0.5">Live Schedule →</a></li>
+            </ul>
+          </div>
+
+          <!-- Rates & Booking -->
+          <div class="space-y-2.5">
+            <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Rates &amp; Booking</h4>
+            <ul class="space-y-2 text-xs leading-snug">
+              <li><a href="courts.html" class="hover:text-brand-lime transition block">4 Pro Cushion Courts</a></li>
+              <li><a href="pricing.html" class="hover:text-brand-lime transition block">Court &amp; Gear Rates</a></li>
+              <li><a href="pricing.html#live-admin-inventory-card" class="hover:text-brand-lime transition block">Live Club Inventory</a></li>
+              <li><a href="book.html" class="hover:text-brand-lime transition block">Full-Page Booking</a></li>
+              <li><button type="button" onclick="openBookingDrawer()" class="text-brand-lime font-bold hover:underline text-left block pt-0.5">Quick Book Drawer →</button></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Col 4 (Span 3 on Desktop): Guest & Staff Portals -->
+        <div class="sm:col-span-2 lg:col-span-3 space-y-3">
+          <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Guest &amp; Staff Portals</h4>
+          <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 text-xs">
+            <a href="check-booking.html" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
+              My Booking Pass →
+            </a>
+            <button type="button" onclick="toggleCartDrawer()" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
+              Reservation Cart →
+            </button>
+          </div>
+
+          <!-- Dedicated Staff Admin & POS Portal Card Link -->
+          <div class="pt-1">
+            <a href="/admin/" onclick="return openAdminPortal(event)" class="group flex items-center justify-between p-3.5 rounded-2xl bg-brand-card border border-brand-lime/40 hover:border-brand-lime hover:bg-brand-lime/10 transition-all shadow-lg">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <img src="assets/logo.png" alt="Admin Portal" class="w-9 h-9 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
+                <div class="min-w-0">
+                  <span class="text-xs font-black uppercase tracking-wider text-white group-hover:text-brand-lime block leading-none">Admin &amp; POS Portal</span>
+                  <span class="text-[10px] font-mono text-brand-lime/90 block mt-1">Gmail Linked • Staff &amp; POS</span>
+                </div>
+              </div>
+              <span class="text-brand-lime font-mono font-black text-base group-hover:translate-x-0.5 transition-transform flex-shrink-0 ml-2">↗</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Copyright & Quick Links Bar -->
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400 text-center sm:text-left">
+        <div>
+          © 2026 P&amp;F Rally Ground Pickleball Club • Est. 2026 | Daraga, Albay. All rights reserved.
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-slate-300 font-semibold">
+          <a href="index.html" class="hover:text-brand-lime transition">Home</a>
+          <span>•</span>
+          <a href="courts.html" class="hover:text-brand-lime transition">Courts</a>
+          <span>•</span>
+          <a href="pricing.html" class="hover:text-brand-lime transition">Rates &amp; Gear</a>
+          <span>•</span>
+          <a href="book.html" class="hover:text-brand-lime transition">Book</a>
+          <span>•</span>
+          <a href="check-booking.html" class="hover:text-brand-lime transition">My Booking</a>
+          <span>•</span>
+          <a href="/admin/" onclick="return openAdminPortal(event)" class="text-brand-lime font-bold hover:underline flex items-center gap-1">
+            <span>Admin Portal</span>
+            <span>↗</span>
+          </a>
+        </div>
+      </div>
+
     </div>
   </footer>
+
+  <!-- ================= UNIFIED CART DRAWER, RESERVATION DRAWER & PAYMENT MODALS ================= -->
+  
+  <!-- 1. CART DRAWER (SLIDE-OVER FROM RIGHT) -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 hidden">
+    <div onclick="toggleCartDrawer()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    
+    <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-md bg-brand-dark border-l border-brand-lime/25 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="cart-panel">
+      
+      <!-- Cart Header -->
+      <div class="flex-shrink-0 px-4 sm:px-5 py-4 border-b border-white/10 flex items-center justify-between bg-brand-dark/95 backdrop-blur-md">
+        <div class="flex items-center gap-2.5">
+          <img src="assets/logo.png" alt="P&amp;F Logo" class="h-9 w-9 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
+          <div>
+            <h3 class="text-base font-black uppercase tracking-tight text-white leading-none">Your Reservation Cart</h3>
+            <p class="text-[10px] text-slate-300 mt-1">Court Reservations &amp; Pro Equipment Rentals</p>
+          </div>
+        </div>
+        <button onclick="toggleCartDrawer()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95">✕</button>
+      </div>
+
+      <!-- Cart Items List (Scrollable) -->
+      <div class="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-3 overscroll-contain touch-scroll" id="cart-items-container"></div>
+
+      <!-- Live Inventory Quick-Add Section -->
+      <div id="cart-live-addons-wrap" class="hidden flex-shrink-0 px-4 sm:px-5 py-3 border-t border-white/10 bg-brand-black/60">
+        <span class="text-[10px] font-black uppercase tracking-wider text-brand-lime block mb-2">Available Club Inventory Add-Ons</span>
+        <div id="cart-live-addons-grid" class="grid grid-cols-2 gap-2 text-xs"></div>
+      </div>
+
+      <!-- Cart Footer & Checkout Button -->
+      <div class="flex-shrink-0 p-4 sm:p-5 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl">
+        <div class="flex items-baseline justify-between mb-3">
+          <div>
+            <span class="text-xs text-slate-300 block font-semibold">Total Amount to Settle</span>
+            <span class="text-[10px] text-slate-400 font-mono">GCash • Maya • BDO InstaPay</span>
+          </div>
+          <span id="cart-total-amount" class="text-2xl font-black text-brand-lime font-mono">₱0</span>
+        </div>
+        <button onclick="proceedToCartCheckout()" id="cart-checkout-btn" class="w-full py-3.5 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
+          <span>Proceed to Checkout</span>
+          <span>→</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. AUTHENTIC DATE-RAIL COURT RESERVATION DRAWER -->
+  <div id="booking-drawer" class="fixed inset-0 z-50 hidden">
+    <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-2xl lg:max-w-3xl bg-brand-dark border-l border-brand-lime/25 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="drawer-panel">
+      
+      <!-- Drawer Top Bar -->
+      <div class="flex-shrink-0 px-4 sm:px-6 py-4 border-b border-white/10 flex items-center justify-between bg-brand-dark/95 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+          <img src="assets/logo.png" alt="P&amp;F Logo" class="h-10 w-10 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Reserve Your Court</h3>
+              <span class="px-2 py-0.5 rounded-full bg-brand-lime/20 text-brand-lime text-[10px] font-mono font-black">ONLINE BOOKING</span>
+            </div>
+            <p class="text-[11px] text-slate-300 mt-1 font-semibold">Choose any date within the next 30 days &bull; Day: ₱400/hr &bull; Night: ₱500/hr</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="book.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[11px] font-mono font-bold text-slate-200 transition" title="Open Full Screen Booking Portal">
+            <span>Full Page</span>
+            <span>↗</span>
+          </a>
+          <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95" aria-label="Close reservation drawer">✕</button>
+        </div>
+      </div>
+
+      <!-- Drawer Scrollable Body -->
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-6 overscroll-contain touch-scroll">
+
+        <!-- STEP 1: Authentic 31-Day Date Rail (White Calendar Box) -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 1</span>
+              <span class="text-sm font-black uppercase tracking-wider text-slate-900 font-display">Choose a Date</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="drawer-selected-date-label" class="text-xs font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">Today</span>
+              <div class="flex items-center gap-1">
+                <button type="button" id="drawer-slider-prev" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
+                <button type="button" id="drawer-slider-next" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Rail -->
+          <div class="date-rail white-calendar-rail" id="drawer-date-rail">
+            <!-- 31 days dynamically generated -->
+          </div>
+        </div>
+
+        <!-- STEP 2: Select Court & Duration -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">2. Select Court &amp; Duration</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-300 font-semibold">Duration:</span>
+              <div class="inline-flex rounded-xl bg-brand-black p-1 border border-white/15 text-xs font-mono">
+                <button type="button" onclick="setDrawerDuration(1)" id="dur-btn-1" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black">1 hr</button>
+                <button type="button" onclick="setDrawerDuration(2)" id="dur-btn-2" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">2 hrs</button>
+                <button type="button" onclick="setDrawerDuration(3)" id="dur-btn-3" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">3 hrs</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Courts Buttons -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="drawer-court-buttons">
+            <button type="button" onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition" data-court="1">
+              <span class="text-[9px] font-mono font-black text-brand-lime block uppercase">Court 01</span>
+              <span class="text-xs font-black text-white block mt-0.5">Championship</span>
+            </button>
+            <button type="button" onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20" data-court="2">
+              <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 02</span>
+              <span class="text-xs font-black text-white block mt-0.5">Tournament</span>
+            </button>
+            <button type="button" onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20" data-court="3">
+              <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 03</span>
+              <span class="text-xs font-black text-white block mt-0.5">Covered</span>
+            </button>
+            <button type="button" onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20" data-court="4">
+              <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 04</span>
+              <span class="text-xs font-black text-white block mt-0.5">Pro Training</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Choose Time Slot (Authentic Time Chips) -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">3. Pick Your Time</span>
+            <span class="text-xs font-mono text-brand-lime font-bold" id="drawer-slot-rate-indicator">Day: ₱400/hr &bull; Night: ₱500/hr</span>
+          </div>
+
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="drawer-time-chips">
+            <!-- 18 time chips -->
+          </div>
+
+          <div class="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
+            <span>Selected Start: <b class="text-brand-lime" id="drawer-selected-slot-badge">06:00 AM</b></span>
+            <span>Open Play (Yellow-Green) • Booked (Red) • Closed (Dark)</span>
+          </div>
+        </div>
+
+        <!-- STEP 4: Number of Players -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">4. Number of Players</span>
+              <p class="text-[11px] text-slate-400 mt-0.5">Up to 6 players included free (+₱100/extra player beyond 6).</p>
+            </div>
+            <div class="flex items-center gap-3 bg-brand-black border border-white/15 p-1.5 rounded-2xl">
+              <button type="button" onclick="changePlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&minus;</button>
+              <span id="player-count" class="font-mono font-black text-base text-brand-lime px-2">4</span>
+              <button type="button" onclick="changePlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&plus;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: Exact Scraped Equipment Rentals -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">5. Optional Equipment Rentals</span>
+            <span class="text-[10px] font-mono text-slate-400">Official Club Rates</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
+              <div>
+                <span class="text-xs font-bold text-white block">Standard paddle</span>
+                <span class="text-[10px] font-mono text-brand-lime font-bold">₱50.00</span>
+              </div>
+              <input type="checkbox" id="rent-paddle-std" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
+              <div>
+                <span class="text-xs font-bold text-white block">Carbon paddle</span>
+                <span class="text-[10px] font-mono text-brand-lime font-bold">₱100.00</span>
+              </div>
+              <input type="checkbox" id="rent-paddle-carbon" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
+              <div>
+                <span class="text-xs font-bold text-white block">Branded carbon paddle</span>
+                <span class="text-[10px] font-mono text-brand-lime font-bold">₱200.00</span>
+              </div>
+              <input type="checkbox" id="rent-paddle-branded" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
+              <div>
+                <span class="text-xs font-bold text-white block">Pickleball ball</span>
+                <span class="text-[10px] font-mono text-brand-lime font-bold">₱50.00</span>
+              </div>
+              <input type="checkbox" id="rent-ball-single" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
+              <div>
+                <span class="text-xs font-bold text-white block">Training balls (50 pcs)</span>
+                <span class="text-[10px] font-mono text-brand-lime font-bold">₱100.00</span>
+              </div>
+              <input type="checkbox" id="rent-balls-bucket" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
+              <div>
+                <span class="text-xs font-bold text-white block">Training machine (per hr)</span>
+                <span class="text-[10px] font-mono text-brand-lime font-bold">₱100.00 / hr</span>
+              </div>
+              <input type="checkbox" id="rent-machine" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 6: Guest Details -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">6. Guest Contact Details *</span>
+            <span class="text-[10px] font-mono text-slate-400">Strict Validation</span>
+          </div>
+
+          <div>
+            <label for="cust-name" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Customer Full Name <span class="text-brand-clay">*</span></label>
+            <input type="text" id="cust-name" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-xs text-white font-bold focus:outline-none transition">
+            <p id="cust-name-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="cust-phone" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Mobile Number (11 Digits) <span class="text-brand-clay">*</span></label>
+              <input type="tel" id="cust-phone" required placeholder="e.g. 0917 123 4567" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none transition">
+              <p id="cust-phone-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
+            </div>
+            <div>
+              <label for="cust-email" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Email Address</label>
+              <input type="email" id="cust-email" placeholder="e.g. juan@email.com" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none transition">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 7: Exact 3 Policies Checkboxes -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+          <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">7. Policies and GuestConsent *</span>
+          <div class="space-y-2.5 text-xs text-slate-300">
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
+              <input type="checkbox" id="policy-waiver" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
+              <span class="text-[11px] leading-tight"><b>Liability Waiver:</b> I accept the facility waiver, playing rules, and safety responsibilities.</span>
+            </label>
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
+              <input type="checkbox" id="policy-cancellation" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
+              <span class="text-[11px] leading-tight"><b>Cancellation &amp; Reschedule:</b> Confirmed reservations are final; advance rescheduling permitted up to 24h prior.</span>
+            </label>
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
+              <input type="checkbox" id="policy-nonrefundable" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
+              <span class="text-[11px] leading-tight"><b>Non-Refundable Fee:</b> Service charges and court reservation fees cannot be returned after booking.</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Drawer Sticky Footer -->
+      <div class="flex-shrink-0 p-4 sm:p-5 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div>
+            <span class="text-[10px] font-mono text-slate-400 block uppercase" id="drawer-summary-meta">Court 01 &bull; 1 hr session</span>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="text-white font-bold" id="drawer-row-court-label">Court Hire</span>
+              <span class="text-brand-lime font-mono font-bold" id="drawer-cost-court">₱400.00</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-mono text-slate-400 block uppercase">Total Amount</span>
+            <span class="text-2xl sm:text-3xl font-black text-brand-lime font-mono" id="drawer-cost-total">₱400.00</span>
+          </div>
+        </div>
+
+        <button type="button" onclick="handleDrawerProceed()" class="w-full py-3.5 rounded-2xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 shadow-lg shadow-brand-lime/25 flex items-center justify-center gap-2">
+          <span>Proceed to Payment &amp; QR Verification</span>
+          <span>&rarr;</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. PAYMENT & REFERENCE NUMBER VERIFICATION MODAL (3 OFFICIAL CHANNELS: GCASH, MAYA, BDO) -->
+  <div id="payment-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-3 sm:px-4">
+    <div onclick="closePaymentModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/40 p-4 sm:p-7 shadow-2xl text-left touch-scroll">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+        <div class="flex items-center gap-2.5">
+          <img src="assets/logo.png" alt="P&amp;F Logo" class="w-9 h-9 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-widest text-brand-lime block">STEP 2 &bull; QR PAYMENT &amp; REFERENCE</span>
+            <h3 class="text-base sm:text-xl font-black uppercase tracking-tight text-white" id="modal-payment-title">Scan QR Code or Send Money</h3>
+          </div>
+        </div>
+        <button onclick="closePaymentModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold">✕</button>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div class="mb-4 p-3.5 rounded-2xl bg-brand-black/90 border border-white/10 text-xs font-mono space-y-1">
+        <div class="flex justify-between items-center text-slate-300">
+          <span>Session / Order:</span>
+          <b class="text-white" id="modal-summary-court">Court 01 &bull; 6:00 AM</b>
+        </div>
+        <div class="flex justify-between items-center text-slate-300">
+          <span>Amount Due:</span>
+          <b class="text-brand-lime text-base font-black" id="modal-summary-amount">₱400.00</b>
+        </div>
+        <div id="modal-items-summary" class="pt-1 text-xs font-sans"></div>
+      </div>
+
+      <!-- Customer Contact Fields (Auto-filled from drawer or editable for Cart Checkout) -->
+      <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 rounded-2xl bg-brand-black/60 border border-white/10">
+        <div>
+          <label for="modal-cust-name" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Full Name <span class="text-brand-clay">*</span></label>
+          <input type="text" id="modal-cust-name" oninput="clearFieldError('modal-cust-name')" placeholder="e.g. Juan Dela Cruz" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-brand-lime">
+          <p id="modal-cust-name-error" class="hidden text-[10px] font-bold text-brand-clay mt-1"></p>
+        </div>
+        <div>
+          <label for="modal-cust-phone" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Mobile Number <span class="text-brand-clay">*</span></label>
+          <input type="tel" id="modal-cust-phone" oninput="clearFieldError('modal-cust-phone')" placeholder="0917 123 4567" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-brand-lime">
+          <p id="modal-cust-phone-error" class="hidden text-[10px] font-bold text-brand-clay mt-1"></p>
+        </div>
+      </div>
+
+      <!-- Payment Channel Switcher (GCash, Maya, Bank Transfer) -->
+      <div class="mb-4">
+        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1.5">Select Payment Channel *</label>
+        <div class="grid grid-cols-3 gap-2" id="modal-pay-buttons">
+          <button type="button" id="modal-pay-btn-gcash" data-modal-pay="gcash" onclick="selectPayMode('gcash')" class="py-2.5 px-2 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md flex items-center justify-center gap-1">
+            <span>GCash</span>
+          </button>
+          <button type="button" id="modal-pay-btn-maya" data-modal-pay="maya" onclick="selectPayMode('maya')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1">
+            <span>Maya</span>
+          </button>
+          <button type="button" id="modal-pay-btn-bank" data-modal-pay="bank" onclick="selectPayMode('bank')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1">
+            <span>BDO / Bank</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. GCash QR Code Section -->
+      <div id="modal-qr-section" class="mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-brand-lime/30">
+          <div class="sm:col-span-5 p-2 rounded-2xl bg-white max-w-[160px] mx-auto text-center shadow-xl">
+            <img id="locked-qr-img" src="assets/qr-gcash.png" alt="P&amp;F Rally Ground GCash QR" class="w-full h-auto rounded-lg">
+            <div class="mt-1 text-[8px] font-mono text-slate-900 font-black uppercase tracking-wider">Official GCash QR</div>
+          </div>
+          <div class="sm:col-span-7 text-xs space-y-2 font-mono">
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Merchant:</span> <b class="text-white">KA******E L.</b>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>GCash No:</span>
+              <span class="flex items-center gap-1.5">
+                <b class="text-brand-lime font-bold">0999 883 2346</b>
+                <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2 py-0.5 rounded bg-brand-lime/20 hover:bg-brand-lime hover:text-brand-black text-[10px] text-brand-lime font-sans font-bold transition">Copy</button>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Amount:</span>
+              <span class="text-brand-lime font-black text-sm" id="manual-modal-amount">₱400.00</span>
+            </div>
+            <p class="text-[10px] text-slate-400 font-sans leading-tight pt-1 border-t border-white/10">
+              💡 <b>Tip:</b> Scan the QR code or open GCash &gt; <b>Express Send</b> &gt; paste <b class="text-white">0999 883 2346</b>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Maya QR Code Section -->
+      <div id="modal-maya-section" class="hidden mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-[#002B49]/60">
+          <div class="sm:col-span-5 p-2 rounded-2xl bg-white max-w-[160px] mx-auto text-center shadow-xl">
+            <img id="locked-maya-qr-img" src="assets/qr-maya.png" alt="P&amp;F Rally Ground Maya QR" class="w-full h-auto rounded-lg">
+            <div class="mt-1 text-[8px] font-mono text-[#002B49] font-black uppercase tracking-wider">Official Maya QR</div>
+          </div>
+          <div class="sm:col-span-7 text-xs space-y-2 font-mono">
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Merchant:</span> <b class="text-white">KATHERINE LIM</b>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Maya No:</span>
+              <span class="flex items-center gap-1.5">
+                <b class="text-brand-lime font-bold">0999 883 2346</b>
+                <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2 py-0.5 rounded bg-brand-lime/20 hover:bg-brand-lime hover:text-brand-black text-[10px] text-brand-lime font-sans font-bold transition">Copy</button>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Amount:</span>
+              <span class="text-brand-lime font-black text-sm" id="manual-modal-maya-amount">₱400.00</span>
+            </div>
+            <p class="text-[10px] text-slate-400 font-sans leading-tight pt-1 border-t border-white/10">
+              💡 Scan in Maya app or Send Money to <b class="text-white">0999 883 2346</b>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Bank Transfer Section (BDO InstaPay) -->
+      <div id="modal-bank-section" class="hidden mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-[#0072CE]/60">
+          <div class="sm:col-span-5 p-2 rounded-2xl bg-white max-w-[160px] mx-auto text-center shadow-xl">
+            <img id="locked-bank-qr-img" src="assets/qr-bdo.png" alt="BDO InstaPay QR" class="w-full h-auto rounded-lg">
+            <div class="mt-1 text-[8px] font-mono text-[#0072CE] font-black uppercase tracking-wider">Official BDO InstaPay</div>
+          </div>
+          <div class="sm:col-span-7 text-xs space-y-2 font-mono">
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Recipient:</span> <b class="text-white">Dex</b>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>BDO No:</span>
+              <span class="flex items-center gap-1.5">
+                <b class="text-brand-lime font-bold">••••••••8678</b>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Amount:</span>
+              <span class="text-brand-lime font-black text-sm" id="manual-modal-bank-amount">₱400.00</span>
+            </div>
+            <p class="text-[10px] text-slate-400 font-sans leading-tight pt-1 border-t border-white/10">
+              💡 Scan this BDO InstaPay QR with any Philippine mobile banking app.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reference Number & Receipt Upload -->
+      <div id="modal-ref-section" class="space-y-3 mb-5 p-4 rounded-2xl bg-brand-black/70 border border-brand-lime/30">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label for="manual-ref-input" id="manual-ref-label" class="text-[11px] font-black uppercase tracking-wider text-brand-lime">Transaction Reference Number <span class="text-brand-clay">*</span></label>
+            <span class="text-[9px] font-mono text-slate-400">6–16 Digits</span>
+          </div>
+          <input type="text" id="manual-ref-input" required oninput="clearFieldError('manual-ref-input')" placeholder="Enter Reference Number (e.g. 9028 3746 1928)" class="w-full bg-brand-card border border-white/20 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono font-bold focus:outline-none focus:border-brand-lime">
+          <p id="manual-ref-input-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
+        </div>
+
+        <div class="pt-2 border-t border-white/10">
+          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300 block mb-1.5">Upload Receipt Proof (Optional Screenshot / Photo)</label>
+          <input type="file" id="manual-receipt-file" onchange="handleReceiptUpload(event)" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-brand-lime file:text-brand-black hover:file:bg-brand-limeHover cursor-pointer">
+          
+          <div id="receipt-preview-wrap" class="hidden mt-2.5 flex items-center gap-3 p-2 rounded-xl bg-brand-card border border-white/10">
+            <img id="receipt-preview-img" src="" alt="Receipt Preview" class="w-12 h-12 object-cover rounded-lg border border-brand-lime/40">
+            <div class="text-[10px] text-slate-300 leading-tight">
+              <span class="text-brand-lime font-bold block">Receipt Attached</span>
+              <span>Synced with Reference Number</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <button type="button" onclick="closePaymentModal()" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 font-bold uppercase text-xs transition">
+          Back
+        </button>
+        <button type="button" onclick="submitReservationFinal()" id="modal-submit-btn" class="flex-2 py-3.5 px-6 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition active:scale-95 lime-glow shadow-lg flex items-center justify-center gap-2">
+          <span>Confirm &amp; Settle Booking</span>
+          <span>→</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  
+  <script src="app.js"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>
@@ -1281,12 +1944,24 @@
       setTimeout(updateButtons, 100);
     }
 
+    function openBookingDrawer(courtNum, slotTime) {
+      if (courtNum) selectCourt(courtNum);
+      if (slotTime) {
+        selectedStartSlot = slotTime;
+        renderTimeChips();
+        updateSummary();
+      }
+      const step1 = document.getElementById('date-rail-container');
+      if (step1) step1.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       generateDays();
       renderDateRail();
       renderTimeChips();
       updateSummary();
       syncAdminQr();
+      setupSliderInteraction('date-rail-container', 'book-slider-prev', 'book-slider-next');
     });
   </script>
 </body>

@@ -149,10 +149,12 @@
       <!-- Brand Logo -->
       <div class="p-5 border-b border-white/10 flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <img src="assets/logo.png" alt="P&amp;F Rally Ground Logo" class="h-11 w-11 rounded-xl object-contain bg-white p-0.5 shadow-lg shadow-brand-lime/25 border border-brand-lime/50 flex-shrink-0">
+          <a href="/" onclick="return openPublicSite(event, 'index.html')" title="Back to Public Website">
+            <img src="assets/logo.png" alt="P&amp;F Rally Ground Logo" class="h-11 w-11 rounded-xl object-contain bg-white p-0.5 shadow-lg shadow-brand-lime/25 border border-brand-lime/50 flex-shrink-0 hover:scale-105 transition-transform">
+          </a>
           <div>
-            <span class="text-sm font-black text-white tracking-tight uppercase block leading-none">P&amp;F Rally Ground</span>
-            <span class="text-[9px] font-bold text-brand-lime uppercase tracking-widest mt-1 block">Staff &amp; POS Workspace</span>
+            <span class="text-sm font-black text-white tracking-tight uppercase block leading-none font-display">P&amp;F Rally Ground</span>
+            <span class="text-[9px] font-mono font-bold text-brand-lime uppercase tracking-widest mt-1 block">Pickleball Club &bull; Daraga</span>
           </div>
         </div>
         <button onclick="toggleAdminMobileSidebar()" class="lg:hidden w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold" aria-label="Close Sidebar">
@@ -426,18 +428,24 @@
               <div>
                 <label class="block text-[10px] text-slate-400 uppercase mb-1">Time Slot</label>
                 <select id="adm-block-hours" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-                  <option value="06:00 AM">06:00 AM</option>
-                  <option value="07:00 AM">07:00 AM</option>
-                  <option value="08:00 AM">08:00 AM</option>
-                  <option value="09:00 AM">09:00 AM</option>
-                  <option value="03:00 PM">03:00 PM</option>
-                  <option value="04:00 PM">04:00 PM</option>
-                  <option value="05:00 PM">05:00 PM</option>
-                  <option value="06:00 PM" selected>06:00 PM</option>
-                  <option value="07:00 PM">07:00 PM</option>
-                  <option value="08:00 PM">08:00 PM</option>
-                  <option value="09:00 PM">09:00 PM</option>
-                  <option value="10:00 PM">10:00 PM</option>
+                  <option value="06:00 AM">06:00 AM (Day ₱400)</option>
+                  <option value="07:00 AM">07:00 AM (Day ₱400)</option>
+                  <option value="08:00 AM">08:00 AM (Day ₱400)</option>
+                  <option value="09:00 AM">09:00 AM (Day ₱400)</option>
+                  <option value="10:00 AM">10:00 AM (Day ₱400)</option>
+                  <option value="11:00 AM">11:00 AM (Day ₱400)</option>
+                  <option value="12:00 PM">12:00 PM (Day ₱400)</option>
+                  <option value="01:00 PM">01:00 PM (Day ₱400)</option>
+                  <option value="02:00 PM">02:00 PM (Day ₱400)</option>
+                  <option value="03:00 PM">03:00 PM (Day ₱400)</option>
+                  <option value="04:00 PM">04:00 PM (Day ₱400)</option>
+                  <option value="05:00 PM">05:00 PM (Day ₱400)</option>
+                  <option value="06:00 PM" selected>06:00 PM (Night ₱500)</option>
+                  <option value="07:00 PM">07:00 PM (Night ₱500)</option>
+                  <option value="08:00 PM">08:00 PM (Night ₱500)</option>
+                  <option value="09:00 PM">09:00 PM (Night ₱500)</option>
+                  <option value="10:00 PM">10:00 PM (Night ₱500)</option>
+                  <option value="11:00 PM">11:00 PM (Night ₱500)</option>
                 </select>
               </div>
               <div>
@@ -458,21 +466,32 @@
             <div id="admin-blocks-container" class="space-y-2"></div>
           </div>
 
-          <!-- Clean Live 4-Court Calendar Matrix Preview -->
-          <div>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Live 4-Court Availability Grid (Synced with Public Website)</h4>
-            <div class="overflow-x-auto rounded-2xl border border-white/10 bg-brand-black/50 p-3">
-              <table class="w-full text-xs border-collapse min-w-[600px]">
+          <!-- Clean White Live 4-Court Calendar Matrix Preview -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-4 sm:p-6 shadow-2xl text-slate-900 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">SYNCED WITH PUBLIC WEBSITE</span>
+                <h4 class="text-sm sm:text-base font-black uppercase tracking-wider text-slate-900">Live 4-Court Availability Matrix (6:00 AM – 11:00 PM)</h4>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Available</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#d9f99d] text-[#365314] border border-[#84cc16]"><span class="w-2 h-2 rounded-full bg-[#65a30d]"></span>Open Play</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 border border-rose-300"><span class="w-2 h-2 rounded-full bg-rose-500"></span>Booked</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 text-white border border-slate-900"><span class="w-2 h-2 rounded-full bg-slate-400"></span>Closed</span>
+              </div>
+            </div>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <table class="w-full text-xs border-collapse min-w-[640px]">
                 <thead>
-                  <tr class="border-b border-white/10 text-slate-400 text-[10px] uppercase">
-                    <th class="py-2.5 px-3 text-left">Time Slot</th>
-                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 01</th>
-                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 02</th>
-                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 03</th>
-                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 04</th>
+                  <tr class="bg-[#050E1D] text-white text-[11px] uppercase tracking-wider">
+                    <th class="py-3.5 px-4 text-left font-black sticky left-0 bg-[#050E1D] z-10">Time Slot</th>
+                    <th class="py-3.5 px-3 text-center font-black">Court 01</th>
+                    <th class="py-3.5 px-3 text-center font-black">Court 02</th>
+                    <th class="py-3.5 px-3 text-center font-black">Court 03</th>
+                    <th class="py-3.5 px-3 text-center font-black">Court 04</th>
                   </tr>
                 </thead>
-                <tbody id="admin-calendar-matrix-tbody" class="divide-y divide-white/5"></tbody>
+                <tbody id="admin-calendar-matrix-tbody" class="divide-y divide-slate-200 bg-white"></tbody>
               </table>
             </div>
           </div>
@@ -668,35 +687,39 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
             <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3">
-              <span class="font-bold text-white uppercase block">GCash &amp; Bank QR Configuration</span>
-              <div>
-                <label class="block text-[10px] text-slate-400 uppercase mb-1">GCash Account Name</label>
-                <input type="text" value="P&F Rally Ground" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white">
+              <span class="font-bold text-white uppercase block">Verified Payment Channels (GCash • Maya • BDO)</span>
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="p-2 rounded-xl bg-white text-slate-900">
+                  <img src="assets/qr-gcash.png" alt="GCash QR" class="w-16 h-16 object-contain mx-auto rounded">
+                  <span class="text-[9px] font-black uppercase block mt-1">GCash • KA******E L.</span>
+                </div>
+                <div class="p-2 rounded-xl bg-white text-slate-900">
+                  <img src="assets/qr-maya.png" alt="Maya QR" class="w-16 h-16 object-contain mx-auto rounded">
+                  <span class="text-[9px] font-black uppercase block mt-1">Maya • KATHERINE LIM</span>
+                </div>
+                <div class="p-2 rounded-xl bg-white text-slate-900">
+                  <img src="assets/qr-bdo.png" alt="BDO QR" class="w-16 h-16 object-contain mx-auto rounded">
+                  <span class="text-[9px] font-black uppercase block mt-1">BDO • Dex (••8678)</span>
+                </div>
               </div>
-              <div>
-                <label class="block text-[10px] text-slate-400 uppercase mb-1">GCash Official Number</label>
-                <input type="text" value="0999 883 2346" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-brand-lime font-mono">
-              </div>
-              <button onclick="alert('Payment settings saved.')" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-bold uppercase text-[10px]">
-                Save Payment Settings
-              </button>
+              <p class="text-[11px] text-brand-lime font-mono">All 3 official QR codes active on public checkout • 0999 883 2346</p>
             </div>
 
-                        <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3">
+            <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3">
               <span class="font-bold text-white uppercase block">Court Hire Rates &amp; Player Capacity</span>
               <div class="grid grid-cols-2 gap-2">
                 <div>
-                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Flat Rate (₱/hr)</label>
-                  <input type="number" value="400" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono" readonly>
-                  <span class="text-[10px] text-slate-500">6:00 AM – 12:00 Midnight</span>
+                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Daytime Rate (6AM–6PM)</label>
+                  <input type="text" value="₱400 / hr" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono" readonly>
+                  <span class="text-[10px] text-slate-400">Evening (6PM–12AM): ₱500/hr</span>
                 </div>
                 <div>
-                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Extra Player (₱/person)</label>
-                  <input type="number" value="100" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono" readonly>
-                  <span class="text-[10px] text-slate-500">Up to 6 players included</span>
+                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Extra Player (&gt;6)</label>
+                  <input type="text" value="+₱100 / player" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono" readonly>
+                  <span class="text-[10px] text-slate-400">Up to 6 players included free</span>
                 </div>
               </div>
-              <p class="text-[11px] text-brand-lime font-mono">Flat ₱400/hr • 4 Tournament Courts • No Peak Surcharge</p>
+              <p class="text-[11px] text-brand-lime font-mono">Day: ₱400/hr • Night: ₱500/hr • Open Play Mon–Sat</p>
             </div>
           </div>
 
@@ -797,16 +820,16 @@
                   </div>
                   <div>
                     <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">GCash Account Name</label>
-                    <input type="text" id="settings-gcash-name" value="P&F Rally Ground" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-bold text-xs focus:outline-none">
+                    <input type="text" id="settings-gcash-name" value="KA******E L." class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-bold text-xs focus:outline-none">
                     <span class="text-[10px] text-slate-400 block mt-1">Daraga, Albay</span>
                   </div>
                   <div>
                     <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">BDO Unibank Account Number</label>
-                    <input type="text" id="settings-bdo-num" value="004588029143" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
+                    <input type="text" id="settings-bdo-num" value="••••••••8678 (Dex)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
                   </div>
                   <div>
-                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">BPI Account Number</label>
-                    <input type="text" id="settings-bpi-num" value="4891003274" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Maya Official Account</label>
+                    <input type="text" id="settings-bpi-num" value="09998832346 (KATHERINE LIM)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
                   </div>
                 </div>
 
@@ -1079,18 +1102,24 @@
         <div>
           <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Time Slot</label>
           <select id="modal-time" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-            <option value="06:00 AM">06:00 AM (Reg ₱400)</option>
-            <option value="07:00 AM">07:00 AM (Reg ₱400)</option>
-            <option value="08:00 AM">08:00 AM (Reg ₱400)</option>
-            <option value="09:00 AM">09:00 AM (Reg ₱400)</option>
-            <option value="03:00 PM">03:00 PM (Reg ₱400)</option>
-            <option value="04:00 PM">04:00 PM (Reg ₱400)</option>
-            <option value="05:00 PM">05:00 PM (Reg ₱400)</option>
-            <option value="06:00 PM" selected>06:00 PM (Peak ₱500)</option>
-            <option value="07:00 PM">07:00 PM (Peak ₱500)</option>
-            <option value="08:00 PM">08:00 PM (Peak ₱500)</option>
-            <option value="09:00 PM">09:00 PM (Peak ₱500)</option>
-            <option value="10:00 PM">10:00 PM (Peak ₱500)</option>
+            <option value="06:00 AM">06:00 AM (Day ₱400)</option>
+            <option value="07:00 AM">07:00 AM (Day ₱400)</option>
+            <option value="08:00 AM">08:00 AM (Day ₱400)</option>
+            <option value="09:00 AM">09:00 AM (Day ₱400)</option>
+            <option value="10:00 AM">10:00 AM (Day ₱400)</option>
+            <option value="11:00 AM">11:00 AM (Day ₱400)</option>
+            <option value="12:00 PM">12:00 PM (Day ₱400)</option>
+            <option value="01:00 PM">01:00 PM (Day ₱400)</option>
+            <option value="02:00 PM">02:00 PM (Day ₱400)</option>
+            <option value="03:00 PM">03:00 PM (Day ₱400)</option>
+            <option value="04:00 PM">04:00 PM (Day ₱400)</option>
+            <option value="05:00 PM">05:00 PM (Day ₱400)</option>
+            <option value="06:00 PM" selected>06:00 PM (Night ₱500)</option>
+            <option value="07:00 PM">07:00 PM (Night ₱500)</option>
+            <option value="08:00 PM">08:00 PM (Night ₱500)</option>
+            <option value="09:00 PM">09:00 PM (Night ₱500)</option>
+            <option value="10:00 PM">10:00 PM (Night ₱500)</option>
+            <option value="11:00 PM">11:00 PM (Night ₱500)</option>
           </select>
         </div>
 
@@ -1111,9 +1140,10 @@
           <div>
             <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Method</label>
             <select id="modal-pay-mode" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-              <option value="Cash (Desk)">Cash (Desk)</option>
               <option value="GCash">GCash</option>
-              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Maya">Maya</option>
+              <option value="BDO InstaPay">BDO InstaPay</option>
+              <option value="Cash (Desk)">Cash (Desk)</option>
             </select>
           </div>
           <div>
@@ -1339,6 +1369,11 @@ function clearFieldError(fieldId) {
       { time: '07:00 AM', peak: false },
       { time: '08:00 AM', peak: false },
       { time: '09:00 AM', peak: false },
+      { time: '10:00 AM', peak: false },
+      { time: '11:00 AM', peak: false },
+      { time: '12:00 PM', peak: false },
+      { time: '01:00 PM', peak: false },
+      { time: '02:00 PM', peak: false },
       { time: '03:00 PM', peak: false },
       { time: '04:00 PM', peak: false },
       { time: '05:00 PM', peak: false },
@@ -1346,8 +1381,29 @@ function clearFieldError(fieldId) {
       { time: '07:00 PM', peak: true },
       { time: '08:00 PM', peak: true },
       { time: '09:00 PM', peak: true },
-      { time: '10:00 PM', peak: true }
+      { time: '10:00 PM', peak: true },
+      { time: '11:00 PM', peak: true }
     ];
+
+    const ADMIN_OPEN_PLAY_BY_DAY = {
+      1: { start: 15, end: 18 },
+      2: { start: 15, end: 20 },
+      3: { start: 15, end: 20 },
+      4: { start: 15, end: 20 },
+      5: { start: 15, end: 23 },
+      6: { start: 18, end: 22 }
+    };
+
+    function isAdminOpenPlaySlot(slotStr) {
+      const dayInput = document.getElementById('adm-block-date')?.value;
+      const d = dayInput ? new Date(dayInput + 'T12:00:00') : new Date();
+      const rule = ADMIN_OPEN_PLAY_BY_DAY[d.getDay()];
+      if (!rule) return false;
+      let hr = parseInt(slotStr, 10);
+      if (slotStr.includes('PM') && hr !== 12) hr += 12;
+      if (slotStr.includes('AM') && hr === 12) hr = 0;
+      return hr >= rule.start && hr < rule.end;
+    }
 
     function openPublicSite(event, pagePath) {
       if (event) event.preventDefault();
@@ -1706,33 +1762,38 @@ function clearFieldError(fieldId) {
         }
       }
 
-      // Render Live 4-Court Matrix
+      // Render Live 4-Court Matrix (Clean White Table with 4 Status Colors)
       const matrixTbody = document.getElementById('admin-calendar-matrix-tbody');
       if (!matrixTbody) return;
 
       matrixTbody.innerHTML = calendarHours.map(h => {
+        const isPeakHr = h.peak;
+        const rate = isPeakHr ? 500 : 400;
+        const isOpenPlay = isAdminOpenPlaySlot(h.time);
+
         const cols = [1, 2, 3, 4].map(cNum => {
           const courtLabel = 'Court 0' + cNum;
-          const booked = bookings.find(b => b.court && b.court.includes(courtLabel) && b.time && b.time.includes(h.time));
-          const blocked = courtBlocks.find(bl => bl.court && bl.court.includes(courtLabel) && bl.hours && bl.hours.includes(h.time));
-          if (booked) {
-            return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-brand-lime/15 border border-brand-lime/40 text-brand-lime text-[10px] font-bold truncate" title="${booked.name}">${booked.name}</span></td>`;
-          }
-          const isPeakHr = ['06:00 PM','07:00 PM','08:00 PM','09:00 PM','10:00 PM','11:00 PM'].includes(h.time);
+          const courtPlain = 'Court ' + cNum;
+          const blocked = courtBlocks.find(bl => bl.court && (bl.court.includes(courtLabel) || bl.court.includes(courtPlain)) && bl.hours && bl.hours.includes(h.time));
+          const booked = bookings.find(b => b.status !== 'CANCELLED' && b.court && (String(b.court).includes(courtLabel) || String(b.court).includes(courtPlain)) && b.time && String(b.time).includes(h.time));
+
           if (blocked) {
-            return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-brand-clay/15 border border-brand-clay/40 text-brand-clay text-[10px] font-bold truncate" title="${blocked.reason}">${blocked.reason}</span></td>`;
+            return `<td class="p-1.5 text-center"><span class="block w-full py-2 px-2 rounded-xl bg-slate-800 text-white border border-slate-900 text-[11px] font-black truncate shadow-sm" title="${pfEscapeHtml(blocked.reason)}">Closed • ${pfEscapeHtml(blocked.reason)}</span></td>`;
           }
-          if (isPeakHr) {
-            return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-[#D4FF00]/25 border border-[#D4FF00] text-[#E6FF4D] text-[10px] font-mono font-bold">Peak • ₱500</span></td>`;
+          if (booked) {
+            return `<td class="p-1.5 text-center"><span class="block w-full py-2 px-2 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 text-[11px] font-black truncate shadow-sm" title="Booked: ${pfEscapeHtml(booked.name)}">Booked • ${pfEscapeHtml(booked.name)}</span></td>`;
           }
-          return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-[#0E8A2D]/20 border border-[#10B981]/45 text-[#34D399] text-[10px] font-mono font-bold">Reg • ₱400</span></td>`;
+          if (isOpenPlay) {
+            return `<td class="p-1.5 text-center"><span class="block w-full py-2 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[11px] font-black shadow-sm">Open Play</span></td>`;
+          }
+          return `<td class="p-1.5 text-center"><span class="block w-full py-2 px-2 rounded-xl bg-emerald-100/90 text-emerald-800 border border-emerald-300 text-[11px] font-black shadow-sm">Available • ₱${rate}</span></td>`;
         }).join('');
 
-        const isPeakRow = ['06:00 PM','07:00 PM','08:00 PM','09:00 PM','10:00 PM','11:00 PM'].includes(h.time);
-        return `<tr class="${isPeakRow ? 'bg-[#D4FF00]/[0.08]' : ''}">
-          <td class="py-2 px-3 font-mono font-bold text-white whitespace-nowrap">
-            <span>${h.time}</span>
-            <span class="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${isPeakRow ? 'bg-[#D4FF00] text-[#050E1D]' : 'bg-[#10B981]/20 text-[#34D399]'}">${isPeakRow ? 'PEAK' : 'REG'}</span>
+        const badgeCls = isPeakHr ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+        return `<tr class="hover:bg-slate-50 transition">
+          <td class="py-2.5 px-4 font-mono sticky left-0 bg-white border-r border-slate-200 border-l-4 ${isPeakHr ? 'border-l-amber-500' : 'border-l-emerald-500'} z-10 whitespace-nowrap">
+            <span class="block text-xs font-black text-slate-900">${h.time}</span>
+            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${badgeCls}">₱${rate}/HR</span>
           </td>
           ${cols}
         </tr>`;
@@ -2417,6 +2478,15 @@ function clearFieldError(fieldId) {
     function checkAdminAuthGate() {
       const gate = document.getElementById('admin-auth-gate');
       if (!gate) return;
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('login') === '1') {
+          sessionStorage.removeItem('pf_admin_unlocked');
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        }
+      } catch (e) {}
       const unlocked = sessionStorage.getItem('pf_admin_unlocked') === 'true';
       if (unlocked) {
         gate.classList.add('hidden');
@@ -2512,7 +2582,7 @@ function clearFieldError(fieldId) {
       if (isMasterKey) {
         clientLockoutUntil = 0;
         clientFailedAttempts = 0;
-        if (lockoutIntervalTimer) clearInterval(lockoutIntervalTimer);
+        if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
         localStorage.removeItem('pf_admin_lockout_until');
       } else if (Date.now() < clientLockoutUntil) {
         const rem = Math.ceil((clientLockoutUntil - Date.now()) / 1000);
@@ -2542,7 +2612,7 @@ function clearFieldError(fieldId) {
       if (authenticated) {
         clientFailedAttempts = 0;
         clientLockoutUntil = 0;
-        if (lockoutIntervalTimer) clearInterval(lockoutIntervalTimer);
+        if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
         sessionStorage.setItem('pf_admin_unlocked', 'true');
         if (errEl) errEl.classList.add('hidden');
         if (input) input.value = '';

@@ -281,9 +281,9 @@ function openAdminPortal(event) {
   const host = window.location.hostname;
   const port = window.location.port;
   if ((host === 'localhost' || host === '127.0.0.1') && port === '8088') {
-    window.location.href = 'http://' + host + ':8089/';
+    window.location.href = 'http://' + host + ':8089/?login=1';
   } else {
-    window.location.href = '/admin/';
+    window.location.href = '/admin/?login=1';
   }
   return false;
 }
@@ -410,8 +410,8 @@ function changePlayers(delta) {
 }
 
 function selectPayMode(mode) {
-  // Cash at desk is removed per club policy - only verified GCash & Bank Transfer accepted
-  if (mode !== 'bank') mode = 'gcash';
+  // Support verified GCash, Maya & BDO Bank Transfer
+  if (mode !== 'bank' && mode !== 'maya') mode = 'gcash';
   selectedPaymentMode = mode;
   const cards = document.querySelectorAll('.pay-mode-card');
   cards.forEach(c => {
@@ -492,44 +492,47 @@ function formatBookingItemsBulletHtml(booking) {
 
 function updatePaymentModalModeUI() {
   const qrBox = document.getElementById('modal-qr-section');
+  const mayaBox = document.getElementById('modal-maya-section');
   const bankBox = document.getElementById('modal-bank-section');
   const cashBox = document.getElementById('modal-cash-section');
   const refBox = document.getElementById('modal-ref-section');
   const refLabel = document.getElementById('manual-ref-label');
   const refInput = document.getElementById('manual-ref-input');
   const titleEl = document.getElementById('modal-payment-title');
-  const descEl = document.getElementById('modal-payment-desc');
-  const submitBtn = document.getElementById('modal-submit-btn');
 
-  if (cashBox) cashBox.classList.add('hidden'); // Cash at desk permanently removed
+  if (cashBox) cashBox.classList.add('hidden');
+  if (qrBox) qrBox.classList.add('hidden');
+  if (mayaBox) mayaBox.classList.add('hidden');
+  if (bankBox) bankBox.classList.add('hidden');
+  if (refBox) refBox.classList.remove('hidden');
 
-  // Highlight active payment method button inside #payment-modal
-  document.querySelectorAll('[data-modal-pay]').forEach(btn => {
-    const isAct = btn.getAttribute('data-modal-pay') === selectedPaymentMode;
-    btn.className = isAct
-      ? 'py-2.5 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md'
-      : 'py-2.5 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition';
+  const btnGcash = document.getElementById('modal-pay-btn-gcash');
+  const btnMaya = document.getElementById('modal-pay-btn-maya');
+  const btnBank = document.getElementById('modal-pay-btn-bank');
+
+  [btnGcash, btnMaya, btnBank].forEach(b => {
+    if (b) b.className = 'py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1';
   });
 
   if (selectedPaymentMode === 'bank') {
-    if (qrBox) qrBox.classList.add('hidden');
     if (bankBox) bankBox.classList.remove('hidden');
-    if (refBox) refBox.classList.remove('hidden');
-    if (refLabel) refLabel.innerHTML = 'Bank Transfer / InstaPay Reference No. <span class="text-brand-clay">*</span>';
-    if (refInput) refInput.placeholder = 'Enter BDO / BPI / InstaPay Reference Number (e.g. FT262918392)';
-    if (titleEl) titleEl.textContent = 'Official Bank Transfer (BDO / BPI / InstaPay)';
-    if (descEl) descEl.textContent = 'Send via online banking or scan the InstaPay QR Ph code below. Then enter your transaction reference number to confirm.';
-    if (submitBtn) submitBtn.textContent = 'Submit Bank Transfer & Reference →';
+    if (btnBank) btnBank.className = 'py-2.5 px-2 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md flex items-center justify-center gap-1';
+    if (refLabel) refLabel.innerHTML = 'BDO InstaPay / Bank Reference No. <span class="text-brand-clay">*</span>';
+    if (refInput) refInput.placeholder = 'Enter BDO / InstaPay Reference Number';
+    if (titleEl) titleEl.textContent = 'Official BDO InstaPay QR Transfer';
+  } else if (selectedPaymentMode === 'maya') {
+    if (mayaBox) mayaBox.classList.remove('hidden');
+    if (btnMaya) btnMaya.className = 'py-2.5 px-2 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md flex items-center justify-center gap-1';
+    if (refLabel) refLabel.innerHTML = 'Maya Reference Number <span class="text-brand-clay">*</span>';
+    if (refInput) refInput.placeholder = 'Enter Maya Reference Number';
+    if (titleEl) titleEl.textContent = 'Scan Official Maya QR Code';
   } else {
     selectedPaymentMode = 'gcash';
     if (qrBox) qrBox.classList.remove('hidden');
-    if (bankBox) bankBox.classList.add('hidden');
-    if (refBox) refBox.classList.remove('hidden');
+    if (btnGcash) btnGcash.className = 'py-2.5 px-2 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md flex items-center justify-center gap-1';
     if (refLabel) refLabel.innerHTML = 'GCash Reference Number <span class="text-brand-clay">*</span>';
     if (refInput) refInput.placeholder = 'Enter GCash Reference Number (e.g. 9028 3746 1928)';
-    if (titleEl) titleEl.textContent = 'Scan GCash QR Ph & Verify Ref #';
-    if (descEl) descEl.textContent = 'Scan the dynamic QR Ph code or send to 0999 883 2346 via GCash Express Send. Then enter your Reference No. below.';
-    if (submitBtn) submitBtn.textContent = 'Submit GCash Booking & Reference →';
+    if (titleEl) titleEl.textContent = 'Scan Official GCash QR & Verify';
   }
 }
 
@@ -769,8 +772,14 @@ function openPaymentVerificationModal() {
 
   const formattedTotal = '₱' + total.toLocaleString() + '.00';
   if (amtEl) amtEl.textContent = formattedTotal;
+  const mayaAmtEl = document.getElementById('manual-modal-maya-amount');
+  if (mayaAmtEl) mayaAmtEl.textContent = formattedTotal;
   const bankAmtEl = document.getElementById('manual-modal-bank-amount');
   if (bankAmtEl) bankAmtEl.textContent = formattedTotal;
+  const summaryAmtEl = document.getElementById('modal-summary-amount');
+  if (summaryAmtEl) summaryAmtEl.textContent = formattedTotal;
+  const summaryCourtEl = document.getElementById('modal-summary-court');
+  if (summaryCourtEl && cartItems.length > 0) summaryCourtEl.textContent = cartItems.map(i => `${i.qty}× ${i.name}`).join(', ');
   if (qrImg) qrImg.src = generateLockedQrUrl(total, 'gcash');
   const bankQrImg = document.getElementById('locked-bank-qr-img');
   if (bankQrImg) bankQrImg.src = generateLockedQrUrl(total, 'bank');
@@ -1045,13 +1054,11 @@ function buildEmvcoPayload(channel, amount) {
 }
 
 function generateLockedQrUrl(amount, channel = 'gcash') {
-  // If custom merchant standee image was uploaded or set in Admin
+  if (channel === 'bank') return 'assets/qr-bdo.png';
+  if (channel === 'maya') return 'assets/qr-maya.png';
   const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
-  if (customStandee && channel === 'gcash') {
-    return customStandee;
-  }
-  const payload = buildEmvcoPayload(channel, amount);
-  return `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(payload)}`;
+  if (customStandee) return customStandee;
+  return 'assets/qr-gcash.png';
 }
 
 function extractRefNumberFromText(text) {
