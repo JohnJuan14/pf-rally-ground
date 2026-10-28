@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Play Sessions &amp; Leagues | P&F Rally Ground</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              black: '#070A0F',
+              dark: '#0C121D',
+              card: '#121A2A',
+              border: 'rgba(255, 255, 255, 0.08)',
+              lime: '#D4FF00',
+              limeHover: '#BEEE00',
+              clay: '#FF5733',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .lime-glow { box-shadow: 0 0 35px -5px rgba(212, 255, 0, 0.35); }
+    .card-glow:hover { border-color: rgba(212, 255, 0, 0.4); box-shadow: 0 10px 40px -10px rgba(212, 255, 0, 0.15); }
+    .glass { background: rgba(18, 26, 42, 0.7); backdrop-filter: blur(16px); }
+  </style>
+</head>
+<body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-brand-black/85 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="h-11 w-11 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl shadow-lg shadow-brand-lime/25 group-hover:scale-105 transition-transform">
+          🎾
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-black tracking-tight text-white uppercase">P&amp;F RALLY</span>
+            <span class="hidden sm:inline-block text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime border border-brand-lime/30">CLUB</span>
+          </div>
+          <span class="text-[10px] font-bold tracking-[0.2em] text-slate-400 block -mt-1 uppercase">Pickleball Ground</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider text-slate-300">
+        <a href="courts.html" class="hover:text-brand-lime transition-colors">Courts</a>
+        <a href="coaching.html" class="hover:text-brand-lime transition-colors">Coaching</a>
+        <a href="open-play.html" class="text-brand-lime font-black border-b-2 border-brand-lime pb-1">Open Play</a>
+        <a href="pricing.html" class="hover:text-brand-lime transition-colors">Rates &amp; Gear</a>
+        <a href="check-booking.html" class="hover:text-brand-lime transition-colors">My Booking</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10" aria-label="Toggle menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <button onclick="openBookingDrawer(2)" class="h-10 px-5 rounded-full bg-brand-lime text-brand-black font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-brand-limeHover transition-all hover:scale-105 lime-glow">
+          <span>Book Court</span>
+          <span>→</span>
+        </button>
+      </div>
+
+    </div>
+  
+    <!-- Mobile Navigation Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl px-4 py-4 space-y-2 text-xs font-bold uppercase tracking-wider">
+      <a href="courts.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Courts</a>
+      <a href="index.html#schedule" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Live Schedule</a>
+      <a href="open-play.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Open Play</a>
+      <a href="coaching.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Coaching (Coach Jerome)</a>
+      <a href="pricing.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Rates & Gear</a>
+      <a href="check-booking.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">My Booking</a>
+    </div>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <section class="pt-36 pb-16 bg-brand-dark border-b border-white/10 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime block mb-2">COMMUNITY &amp; MATCHMAKING</span>
+      <h1 class="text-5xl sm:text-7xl font-black uppercase tracking-tight text-white">
+        OPEN <span class="text-brand-lime">PLAY</span>
+      </h1>
+      <p class="mt-4 max-w-2xl text-base text-slate-300 font-medium leading-relaxed">
+        6 structured sessions weekly across Court 01 &amp; Court 02. No partner needed—place your paddle in the rack, rotate in, and test your skills against players at your level.
+      </p>
+
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a href="https://reclub.co" target="_blank" class="px-6 py-3.5 rounded-full bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition lime-glow flex items-center gap-2">
+          <span>Join P&amp;F on Reclub App</span> <span>↗</span>
+        </a>
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10" aria-label="Toggle menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <button onclick="openBookingDrawer(2)" class="px-6 py-3.5 rounded-full glass border border-white/15 text-white font-extrabold text-xs uppercase tracking-wider hover:bg-white/10 transition">
+          Reserve Individual Court Instead
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WEEKLY SCHEDULE ================= -->
+  <section class="py-20 bg-brand-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime block mb-2">TIMETABLE</span>
+        <h2 class="text-4xl sm:text-5xl font-black uppercase tracking-tight text-white">
+          6 SESSIONS <span class="text-brand-lime">WEEKLY</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mt-2 font-medium">
+          Open Play reserves dedicated courts. Slots can be joined via Reclub or by booking on-site.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Tuesday -->
+        <div class="rounded-3xl bg-brand-card border border-brand-border p-6 card-glow flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-base font-black uppercase text-white">Tuesday</span>
+              <span class="px-2.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime text-[10px] font-mono font-bold">ALL SKILLS</span>
+            </div>
+            <div class="text-2xl font-black text-brand-lime font-mono mb-2">3:00 PM – 8:00 PM</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              5 hours of continuous round-robin play. Great for casual players, warm-up games, and meeting new rally partners.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Courts: <b class="text-white">Court 01 &amp; 02</b></span>
+            <span class="text-brand-lime font-bold">Paddle Rack System</span>
+          </div>
+        </div>
+
+        <!-- Wednesday -->
+        <div class="rounded-3xl bg-brand-card border border-brand-border p-6 card-glow flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-base font-black uppercase text-white">Wednesday</span>
+              <span class="px-2.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[10px] font-mono font-bold">DUPR 2.5–3.5</span>
+            </div>
+            <div class="text-2xl font-black text-brand-lime font-mono mb-2">3:00 PM – 8:00 PM</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Intermediate level focus. Solid kitchen dinks, controlled 3rd shots, and doubles stacking practice.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Courts: <b class="text-white">Court 01 &amp; 02</b></span>
+            <span class="text-brand-lime font-bold">Reclub Verified</span>
+          </div>
+        </div>
+
+        <!-- Thursday -->
+        <div class="rounded-3xl bg-brand-card border border-brand-border p-6 card-glow flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-base font-black uppercase text-white">Thursday</span>
+              <span class="px-2.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime text-[10px] font-mono font-bold">ALL SKILLS</span>
+            </div>
+            <div class="text-2xl font-black text-brand-lime font-mono mb-2">3:00 PM – 8:00 PM</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Mid-week social mixer. Fast 11-point games (win by 2) with 4-on / 4-off paddle rotations.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Courts: <b class="text-white">Court 01 &amp; 02</b></span>
+            <span class="text-brand-lime font-bold">Paddle Rack System</span>
+          </div>
+        </div>
+
+        <!-- Friday Afternoon -->
+        <div class="rounded-3xl bg-brand-card border border-brand-border p-6 card-glow flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-base font-black uppercase text-white">Friday (Early)</span>
+              <span class="px-2.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime text-[10px] font-mono font-bold">AFTERNOON</span>
+            </div>
+            <div class="text-2xl font-black text-brand-lime font-mono mb-2">3:00 PM – 7:00 PM</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Kick off the weekend early with high-energy afternoon doubles play.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Courts: <b class="text-white">Court 01 &amp; 02</b></span>
+            <span class="text-brand-lime font-bold">4 Hours Play</span>
+          </div>
+        </div>
+
+        <!-- Friday Night Lights -->
+        <div class="rounded-3xl bg-brand-card border border-brand-lime/40 p-6 card-glow flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute top-0 right-0 bg-brand-lime text-brand-black text-[9px] font-black px-3 py-1 uppercase tracking-widest rounded-bl-xl">
+            HOT SPOT
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-base font-black uppercase text-white">Friday Night Lights</span>
+              <span class="px-2.5 py-0.5 rounded bg-brand-clay/10 text-brand-clay text-[10px] font-mono font-bold">PRIME</span>
+            </div>
+            <div class="text-2xl font-black text-brand-clay font-mono mb-2">7:00 PM – 11:00 PM</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Music, electric lighting, King of the Court challenge format, and high-intensity match play.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Courts: <b class="text-white">All 4 Courts</b></span>
+            <span class="text-brand-clay font-bold">Fast Rotations</span>
+          </div>
+        </div>
+
+        <!-- Saturday Prime -->
+        <div class="rounded-3xl bg-brand-card border border-brand-border p-6 card-glow flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-base font-black uppercase text-white">Saturday Prime</span>
+              <span class="px-2.5 py-0.5 rounded bg-brand-clay/10 text-brand-clay text-[10px] font-mono font-bold">WEEKEND</span>
+            </div>
+            <div class="text-2xl font-black text-brand-clay font-mono mb-2">6:00 PM – 10:00 PM</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Weekend showdown. Competitive DUPR-bracketed play with weekly ladder rankings on Reclub.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Courts: <b class="text-white">Court 01 &amp; 02</b></span>
+            <span class="text-brand-lime font-bold">Reclub RSVP</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= HOW OPEN PLAY WORKS ================= -->
+  <section class="py-20 bg-brand-dark border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-xl mx-auto mb-16">
+        <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime block mb-2">COURT ETIQUETTE</span>
+        <h2 class="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white">
+          THE PADDLE RACK RULES
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-300">
+        <div class="p-6 rounded-2xl bg-brand-black border border-white/10">
+          <span class="text-2xl font-mono font-black text-brand-lime block mb-3">01</span>
+          <h4 class="text-base font-black uppercase text-white mb-2">Rack Your Paddle</h4>
+          <p class="leading-relaxed text-slate-400">
+            Slide your paddle into the next open slot in the rack queue. Sets of 4 paddles will enter the court together as the next match opens.
+          </p>
+        </div>
+        <div class="p-6 rounded-2xl bg-brand-black border border-white/10">
+          <span class="text-2xl font-mono font-black text-brand-lime block mb-3">02</span>
+          <h4 class="text-base font-black uppercase text-white mb-2">Game to 11 (Win by 1)</h4>
+          <p class="leading-relaxed text-slate-400">
+            During peak Open Play, games play to 11 points (win by 1 sudden death) to keep rotation moving smoothly so nobody sits out for long.
+          </p>
+        </div>
+        <div class="p-6 rounded-2xl bg-brand-black border border-white/10">
+          <span class="text-2xl font-mono font-black text-brand-lime block mb-3">03</span>
+          <h4 class="text-base font-black uppercase text-white mb-2">2-Game Max Rule</h4>
+          <p class="leading-relaxed text-slate-400">
+            Winners may stay on for a maximum of 2 consecutive matches before rotating back to the rack. Tap paddles at the net after every rally!
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= INCLUDED DRAWER & MODALS ================= -->
+  <div id="booking-drawer" class="fixed inset-0 z-50 hidden">
+    <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/80 backdrop-blur-sm "></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full max-w-xl bg-brand-dark border-l border-white/10 shadow-2xl p-6 sm:p-8 overflow-y-auto  transform translate-x-full transition-transform duration-300 flex flex-col justify-between" id="drawer-panel">
+      <div>
+        <div class="flex items-center justify-between border-b border-white/10 pb-5">
+          <div class="flex items-center gap-2.5">
+            <span class="h-9 w-9 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black">🏓</span>
+            <div>
+              <h3 class="text-lg font-black uppercase tracking-tight text-white">Court Reservation</h3>
+              <p class="text-[11px] text-slate-400">Automated HitPay GCash Checkout</p>
+            </div>
+          </div>
+          <button onclick="closeBookingDrawer()" class="h-8 w-8 rounded-full bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-sm">✕</button>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">1. Select Court</label>
+          <div class="grid grid-cols-2 gap-2" id="drawer-court-buttons">
+            <button onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left">
+              <span class="text-[10px] font-bold text-slate-400 block">COURT 01</span>
+              <span class="text-xs font-black text-brand-lime">Indoor Championship</span>
+            </button>
+            <button onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+              <span class="text-[10px] font-bold text-slate-400 block">COURT 02</span>
+              <span class="text-xs font-black text-white">Indoor Tournament</span>
+            </button>
+            <button onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+              <span class="text-[10px] font-bold text-slate-400 block">COURT 03</span>
+              <span class="text-xs font-black text-white">Covered Outdoor</span>
+            </button>
+            <button onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+              <span class="text-[10px] font-bold text-slate-400 block">COURT 04</span>
+              <span class="text-xs font-black text-white">Pro Training Court</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-400">2. Pick Hour</label>
+            <span class="text-[10px] font-mono text-brand-lime" id="drawer-rate-badge">Regular: ₱400/hr</span>
+          </div>
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1" id="drawer-slot-buttons"></div>
+        </div>
+
+        <div class="mt-6">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-400">3. Players Count</label>
+            <span class="text-[10px] text-slate-400">Up to 6 included (+₱100/player over 6)</span>
+          </div>
+          <div class="flex items-center gap-3 bg-brand-card border border-white/10 p-2 rounded-2xl w-fit">
+            <button onclick="changePlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20">-</button>
+            <span id="player-count" class="font-mono font-black text-lg text-brand-lime px-2">4</span>
+            <span class="text-xs text-slate-400">Players</span>
+            <button onclick="changePlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20">+</button>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">4. Add-ons &amp; Gear</label>
+          <div class="space-y-2">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40">
+              <span class="text-xs font-bold text-white">🏓 Carbon Fiber Paddle (+₱100)</span>
+              <input type="checkbox" id="rent-paddle" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40">
+              <span class="text-xs font-bold text-white">🎾 Training Ball Bucket (50 pcs) (+₱100)</span>
+              <input type="checkbox" id="rent-balls" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40">
+              <span class="text-xs font-bold text-white">🤖 Ball Machine (1 Hour) (+₱100)</span>
+              <input type="checkbox" id="rent-machine" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+            </label>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-3">
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-400">5. Guest Information</label>
+          <input type="text" id="cust-name" placeholder="Full Name" value="Dexter Lim" class="w-full bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="tel" id="cust-phone" placeholder="+63 9XX XXX XXXX" value="+63 999 883 2346" class="bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
+            <input type="email" id="cust-email" placeholder="Email Address" value="player@pfrally.ph" class="bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
+          </div>
+        </div>
+              <!-- Step 6: Payment Terms & Facility Rules -->
+        <div class="mt-6 p-4 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2.5">
+          <label class="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" id="accept-terms" checked class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+            <span class="text-xs text-slate-300 leading-snug">
+              I agree to the <button type="button" onclick="toggleTermsDetails()" class="text-brand-lime font-bold underline">Payment Terms, 48h Reschedule &amp; Rules</button>
+            </span>
+          </label>
+
+          <!-- Collapsible Terms Details -->
+          <div id="terms-details" class="text-[11px] text-slate-400 space-y-1.5 pt-2 border-t border-white/10 leading-relaxed font-medium">
+            <p>● <b class="text-white">Non-Refundable:</b> Payment is final upon HitPay/GCash confirmation.</p>
+            <p>● <b class="text-white">48-Hour Rescheduling:</b> Move your session once if requested &ge; 48 hours in advance.</p>
+            <p>● <b class="text-white">Court Shoes:</b> Strictly non-marking sports shoes only to protect cushion acrylic.</p>
+            <p>● <b class="text-white">Player Surcharge:</b> 6 players included; +₱100/player above 6.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-white/10 mt-6">
+        <div class="flex items-baseline justify-between mb-4">
+          <div>
+            <span class="text-xs text-slate-400 block font-semibold">Total to Pay</span>
+            <span class="text-[10px] text-brand-lime">🔒 Instant HitPay GCash Auto-Verify</span>
+          </div>
+          <span id="drawer-total-amount" class="text-3xl font-black text-brand-lime font-mono">₱400</span>
+        </div>
+        <button onclick="launchHitPayCheckout()" class="w-full py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-sm hover:bg-brand-limeHover transition lime-glow flex items-center justify-center gap-2">
+          <span>Pay Instantly with GCash</span> ⚡
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HitPay Modal -->
+  <div id="hitpay-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+    <div onclick="closeHitPayModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/30 p-6 shadow-2xl text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lime/10 text-brand-lime border border-brand-lime/20 text-xs font-bold mb-4">
+        <span>⚡ HitPay Gateway</span> • <span>Automated Webhook</span>
+      </div>
+      <h3 class="text-xl font-black uppercase tracking-tight text-white">Scan with GCash / QR Ph</h3>
+      <div class="my-6 p-4 rounded-2xl bg-white max-w-[220px] mx-auto shadow-xl">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HITPAY-OPENPLAY" alt="QR Code" class="w-full h-auto">
+      </div>
+      <div class="bg-brand-black/60 rounded-xl p-3 border border-white/10 text-left text-xs space-y-1 mb-6 font-mono">
+        <div class="flex justify-between text-slate-400"><span>Merchant:</span> <span class="text-white">P&amp;F Rally Ground</span></div>
+        <div class="flex justify-between text-slate-400"><span>Court:</span> <span id="hitpay-modal-court" class="text-brand-lime">Court 02</span></div>
+        <div class="flex justify-between text-slate-400"><span>Amount:</span> <span id="hitpay-modal-amount" class="text-brand-lime font-bold">₱400.00</span></div>
+      </div>
+      <button onclick="simulateSuccessfulPayment()" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition">
+        Simulate Successful GCash Payment (Test)
+      </button>
+    </div>
+  </div>
+
+  <!-- Match Pass Modal -->
+  <div id="match-pass-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+    <div onclick="closeMatchPassModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/40 p-6 sm:p-8 shadow-2xl text-center">
+      <div class="h-12 w-12 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl mx-auto mb-4">✓</div>
+      <span class="text-[10px] font-black uppercase tracking-widest text-brand-lime block">MATCH PASS ISSUED</span>
+      <h3 class="text-2xl font-black uppercase tracking-tight text-white mt-1">Digital Match Pass</h3>
+      <p class="text-xs text-slate-400 mt-1">Ref: <span id="pass-ref" class="text-white font-mono font-bold">PF-84920</span></p>
+      <div class="my-6 rounded-2xl bg-brand-black border border-white/10 p-5 text-left text-xs space-y-3">
+        <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Guest</span><span id="pass-name" class="font-bold text-white">Dexter Lim</span></div>
+        <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Court Reserved</span><span id="pass-court" class="font-bold text-brand-lime">Court 02</span></div>
+        <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Schedule</span><span id="pass-time" class="font-bold text-white">Today • 06:00 PM</span></div>
+        <div class="flex justify-between items-center"><span class="text-slate-400">Status</span><span class="text-brand-lime font-bold">● PAID &amp; CONFIRMED</span></div>
+      </div>
+      <div class="space-y-2">
+        <button onclick="downloadCalendarInvite()" class="w-full py-3 rounded-xl bg-white/10 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2">📅 Add to Google / Apple Calendar</button>
+      </div>
+      <button onclick="closeMatchPassModal()" class="mt-4 text-xs font-bold text-slate-500 hover:text-white">Close</button>
+    </div>
+  </div>
+
+  <footer class="bg-brand-black border-t border-white/5 py-10 text-xs text-slate-500 text-center">
+    © 2026 P&amp;F Rally Ground. Play more. Rally together. Powered by HitPay &amp; GoHighLevel.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
