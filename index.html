@@ -800,7 +800,7 @@
           <label class="block text-xs font-black uppercase tracking-widest text-slate-400">1. Select Session Date</label>
           <span id="selected-schedule-date-label" class="text-xs font-mono text-brand-lime font-bold">Today</span>
         </div>
-        <div id="date-carousel" class="flex gap-2 overflow-x-auto pb-3 scrollbar-none touch-scroll"></div>
+        <div id="date-carousel" class="date-rail"></div>
       </div>
 
       <!-- Mobile & Tablet Court Filter Tabs (Optimizes Table View on Small Screens) -->
@@ -1539,49 +1539,12 @@
 
   <script src="app.js"></script>
   <script>
+    // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
     let selectedDateStr = 'Today';
+    let selectedScheduleDateYMD = '';
+    let pendingOrderData = null;
 
-    // 1. Populate 30-Day Date Strip
-    const dateCarousel = document.getElementById('date-carousel');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const today = new Date();
-
-    if (dateCarousel) {
-      for (let i = 0; i < 30; i++) {
-        const d = new Date();
-        d.setDate(today.getDate() + i);
-        const isToday = i === 0;
-        const labelStr = isToday ? 'Today' : `${months[d.getMonth()]} ${d.getDate()}`;
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `flex-shrink-0 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border text-center transition ${
-          isToday ? 'border-brand-lime bg-brand-lime/10 text-brand-lime' : 'border-white/10 bg-brand-card text-slate-300 hover:border-brand-lime/40'
-        }`;
-        btn.innerHTML = `
-          <span class="text-[9px] sm:text-[10px] uppercase font-bold block ${isToday ? 'text-brand-lime' : 'text-slate-400'}">${isToday ? 'TODAY' : days[d.getDay()]}</span>
-          <span class="text-sm sm:text-base font-black text-white font-mono block">${d.getDate()}</span>
-          <span class="text-[9px] uppercase font-bold text-slate-500 block">${months[d.getMonth()]}</span>
-        `;
-        btn.onclick = () => {
-          selectedDateStr = labelStr;
-          if (typeof currentSelectedDateLabel !== 'undefined') currentSelectedDateLabel = labelStr;
-          const lbl = document.getElementById('selected-schedule-date-label');
-          if (lbl) lbl.textContent = labelStr;
-          document.querySelectorAll('#date-carousel button').forEach(b => {
-            b.className = 'flex-shrink-0 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border text-center transition border-white/10 bg-brand-card text-slate-300 hover:border-brand-lime/40';
-          });
-          btn.className = 'flex-shrink-0 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border text-center transition border-brand-lime bg-brand-lime/10 text-brand-lime';
-          renderLiveScheduleMatrix();
-        };
-        dateCarousel.appendChild(btn);
-      }
-    }
-
-    
-    // ================= AUTHENTIC DATE-RAIL CALENDAR & DRAWER ENGINE =================
     const DRAWER_STATE = {
       daysList: [],
       selectedDateVal: '',
@@ -1598,11 +1561,13 @@
       '06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM'
     ];
 
+    const baseHours = ALL_HOURS_SLOTS.map(t => ({ time: t }));
+
     function getHourlyRate(slotStr) {
       if (!slotStr) return 400;
       let hour24 = parseInt(slotStr, 10);
-      if (slotStr.includes("PM") && hour24 !== 12) hour24 += 12;
-      if (slotStr.includes("AM") && hour24 === 12) hour24 = 0;
+      if (slotStr.includes('PM') && hour24 !== 12) hour24 += 12;
+      if (slotStr.includes('AM') && hour24 === 12) hour24 = 0;
       return hour24 >= 18 ? 500 : 400;
     }
 
@@ -1618,21 +1583,154 @@
         d.setDate(today.getDate() + i);
         DRAWER_STATE.daysList.push({
           value: toYMD(d),
-          weekday: i === 0 ? "Today" : new Intl.DateTimeFormat("en-PH", { weekday: "short" }).format(d),
+          weekday: i === 0 ? 'Today' : new Intl.DateTimeFormat('en-PH', { weekday: 'short' }).format(d),
           day: d.getDate(),
-          month: new Intl.DateTimeFormat("en-PH", { month: "short" }).format(d),
-          label: new Intl.DateTimeFormat("en-PH", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(d)
+          month: new Intl.DateTimeFormat('en-PH', { month: 'short' }).format(d),
+          label: new Intl.DateTimeFormat('en-PH', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(d)
         });
       }
-      if (!DRAWER_STATE.selectedDateVal) {
+      if (!DRAWER_STATE.selectedDateVal && DRAWER_STATE.daysList.length > 0) {
         DRAWER_STATE.selectedDateVal = DRAWER_STATE.daysList[0].value;
         DRAWER_STATE.selectedDateLabel = DRAWER_STATE.daysList[0].label;
       }
+      if (!selectedScheduleDateYMD && DRAWER_STATE.daysList.length > 0) {
+        selectedScheduleDateYMD = DRAWER_STATE.daysList[0].value;
+      }
     }
 
+    // 1. Landing Page Schedule Date-Rail (#date-carousel)
+    function initScheduleDateCarousel() {
+      const carousel = document.getElementById('date-carousel');
+      if (!carousel) return;
+      if (DRAWER_STATE.daysList.length === 0) generateDrawerDays();
+      carousel.innerHTML = '';
+
+      DRAWER_STATE.daysList.forEach((d, idx) => {
+        const isSelected = d.value === selectedScheduleDateYMD || (idx === 0 && !selectedScheduleDateYMD);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `date-tile ${isSelected ? 'date-tile-active' : ''}`;
+        btn.innerHTML = `
+          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
+          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
+          <span class="tile-month mt-1 block text-xs font-bold opacity-70 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
+        `;
+        btn.onclick = () => {
+          selectedScheduleDateYMD = d.value;
+          selectedDateStr = idx === 0 ? 'Today' : `${d.weekday}, ${d.month} ${d.day}`;
+          DRAWER_STATE.selectedDateVal = d.value;
+          DRAWER_STATE.selectedDateLabel = d.label;
+
+          carousel.querySelectorAll('.date-tile').forEach(b => {
+            b.classList.remove('date-tile-active');
+            const spans = b.querySelectorAll('span');
+            if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-400';
+            if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
+            if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-slate-400';
+          });
+
+          btn.classList.add('date-tile-active');
+          const activeSpans = btn.querySelectorAll('span');
+          if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-[#050E1D]';
+          if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-[#050E1D]';
+          if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-[#050E1D]';
+
+          const lbl = document.getElementById('selected-schedule-date-label');
+          if (lbl) lbl.textContent = idx === 0 ? `Today (${d.month} ${d.day})` : d.label;
+
+          renderLiveScheduleMatrix();
+        };
+        carousel.appendChild(btn);
+      });
+
+      const lbl = document.getElementById('selected-schedule-date-label');
+      if (lbl && DRAWER_STATE.daysList[0]) {
+        const cur = DRAWER_STATE.daysList.find(x => x.value === selectedScheduleDateYMD) || DRAWER_STATE.daysList[0];
+        lbl.textContent = cur.weekday === 'Today' ? `Today (${cur.month} ${cur.day})` : cur.label;
+      }
+    }
+
+    // 2. Landing Page Court Timeline Matrix (#schedule-table)
+    function renderLiveScheduleMatrix() {
+      const thead = document.getElementById('schedule-table-head');
+      const tbody = document.getElementById('schedule-matrix-rows');
+      if (!thead || !tbody) return;
+
+      const courtsToShow = currentScheduleFilter === 'ALL' ? [1, 2, 3, 4] : [Number(currentScheduleFilter)];
+      const courtColumnLabels = {
+        1: 'COURT 01 • CHAMPIONSHIP',
+        2: 'COURT 02 • TOURNAMENT',
+        3: 'COURT 03 • COVERED OUTDOOR',
+        4: 'COURT 04 • PRO TRAINING'
+      };
+
+      thead.innerHTML = `
+        <th class="py-3 px-2.5 sm:px-4 text-left sticky left-0 bg-brand-card z-20 min-w-[105px] text-white">TIME SLOT (PHT)</th>
+        ${courtsToShow.map(c => `<th class="py-3 px-2 sm:px-3 text-center min-w-[135px] text-brand-lime">${courtColumnLabels[c]}</th>`).join('')}
+      `;
+
+      const liveBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
+      const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
+
+      tbody.innerHTML = baseHours.map(h => {
+        const rate = getHourlyRate(h.time);
+        const cells = courtsToShow.map(cNum => {
+          const courtLabel = 'Court 0' + cNum;
+          const isLiveBooked = liveBookings.some(b => {
+            if (!b.court || !b.court.includes(courtLabel)) return false;
+            if (!b.time || !b.time.includes(h.time)) return false;
+            if (b.date && selectedScheduleDateYMD) return b.date === selectedScheduleDateYMD;
+            return true;
+          });
+          const isLiveBlocked = liveBlocks.some(bl =>
+            bl.court && (bl.court.includes(courtLabel) || bl.court.includes('All')) &&
+            bl.hours && bl.hours.includes(h.time)
+          );
+
+          if (isLiveBooked || isLiveBlocked) {
+            return `<td class="p-1.5 sm:p-2 text-center">
+              <span class="inline-block w-full py-2.5 px-2 rounded-xl bg-white/5 text-slate-500 text-[10px] sm:text-xs uppercase font-bold">
+                Reserved
+              </span>
+            </td>`;
+          } else {
+            return `<td class="p-1.5 sm:p-2 text-center">
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2.5 px-2 rounded-xl bg-[#0E8A2D]/20 border border-[#10B981]/45 text-[#34D399] hover:bg-[#10B981] hover:text-[#050E1D] transition text-xs font-black flex flex-col items-center justify-center leading-tight">
+                <span>Book ₱${rate}</span>
+                <span class="text-[9px] font-mono uppercase tracking-wider opacity-85">Available</span>
+              </button>
+            </td>`;
+          }
+        }).join('');
+
+        const rateColor = rate === 500 ? 'bg-[#D4FF00]/20 text-[#D4FF00]' : 'bg-[#10B981]/20 text-[#34D399]';
+        return `<tr class="hover:bg-white/[0.02] transition">
+          <td class="py-2.5 px-2.5 sm:px-4 text-left font-mono text-slate-200 sticky left-0 bg-brand-card/95 border-l-4 ${rate === 500 ? 'border-l-[#D4FF00]' : 'border-l-[#10B981]'} backdrop-blur-md z-10 whitespace-nowrap">
+            <span class="block text-xs font-black text-white">${h.time}</span>
+            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${rateColor}">₱${rate} / HR</span>
+          </td>
+          ${cells}
+        </tr>`;
+      }).join('');
+    }
+
+    function setScheduleCourtFilter(filterVal) {
+      currentScheduleFilter = filterVal;
+      document.querySelectorAll('.sched-filter-btn').forEach(btn => {
+        if (String(btn.dataset.court) === String(filterVal)) {
+          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-brand-lime text-brand-black transition flex-shrink-0';
+        } else {
+          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40 transition flex-shrink-0';
+        }
+      });
+      renderLiveScheduleMatrix();
+    }
+
+    // 3. Drawer Date Rail & Time Chips (#booking-drawer)
     function renderDrawerDateRail() {
       const container = document.getElementById('drawer-date-rail');
       if (!container) return;
+      if (DRAWER_STATE.daysList.length === 0) generateDrawerDays();
       container.innerHTML = '';
 
       DRAWER_STATE.daysList.forEach(d => {
@@ -1661,11 +1759,17 @@
 
       document.querySelectorAll('#drawer-date-rail .date-tile').forEach(b => {
         b.classList.remove('date-tile-active');
-        b.querySelectorAll('span').forEach(s => s.classList.remove('text-[#050E1D]'));
+        const spans = b.querySelectorAll('span');
+        if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-400';
+        if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
+        if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-slate-400';
       });
       if (clickedBtn) {
         clickedBtn.classList.add('date-tile-active');
-        clickedBtn.querySelectorAll('span').forEach(s => s.classList.add('text-[#050E1D]'));
+        const activeSpans = clickedBtn.querySelectorAll('span');
+        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-[#050E1D]';
+        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-[#050E1D]';
+        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-[#050E1D]';
       }
 
       const lbl = document.getElementById('drawer-selected-date-label');
@@ -1681,10 +1785,12 @@
         const c = Number(btn.getAttribute('data-court')) || (idx + 1);
         if (c === courtNum) {
           btn.className = 'drawer-court active p-3 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition';
-          btn.querySelector('span:first-child').className = 'text-[9px] font-mono font-black text-brand-lime block uppercase';
+          const sp = btn.querySelector('span:first-child');
+          if (sp) sp.className = 'text-[9px] font-mono font-black text-brand-lime block uppercase';
         } else {
           btn.className = 'drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20';
-          btn.querySelector('span:first-child').className = 'text-[9px] font-mono font-bold text-slate-400 block uppercase';
+          const sp = btn.querySelector('span:first-child');
+          if (sp) sp.className = 'text-[9px] font-mono font-bold text-slate-400 block uppercase';
         }
       });
       renderDrawerSlots();
@@ -1718,9 +1824,9 @@
         const btn = document.createElement('button');
         btn.type = 'button';
 
-        const isBooked = liveBookings.some(b => 
-          b.court && b.court.includes(courtLabel) && 
-          b.time && b.time.includes(slot) && 
+        const isBooked = liveBookings.some(b =>
+          b.court && b.court.includes(courtLabel) &&
+          b.time && b.time.includes(slot) &&
           (b.date === DRAWER_STATE.selectedDateVal || (b.time && b.time.includes(DRAWER_STATE.selectedDateVal)))
         );
 
@@ -1794,7 +1900,6 @@
       const totalEl = document.getElementById('drawer-cost-total');
       if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
 
-      // Update payment modal amount
       const modalAmt = document.getElementById('manual-modal-amount');
       if (modalAmt) modalAmt.textContent = `₱${total.toFixed(2)}`;
       const modalMayaAmt = document.getElementById('manual-modal-maya-amount');
@@ -1807,8 +1912,16 @@
 
     function openBookingDrawer(courtNum, slotTime) {
       generateDrawerDays();
+      if (selectedScheduleDateYMD) {
+        DRAWER_STATE.selectedDateVal = selectedScheduleDateYMD;
+        const found = DRAWER_STATE.daysList.find(d => d.value === selectedScheduleDateYMD);
+        if (found) DRAWER_STATE.selectedDateLabel = found.label;
+      }
       if (courtNum) drawerSetCourt(courtNum);
       if (slotTime) DRAWER_STATE.selectedStartSlot = slotTime;
+      const badge = document.getElementById('drawer-selected-slot-badge');
+      if (badge) badge.textContent = DRAWER_STATE.selectedStartSlot;
+
       renderDrawerDateRail();
       renderDrawerSlots();
       recalculateDrawerTotal();
@@ -1967,11 +2080,11 @@
         return;
       }
 
-      const name = document.getElementById('cust-name')?.value.trim() || 'Valued Guest';
-      const phone = document.getElementById('cust-phone')?.value.trim() || '09000000000';
-      const email = document.getElementById('cust-email')?.value.trim() || '';
-      const total = recalculateGhlDrawerTotal();
-      const dateStr = GHL_STATE.selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const name = (pendingOrderData && pendingOrderData.name) || document.getElementById('cust-name')?.value.trim() || 'Valued Guest';
+      const phone = (pendingOrderData && pendingOrderData.phone) || document.getElementById('cust-phone')?.value.trim() || '09000000000';
+      const email = (pendingOrderData && pendingOrderData.email) || document.getElementById('cust-email')?.value.trim() || '';
+      const total = (pendingOrderData && pendingOrderData.total) || recalculateDrawerTotal();
+      const dateStr = DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal;
 
       const submitBtn = document.getElementById('modal-submit-btn');
       if (submitBtn) {
@@ -1983,9 +2096,10 @@
         name: name,
         phone: phone,
         email: email,
-        court: `Court 0${GHL_STATE.selectedCourt}`,
-        time: `${dateStr} • ${GHL_STATE.selectedSlot} (${GHL_STATE.selectedDuration} hr)`,
-        total: `₱${total.toFixed(2)}`,
+        court: `Court 0${DRAWER_STATE.selectedCourt}`,
+        date: DRAWER_STATE.selectedDateVal,
+        time: `${dateStr} • ${DRAWER_STATE.selectedStartSlot} (${DRAWER_STATE.selectedDuration} hr)`,
+        total: `₱${Number(total).toFixed(2)}`,
         status: 'PENDING',
         transactionRef: refVal,
         createdAt: new Date().toISOString()
@@ -2003,9 +2117,9 @@
         alert(`✅ Reservation Submitted Successfully!
 
 Reference: ${data.ref || refVal}
-Court: Court 0${GHL_STATE.selectedCourt}
-Date & Time: ${dateStr} • ${GHL_STATE.selectedSlot}
-Total Amount: ₱${total.toFixed(2)}
+Court: Court 0${DRAWER_STATE.selectedCourt}
+Date & Time: ${dateStr} • ${DRAWER_STATE.selectedStartSlot}
+Total Amount: ₱${Number(total).toFixed(2)}
 
 Our front desk is verifying your payment reference.`);
         window.location.reload();
@@ -2014,141 +2128,14 @@ Our front desk is verifying your payment reference.`);
         alert(`✅ Reservation Recorded Locally!
 
 Reference: ${refVal}
-Court: Court 0${GHL_STATE.selectedCourt}
-Total Amount: ₱${total.toFixed(2)}`);
+Court: Court 0${DRAWER_STATE.selectedCourt}
+Total Amount: ₱${Number(total).toFixed(2)}`);
         window.location.reload();
       }
     }
 
-    // ================= SCHEDULE MATRIX (FLAT ₱400/HR, ZERO FAKE PROMOS) =================
-    const baseHours = [
-      { time: '06:00 AM' }, { time: '07:00 AM' }, { time: '08:00 AM' }, { time: '09:00 AM' },
-      { time: '10:00 AM' }, { time: '11:00 AM' }, { time: '12:00 PM' }, { time: '01:00 PM' },
-      { time: '02:00 PM' }, { time: '03:00 PM' }, { time: '04:00 PM' }, { time: '05:00 PM' },
-      { time: '06:00 PM' }, { time: '07:00 PM' }, { time: '08:00 PM' }, { time: '09:00 PM' },
-      { time: '10:00 PM' }, { time: '11:00 PM' }
-    ];
-
-    let currentScheduleFilter = 'ALL';
-    let selectedDateStr = 'Today';
-
-    function renderLiveScheduleMatrix() {
-      const thead = document.getElementById('schedule-table-head');
-      const tbody = document.getElementById('schedule-matrix-rows');
-      if (!thead || !tbody) return;
-
-      const courtsToShow = currentScheduleFilter === 'ALL' ? [1, 2, 3, 4] : [ Number(currentScheduleFilter) ];
-      const courtColumnLabels = {
-        1: 'COURT 01 • CHAMPIONSHIP',
-        2: 'COURT 02 • TOURNAMENT',
-        3: 'COURT 03 • COVERED OUTDOOR',
-        4: 'COURT 04 • PRO TRAINING'
-      };
-
-      thead.innerHTML = `
-        <th class="py-3 px-2.5 sm:px-4 text-left sticky left-0 bg-brand-card z-20 min-w-[105px] text-white">TIME SLOT (PHT)</th>
-        ${courtsToShow.map(c => `<th class="py-3 px-2 sm:px-3 text-center min-w-[135px] text-brand-lime">${courtColumnLabels[c]}</th>`).join('')}
-      `;
-
-      const liveBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
-      const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
-
-      tbody.innerHTML = baseHours.map(h => {
-        const cells = courtsToShow.map(cNum => {
-          const courtLabel = 'Court 0' + cNum;
-          const isLiveBooked = liveBookings.some(b =>
-            b.court && b.court.includes(courtLabel) &&
-            b.time && b.time.includes(h.time)
-          );
-          const isLiveBlocked = liveBlocks.some(bl => 
-            bl.court && (bl.court.includes(courtLabel) || bl.court.includes('All')) && 
-            bl.hours && bl.hours.includes(h.time)
-          );
-
-          if (isLiveBooked || isLiveBlocked) {
-            return `<td class="p-1.5 sm:p-2 text-center">
-              <span class="inline-block w-full py-2.5 px-2 rounded-xl bg-white/5 text-slate-500 text-[10px] sm:text-xs uppercase font-bold">
-                Reserved
-              </span>
-            </td>`;
-          } else {
-            return `<td class="p-1.5 sm:p-2 text-center">
-              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2.5 px-2 rounded-xl bg-[#0E8A2D]/20 border border-[#10B981]/45 text-[#34D399] hover:bg-[#10B981] hover:text-[#050E1D] transition text-xs font-black flex flex-col items-center justify-center leading-tight">
-                <span>Book ₱${getHourlyRate(h.time)}</span>
-                <span class="text-[9px] font-mono uppercase tracking-wider opacity-85">Available</span>
-              </button>
-            </td>`;
-          }
-        }).join('');
-
-        const rate = getHourlyRate(h.time);
-        const rateColor = rate === 500 ? 'bg-[#D4FF00]/20 text-[#D4FF00]' : 'bg-[#10B981]/20 text-[#34D399]';
-        return `<tr class="hover:bg-white/[0.02] transition">
-          <td class="py-2.5 px-2.5 sm:px-4 text-left font-mono text-slate-200 sticky left-0 bg-brand-card/95 border-l-4 ${rate === 500 ? 'border-l-[#D4FF00]' : 'border-l-[#10B981]'} backdrop-blur-md z-10 whitespace-nowrap">
-            <span class="block text-xs font-black text-white">${h.time}</span>
-            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${rateColor}">₱${rate} / HR</span>
-          </td>
-          ${cells}
-        </tr>`;
-      }).join('');
-    }
-
-    function initScheduleDateCarousel() {
-      const carousel = document.getElementById('date-carousel');
-      if (!carousel) return;
-      carousel.innerHTML = '';
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-      for (let i = 0; i < 31; i++) {
-        const d = new Date();
-        d.setDate(d.getDate() + i);
-        const isToday = (i === 0);
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `date-tile ${isToday ? 'date-tile-active' : ''}`;
-        btn.innerHTML = `
-          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isToday ? 'text-[#050E1D]' : 'text-slate-400'}">${isToday ? 'Today' : days[d.getDay()]}</span>
-          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isToday ? 'text-[#050E1D]' : 'text-white'}">${d.getDate()}</span>
-          <span class="tile-month mt-1 block text-xs font-bold opacity-70 ${isToday ? 'text-[#050E1D]' : 'text-slate-400'}">${months[d.getMonth()]}</span>
-        `;
-        btn.onclick = () => {
-          carousel.querySelectorAll('.date-tile').forEach(b => {
-            b.classList.remove('date-tile-active');
-            b.querySelectorAll('span').forEach(s => s.classList.remove('text-[#050E1D]'));
-          });
-          btn.classList.add('date-tile-active');
-          btn.querySelectorAll('span').forEach(s => s.classList.add('text-[#050E1D]'));
-          const lbl = document.getElementById('selected-schedule-date-label');
-          if (lbl) lbl.textContent = isToday ? 'Today' : `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
-          renderLiveScheduleMatrix();
-        };
-        carousel.appendChild(btn);
-      }
-    }
-
-    function setScheduleCourtFilter(filterVal) {
-      currentScheduleFilter = filterVal;
-      document.querySelectorAll('.sched-filter-btn').forEach(btn => {
-        if (String(btn.dataset.court) === String(filterVal)) {
-          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-brand-lime text-brand-black transition flex-shrink-0';
-        } else {
-          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40 transition flex-shrink-0';
-        }
-      });
-      renderLiveScheduleMatrix();
-    }
-
-
-    
-    // Synchronize QR Code with Admin Portal Configuration
     function syncAdminPortalQr() {
       const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
-      const gcashNum = localStorage.getItem('pf_gcash_number') || '09998832346';
-      const bdoNum = localStorage.getItem('pf_bdo_number') || '004588029143';
-      const bpiNum = localStorage.getItem('pf_bpi_number') || '4891003274';
-
-      // If admin uploaded a standee or custom QR, use it!
       const qrImg = document.getElementById('locked-qr-img');
       if (qrImg) {
         if (customStandee) {
@@ -2161,13 +2148,14 @@ Total Amount: ₱${total.toFixed(2)}`);
       }
     }
 
-
     document.addEventListener('DOMContentLoaded', () => {
       syncAdminPortalQr();
-      renderLiveScheduleMatrix();
+      generateDrawerDays();
       initScheduleDateCarousel();
-      renderGhlCalendar();
-      renderGhlSlots();
+      renderLiveScheduleMatrix();
+      renderDrawerDateRail();
+      renderDrawerSlots();
+      recalculateDrawerTotal();
     });
   </script>
 </body>

@@ -694,7 +694,7 @@ function renderCartUI() {
         <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3 text-slate-400">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
         </div>
-        Your reservation cart is empty.<br>Select a court, open play pass, or pro-shop gear!
+        Your reservation cart is empty.<br>Select a court or equipment rental!
       </div>
     `;
     if (totalEl) totalEl.textContent = '₱0';
@@ -735,7 +735,7 @@ function renderCartUI() {
 
 function proceedToCartCheckout() {
   if (cartItems.length === 0) {
-    alert('Your cart is empty. Please add a court, open play pass, or gear first!');
+    alert('Your cart is empty. Please add a court or gear first!');
     return;
   }
 
@@ -1324,7 +1324,7 @@ function renderPublicInventoryCatalog() {
   if (invList.length === 0) {
     grid.innerHTML = `
       <div class="col-span-full p-6 rounded-2xl bg-brand-black/60 border border-white/10 text-center text-xs text-slate-400">
-        Inventory is currently empty. Add custom products &amp; custom categories with photos in the <a href="/admin/" onclick="return openAdminPortal(event)" class="text-brand-lime font-bold underline">Admin Portal Inventory tab</a> and they will appear here automatically!
+        All standard paddles (₱50), carbon paddles (₱100), branded carbon paddles (₱200), balls (₱50), 50-ball training buckets (₱100), and training machine rentals (₱100/hr) are available above or during court booking.
       </div>`;
     return;
   }
