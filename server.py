@@ -227,6 +227,16 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 payload.update(found)
             self.wfile.write(json.dumps(payload).encode("utf-8"))
             return
+        # Clean URL Routing for local host
+        if parsed.path in ("/book", "/book/"):
+            self.path = "/book.html"
+        elif parsed.path in ("/my-booking", "/my-booking/", "/check-booking", "/check-booking/"):
+            self.path = "/check-booking.html"
+        elif parsed.path in ("/admin", "/admin/"):
+            self.path = "/admin/index.html"
+        elif parsed.path in ("/courts", "/courts/", "/pricing", "/pricing/"):
+            self.path = "/book.html"
+
         super().do_GET()
 
     def do_POST(self):

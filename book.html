@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserve Your Court | P&F Rally Ground Pickleball Club</title>
+  <meta name="description" content="Book tournament-grade pickleball courts at P&F Rally Ground, Daraga, Albay. Choose your schedule, add equipment, enter details, and pay online.">
+  <link rel="canonical" href="https://pf-rally-ground.vercel.app/book">
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              lime: '#9BE600',
+              limeHover: '#88CA00',
+              dark: '#050E1D',
+              black: '#030811',
+              card: '#0A1628',
+              cardBorder: 'rgba(255, 255, 255, 0.12)',
+              clay: '#FF5C35'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            display: ['Plus Jakarta Sans', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #050E1D;
+      color: #F8FAFC;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    .lime-glow {
+      box-shadow: 0 0 24px rgba(155, 230, 0, 0.28);
+    }
+    .ghl-calendar-cell {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .ghl-calendar-cell:hover:not(.disabled):not(.selected) {
+      background-color: rgba(155, 230, 0, 0.2);
+      color: #FFFFFF;
+    }
+    .ghl-calendar-cell.selected {
+      background-color: #9BE600 !important;
+      color: #050E1D !important;
+      font-weight: 900 !important;
+      box-shadow: 0 4px 14px rgba(155, 230, 0, 0.4);
+      transform: scale(1.06);
+    }
+    .ghl-calendar-cell.today-marker:not(.selected) {
+      border: 1.5px solid #9BE600;
+      color: #9BE600;
+    }
+    .ghl-calendar-cell.disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .ghl-slot-pill {
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ghl-slot-pill.active {
+      background-color: #9BE600;
+      color: #050E1D;
+      border-color: #9BE600;
+      font-weight: 900;
+      box-shadow: 0 4px 16px rgba(155, 230, 0, 0.35);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#050E1D] text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-40 bg-[#050E1D]/90 backdrop-blur-xl border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3.5 group">
+        <div class="w-12 h-12 rounded-2xl bg-white p-1 shadow-lg flex items-center justify-center transition group-hover:scale-105">
+          <img src="assets/logo.png" alt="P&F Rally Ground Logo" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <span class="text-lg sm:text-xl font-black uppercase tracking-tight text-white block leading-none font-display">P&amp;F Rally Ground</span>
+          <span class="text-[10px] sm:text-xs text-brand-lime font-mono tracking-widest uppercase font-bold">Pickleball Club &bull; Daraga</span>
+        </div>
+      </a>
+
+      <nav class="flex items-center gap-2 sm:gap-4">
+        <a href="book.html" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition lime-glow">Book</a>
+        <a href="check-booking.html" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 font-bold uppercase text-xs tracking-wider transition">My Booking</a>
+        <a href="admin/index.html" class="px-3.5 py-2 rounded-xl text-slate-400 hover:text-brand-lime hover:bg-white/5 font-bold uppercase text-xs tracking-wider transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>Admin</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Booking Page Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Hero Banner (Scraped Exactly from https://pf-rally-ground.vercel.app/book) -->
+    <div class="mb-10 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lime/15 border border-brand-lime/30 text-brand-lime text-xs font-mono font-bold uppercase mb-3">
+        <span class="w-2 h-2 rounded-full bg-brand-lime animate-pulse"></span>
+        <span>Book online</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white font-display mb-3">Reserve your court</h1>
+      <p class="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
+        Choose your schedule, add equipment, enter your details, and pay&mdash;all on this page.
+      </p>
+
+      <!-- Feature Badges -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3 mt-5">
+        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>6 AM&ndash;12 midnight</span>
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span>30-day window</span>
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          <span>4 premium courts</span>
+        </span>
+        <span class="px-3 py-1.5 rounded-xl bg-brand-lime/15 border border-brand-lime/30 text-brand-lime text-xs font-mono font-black">
+          ₱400.00 / hour
+        </span>
+      </div>
+    </div>
+
+    <!-- Booking Layout: Left Stepper & Right Sticky Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT COLUMN: GHL Calendar & Booking Options (8 Cols) -->
+      <div class="lg:col-span-8 space-y-8">
+        
+        <!-- STEP 1: COURT SELECTION -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 1</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Select a Court</h2>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300">4 Courts Available</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="ghl-court-selector">
+            <button type="button" onclick="selectGhlCourt(1)" class="ghl-court-btn p-4 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition active:scale-95 shadow-md" data-court="1">
+              <span class="text-[10px] font-mono font-black uppercase text-brand-lime block">Court 01</span>
+              <span class="text-sm font-black text-white block mt-0.5">Court 1</span>
+              <span class="text-[10px] text-slate-300 block mt-1 font-mono">₱400/hr</span>
+            </button>
+            <button type="button" onclick="selectGhlCourt(2)" class="ghl-court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95" data-court="2">
+              <span class="text-[10px] font-mono font-bold uppercase text-slate-400 block">Court 02</span>
+              <span class="text-sm font-black text-white block mt-0.5">Court 2</span>
+              <span class="text-[10px] text-slate-400 block mt-1 font-mono">₱400/hr</span>
+            </button>
+            <button type="button" onclick="selectGhlCourt(3)" class="ghl-court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95" data-court="3">
+              <span class="text-[10px] font-mono font-bold uppercase text-slate-400 block">Court 03</span>
+              <span class="text-sm font-black text-white block mt-0.5">Court 3</span>
+              <span class="text-[10px] text-slate-400 block mt-1 font-mono">₱400/hr</span>
+            </button>
+            <button type="button" onclick="selectGhlCourt(4)" class="ghl-court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95" data-court="4">
+              <span class="text-[10px] font-mono font-bold uppercase text-slate-400 block">Court 04</span>
+              <span class="text-sm font-black text-white block mt-0.5">Court 4</span>
+              <span class="text-[10px] text-slate-400 block mt-1 font-mono">₱400/hr</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- STEP 2: GOHIGHLEVEL (GHL) INTERACTIVE CALENDAR & TIME SLOTS WIDGET -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 2 &bull; GoHighLevel Booking Engine</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Choose Date &amp; Time</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-300 font-semibold">Duration:</span>
+              <div class="inline-flex rounded-xl bg-brand-black p-1 border border-white/15 text-xs font-mono">
+                <button type="button" onclick="setGhlDuration(1)" class="ghl-duration-btn px-3 py-1 rounded-lg bg-brand-lime text-brand-black font-black" data-dur="1">1h</button>
+                <button type="button" onclick="setGhlDuration(2)" class="ghl-duration-btn px-3 py-1 rounded-lg text-slate-300 hover:text-white font-bold" data-dur="2">2h</button>
+                <button type="button" onclick="setGhlDuration(3)" class="ghl-duration-btn px-3 py-1 rounded-lg text-slate-300 hover:text-white font-bold" data-dur="3">3h</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- GHL Two-Column Calendar Layout -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Side: GHL Month Calendar Picker -->
+            <div class="md:col-span-6 p-4 sm:p-5 rounded-2xl bg-brand-black/70 border border-white/10">
+              <!-- Calendar Month Navigator Header -->
+              <div class="flex items-center justify-between mb-4">
+                <button type="button" onclick="navGhlMonth(-1)" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95" aria-label="Previous Month">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span id="ghl-month-label" class="text-sm font-black text-white uppercase tracking-wider font-display">October 2026</span>
+                <button type="button" onclick="navGhlMonth(1)" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95" aria-label="Next Month">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+
+              <!-- Day of Week Headers -->
+              <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-mono font-bold uppercase text-slate-400 mb-2">
+                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+              </div>
+
+              <!-- Calendar Days Grid (Generated via JS) -->
+              <div class="grid grid-cols-7 gap-1.5 text-center font-mono" id="ghl-days-grid">
+                <!-- Injected via renderGhlCalendar() -->
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-brand-lime"></span> Selected</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full border border-brand-lime"></span> Today</span>
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-white/20"></span> Available</span>
+              </div>
+            </div>
+
+            <!-- Right Side: GHL Available Time Slots Picker -->
+            <div class="md:col-span-6 p-4 sm:p-5 rounded-2xl bg-brand-black/70 border border-white/10 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+                <div>
+                  <span class="text-[10px] font-mono uppercase text-slate-400 block font-bold">Selected Date</span>
+                  <span id="ghl-selected-date-heading" class="text-xs font-black text-brand-lime uppercase">Wednesday, Oct 28</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400" id="ghl-selected-session-info">1 hr session</span>
+              </div>
+
+              <!-- Time Slot Pills Container (6 AM to 11 PM) -->
+              <div class="max-h-[300px] overflow-y-auto pr-1 space-y-2 overscroll-contain" id="ghl-time-slots-container">
+                <!-- Injected via renderGhlTimeSlots() -->
+              </div>
+
+              <p class="text-[10px] text-slate-400 leading-snug">
+                Click a slot to reserve your court time. Start time is guaranteed upon confirmation.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Open Play Schedule Informational Box (From Scraped Site) -->
+          <div class="p-4 rounded-2xl bg-brand-black/80 border border-white/10 text-xs space-y-1.5">
+            <div class="flex items-center gap-2 text-brand-lime font-bold font-mono text-[11px] uppercase">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Weekly Open Play Schedule (Club Notice)</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-slate-300 text-[11px] leading-relaxed font-mono">
+              <div>&bull; Monday: 3:00 PM&ndash;6:00 PM</div>
+              <div>&bull; Tuesday: 3:00 PM&ndash;8:00 PM</div>
+              <div>&bull; Wednesday: 3:00 PM&ndash;8:00 PM</div>
+              <div>&bull; Thursday: 3:00 PM&ndash;8:00 PM</div>
+              <div>&bull; Friday: 3:00 PM&ndash;7:00 PM &amp; 7:00 PM&ndash;11:00 PM</div>
+              <div>&bull; Saturday: 6:00 PM&ndash;10:00 PM</div>
+            </div>
+          </div>
+
+          <!-- Players Counter (Scraped Rule: Up to 6 included, +₱100/player above 6) -->
+          <div class="p-4 rounded-2xl bg-brand-black/80 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div>
+              <span class="font-bold text-white uppercase block text-xs">Number of Players</span>
+              <span class="text-[11px] text-slate-300">Up to 6 players included. Add <b class="text-brand-lime font-mono">₱100.00</b> per player above 6.</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="button" onclick="adjustPlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black flex items-center justify-center transition active:scale-95">&minus;</button>
+              <span id="player-count-display" class="font-mono font-black text-sm text-white w-12 text-center">4</span>
+              <button type="button" onclick="adjustPlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black flex items-center justify-center transition active:scale-95">&plus;</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- STEP 3: EQUIPMENT RENTALS (EXACT SCRAPED ITEMS & PRICES) -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Optional Add-ons</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Equipment Rentals</h2>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300" id="gear-subtotal-badge">₱0.00 Total</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="equipment-grid">
+            <!-- 1. Standard Paddle (Scraped: ₱50.00) -->
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Standard paddle</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="adjustGear('gear-standard-paddle', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-gear-standard-paddle" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('gear-standard-paddle', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
+              </div>
+            </div>
+
+            <!-- 2. Carbon Paddle (Scraped: ₱100.00) -->
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Carbon paddle</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="adjustGear('gear-carbon-paddle', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-gear-carbon-paddle" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('gear-carbon-paddle', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
+              </div>
+            </div>
+
+            <!-- 3. Branded Carbon Paddle (Scraped: ₱200.00) -->
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Branded carbon paddle</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱200.00</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="adjustGear('gear-branded-carbon', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-gear-branded-carbon" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('gear-branded-carbon', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
+              </div>
+            </div>
+
+            <!-- 4. Pickleball Ball (Scraped: ₱50.00) -->
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Pickleball ball</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="adjustGear('gear-pickle-ball', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-gear-pickle-ball" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('gear-pickle-ball', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
+              </div>
+            </div>
+
+            <!-- 5. Training Balls 50 pcs (Scraped: ₱100.00) -->
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Training balls (50 pcs)</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="adjustGear('gear-training-balls', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-gear-training-balls" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('gear-training-balls', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
+              </div>
+            </div>
+
+            <!-- 6. Training Machine per hour (Scraped: ₱100.00 / hour) -->
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-white block">Training machine</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱100.00 / hour</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="adjustGear('gear-training-machine', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-gear-training-machine" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('gear-training-machine', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 4: GUEST DETAILS -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
+          <div>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 3</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Guest details</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="book-cust-name" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Full Name *</label>
+              <input type="text" id="book-cust-name" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-bold focus:outline-none transition">
+              <p id="book-cust-name-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
+            </div>
+            <div>
+              <label for="book-cust-phone" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Mobile Phone (11 Digits) *</label>
+              <input type="tel" id="book-cust-phone" required placeholder="0917 123 4567" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
+              <p id="book-cust-phone-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="book-cust-email" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Email Address (Optional &mdash; for instant receipt)</label>
+              <input type="email" id="book-cust-email" placeholder="juan@gmail.com" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none transition">
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 5: POLICIES AND GUEST CONSENT (3 EXACT POLICIES SCRAPED) -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
+          <div>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Required Confirmation</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Policies and guest consent</h2>
+            <p class="text-xs text-slate-300 mt-1">Review and accept each item before payment options are enabled.</p>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <!-- Policy 1 -->
+            <label class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3 cursor-pointer transition">
+              <input type="checkbox" id="consent-waiver" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-brand-lime flex-shrink-0">
+              <div class="text-xs">
+                <span class="text-white font-bold block">I accept the facility waiver and court conduct rules.</span>
+                <span class="text-slate-300 text-[11px] leading-relaxed block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
+              </div>
+            </label>
+
+            <!-- Policy 2 -->
+            <label class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3 cursor-pointer transition">
+              <input type="checkbox" id="consent-cancel" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-brand-lime flex-shrink-0">
+              <div class="text-xs">
+                <span class="text-white font-bold block">I accept the cancellation and rescheduling terms.</span>
+                <span class="text-slate-300 text-[11px] leading-relaxed block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
+              </div>
+            </label>
+
+            <!-- Policy 3 -->
+            <label class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3 cursor-pointer transition">
+              <input type="checkbox" id="consent-charges" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-brand-lime flex-shrink-0">
+              <div class="text-xs">
+                <span class="text-white font-bold block">I understand that processing and convenience charges are non-refundable.</span>
+                <span class="text-slate-300 text-[11px] leading-relaxed block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <!-- STEP 6: PAYMENT -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4" id="payment-section">
+          <div>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Settle Reservation</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Payment</h2>
+            <p id="payment-gate-notice" class="text-xs text-brand-clay font-bold mt-1">Accept all three policy confirmations above to continue with payment.</p>
+          </div>
+
+          <div id="payment-controls" class="space-y-5 opacity-40 pointer-events-none transition-opacity duration-300">
+            <!-- Payment Channel Selector -->
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" onclick="selectBookPaymentMode('gcash')" id="pay-pill-gcash" class="py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition">GCash</button>
+              <button type="button" onclick="selectBookPaymentMode('maya')" id="pay-pill-maya" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Maya</button>
+              <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Bank Transfer</button>
+            </div>
+
+            <!-- GCash Channel Card -->
+            <div id="book-pay-gcash" class="p-4 sm:p-5 rounded-2xl bg-brand-black border border-brand-lime/30 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                <div class="sm:col-span-5 text-center p-3 bg-white rounded-2xl shadow-lg max-w-[160px] mx-auto">
+                  <img id="book-gcash-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=00020101021226280010com.gcash0112099988323465204599953036085406400.005802PH5916PF%20RALLY%20GROUND6006DARAGA6304B932" alt="Official GCash QR Ph" class="w-full h-auto">
+                  <span class="text-[9px] font-mono font-black text-slate-900 block mt-1 uppercase">Official GCash QR Ph</span>
+                </div>
+                <div class="sm:col-span-7 space-y-2 text-xs font-mono">
+                  <div class="flex justify-between items-center text-slate-400"><span>Recipient:</span> <b class="text-white">P&amp;F Rally Ground</b></div>
+                  <div class="flex justify-between items-center text-slate-400">
+                    <span>GCash Number:</span>
+                    <span class="flex items-center gap-1.5">
+                      <b class="text-brand-lime font-bold">0999 883 2346</b>
+                      <button type="button" onclick="copyText('09998832346', this)" class="px-2 py-0.5 rounded bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[9px] text-white font-sans font-bold transition">Copy</button>
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center text-slate-400 pt-1 border-t border-white/10">
+                    <span>Amount Due:</span>
+                    <span class="flex items-center gap-1.5">
+                      <b class="text-brand-lime font-black text-base" id="book-due-display">₱400.00</b>
+                      <button type="button" onclick="copyAmountDue(this)" class="px-2 py-0.5 rounded bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[9px] text-white font-sans font-bold transition">Copy</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Maya Channel Card -->
+            <div id="book-pay-maya" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border border-white/15 space-y-2 text-xs font-mono">
+              <div class="flex justify-between items-center text-slate-400"><span>Merchant:</span> <b class="text-white">P&amp;F Rally Ground</b></div>
+              <div class="flex justify-between items-center text-slate-400">
+                <span>Maya Mobile:</span>
+                <span class="flex items-center gap-1.5">
+                  <b class="text-brand-lime font-bold">0999 883 2346</b>
+                  <button type="button" onclick="copyText('09998832346', this)" class="px-2 py-0.5 rounded bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[9px] text-white font-sans font-bold transition">Copy</button>
+                </span>
+              </div>
+            </div>
+
+            <!-- Bank Transfer Channel Card -->
+            <div id="book-pay-bank" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border border-white/15 space-y-2.5 text-xs font-mono">
+              <div class="flex justify-between items-center text-slate-400"><span>Transfer Mode:</span> <b class="text-white font-bold">InstaPay / PESONet</b></div>
+              <div class="flex justify-between items-center text-slate-400">
+                <span>BDO Unibank:</span>
+                <span class="flex items-center gap-1.5">
+                  <b class="text-brand-lime font-bold">0045 8802 9143</b>
+                  <button type="button" onclick="copyText('004588029143', this)" class="px-2 py-0.5 rounded bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[9px] text-white font-sans font-bold transition">Copy</button>
+                </span>
+              </div>
+              <div class="flex justify-between items-center text-slate-400">
+                <span>BPI Account:</span>
+                <span class="flex items-center gap-1.5">
+                  <b class="text-white font-bold">4891 0032 74</b>
+                  <button type="button" onclick="copyText('4891003274', this)" class="px-2 py-0.5 rounded bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[9px] text-white font-sans font-bold transition">Copy</button>
+                </span>
+              </div>
+            </div>
+
+            <!-- Reference Number & Receipt Upload (Scraped: Upload receipt max 5MB) -->
+            <div class="space-y-3 pt-2">
+              <div>
+                <label for="book-ref-no" class="block text-[10px] font-mono uppercase tracking-wider text-brand-lime font-bold mb-1.5">Transaction Reference Number *</label>
+                <input type="text" id="book-ref-no" placeholder="Enter GCash / Maya / Bank Ref (e.g. 9028 1746 9912)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
+                <p id="book-ref-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Upload receipt (image or PDF, max 5 MB)</label>
+                <input type="file" id="book-receipt-file" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer">
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT COLUMN: STICKY BOOKING SUMMARY CARD (4 Cols) -->
+      <div class="lg:col-span-4 sticky top-28 space-y-4">
+        <div class="p-6 rounded-3xl bg-brand-card border border-white/15 shadow-2xl space-y-5">
+          <div>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Your reservation</span>
+            <h2 class="text-xl font-black uppercase tracking-tight text-white font-display">Booking summary</h2>
+            <p class="text-xs text-slate-400 mt-1" id="summary-meta">Court 1 &bull; 1 hr session</p>
+          </div>
+
+          <!-- Schedule Badge -->
+          <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-white/10 space-y-1 text-xs font-mono">
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Date:</span>
+              <b class="text-white" id="summary-date">Today &bull; Oct 28</b>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Time:</span>
+              <b class="text-brand-lime" id="summary-time">6:00 AM &ndash; 7:00 AM</b>
+            </div>
+            <div class="flex justify-between items-center text-slate-400">
+              <span>Court:</span>
+              <b class="text-white" id="summary-court">Court 1</b>
+            </div>
+          </div>
+
+          <!-- Pricing Breakdown (Exact Scraped Items) -->
+          <div class="space-y-2 text-xs border-t border-b border-white/10 py-3 font-mono">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-300" id="summary-court-row-label">Court (1 hr)</span>
+              <span class="text-white font-bold" id="summary-court-cost">₱400.00</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-300">Equipment</span>
+              <span class="text-white font-bold" id="summary-gear-cost">₱0.00</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-300" id="summary-extra-players-label">Extra players (0)</span>
+              <span class="text-white font-bold" id="summary-extra-cost">₱0.00</span>
+            </div>
+            <div class="pt-2 border-t border-white/10 flex justify-between items-baseline">
+              <span class="text-sm font-black uppercase text-white font-display">Total</span>
+              <span class="text-2xl font-black text-brand-lime font-mono" id="summary-total-cost">₱400.00</span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="button" onclick="handleGhlBookingSubmit()" id="ghl-submit-btn" class="w-full py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition active:scale-95 lime-glow shadow-xl flex items-center justify-center gap-2">
+            <span>Submit for approval</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+
+          <p class="text-[11px] text-slate-400 text-center leading-relaxed">
+            Choose an available time and accept all policies before submitting.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Booking Confirmation Success Modal -->
+  <div id="booking-success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    <div class="relative w-full max-w-md bg-brand-dark border-2 border-brand-lime rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-center">
+      <div class="w-16 h-16 rounded-full bg-brand-lime text-brand-black mx-auto flex items-center justify-center shadow-lg">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+
+      <div>
+        <h3 class="text-xl sm:text-2xl font-black uppercase tracking-tight text-white font-display">Reservation Submitted!</h3>
+        <p class="text-xs text-slate-300 mt-1">Your court booking has been dispatched to Daraga front-desk for verification.</p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-brand-black/90 border border-white/10 text-xs font-mono space-y-2 text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Reference:</span>
+          <b class="text-brand-lime text-sm" id="modal-ref-code">PF-12345</b>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Court:</span>
+          <b class="text-white" id="modal-court-name">Court 1</b>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Schedule:</span>
+          <b class="text-white" id="modal-sched-text">Oct 28 &bull; 6:00 PM</b>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Status:</span>
+          <span class="px-2 py-0.5 rounded bg-brand-lime/20 text-brand-lime font-bold">PENDING APPROVAL</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <a href="check-booking.html" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold uppercase text-xs transition">Check Booking</a>
+        <button type="button" onclick="closeSuccessModal()" class="flex-1 py-3 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs transition active:scale-95 lime-glow">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-16 border-t border-white/10 bg-[#030811] py-8 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <img src="assets/logo.png" alt="P&F Logo" class="w-6 h-6 rounded bg-white p-0.5">
+        <span class="font-bold text-white">&copy; 2026 P&amp;F Rally Ground</span>
+        <span class="text-slate-600">&bull;</span>
+        <span>Play more. Rally together.</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <a href="book.html" class="hover:text-brand-lime transition">Book</a>
+        <a href="check-booking.html" class="hover:text-brand-lime transition">My Booking</a>
+        <a href="admin/index.html" class="hover:text-brand-lime transition">Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GHL Calendar & Booking Logic Script -->
+  <script>
+    // State
+    const HOURLY_RATE = 400.00;
+    let selectedCourt = 1;
+    let selectedDuration = 1; // 1, 2, or 3 hours
+    let selectedDate = new Date();
+    let selectedTimeSlot = "06:00 AM";
+    let selectedPlayerCount = 4;
+    let selectedPaymentMode = "gcash";
+    let currentViewingMonth = new Date().getMonth();
+    let currentViewingYear = new Date().getFullYear();
+
+    const gearPrices = {
+      'gear-standard-paddle': 50,
+      'gear-carbon-paddle': 100,
+      'gear-branded-carbon': 200,
+      'gear-pickle-ball': 50,
+      'gear-training-balls': 100,
+      'gear-training-machine': 100
+    };
+    const gearQuantities = {
+      'gear-standard-paddle': 0,
+      'gear-carbon-paddle': 0,
+      'gear-branded-carbon': 0,
+      'gear-pickle-ball': 0,
+      'gear-training-balls': 0,
+      'gear-training-machine': 0
+    };
+
+    const courtNames = {
+      1: "Court 1",
+      2: "Court 2",
+      3: "Court 3",
+      4: "Court 4"
+    };
+
+    const allSlots = [
+      "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
+      "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM",
+      "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM", "11:00 PM"
+    ];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGhlCalendar();
+      renderGhlTimeSlots();
+      updateBookingSummary();
+    });
+
+    // Court Selection
+    function selectGhlCourt(cNum) {
+      selectedCourt = cNum;
+      document.querySelectorAll('#ghl-court-selector button').forEach(b => {
+        const c = Number(b.getAttribute('data-court'));
+        if (c === cNum) {
+          b.className = "ghl-court-btn p-4 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition active:scale-95 shadow-md";
+          b.querySelector('span:first-child').className = "text-[10px] font-mono font-black uppercase text-brand-lime block";
+        } else {
+          b.className = "ghl-court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95";
+          b.querySelector('span:first-child').className = "text-[10px] font-mono font-bold uppercase text-slate-400 block";
+        }
+      });
+      renderGhlTimeSlots();
+      updateBookingSummary();
+    }
+
+    // Duration Selection
+    function setGhlDuration(hours) {
+      selectedDuration = hours;
+      document.querySelectorAll('.ghl-duration-btn').forEach(btn => {
+        const d = Number(btn.getAttribute('data-dur'));
+        if (d === hours) {
+          btn.className = "ghl-duration-btn px-3 py-1 rounded-lg bg-brand-lime text-brand-black font-black";
+        } else {
+          btn.className = "ghl-duration-btn px-3 py-1 rounded-lg text-slate-300 hover:text-white font-bold";
+        }
+      });
+      document.getElementById('ghl-selected-session-info').textContent = `${hours} hr session`;
+      renderGhlTimeSlots();
+      updateBookingSummary();
+    }
+
+    // Month Navigation
+    function navGhlMonth(delta) {
+      currentViewingMonth += delta;
+      if (currentViewingMonth < 0) {
+        currentViewingMonth = 11;
+        currentViewingYear--;
+      } else if (currentViewingMonth > 11) {
+        currentViewingMonth = 0;
+        currentViewingYear++;
+      }
+      renderGhlCalendar();
+    }
+
+    // GHL Month Calendar Renderer
+    function renderGhlCalendar() {
+      const label = document.getElementById('ghl-month-label');
+      const grid = document.getElementById('ghl-days-grid');
+      if (!grid) return;
+
+      const dateObj = new Date(currentViewingYear, currentViewingMonth, 1);
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      if (label) label.textContent = `${monthNames[currentViewingMonth]} ${currentViewingYear}`;
+
+      grid.innerHTML = '';
+      const firstDayOfWeek = dateObj.getDay(); // 0 = Sun
+      const daysInMonth = new Date(currentViewingYear, currentViewingMonth + 1, 0).getDate();
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const maxBookingDate = new Date(today);
+      maxBookingDate.setDate(maxBookingDate.getDate() + 30);
+
+      // Blank slots before first day
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'ghl-calendar-cell disabled';
+        grid.appendChild(emptyCell);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const thisDate = new Date(currentViewingYear, currentViewingMonth, d);
+        thisDate.setHours(0, 0, 0, 0);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = d;
+
+        const isPast = thisDate < today;
+        const isBeyond30 = thisDate > maxBookingDate;
+        const isSelected = thisDate.getTime() === new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()).getTime();
+        const isToday = thisDate.getTime() === today.getTime();
+
+        if (isPast || isBeyond30) {
+          btn.className = 'ghl-calendar-cell disabled';
+        } else {
+          btn.className = 'ghl-calendar-cell';
+          if (isSelected) btn.classList.add('selected');
+          if (isToday) btn.classList.add('today-marker');
+
+          btn.onclick = () => {
+            selectedDate = new Date(thisDate);
+            renderGhlCalendar();
+            renderGhlTimeSlots();
+            updateBookingSummary();
+          };
+        }
+
+        grid.appendChild(btn);
+      }
+    }
+
+    // GHL Time Slots Renderer
+    function renderGhlTimeSlots() {
+      const container = document.getElementById('ghl-time-slots-container');
+      const dateHeading = document.getElementById('ghl-selected-date-heading');
+      if (!container) return;
+
+      const opts = { weekday: 'long', month: 'short', day: 'numeric' };
+      if (dateHeading) dateHeading.textContent = selectedDate.toLocaleDateString('en-US', opts);
+
+      container.innerHTML = '';
+
+      // Check booked slots from localStorage shared bookings
+      const allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      const dateStr = selectedDate.toISOString().split('T')[0];
+
+      allSlots.forEach(slot => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        const isSelected = (slot === selectedTimeSlot);
+        const isActive = isSelected ? 'active' : '';
+
+        // Check if court is booked at this date and slot
+        const isOccupied = allBookings.some(b => {
+          return b.status !== 'CANCELLED' && String(b.court).includes(String(selectedCourt)) && String(b.time).includes(slot);
+        });
+
+        if (isOccupied) {
+          btn.className = 'w-full py-2.5 px-4 rounded-xl border border-white/5 bg-brand-black/40 text-slate-500 text-xs font-mono flex items-center justify-between cursor-not-allowed opacity-50';
+          btn.disabled = true;
+          btn.innerHTML = `<span>${slot}</span><span class="text-[9px] uppercase font-bold text-slate-500">Booked</span>`;
+        } else {
+          btn.className = `ghl-slot-pill ${isActive} w-full py-2.5 px-4 rounded-xl border border-white/15 bg-brand-black/80 hover:border-brand-lime/60 text-white text-xs font-mono flex items-center justify-between active:scale-95 transition`;
+          btn.innerHTML = `<span>${slot}</span><span class="text-[10px] text-brand-lime font-bold">Available</span>`;
+          btn.onclick = () => {
+            selectedTimeSlot = slot;
+            renderGhlTimeSlots();
+            updateBookingSummary();
+          };
+        }
+
+        container.appendChild(btn);
+      });
+    }
+
+    // Players Stepper
+    function adjustPlayers(delta) {
+      selectedPlayerCount = Math.max(1, Math.min(16, selectedPlayerCount + delta));
+      document.getElementById('player-count-display').textContent = selectedPlayerCount;
+      updateBookingSummary();
+    }
+
+    // Gear Stepper
+    function adjustGear(gearId, delta) {
+      gearQuantities[gearId] = Math.max(0, Math.min(10, gearQuantities[gearId] + delta));
+      document.getElementById(`qty-${gearId}`).textContent = gearQuantities[gearId];
+      updateBookingSummary();
+    }
+
+    // Summary Updater
+    function updateBookingSummary() {
+      // 1. Court Cost
+      const courtCost = HOURLY_RATE * selectedDuration;
+      document.getElementById('summary-court-cost').textContent = `₱${courtCost.toLocaleString()}.00`;
+      document.getElementById('summary-court-row-label').textContent = `Court (${selectedDuration} hr)`;
+
+      // 2. Equipment Cost
+      let gearTotal = 0;
+      for (const [id, qty] of Object.entries(gearQuantities)) {
+        gearTotal += (gearPrices[id] || 0) * qty;
+      }
+      document.getElementById('summary-gear-cost').textContent = `₱${gearTotal.toLocaleString()}.00`;
+      document.getElementById('gear-subtotal-badge').textContent = `₱${gearTotal.toLocaleString()}.00 Total`;
+
+      // 3. Extra Players Cost (Scraped: Up to 6 included, +₱100/player above 6)
+      const extraPlayers = Math.max(0, selectedPlayerCount - 6);
+      const extraCost = extraPlayers * 100.00;
+      document.getElementById('summary-extra-players-label').textContent = `Extra players (${extraPlayers})`;
+      document.getElementById('summary-extra-cost').textContent = `₱${extraCost.toLocaleString()}.00`;
+
+      // Total
+      const grandTotal = courtCost + gearTotal + extraCost;
+      const formattedTotal = `₱${grandTotal.toLocaleString()}.00`;
+      document.getElementById('summary-total-cost').textContent = formattedTotal;
+      document.getElementById('book-due-display').textContent = formattedTotal;
+
+      // Meta labels
+      document.getElementById('summary-meta').textContent = `${courtNames[selectedCourt]} • ${selectedDuration} hr session`;
+      document.getElementById('summary-court').textContent = courtNames[selectedCourt];
+
+      const opts = { month: 'short', day: 'numeric' };
+      document.getElementById('summary-date').textContent = `${selectedDate.toLocaleDateString('en-US', opts)}`;
+
+      // Calculate end time
+      document.getElementById('summary-time').textContent = formatSessionTimeSpan(selectedTimeSlot, selectedDuration);
+    }
+
+    function formatSessionTimeSpan(startStr, durationHours) {
+      const match = startStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!match) return startStr;
+      let h = parseInt(match[1]);
+      const m = match[2];
+      const ampm = match[3].toUpperCase();
+      if (ampm === 'PM' && h !== 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+
+      let endH = h + durationHours;
+      let endAmpm = endH >= 12 && endH < 24 ? 'PM' : 'AM';
+      let dispEndH = endH % 12;
+      if (dispEndH === 0) dispEndH = 12;
+      const endStr = `${String(dispEndH).padStart(2, '0')}:${m} ${endAmpm}`;
+      return `${startStr} – ${endStr}`;
+    }
+
+    // Policy Consent Check
+    function checkPoliciesConsent() {
+      const c1 = document.getElementById('consent-waiver').checked;
+      const c2 = document.getElementById('consent-cancel').checked;
+      const c3 = document.getElementById('consent-charges').checked;
+      const allChecked = c1 && c2 && c3;
+
+      const controls = document.getElementById('payment-controls');
+      const notice = document.getElementById('payment-gate-notice');
+
+      if (allChecked) {
+        controls.classList.remove('opacity-40', 'pointer-events-none');
+        notice.textContent = "All 3 policies accepted. Select your payment channel below.";
+        notice.className = "text-xs text-brand-lime font-bold mt-1";
+      } else {
+        controls.classList.add('opacity-40', 'pointer-events-none');
+        notice.textContent = "Accept all three policy confirmations above to continue with payment.";
+        notice.className = "text-xs text-brand-clay font-bold mt-1";
+      }
+    }
+
+    // Payment Channel Switcher
+    function selectBookPaymentMode(mode) {
+      selectedPaymentMode = mode;
+      document.getElementById('pay-pill-gcash').className = mode === 'gcash'
+        ? "py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition"
+        : "py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition";
+
+      document.getElementById('pay-pill-maya').className = mode === 'maya'
+        ? "py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition"
+        : "py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition";
+
+      document.getElementById('pay-pill-bank').className = mode === 'bank'
+        ? "py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition"
+        : "py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition";
+
+      document.getElementById('book-pay-gcash').classList.toggle('hidden', mode !== 'gcash');
+      document.getElementById('book-pay-maya').classList.toggle('hidden', mode !== 'maya');
+      document.getElementById('book-pay-bank').classList.toggle('hidden', mode !== 'bank');
+    }
+
+    // Submit Booking
+    async function handleGhlBookingSubmit() {
+      // Validate policies
+      const c1 = document.getElementById('consent-waiver').checked;
+      const c2 = document.getElementById('consent-cancel').checked;
+      const c3 = document.getElementById('consent-charges').checked;
+      if (!c1 || !c2 || !c3) {
+        alert("Please review and accept all 3 policies before submitting.");
+        document.getElementById('payment-section').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      // Validate Guest Name
+      const nameInput = document.getElementById('book-cust-name');
+      const phoneInput = document.getElementById('book-cust-phone');
+      const emailInput = document.getElementById('book-cust-email');
+      const refInput = document.getElementById('book-ref-no');
+
+      const nameVal = nameInput.value.trim();
+      const phoneVal = phoneInput.value.trim();
+      const emailVal = emailInput.value.trim();
+      const refVal = refInput.value.trim();
+
+      if (!nameVal || nameVal.length < 2) {
+        alert("Please enter a valid guest full name.");
+        nameInput.focus();
+        return;
+      }
+      if (!phoneVal || phoneVal.replace(/\D/g, '').length < 10) {
+        alert("Please enter a valid 11-digit mobile number.");
+        phoneInput.focus();
+        return;
+      }
+      if (!refVal || refVal.length < 5) {
+        alert("Please enter your transaction reference number to verify payment.");
+        refInput.focus();
+        return;
+      }
+
+      const refCode = "PF-" + Math.floor(10000 + Math.random() * 90000);
+      const schedText = `${selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • ${formatSessionTimeSpan(selectedTimeSlot, selectedDuration)}`;
+
+      const newBooking = {
+        ref: refCode,
+        name: nameVal,
+        phone: phoneVal,
+        email: emailVal || "guest@pfrally.ph",
+        court: courtNames[selectedCourt],
+        time: schedText,
+        paymentMode: selectedPaymentMode.toUpperCase(),
+        paymentMethod: selectedPaymentMode.toUpperCase(),
+        transactionRef: refVal,
+        total: parseFloat(document.getElementById('summary-total-cost').textContent.replace(/[^0-9.]/g, '')),
+        status: "PENDING APPROVAL",
+        createdAt: new Date().toISOString()
+      };
+
+      // Save locally
+      const existing = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      existing.unshift(newBooking);
+      localStorage.setItem('pf_all_bookings', JSON.stringify(existing));
+
+      // Post to local server if live
+      try {
+        await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newBooking)
+        });
+      } catch (err) {}
+
+      // Show confirmation modal
+      document.getElementById('modal-ref-code').textContent = refCode;
+      document.getElementById('modal-court-name').textContent = courtNames[selectedCourt];
+      document.getElementById('modal-sched-text').textContent = schedText;
+      document.getElementById('booking-success-modal').classList.remove('hidden');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('booking-success-modal').classList.add('hidden');
+      window.location.href = 'check-booking.html';
+    }
+
+    function copyText(txt, btn) {
+      if (navigator.clipboard) navigator.clipboard.writeText(txt);
+      if (btn) {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = orig, 1200);
+      }
+    }
+
+    function copyAmountDue(btn) {
+      const amt = document.getElementById('book-due-display').textContent.replace(/[^0-9.]/g, '');
+      copyText(amt, btn);
+    }
+  </script>
+</body>
+</html>

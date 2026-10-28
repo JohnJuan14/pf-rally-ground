@@ -1,6 +1,13 @@
 {
   "version": 2,
-  "cleanUrls": false,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/book", "destination": "/book.html" },
+    { "source": "/my-booking", "destination": "/check-booking.html" },
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/courts", "destination": "/book.html" },
+    { "source": "/pricing", "destination": "/book.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
