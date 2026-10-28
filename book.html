@@ -2,25 +2,32 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Book a Court | P&amp;F Rally Ground Pickleball Club</title>
-  <meta name="description" content="Reserve courts, equipment, and training slots at P&F Rally Ground Pickleball Club in Daraga, Albay. Instant booking confirmation with transparent rates.">
-  <link rel="icon" type="image/png" href="assets/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserve Your Court | P&F Rally Ground Pickleball Club</title>
+  <meta name="description" content="Book tournament-grade pickleball courts at P&F Rally Ground, Daraga, Albay. Choose your schedule, add equipment, enter details, and pay online.">
+  <link rel="canonical" href="https://pf-rally-ground.vercel.app/book">
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
             brand: {
               lime: '#9BE600',
-              limeHover: '#88cc00',
-              black: '#050E1D',
-              navy: '#0B1F33',
-              clay: '#E0533C'
+              limeHover: '#88CA00',
+              dark: '#050E1D',
+              black: '#030811',
+              card: '#0A1628',
+              cardBorder: 'rgba(255, 255, 255, 0.12)',
+              clay: '#FF5C35'
             }
           },
           fontFamily: {
@@ -38,18 +45,21 @@
 
   <style>
     body {
-      background-color: #F8FAFC;
-      color: #0F172A;
+      background-color: #050E1D;
+      color: #F8FAFC;
       font-family: 'Inter', system-ui, sans-serif;
     }
+    .lime-glow {
+      box-shadow: 0 0 24px rgba(155, 230, 0, 0.28);
+    }
     
-    /* Smooth & Drag-Friendly Horizontal Date Rail */
+    /* White Calendar Box & Date Rail Styles */
     .date-rail {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.65rem;
       overflow-x: auto;
       padding-top: 0.25rem;
-      padding-bottom: 0.85rem;
+      padding-bottom: 0.75rem;
       scrollbar-width: thin;
       scrollbar-color: #CBD5E1 transparent;
       -webkit-overflow-scrolling: touch;
@@ -60,9 +70,6 @@
     .date-rail::-webkit-scrollbar {
       height: 6px;
     }
-    .date-rail::-webkit-scrollbar-track {
-      background: transparent;
-    }
     .date-rail::-webkit-scrollbar-thumb {
       background: #CBD5E1;
       border-radius: 9999px;
@@ -72,90 +79,57 @@
       scroll-behavior: auto;
     }
 
-    /* Polished Clean White Date Tiles */
-    .date-tile {
+    .white-calendar-rail .date-tile {
       text-align: center;
       background: #FFFFFF;
       border: 1.5px solid #E2E8F0;
       border-radius: 1.25rem;
-      min-width: 84px;
-      padding: 0.85rem 0.65rem;
+      min-width: 82px;
+      padding: 0.85rem 0.6rem;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       flex-shrink: 0;
+      color: #0F172A;
     }
-    .date-tile:hover {
+    .white-calendar-rail .date-tile:hover {
       border-color: #9BE600;
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px -8px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 8px 18px -6px rgba(15, 23, 42, 0.15);
     }
-    .date-tile-active {
+    .white-calendar-rail .date-tile.date-tile-active {
       border-color: #050E1D !important;
       background: #050E1D !important;
       color: #FFFFFF !important;
       box-shadow: 0 12px 24px -6px rgba(5, 14, 29, 0.35) !important;
       transform: translateY(-2px);
     }
-    .date-tile-active .tile-weekday {
+    .white-calendar-rail .date-tile.date-tile-active .tile-weekday {
       color: #9BE600 !important;
     }
-    .date-tile-active .tile-day {
+    .white-calendar-rail .date-tile.date-tile-active .tile-day {
       color: #FFFFFF !important;
     }
-    .date-tile-active .tile-month {
+    .white-calendar-rail .date-tile.date-tile-active .tile-month {
       color: #E2E8F0 !important;
       opacity: 0.9 !important;
     }
-
-    /* Clean White Time Chips */
-    .time-chip {
-      text-align: center;
-      border-radius: 0.875rem;
-      padding: 0.75rem 0.5rem;
-      font-size: 0.8125rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      border: 1.5px solid #E2E8F0;
-      background: #FFFFFF;
-      color: #1E293B;
-      transition: all 0.18s ease;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    .white-calendar-rail .date-tile .tile-weekday {
+      color: #64748B;
     }
-    .time-chip:hover:not(:disabled) {
-      background: #F8FAFC;
-      border-color: #9BE600;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(155, 230, 0, 0.2);
+    .white-calendar-rail .date-tile .tile-day {
+      color: #0F172A;
     }
-    .time-chip.time-chip-active {
-      border-color: #9BE600 !important;
-      background: #9BE600 !important;
-      color: #050E1D !important;
-      font-weight: 900 !important;
-      box-shadow: 0 8px 18px -4px rgba(155, 230, 0, 0.45);
-    }
-    .time-chip:disabled {
-      cursor: not-allowed;
-      opacity: 0.4;
-      background: #F1F5F9;
-      border-color: #E2E8F0;
-      color: #94A3B8;
-      text-decoration: line-through;
+    .white-calendar-rail .date-tile .tile-month {
+      color: #64748B;
     }
 
-    /* Arrow Nav Buttons */
-    .slider-arrow-btn {
-      width: 34px;
-      height: 34px;
+    .slider-arrow-btn-light {
+      width: 32px;
+      height: 32px;
       border-radius: 9999px;
-      background: #FFFFFF;
-      border: 1.5px solid #E2E8F0;
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
       color: #0F172A;
       display: flex;
       align-items: center;
@@ -163,72 +137,170 @@
       font-weight: 900;
       font-size: 15px;
       transition: all 0.18s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      cursor: pointer;
+      user-select: none;
       flex-shrink: 0;
     }
-    .slider-arrow-btn:hover {
+    .slider-arrow-btn-light:hover {
       background: #9BE600;
       border-color: #9BE600;
       color: #050E1D;
-      transform: scale(1.06);
+      transform: scale(1.08);
     }
-    .slider-arrow-btn:active {
+    .slider-arrow-btn-light:active {
       transform: scale(0.95);
+    }
+
+    /* Authentic Date Rail & Date Tiles */
+    .date-rail {
+      display: flex;
+      gap: 0.625rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .date-rail::-webkit-scrollbar {
+      height: 6px;
+    }
+    .date-rail::-webkit-scrollbar-thumb {
+      background: rgba(155, 230, 0, 0.3);
+      border-radius: 9999px;
+    }
+    .date-tile {
+      text-align: center;
+      background: #0A1628;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.25rem;
+      min-width: 82px;
+      padding: 0.85rem 0.6rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+    .date-tile:hover {
+      border-color: #9BE600;
+      background: rgba(155, 230, 0, 0.08);
+      transform: translateY(-2px);
+    }
+    .date-tile.date-tile-active {
+      border-color: #9BE600 !important;
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      box-shadow: 0 10px 25px -8px rgba(155, 230, 0, 0.45);
+      transform: translateY(-2px);
+    }
+    .date-tile.date-tile-active .tile-weekday {
+      color: #050E1D !important;
+      opacity: 0.85;
+    }
+    .date-tile.date-tile-active .tile-day {
+      color: #050E1D !important;
+    }
+    .date-tile.date-tile-active .tile-month {
+      color: #050E1D !important;
+      opacity: 0.85;
+    }
+
+    /* Authentic Time Chips */
+    .time-chip {
+      text-align: center;
+      border-radius: 0.875rem;
+      padding: 0.7rem 0.5rem;
+      font-size: 0.8125rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(10, 22, 40, 0.85);
+      color: #E2E8F0;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .time-chip:hover:not(:disabled) {
+      background: rgba(155, 230, 0, 0.15);
+      border-color: #9BE600;
+      transform: translateY(-1px);
+    }
+    .time-chip.time-chip-active {
+      border-color: #9BE600 !important;
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      font-weight: 900 !important;
+      box-shadow: 0 8px 20px -4px rgba(155, 230, 0, 0.45);
+    }
+    .time-chip:disabled {
+      cursor: not-allowed;
+      opacity: 0.3;
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.06);
+      text-decoration: line-through;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-800 antialiased selection:bg-brand-lime selection:text-brand-black">
+<body class="min-h-screen flex flex-col bg-[#050E1D] text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
 
-  <!-- Header / Navigation (Clean White Bar) -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-40 bg-[#050E1D]/90 backdrop-blur-xl border-b border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       <a href="index.html" class="flex items-center gap-3.5 group">
-        <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 p-1 shadow-sm flex items-center justify-center transition group-hover:scale-105">
+        <div class="w-12 h-12 rounded-2xl bg-white p-1 shadow-lg flex items-center justify-center transition group-hover:scale-105">
           <img src="assets/logo.png" alt="P&F Rally Ground Logo" class="w-full h-full object-contain">
         </div>
         <div>
-          <span class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 block leading-none font-display">P&amp;F Rally Ground</span>
-          <span class="text-[10px] sm:text-xs text-emerald-700 font-mono tracking-widest uppercase font-bold">Pickleball Club &bull; Daraga</span>
+          <span class="text-lg sm:text-xl font-black uppercase tracking-tight text-white block leading-none font-display">P&amp;F Rally Ground</span>
+          <span class="text-[10px] sm:text-xs text-brand-lime font-mono tracking-widest uppercase font-bold">Pickleball Club &bull; Daraga</span>
         </div>
       </a>
 
       <nav class="flex items-center gap-2 sm:gap-4">
-        <a href="book.html" class="px-4 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] font-black uppercase text-xs tracking-wider transition shadow-md shadow-slate-900/15">Book</a>
-        <a href="check-booking.html" class="px-3.5 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 font-bold uppercase text-xs tracking-wider transition">My Booking</a>
-        <a href="pricing.html" class="px-3.5 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 font-bold uppercase text-xs tracking-wider transition">Rates &amp; Gear</a>
+        <a href="book.html" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition lime-glow">Book</a>
+        <a href="check-booking.html" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 font-bold uppercase text-xs tracking-wider transition">My Booking</a>
+        <a href="admin/index.html" class="px-3.5 py-2 rounded-xl text-slate-400 hover:text-brand-lime hover:bg-white/5 font-bold uppercase text-xs tracking-wider transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>Admin</span>
+        </a>
       </nav>
     </div>
   </header>
 
-  <!-- Main Booking Page Content (White Theme) -->
+  <!-- Main Booking Page Content -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
     
-    <!-- Hero Banner -->
+    <!-- Hero Banner (Scraped Exactly from https://pf-rally-ground.vercel.app/book) -->
     <div class="mb-10 text-center sm:text-left">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono font-bold uppercase mb-3 shadow-sm">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lime/15 border border-brand-lime/30 text-brand-lime text-xs font-mono font-bold uppercase mb-3">
+        <span class="w-2 h-2 rounded-full bg-brand-lime animate-pulse"></span>
         <span>Book online</span>
       </div>
-      <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-slate-900 font-display mb-3">Reserve your court</h1>
-      <p class="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
+      <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white font-display mb-3">Reserve your court</h1>
+      <p class="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
         Choose your schedule, add equipment, enter your details, and pay&mdash;all on this page.
       </p>
 
       <!-- Feature Badges -->
       <div class="flex flex-wrap items-center gap-2 sm:gap-3 mt-5">
-        <span class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold shadow-sm flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span>6 AM&ndash;12 midnight</span>
         </span>
-        <span class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold shadow-sm flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          <span>31-day window</span>
+        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span>30-day window</span>
         </span>
-        <span class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold shadow-sm flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
           <span>4 premium courts</span>
         </span>
-        <span class="px-3.5 py-1.5 rounded-xl bg-[#050E1D] text-[#9BE600] text-xs font-mono font-bold shadow-sm">
+        <span class="px-3 py-1.5 rounded-xl bg-brand-lime/15 border border-brand-lime/30 text-brand-lime text-xs font-mono font-black">
           Daytime: ₱400/hr &bull; Night: ₱500/hr
         </span>
       </div>
@@ -240,365 +312,363 @@
       <!-- LEFT COLUMN: Authentic Date-Rail Calendar & Booking Form (8 Cols) -->
       <div class="lg:col-span-8 space-y-7">
         
-        <!-- STEP 1: CHOOSE A DATE (Authentic Date Rail with Arrow Nav & Drag Scroll) -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <!-- STEP 1: CHOOSE A DATE (White Calendar Box with Arrow Navigation) -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-white text-slate-900 border border-slate-200 shadow-2xl space-y-4">
           <div class="flex items-center justify-between">
             <div>
               <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 1</span>
               <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Choose a date</h2>
             </div>
             
-            <!-- Controls: Selected Label + Smooth Arrows -->
             <div class="flex items-center gap-2">
-              <span id="selected-date-label" class="text-xs sm:text-sm font-bold text-slate-700 hidden sm:block font-mono bg-slate-100 px-3 py-1 rounded-full border border-slate-200">Today</span>
+              <span id="selected-date-label" class="text-xs sm:text-sm font-bold text-slate-800 hidden sm:block font-mono bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">Today</span>
               <div class="flex items-center gap-1.5">
-                <button type="button" id="slider-prev-btn" class="slider-arrow-btn" title="Previous Days" aria-label="Previous Days">&larr;</button>
-                <button type="button" id="slider-next-btn" class="slider-arrow-btn" title="Next Days" aria-label="Next Days">&rarr;</button>
+                <button type="button" id="slider-prev-btn" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
+                <button type="button" id="slider-next-btn" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
               </div>
             </div>
           </div>
 
-          <!-- Date Rail Carousel Container -->
-          <div class="date-rail" id="date-rail-container">
+          <div class="date-rail white-calendar-rail" id="date-rail-container">
             <!-- 31 days dynamically generated here -->
           </div>
           <span id="selected-date-label-mobile" class="text-xs font-bold text-emerald-700 block sm:hidden font-mono text-center pt-1">Today</span>
         </section>
 
         <!-- STEP 2: SELECT A COURT -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 2</span>
-              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Select a court</h2>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 2</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Select a court</h2>
             </div>
-            <span class="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-600 font-bold">4 Courts Available</span>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300">4 Courts Available</span>
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="court-selector">
-            <button type="button" onclick="selectCourt(1)" class="court-btn p-4 rounded-2xl border-2 border-[#050E1D] bg-[#050E1D] text-white text-left transition active:scale-95 shadow-md" data-court="1">
+            <button type="button" onclick="selectCourt(1)" class="court-btn p-4 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition active:scale-95 shadow-md" data-court="1">
               <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-lime text-brand-black font-black text-xs mb-2">1</span>
-              <b class="text-sm font-black block">Court 1</b>
+              <b class="text-sm font-black text-white block">Court 1</b>
               <span class="text-[10px] text-brand-lime block mt-0.5 font-mono">Championship</span>
             </button>
-            <button type="button" onclick="selectCourt(2)" class="court-btn p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-[#050E1D] text-slate-800 text-left transition active:scale-95" data-court="2">
-              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs mb-2 shadow-sm">2</span>
-              <b class="text-sm font-black block">Court 2</b>
-              <span class="text-[10px] text-slate-500 block mt-0.5 font-mono">Tournament</span>
+            <button type="button" onclick="selectCourt(2)" class="court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95" data-court="2">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-slate-400 font-bold text-xs mb-2">2</span>
+              <b class="text-sm font-black text-white block">Court 2</b>
+              <span class="text-[10px] text-slate-400 block mt-0.5 font-mono">Tournament</span>
             </button>
-            <button type="button" onclick="selectCourt(3)" class="court-btn p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-[#050E1D] text-slate-800 text-left transition active:scale-95" data-court="3">
-              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs mb-2 shadow-sm">3</span>
-              <b class="text-sm font-black block">Court 3</b>
-              <span class="text-[10px] text-slate-500 block mt-0.5 font-mono">Covered</span>
+            <button type="button" onclick="selectCourt(3)" class="court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95" data-court="3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-slate-400 font-bold text-xs mb-2">3</span>
+              <b class="text-sm font-black text-white block">Court 3</b>
+              <span class="text-[10px] text-slate-400 block mt-0.5 font-mono">Covered</span>
             </button>
-            <button type="button" onclick="selectCourt(4)" class="court-btn p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-[#050E1D] text-slate-800 text-left transition active:scale-95" data-court="4">
-              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs mb-2 shadow-sm">4</span>
-              <b class="text-sm font-black block">Court 4</b>
-              <span class="text-[10px] text-slate-500 block mt-0.5 font-mono">Pro Training</span>
+            <button type="button" onclick="selectCourt(4)" class="court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95" data-court="4">
+              <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-slate-400 font-bold text-xs mb-2">4</span>
+              <b class="text-sm font-black text-white block">Court 4</b>
+              <span class="text-[10px] text-slate-400 block mt-0.5 font-mono">Pro Training</span>
             </button>
           </div>
         </section>
 
         <!-- STEP 3: CHOOSE YOUR TIME -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-5">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4">
             <div>
-              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 3 &bull; Time Slot</span>
-              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Choose your time</h2>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 3 &bull; Time Slot</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Choose your time</h2>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-xs text-slate-600 font-bold">Duration:</span>
-              <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-mono">
-                <button type="button" onclick="setDuration(1)" class="duration-pill-btn px-3 py-1 rounded-lg bg-[#050E1D] text-white font-black" data-dur="1">1h</button>
-                <button type="button" onclick="setDuration(2)" class="duration-pill-btn px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-bold" data-dur="2">2h</button>
-                <button type="button" onclick="setDuration(3)" class="duration-pill-btn px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-bold" data-dur="3">3h</button>
+              <span class="text-xs text-slate-300 font-semibold">Duration:</span>
+              <div class="inline-flex rounded-xl bg-brand-black p-1 border border-white/15 text-xs font-mono">
+                <button type="button" onclick="setDuration(1)" class="duration-pill-btn px-3 py-1 rounded-lg bg-brand-lime text-brand-black font-black" data-dur="1">1h</button>
+                <button type="button" onclick="setDuration(2)" class="duration-pill-btn px-3 py-1 rounded-lg text-slate-300 hover:text-white font-bold" data-dur="2">2h</button>
+                <button type="button" onclick="setDuration(3)" class="duration-pill-btn px-3 py-1 rounded-lg text-slate-300 hover:text-white font-bold" data-dur="3">3h</button>
               </div>
             </div>
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-2.5">
-              <span class="text-xs font-bold uppercase text-slate-600">Select Start Time</span>
-              <span class="text-xs font-mono text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200" id="slot-rate-indicator">₱400.00 / hr (Daytime)</span>
+              <span class="text-xs font-bold uppercase text-slate-300">Select Start Time</span>
+              <span class="text-xs font-mono text-brand-lime font-bold" id="slot-rate-indicator">₱400.00 / hr (Daytime)</span>
             </div>
             <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="time-chips-container">
               <!-- Injected via renderTimeChips() -->
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-4 text-[11px] text-slate-500 font-mono">
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-lime border border-slate-400"></span> Selected</span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white border border-slate-300"></span> Available</span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 opacity-60"></span> Booked / Past</span>
+          <div class="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-slate-400 font-mono">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-lime"></span> Selected</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-card border border-white/20"></span> Available</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white/10 opacity-40"></span> Booked / Past</span>
           </div>
         </section>
 
         <!-- STEP 4: NUMBER OF PLAYERS -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 4</span>
-              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Number of players</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Up to 6 players included free with court hire (+₱100/extra player beyond 6).</p>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 4</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Number of players</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Up to 6 players included free with court hire (+₱100/extra player beyond 6).</p>
             </div>
-            <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-slate-200">
-              <button type="button" onclick="adjustPlayers(-1)" class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-800 font-bold hover:bg-slate-100 active:scale-95 text-base flex items-center justify-center shadow-sm">&minus;</button>
-              <span id="player-count-display" class="font-mono font-black text-lg text-slate-900 px-2">4</span>
-              <button type="button" onclick="adjustPlayers(1)" class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-800 font-bold hover:bg-slate-100 active:scale-95 text-base flex items-center justify-center shadow-sm">&plus;</button>
+            <div class="flex items-center gap-3 bg-brand-black p-2 rounded-2xl border border-white/15">
+              <button type="button" onclick="adjustPlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&minus;</button>
+              <span id="player-count-display" class="font-mono font-black text-lg text-brand-lime px-2">4</span>
+              <button type="button" onclick="adjustPlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&plus;</button>
             </div>
           </div>
         </section>
 
         <!-- STEP 5: EQUIPMENT RENTALS (EXACT 6 ITEMS SCRAPED FROM SITE) -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 5 &bull; Optional Add-ons</span>
-              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Equipment rentals</h2>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 5 &bull; Optional Add-ons</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Equipment rentals</h2>
             </div>
-            <span class="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-700 font-bold" id="gear-subtotal-badge">₱0.00 Total</span>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300" id="gear-subtotal-badge">₱0.00 Total</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="equipment-grid">
             <!-- 1. Standard Paddle (₱50.00) -->
-            <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center justify-between hover:bg-white hover:border-[#9BE600] transition">
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Standard paddle</span>
-                <span class="text-xs text-emerald-700 font-mono font-bold">₱50.00</span>
+                <span class="text-xs font-bold text-white block">Standard paddle</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="adjustGear('standard', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&minus;</button>
-                <span id="qty-standard" class="font-mono font-bold text-xs text-slate-900 w-6 text-center">0</span>
-                <button type="button" onclick="adjustGear('standard', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&plus;</button>
+                <button type="button" onclick="adjustGear('standard', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-standard" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('standard', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
               </div>
             </div>
 
             <!-- 2. Carbon Paddle (₱100.00) -->
-            <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center justify-between hover:bg-white hover:border-[#9BE600] transition">
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Carbon paddle</span>
-                <span class="text-xs text-emerald-700 font-mono font-bold">₱100.00</span>
+                <span class="text-xs font-bold text-white block">Carbon paddle</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="adjustGear('carbon', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&minus;</button>
-                <span id="qty-carbon" class="font-mono font-bold text-xs text-slate-900 w-6 text-center">0</span>
-                <button type="button" onclick="adjustGear('carbon', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&plus;</button>
+                <button type="button" onclick="adjustGear('carbon', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-carbon" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('carbon', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
               </div>
             </div>
 
             <!-- 3. Branded Carbon Paddle (₱200.00) -->
-            <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center justify-between hover:bg-white hover:border-[#9BE600] transition">
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Branded carbon paddle</span>
-                <span class="text-xs text-emerald-700 font-mono font-bold">₱200.00</span>
+                <span class="text-xs font-bold text-white block">Branded carbon paddle</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱200.00</span>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="adjustGear('branded', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&minus;</button>
-                <span id="qty-branded" class="font-mono font-bold text-xs text-slate-900 w-6 text-center">0</span>
-                <button type="button" onclick="adjustGear('branded', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&plus;</button>
+                <button type="button" onclick="adjustGear('branded', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-branded" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('branded', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
               </div>
             </div>
 
             <!-- 4. Pickleball Ball (₱50.00) -->
-            <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center justify-between hover:bg-white hover:border-[#9BE600] transition">
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Pickleball ball</span>
-                <span class="text-xs text-emerald-700 font-mono font-bold">₱50.00</span>
+                <span class="text-xs font-bold text-white block">Pickleball ball</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="adjustGear('ball', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&minus;</button>
-                <span id="qty-ball" class="font-mono font-bold text-xs text-slate-900 w-6 text-center">0</span>
-                <button type="button" onclick="adjustGear('ball', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&plus;</button>
+                <button type="button" onclick="adjustGear('ball', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-ball" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('ball', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
               </div>
             </div>
 
             <!-- 5. Training Balls 50 pcs (₱100.00) -->
-            <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center justify-between hover:bg-white hover:border-[#9BE600] transition">
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Training balls (50 pcs)</span>
-                <span class="text-xs text-emerald-700 font-mono font-bold">₱100.00</span>
+                <span class="text-xs font-bold text-white block">Training balls (50 pcs)</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="adjustGear('training', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&minus;</button>
-                <span id="qty-training" class="font-mono font-bold text-xs text-slate-900 w-6 text-center">0</span>
-                <button type="button" onclick="adjustGear('training', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&plus;</button>
+                <button type="button" onclick="adjustGear('training', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-training" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('training', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
               </div>
             </div>
 
             <!-- 6. Training Machine (₱100.00 / hour) -->
-            <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 flex items-center justify-between hover:bg-white hover:border-[#9BE600] transition">
+            <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Training machine (per hour)</span>
-                <span class="text-xs text-emerald-700 font-mono font-bold">₱100.00 / hour</span>
+                <span class="text-xs font-bold text-white block">Training machine (per hour)</span>
+                <span class="text-xs text-brand-lime font-mono font-bold">₱100.00 / hour</span>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="adjustGear('training-machine', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&minus;</button>
-                <span id="qty-training-machine" class="font-mono font-bold text-xs text-slate-900 w-6 text-center">0</span>
-                <button type="button" onclick="adjustGear('training-machine', 1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-800 font-bold flex items-center justify-center shadow-sm hover:bg-slate-100">&plus;</button>
+                <button type="button" onclick="adjustGear('training-machine', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&minus;</button>
+                <span id="qty-training-machine" class="font-mono font-bold text-xs text-white w-6 text-center">0</span>
+                <button type="button" onclick="adjustGear('training-machine', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center">&plus;</button>
               </div>
             </div>
           </div>
         </section>
 
         <!-- STEP 6: GUEST DETAILS -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
           <div>
-            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 6</span>
-            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Guest details</h2>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 6</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Guest details</h2>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label for="book-cust-name" class="block text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">Full Name *</label>
-              <input type="text" id="book-cust-name" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-white border border-slate-300 focus:border-[#050E1D] focus:ring-4 focus:ring-brand-lime/25 rounded-xl px-4 py-3 text-sm text-slate-900 font-bold focus:outline-none transition shadow-sm">
-              <p id="book-cust-name-err" class="hidden text-xs text-rose-600 font-bold mt-1"></p>
+              <label for="book-cust-name" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Full Name *</label>
+              <input type="text" id="book-cust-name" required placeholder="e.g. Juan Dela Cruz" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-bold focus:outline-none transition">
+              <p id="book-cust-name-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
             </div>
             <div>
-              <label for="book-cust-phone" class="block text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">Mobile Phone (11 Digits) *</label>
-              <input type="tel" id="book-cust-phone" required placeholder="0917 123 4567" class="w-full bg-white border border-slate-300 focus:border-[#050E1D] focus:ring-4 focus:ring-brand-lime/25 rounded-xl px-4 py-3 text-sm text-slate-900 font-mono focus:outline-none transition shadow-sm">
-              <p id="book-cust-phone-err" class="hidden text-xs text-rose-600 font-bold mt-1"></p>
+              <label for="book-cust-phone" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Mobile Phone (11 Digits) *</label>
+              <input type="tel" id="book-cust-phone" required placeholder="0917 123 4567" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
+              <p id="book-cust-phone-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
             </div>
             <div class="sm:col-span-2">
-              <label for="book-cust-email" class="block text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">Email Address (Optional &mdash; for instant receipt)</label>
-              <input type="email" id="book-cust-email" placeholder="juan@gmail.com" class="w-full bg-white border border-slate-300 focus:border-[#050E1D] focus:ring-4 focus:ring-brand-lime/25 rounded-xl px-4 py-3 text-sm text-slate-900 font-sans focus:outline-none transition shadow-sm">
+              <label for="book-cust-email" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Email Address (Optional &mdash; for instant receipt)</label>
+              <input type="email" id="book-cust-email" placeholder="juan@gmail.com" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none transition">
             </div>
           </div>
         </section>
 
         <!-- STEP 7: POLICIES AND GUEST CONSENT (3 EXACT POLICIES SCRAPED) -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
           <div>
-            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 7 &bull; Required Consent</span>
-            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Policies and guest consent</h2>
-            <p class="text-xs text-slate-500 mt-1">Review and accept each item before payment options are enabled.</p>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 7 &bull; Required Consent</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Policies and guest consent</h2>
+            <p class="text-xs text-slate-300 mt-1">Review and accept each item before payment options are enabled.</p>
           </div>
 
           <div class="space-y-3 pt-2">
             <!-- Policy 1 -->
-            <label class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-600 flex items-start gap-3 cursor-pointer transition">
-              <input type="checkbox" id="consent-waiver" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-emerald-600 flex-shrink-0">
+            <label class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3 cursor-pointer transition">
+              <input type="checkbox" id="consent-waiver" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-brand-lime flex-shrink-0">
               <div class="text-xs">
-                <span class="text-slate-900 font-bold block">I accept the facility waiver and court conduct rules.</span>
-                <span class="text-slate-600 text-[11px] leading-relaxed block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
+                <span class="text-white font-bold block">I accept the facility waiver and court conduct rules.</span>
+                <span class="text-slate-300 text-[11px] leading-relaxed block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
               </div>
             </label>
 
             <!-- Policy 2 -->
-            <label class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-600 flex items-start gap-3 cursor-pointer transition">
-              <input type="checkbox" id="consent-cancel" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-emerald-600 flex-shrink-0">
+            <label class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3 cursor-pointer transition">
+              <input type="checkbox" id="consent-cancel" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-brand-lime flex-shrink-0">
               <div class="text-xs">
-                <span class="text-slate-900 font-bold block">I accept the cancellation and rescheduling terms.</span>
-                <span class="text-slate-600 text-[11px] leading-relaxed block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
+                <span class="text-white font-bold block">I accept the cancellation and rescheduling terms.</span>
+                <span class="text-slate-300 text-[11px] leading-relaxed block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
               </div>
             </label>
 
             <!-- Policy 3 -->
-            <label class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-600 flex items-start gap-3 cursor-pointer transition">
-              <input type="checkbox" id="consent-charges" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-emerald-600 flex-shrink-0">
+            <label class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3 cursor-pointer transition">
+              <input type="checkbox" id="consent-charges" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded accent-brand-lime flex-shrink-0">
               <div class="text-xs">
-                <span class="text-slate-900 font-bold block">I understand that processing and convenience charges are non-refundable.</span>
-                <span class="text-slate-600 text-[11px] leading-relaxed block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
+                <span class="text-white font-bold block">I understand that processing and convenience charges are non-refundable.</span>
+                <span class="text-slate-300 text-[11px] leading-relaxed block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
               </div>
             </label>
           </div>
         </section>
 
         <!-- STEP 8: PAYMENT -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4" id="payment-section">
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4" id="payment-section">
           <div>
-            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 8 &bull; Settlement</span>
-            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Payment</h2>
-            <p id="payment-gate-notice" class="text-xs text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200 font-bold mt-2">Accept all three policy confirmations above to continue with payment.</p>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 8 &bull; Settlement</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Payment</h2>
+            <p id="payment-gate-notice" class="text-xs text-brand-clay font-bold mt-1">Accept all three policy confirmations above to continue with payment.</p>
           </div>
 
           <div id="payment-controls" class="space-y-5 opacity-40 pointer-events-none transition-opacity duration-300">
             <!-- Payment Channel Selector -->
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="selectBookPaymentMode('gcash')" id="pay-pill-gcash" class="py-3 px-3 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] text-white font-black uppercase text-xs tracking-wider transition shadow-sm">GCash</button>
-              <button type="button" onclick="selectBookPaymentMode('maya')" id="pay-pill-maya" class="py-3 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 font-bold uppercase text-xs tracking-wider transition">Maya</button>
-              <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 font-bold uppercase text-xs tracking-wider transition">Bank Transfer</button>
+              <button type="button" onclick="selectBookPaymentMode('gcash')" id="pay-pill-gcash" class="py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition">GCash</button>
+              <button type="button" onclick="selectBookPaymentMode('maya')" id="pay-pill-maya" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Maya</button>
+              <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Bank Transfer</button>
             </div>
 
             <!-- GCash Channel Card -->
-            <div id="book-pay-gcash" class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
-                <div class="sm:col-span-5 text-center p-3.5 bg-white rounded-2xl shadow-sm border border-slate-200 max-w-[170px] mx-auto">
-                  <img id="book-gcash-qr-img" src="assets/qr-gcash.png" alt="Official GCash QR Ph" class="w-full h-auto rounded-lg">
-                  <span class="text-[9px] font-mono font-black text-slate-900 block mt-1.5 uppercase">Official GCash QR Ph</span>
+            <div id="book-pay-gcash" class="p-4 sm:p-5 rounded-2xl bg-brand-black border border-brand-lime/30 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                <div class="sm:col-span-5 text-center p-3 bg-white rounded-2xl shadow-lg max-w-[160px] mx-auto">
+                  <img id="book-gcash-qr-img" src="assets/qr-gcash.png" alt="Official GCash QR Ph" class="w-full h-auto">
+                  <span class="text-[9px] font-mono font-black text-slate-900 block mt-1 uppercase">Official GCash QR Ph</span>
                 </div>
-                <div class="sm:col-span-7 space-y-2.5 text-xs">
-                  <div class="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1 shadow-sm">
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block">Direct GCash Mobile Number</span>
+                <div class="sm:col-span-7 space-y-2 text-xs">
+                  <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-1">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Direct GCash Mobile Number</span>
                     <div class="flex items-center justify-between">
-                      <b id="book-gcash-number" class="text-sm font-mono text-slate-900 font-bold">0999 883 2346</b>
-                      <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-mono font-bold text-[10px] uppercase transition">Copy</button>
+                      <b id="book-gcash-number" class="text-sm font-mono text-white font-bold">0999 883 2346</b>
+                      <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime/20 text-brand-lime hover:bg-brand-lime hover:text-brand-black font-mono font-bold text-[10px] uppercase transition">Copy</button>
                     </div>
-                    <span class="text-[10px] text-slate-500 block">Name: P&amp;F Rally Ground</span>
+                    <span class="text-[10px] text-slate-400 block">Name: P&amp;F Rally Ground</span>
                   </div>
-                  <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-snug">
-                    <span class="font-bold">💡 How to Pay:</span> Scan the QR Ph code above or open GCash &rarr; Express Send to <b>0999 883 2346</b>. Then enter your Reference No. below.
+                  <div class="p-2.5 rounded-xl bg-brand-lime/10 border border-brand-lime/20 text-[11px] text-slate-300 leading-snug">
+                    <span class="font-bold text-brand-lime">💡 Scan or Express Send:</span> Scan the official QR Ph or open GCash &rarr; Express Send &rarr; paste <b>0999 883 2346</b>.
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Maya Channel Card -->
-            <div id="book-pay-maya" class="hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
-                <div class="sm:col-span-5 text-center p-3.5 bg-white rounded-2xl shadow-sm border border-slate-200 max-w-[170px] mx-auto">
-                  <img src="assets/qr-maya.png" alt="Official Maya QR Ph" class="w-full h-auto rounded-lg">
-                  <span class="text-[9px] font-mono font-black text-slate-900 block mt-1.5 uppercase">Official Maya QR Ph</span>
+            <div id="book-pay-maya" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border border-brand-lime/30 space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                <div class="sm:col-span-5 text-center p-3 bg-white rounded-2xl shadow-lg max-w-[160px] mx-auto">
+                  <img src="assets/qr-maya.png" alt="Official Maya QR Ph" class="w-full h-auto">
+                  <span class="text-[9px] font-mono font-black text-slate-900 block mt-1 uppercase">Official Maya QR Ph</span>
                 </div>
-                <div class="sm:col-span-7 space-y-2.5 text-xs">
-                  <div class="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1 shadow-sm">
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block">Maya Mobile Number</span>
+                <div class="sm:col-span-7 space-y-2 text-xs">
+                  <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-1">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Maya Mobile Number</span>
                     <div class="flex items-center justify-between">
-                      <b class="text-sm font-mono text-slate-900 font-bold">0999 883 2346</b>
-                      <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-mono font-bold text-[10px] uppercase transition">Copy</button>
+                      <b class="text-sm font-mono text-white font-bold">0999 883 2346</b>
+                      <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime/20 text-brand-lime hover:bg-brand-lime hover:text-brand-black font-mono font-bold text-[10px] uppercase transition">Copy</button>
                     </div>
-                    <span class="text-[10px] text-slate-500 block">Name: P&amp;F Rally Ground</span>
+                    <span class="text-[10px] text-slate-400 block">Name: P&amp;F Rally Ground</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Bank Transfer Channel Card -->
-            <div id="book-pay-bank" class="hidden p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div class="space-y-2.5 text-xs">
-                <div class="p-3.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between shadow-sm">
+            <div id="book-pay-bank" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border border-brand-lime/30 space-y-3">
+              <div class="space-y-2 text-xs">
+                <div class="p-3 rounded-xl bg-brand-card border border-white/10 flex items-center justify-between">
                   <div>
-                    <span class="text-[10px] font-bold text-emerald-700 uppercase block">BDO Unibank</span>
-                    <b class="text-sm font-mono text-slate-900 font-bold">0045 8802 9143</b>
-                    <span class="text-[10px] text-slate-500 block">P&amp;F Rally Ground Club</span>
+                    <span class="text-[10px] font-bold text-brand-lime uppercase block">BDO Unibank</span>
+                    <b class="text-sm font-mono text-white font-bold">0045 8802 9143</b>
+                    <span class="text-[10px] text-slate-400 block">P&amp;F Rally Ground Club</span>
                   </div>
-                  <button type="button" onclick="copyPaymentNumber('004588029143', this)" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-mono font-bold text-[10px] uppercase transition">Copy</button>
+                  <button type="button" onclick="copyPaymentNumber('004588029143', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime/20 text-brand-lime hover:bg-brand-lime hover:text-brand-black font-mono font-bold text-[10px] uppercase transition">Copy</button>
                 </div>
-                <div class="p-3.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between shadow-sm">
+                <div class="p-3 rounded-xl bg-brand-card border border-white/10 flex items-center justify-between">
                   <div>
-                    <span class="text-[10px] font-bold text-emerald-700 uppercase block">BPI Bank</span>
-                    <b class="text-sm font-mono text-slate-900 font-bold">4891 0032 74</b>
-                    <span class="text-[10px] text-slate-500 block">P&amp;F Rally Ground</span>
+                    <span class="text-[10px] font-bold text-brand-lime uppercase block">BPI Bank</span>
+                    <b class="text-sm font-mono text-white font-bold">4891 0032 74</b>
+                    <span class="text-[10px] text-slate-400 block">P&amp;F Rally Ground</span>
                   </div>
-                  <button type="button" onclick="copyPaymentNumber('4891003274', this)" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-mono font-bold text-[10px] uppercase transition">Copy</button>
+                  <button type="button" onclick="copyPaymentNumber('4891003274', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime/20 text-brand-lime hover:bg-brand-lime hover:text-brand-black font-mono font-bold text-[10px] uppercase transition">Copy</button>
                 </div>
               </div>
             </div>
 
             <!-- Reference Number Input -->
-            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <label for="book-payment-ref" class="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">Payment Reference Number *</label>
-              <input type="text" id="book-payment-ref" required placeholder="e.g. 1029 3847 5612" class="w-full bg-white border border-slate-300 focus:border-[#050E1D] focus:ring-4 focus:ring-brand-lime/25 rounded-xl px-4 py-3 text-sm text-slate-900 font-mono font-black focus:outline-none transition shadow-sm">
-              <p class="text-[10px] text-slate-500">Enter the 8-13 digit transaction reference number from your payment confirmation.</p>
-              <p id="book-ref-err" class="hidden text-xs text-rose-600 font-bold mt-1"></p>
+            <div class="p-4 rounded-2xl bg-brand-card border border-white/15 space-y-2">
+              <label for="book-payment-ref" class="block text-xs font-mono font-bold uppercase tracking-wider text-white">Payment Reference Number *</label>
+              <input type="text" id="book-payment-ref" required placeholder="e.g. 1029 3847 5612" class="w-full bg-brand-black border border-white/20 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-brand-lime font-mono font-black focus:outline-none transition">
+              <p class="text-[10px] text-slate-400">Enter the 8-13 digit transaction number from your payment receipt.</p>
+              <p id="book-ref-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
             </div>
           </div>
         </section>
 
       </div>
 
-      <!-- RIGHT COLUMN: Sticky Live Reservation Summary (4 Cols, Deep Navy High-Contrast Panel) -->
+      <!-- RIGHT COLUMN: Sticky Live Reservation Summary (4 Cols) -->
       <div class="lg:col-span-4 sticky top-28 space-y-5">
-        <div class="p-6 rounded-3xl bg-[#050E1D] text-white border border-slate-800 shadow-2xl space-y-5">
+        <div class="p-6 rounded-3xl bg-brand-card/95 border border-brand-lime/30 shadow-2xl space-y-5 backdrop-blur-xl">
           <div class="border-b border-white/10 pb-4">
             <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Live Reservation</span>
             <h3 class="text-xl font-black uppercase tracking-tight text-white font-display">Booking Summary</h3>
@@ -652,12 +722,12 @@
           </p>
         </div>
 
-        <div class="p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-700 space-y-2 shadow-sm">
-          <div class="flex items-center gap-2 text-emerald-700 font-bold">
+        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-slate-300 space-y-2">
+          <div class="flex items-center gap-2 text-brand-lime font-bold">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             <span>Verified Reservation Protocol</span>
           </div>
-          <p class="text-[11px] leading-relaxed text-slate-500">
+          <p class="text-[11px] leading-relaxed text-slate-400">
             Once submitted, your booking is registered with your payment reference and saved for court check-in.
           </p>
         </div>
@@ -668,36 +738,36 @@
 
   <!-- Success Confirmation Modal -->
   <div id="booking-success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
-    <div class="relative z-10 max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-4">
-      <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto text-2xl font-black border border-emerald-200">✓</div>
-      <h3 class="text-2xl font-black uppercase text-slate-900 font-display">Booking Submitted!</h3>
-      <p class="text-xs text-slate-600">Your reservation has been transmitted with payment reference.</p>
+    <div class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    <div class="relative z-10 max-w-lg w-full bg-brand-card border border-brand-lime/40 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-4">
+      <div class="w-16 h-16 rounded-2xl bg-brand-lime/20 text-brand-lime flex items-center justify-center mx-auto text-2xl font-black border border-brand-lime/40">✓</div>
+      <h3 class="text-2xl font-black uppercase text-white font-display">Booking Submitted!</h3>
+      <p class="text-xs text-slate-300">Your reservation has been transmitted with payment reference.</p>
       
-      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs font-mono space-y-2">
-        <div class="flex justify-between"><span class="text-slate-500">Ref ID:</span><b id="conf-ref-id" class="text-emerald-700 font-bold">PF-XXXXXX</b></div>
-        <div class="flex justify-between"><span class="text-slate-500">Court:</span><span id="conf-court" class="text-slate-900 font-bold">Court 1</span></div>
-        <div class="flex justify-between"><span class="text-slate-500">Date &amp; Time:</span><span id="conf-datetime" class="text-slate-900 font-bold">--</span></div>
-        <div class="flex justify-between"><span class="text-slate-500">Amount:</span><span id="conf-total" class="text-emerald-700 font-bold">₱400.00</span></div>
+      <div class="p-4 rounded-2xl bg-brand-black border border-white/10 text-left text-xs font-mono space-y-2">
+        <div class="flex justify-between"><span class="text-slate-400">Ref ID:</span><b id="conf-ref-id" class="text-brand-lime font-bold">PF-XXXXXX</b></div>
+        <div class="flex justify-between"><span class="text-slate-400">Court:</span><span id="conf-court" class="text-white">Court 1</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Date &amp; Time:</span><span id="conf-datetime" class="text-white">--</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Amount:</span><span id="conf-total" class="text-brand-lime font-bold">₱400.00</span></div>
       </div>
 
       <div class="flex gap-3 pt-2">
-        <a href="check-booking.html" class="flex-1 py-3.5 rounded-xl bg-[#050E1D] text-[#9BE600] font-black uppercase text-xs tracking-wider hover:bg-slate-800 transition text-center shadow-md">Track in My Booking</a>
-        <button type="button" onclick="closeSuccessModal()" class="px-5 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold uppercase text-xs tracking-wider transition">Done</button>
+        <a href="check-booking.html" class="flex-1 py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition text-center">Track in My Booking</a>
+        <button type="button" onclick="closeSuccessModal()" class="px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold uppercase text-xs tracking-wider transition">Done</button>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
-  <footer class="bg-white border-t border-slate-200 text-xs text-slate-600 font-medium py-10 mt-16">
+  <footer class="bg-brand-black border-t border-brand-lime/20 text-xs text-slate-300 font-medium py-10 mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-      <p class="font-display font-bold uppercase tracking-wider text-slate-900">P&amp;F Rally Ground Pickleball Club &bull; Daraga, Albay</p>
-      <p class="text-[11px] text-slate-500">Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, Albay &bull; 0999 883 2346</p>
-      <p class="text-[10px] text-slate-400 font-mono pt-2">&copy; 2026 P&amp;F Rally Ground. All rights reserved.</p>
+      <p class="font-display font-bold uppercase tracking-wider text-white">P&amp;F Rally Ground Pickleball Club &bull; Daraga, Albay</p>
+      <p class="text-[11px] text-slate-400">Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, Albay &bull; 0999 883 2346</p>
+      <p class="text-[10px] text-slate-500 font-mono pt-2">&copy; 2026 P&amp;F Rally Ground. All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- SCRIPT: Authentic 31-Day Date-Rail, Smooth Arrows & Drag Scrolling Engine -->
+  <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>
     // Exact Scraped Rates & Gear
     const GEAR_CATALOG = [
@@ -737,6 +807,7 @@
     const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
     function getHourlyRate(slotStr) {
+      // Scraped logic: Number(R.start.slice(0, 2)) >= 18 ? 500 : 400
       let hour24 = parseInt(slotStr, 10);
       if (slotStr.includes("PM") && hour24 !== 12) hour24 += 12;
       if (slotStr.includes("AM") && hour24 === 12) hour24 = 0;
@@ -772,14 +843,13 @@
       daysList.forEach((dayObj, idx) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        const isSelected = dayObj.value === selectedDateValue;
-        btn.className = `date-tile ${isSelected ? "date-tile-active" : ""}`;
+        btn.className = `date-tile ${dayObj.value === selectedDateValue ? "date-tile-active" : ""}`;
         btn.onclick = () => selectDate(dayObj.value, btn);
 
         btn.innerHTML = `
-          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-lime' : 'text-slate-400'}">${dayObj.weekday}</span>
-          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${dayObj.day}</span>
-          <span class="tile-month mt-1 block text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${dayObj.month}</span>
+          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${dayObj.value === selectedDateValue ? 'text-brand-lime' : 'text-slate-500'}">${dayObj.weekday}</span>
+          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${dayObj.value === selectedDateValue ? 'text-white' : 'text-slate-900'}">${dayObj.day}</span>
+          <span class="tile-month mt-1 block text-xs font-bold opacity-75 ${dayObj.value === selectedDateValue ? 'text-slate-200' : 'text-slate-500'}">${dayObj.month}</span>
         `;
         container.appendChild(btn);
       });
@@ -798,7 +868,7 @@
       document.querySelectorAll("#date-rail-container .date-tile").forEach(b => {
         b.classList.remove("date-tile-active");
         const spans = b.querySelectorAll("span");
-        if (spans[0]) spans[0].className = "tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-400";
+        if (spans[0]) spans[0].className = "tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-500";
         if (spans[1]) spans[1].className = "tile-day mt-1 block text-2xl font-black leading-none font-mono text-slate-900";
         if (spans[2]) spans[2].className = "tile-month mt-1 block text-xs font-bold opacity-75 text-slate-500";
       });
@@ -827,15 +897,11 @@
         const c = Number(btn.getAttribute("data-court"));
         const spanNum = btn.querySelector("span");
         if (c === cNum) {
-          btn.className = "court-btn p-4 rounded-2xl border-2 border-[#050E1D] bg-[#050E1D] text-white text-left transition active:scale-95 shadow-md";
+          btn.className = "court-btn p-4 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition active:scale-95 shadow-md";
           spanNum.className = "flex h-8 w-8 items-center justify-center rounded-xl bg-brand-lime text-brand-black font-black text-xs mb-2";
-          btn.querySelector("b").className = "text-sm font-black block text-white";
-          btn.querySelector("span:last-child").className = "text-[10px] text-brand-lime block mt-0.5 font-mono";
         } else {
-          btn.className = "court-btn p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-[#050E1D] text-slate-800 text-left transition active:scale-95";
-          spanNum.className = "flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs mb-2 shadow-sm";
-          btn.querySelector("b").className = "text-sm font-black block text-slate-900";
-          btn.querySelector("span:last-child").className = "text-[10px] text-slate-500 block mt-0.5 font-mono";
+          btn.className = "court-btn p-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95";
+          spanNum.className = "flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-slate-400 font-bold text-xs mb-2";
         }
       });
       renderTimeChips();
@@ -848,9 +914,9 @@
       document.querySelectorAll(".duration-pill-btn").forEach(btn => {
         const d = Number(btn.getAttribute("data-dur"));
         if (d === dur) {
-          btn.className = "duration-pill-btn px-3 py-1 rounded-lg bg-[#050E1D] text-white font-black";
+          btn.className = "duration-pill-btn px-3 py-1 rounded-lg bg-brand-lime text-brand-black font-black";
         } else {
-          btn.className = "duration-pill-btn px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-bold";
+          btn.className = "duration-pill-btn px-3 py-1 rounded-lg text-slate-300 hover:text-white font-bold";
         }
       });
       renderTimeChips();
@@ -897,11 +963,11 @@
       const indicator = document.getElementById("slot-rate-indicator");
       if (indicator) {
         if (currentRate === 500) {
-          indicator.textContent = "₱500.00 / hr (Peak Evening: 6PM–12AM)";
-          indicator.className = "text-xs font-mono text-amber-800 font-bold bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200";
+          indicator.textContent = `₱500.00 / hr (Evening 6PM–12AM)`;
+          indicator.className = "text-xs font-mono text-[#D4FF00] font-bold";
         } else {
-          indicator.textContent = "₱400.00 / hr (Daytime: 6AM–6PM)";
-          indicator.className = "text-xs font-mono text-emerald-800 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200";
+          indicator.textContent = `₱400.00 / hr (Daytime 6AM–6PM)`;
+          indicator.className = "text-xs font-mono text-brand-lime font-bold";
         }
       }
     }
@@ -909,275 +975,218 @@
     // 6. Players
     function adjustPlayers(delta) {
       selectedPlayerCount = Math.max(1, Math.min(16, selectedPlayerCount + delta));
-      const el = document.getElementById("player-count-display");
-      if (el) el.textContent = selectedPlayerCount;
+      document.getElementById("player-count-display").textContent = selectedPlayerCount;
       updateSummary();
     }
 
-    // 7. Gear Rentals
+    // 7. Gear
     function adjustGear(gearId, delta) {
-      gearQuantities[gearId] = Math.max(0, Math.min(12, (gearQuantities[gearId] || 0) + delta));
+      gearQuantities[gearId] = Math.max(0, Math.min(10, (gearQuantities[gearId] || 0) + delta));
       const el = document.getElementById(`qty-${gearId}`);
       if (el) el.textContent = gearQuantities[gearId];
       updateSummary();
     }
 
-    // 8. Consent Check
+    // 8. Order Summary
+    function updateSummary() {
+      // Court cost
+      const hourlyRate = getHourlyRate(selectedStartSlot);
+      const courtCost = hourlyRate * selectedDuration;
+      document.getElementById("summary-court-cost").textContent = `₱${courtCost.toLocaleString()}.00`;
+      document.getElementById("summary-court-row-label").textContent = `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`;
+
+      // Extra players (Up to 6 included, +₱100/extra)
+      const extraPlayers = Math.max(0, selectedPlayerCount - 6);
+      const extraCost = extraPlayers * 100;
+      document.getElementById("summary-extra-players-label").textContent = `Extra players (${extraPlayers})`;
+      document.getElementById("summary-extra-cost").textContent = `₱${extraCost.toLocaleString()}.00`;
+
+      // Equipment cost (Training machine is per hour)
+      let gearTotal = 0;
+      GEAR_CATALOG.forEach(item => {
+        const qty = gearQuantities[item.id] || 0;
+        if (item.id === "training-machine") {
+          gearTotal += qty * item.price * selectedDuration;
+        } else {
+          gearTotal += qty * item.price;
+        }
+      });
+      document.getElementById("summary-gear-cost").textContent = `₱${gearTotal.toLocaleString()}.00`;
+      document.getElementById("gear-subtotal-badge").textContent = `₱${gearTotal.toLocaleString()}.00 Total`;
+
+      // Grand total
+      const grandTotal = courtCost + extraCost + gearTotal;
+      document.getElementById("summary-grand-total").textContent = `₱${grandTotal.toLocaleString()}.00`;
+
+      // Header labels
+      document.getElementById("summary-date").textContent = selectedDateLabel.split(",")[0] + ", " + selectedDateLabel.split(",")[1];
+      document.getElementById("summary-court").textContent = `Court ${selectedCourt}`;
+      document.getElementById("summary-time").textContent = `${selectedStartSlot} (${selectedDuration} hr)`;
+      document.getElementById("summary-players").textContent = `${selectedPlayerCount} players`;
+    }
+
+    // 9. Policies Consent
     function checkPoliciesConsent() {
       const p1 = document.getElementById("consent-waiver")?.checked;
       const p2 = document.getElementById("consent-cancel")?.checked;
       const p3 = document.getElementById("consent-charges")?.checked;
-      const allPassed = (p1 && p2 && p3);
+      const allPassed = Boolean(p1 && p2 && p3);
 
-      const notice = document.getElementById("payment-gate-notice");
       const controls = document.getElementById("payment-controls");
-
+      const notice = document.getElementById("payment-gate-notice");
       if (allPassed) {
+        controls.classList.remove("opacity-40", "pointer-events-none");
         if (notice) notice.classList.add("hidden");
-        if (controls) {
-          controls.classList.remove("opacity-40", "pointer-events-none");
-        }
       } else {
+        controls.classList.add("opacity-40", "pointer-events-none");
         if (notice) notice.classList.remove("hidden");
-        if (controls) {
-          controls.classList.add("opacity-40", "pointer-events-none");
-        }
       }
-      return allPassed;
     }
 
-    // 9. Payment Mode Toggle
+    // 10. Payment Mode Tabs
     function selectBookPaymentMode(mode) {
       activePaymentMode = mode;
-      const gcashSec = document.getElementById("book-pay-gcash");
-      const mayaSec = document.getElementById("book-pay-maya");
-      const bankSec = document.getElementById("book-pay-bank");
-
-      const pillGcash = document.getElementById("pay-pill-gcash");
-      const pillMaya = document.getElementById("pay-pill-maya");
-      const pillBank = document.getElementById("pay-pill-bank");
-
-      [pillGcash, pillMaya, pillBank].forEach(p => {
-        if (p) p.className = "py-3 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 font-bold uppercase text-xs tracking-wider transition";
-      });
-
-      if (gcashSec) gcashSec.classList.add("hidden");
-      if (mayaSec) mayaSec.classList.add("hidden");
-      if (bankSec) bankSec.classList.add("hidden");
-
-      if (mode === 'gcash') {
-        if (gcashSec) gcashSec.classList.remove("hidden");
-        if (pillGcash) pillGcash.className = "py-3 px-3 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] text-white font-black uppercase text-xs tracking-wider transition shadow-sm";
-      } else if (mode === 'maya') {
-        if (mayaSec) mayaSec.classList.remove("hidden");
-        if (pillMaya) pillMaya.className = "py-3 px-3 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] text-white font-black uppercase text-xs tracking-wider transition shadow-sm";
-      } else if (mode === 'bank') {
-        if (bankSec) bankSec.classList.remove("hidden");
-        if (pillBank) pillBank.className = "py-3 px-3 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] text-white font-black uppercase text-xs tracking-wider transition shadow-sm";
-      }
-    }
-
-    function copyPaymentNumber(val, btn) {
-      if (!navigator.clipboard) {
-        prompt("Copy account number:", val);
-        return;
-      }
-      navigator.clipboard.writeText(val).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = "Copied!";
-        btn.classList.add("bg-emerald-600", "text-white");
-        setTimeout(() => {
-          btn.textContent = orig;
-          btn.classList.remove("bg-emerald-600", "text-white");
-        }, 1800);
-      });
-    }
-
-    // 10. Live Summary Calculations (Exact Scraped Formula)
-    function updateSummary() {
-      const hourlyRate = getHourlyRate(selectedStartSlot);
-      const courtCost = selectedDuration * hourlyRate;
-
-      const extraPlayers = Math.max(0, selectedPlayerCount - 6);
-      const extraPlayersCost = extraPlayers * 100.00;
-
-      let gearCost = 0.0;
-      GEAR_CATALOG.forEach(item => {
-        const qty = gearQuantities[item.id] || 0;
-        if (item.id === "training-machine") {
-          gearCost += qty * item.price * selectedDuration;
+      ['gcash', 'maya', 'bank'].forEach(m => {
+        const btn = document.getElementById(`pay-pill-${m}`);
+        const card = document.getElementById(`book-pay-${m}`);
+        if (m === mode) {
+          btn.className = "py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition";
+          if (card) card.classList.remove("hidden");
         } else {
-          gearCost += qty * item.price;
+          btn.className = "py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition";
+          if (card) card.classList.add("hidden");
         }
       });
-
-      const grandTotal = courtCost + extraPlayersCost + gearCost;
-
-      // Update DOM
-      const sumDate = document.getElementById("summary-date");
-      if (sumDate) sumDate.textContent = selectedDateLabel.split(',')[0] || "Today";
-
-      const sumCourt = document.getElementById("summary-court");
-      if (sumCourt) sumCourt.textContent = `Court ${selectedCourt}`;
-
-      const sumTime = document.getElementById("summary-time");
-      if (sumTime) sumTime.textContent = `${selectedStartSlot} (${selectedDuration} hr)`;
-
-      const sumPlayers = document.getElementById("summary-players");
-      if (sumPlayers) sumPlayers.textContent = `${selectedPlayerCount} player${selectedPlayerCount === 1 ? '' : 's'}`;
-
-      const sumCourtLbl = document.getElementById("summary-court-row-label");
-      if (sumCourtLbl) sumCourtLbl.textContent = `Court Hire (${selectedDuration} hr @ ₱${hourlyRate}/hr)`;
-
-      const sumCourtCost = document.getElementById("summary-court-cost");
-      if (sumCourtCost) sumCourtCost.textContent = `₱${courtCost.toFixed(2)}`;
-
-      const sumExtraLbl = document.getElementById("summary-extra-players-label");
-      if (sumExtraLbl) sumExtraLbl.textContent = `Extra players (${extraPlayers})`;
-
-      const sumExtraCost = document.getElementById("summary-extra-cost");
-      if (sumExtraCost) sumExtraCost.textContent = `₱${extraPlayersCost.toFixed(2)}`;
-
-      const sumGearCost = document.getElementById("summary-gear-cost");
-      if (sumGearCost) sumGearCost.textContent = `₱${gearCost.toFixed(2)}`;
-
-      const gearBadge = document.getElementById("gear-subtotal-badge");
-      if (gearBadge) gearBadge.textContent = `₱${gearCost.toFixed(2)} Total`;
-
-      const sumGrand = document.getElementById("summary-grand-total");
-      if (sumGrand) sumGrand.textContent = `₱${grandTotal.toFixed(2)}`;
-
-      return {
-        courtCost,
-        extraPlayersCost,
-        gearCost,
-        grandTotal,
-        hourlyRate
-      };
     }
 
-    // 11. Final Submission
+    // 11. Copy Account Number
+    function copyPaymentNumber(num, btn) {
+      navigator.clipboard.writeText(num).then(() => {
+        const prev = btn.textContent;
+        btn.textContent = "COPIED!";
+        btn.classList.add("bg-brand-lime", "text-brand-black");
+        setTimeout(() => {
+          btn.textContent = prev;
+          btn.classList.remove("bg-brand-lime", "text-brand-black");
+        }, 2000);
+      });
+    }
+
+    // 12. Submit Reservation
     async function submitReservation() {
-      const nameInput = document.getElementById("book-cust-name");
-      const phoneInput = document.getElementById("book-cust-phone");
-      const emailInput = document.getElementById("book-cust-email");
-      const refInput = document.getElementById("book-payment-ref");
+      const name = (document.getElementById("book-cust-name")?.value || "").trim();
+      const phone = (document.getElementById("book-cust-phone")?.value || "").trim();
+      const email = (document.getElementById("book-cust-email")?.value || "").trim();
+      const ref = (document.getElementById("book-payment-ref")?.value || "").trim();
 
-      const nameErr = document.getElementById("book-cust-name-err");
-      const phoneErr = document.getElementById("book-cust-phone-err");
-      const refErr = document.getElementById("book-ref-err");
+      const p1 = document.getElementById("consent-waiver")?.checked;
+      const p2 = document.getElementById("consent-cancel")?.checked;
+      const p3 = document.getElementById("consent-charges")?.checked;
 
-      if (nameErr) nameErr.classList.add("hidden");
-      if (phoneErr) phoneErr.classList.add("hidden");
-      if (refErr) refErr.classList.add("hidden");
-
-      const nameVal = nameInput ? nameInput.value.trim() : "";
-      const phoneVal = phoneInput ? phoneInput.value.trim() : "";
-      const emailVal = emailInput ? emailInput.value.trim() : "";
-      const refVal = refInput ? refInput.value.trim() : "";
-
-      if (!nameVal || nameVal.length < 3) {
-        if (nameErr) {
-          nameErr.textContent = "Please enter your full first & last name.";
-          nameErr.classList.remove("hidden");
-        }
-        nameInput?.focus();
+      if (!p1 || !p2 || !p3) {
+        alert("Please review and accept all 3 policy agreements before continuing.");
+        document.getElementById("consent-waiver")?.focus();
         return;
       }
 
-      const digitsOnly = phoneVal.replace(/[^0-9]/g, '');
-      if (digitsOnly.length < 10) {
-        if (phoneErr) {
-          phoneErr.textContent = "Please enter a valid Philippine mobile number (e.g. 0917 123 4567).";
-          phoneErr.classList.remove("hidden");
-        }
-        phoneInput?.focus();
+      if (!name) {
+        alert("Please enter your full name.");
+        document.getElementById("book-cust-name")?.focus();
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        alert("Please enter a valid 11-digit mobile number.");
+        document.getElementById("book-cust-phone")?.focus();
+        return;
+      }
+      if (!ref) {
+        alert("Please enter your Payment Reference Number.");
+        document.getElementById("book-payment-ref")?.focus();
         return;
       }
 
-      if (!checkPoliciesConsent()) {
-        alert("Please review and accept all 3 policy agreements before submitting your booking.");
-        return;
-      }
-
-      if (!refVal || refVal.length < 5) {
-        if (refErr) {
-          refErr.textContent = "Please enter your official payment reference number.";
-          refErr.classList.remove("hidden");
-        }
-        refInput?.focus();
-        return;
-      }
-
-      const summary = updateSummary();
-      const refCode = "PF-" + Math.floor(100000 + Math.random() * 900000);
-
-      const itemsList = [`Court 0${selectedCourt} (${selectedDuration} hr @ ₱${summary.hourlyRate}/hr)`];
-      if (selectedPlayerCount > 6) {
-        itemsList.push(`Extra Players (${selectedPlayerCount - 6})`);
-      }
+      const hourlyRate = getHourlyRate(selectedStartSlot);
+      const courtCost = hourlyRate * selectedDuration;
+      const extraCost = Math.max(0, selectedPlayerCount - 6) * 100;
+      let gearTotal = 0;
+      const items = [`Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`];
+      if (extraCost > 0) items.push(`Extra Players (${Math.max(0, selectedPlayerCount - 6)})`);
+      
       GEAR_CATALOG.forEach(g => {
         const q = gearQuantities[g.id] || 0;
-        if (q > 0) itemsList.push(`${g.name} x${q}`);
+        if (q > 0) {
+          const cost = g.id === "training-machine" ? q * g.price * selectedDuration : q * g.price;
+          gearTotal += cost;
+          items.push(`${g.name} x${q} (₱${cost})`);
+        }
       });
+      const grandTotal = courtCost + extraCost + gearTotal;
 
-      const payload = {
-        ref: refCode,
-        name: nameVal,
-        phone: phoneVal,
-        email: emailVal || "guest@pfrally.ph",
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      const newRef = `PF-${Date.now().toString().slice(-4)}${randomSuffix}`;
+
+      const bookingPayload = {
+        ref: newRef,
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: email || "guest@pfrally.ph",
         court: `Court 0${selectedCourt}`,
         date: selectedDateValue,
-        time: `${selectedDateLabel} • ${selectedStartSlot} (${selectedDuration} hr)`,
-        total: summary.grandTotal,
-        paymentMethod: activePaymentMode === 'bank' ? 'Bank Transfer' : (activePaymentMode === 'maya' ? 'Maya' : 'GCash'),
-        transactionRef: refVal,
-        status: "PENDING VERIFICATION",
-        items: itemsList,
+        time: `${selectedStartSlot} (${selectedDuration} hr)`,
+        players: selectedPlayerCount,
+        paymentMethod: activePaymentMode.toUpperCase(),
+        transactionRef: ref,
+        total: grandTotal,
+        courtCost: courtCost,
+        extraCost: extraCost,
+        gearCost: gearTotal,
+        items: items,
+        status: "CONFIRMED",
         createdAt: new Date().toISOString()
       };
 
-      const submitBtn = document.getElementById("btn-submit-booking");
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = "<span>Transmitting Booking...</span>";
-      }
-
+      // 1. Send to server
       try {
-        await fetch("/api/bookings", {
+        await fetch("/api/booking", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(bookingPayload)
         });
-      } catch (e) {
-        // Local preview fallback
+      } catch (err) {
+        console.warn("Server offline, stored locally");
       }
 
-      // Save locally
-      let existingBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
-      existingBookings.unshift(payload);
-      localStorage.setItem('pf_all_bookings', JSON.stringify(existingBookings));
-      localStorage.setItem('latest_booking', JSON.stringify(payload));
-      localStorage.setItem('booking_' + refCode, JSON.stringify(payload));
+      // 2. Save in localStorage
+      const all = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      all.unshift(bookingPayload);
+      localStorage.setItem('pf_all_bookings', JSON.stringify(all));
 
-      // Show Confirmation Modal
-      const modal = document.getElementById("booking-success-modal");
-      if (modal) {
-        document.getElementById("conf-ref-id").textContent = refCode;
-        document.getElementById("conf-court").textContent = `Court ${selectedCourt}`;
-        document.getElementById("conf-datetime").textContent = `${selectedDateLabel.split(',')[0]} • ${selectedStartSlot}`;
-        document.getElementById("conf-total").textContent = `₱${summary.grandTotal.toFixed(2)}`;
-        modal.classList.remove("hidden");
-      }
+      // 3. Show Success Modal
+      document.getElementById("conf-ref-id").textContent = newRef;
+      document.getElementById("conf-court").textContent = `Court ${selectedCourt}`;
+      document.getElementById("conf-datetime").textContent = `${selectedDateValue} • ${selectedStartSlot}`;
+      document.getElementById("conf-total").textContent = `₱${grandTotal.toLocaleString()}.00`;
+      document.getElementById("booking-success-modal").classList.remove("hidden");
     }
 
     function closeSuccessModal() {
-      const modal = document.getElementById("booking-success-modal");
-      if (modal) modal.classList.add("hidden");
+      document.getElementById("booking-success-modal").classList.add("hidden");
       window.location.href = "check-booking.html";
     }
 
-    // 12. Connect Smooth Horizontal Wheel & Drag Scrolling Controls
+    // Dynamic Standee Sync with Admin Portal
+    function syncAdminQr() {
+      const standee = localStorage.getItem('pf_custom_gcash_standee_url');
+      const gNum = localStorage.getItem('pf_gcash_number');
+      const img = document.getElementById('book-gcash-qr-img');
+      const numEl = document.getElementById('book-gcash-number');
+      if (img && standee) img.src = standee;
+      if (numEl && gNum) numEl.textContent = gNum;
+    }
+
+    // Init on Load
+    
+    // Smooth Wheel & Drag Slider Controls
     function setupSliderInteraction(railId, prevBtnId, nextBtnId) {
       const rail = document.getElementById(railId);
       const prevBtn = document.getElementById(prevBtnId);
@@ -1202,7 +1211,6 @@
         });
       }
 
-      // Mouse wheel horizontal scroll
       rail.addEventListener('wheel', (e) => {
         if (e.deltaY !== 0) {
           e.preventDefault();
@@ -1211,7 +1219,6 @@
         }
       }, { passive: false });
 
-      // Click & drag to scroll
       let isDown = false;
       let startX = 0;
       let scrollLeft = 0;
@@ -1246,13 +1253,12 @@
       setTimeout(updateButtons, 100);
     }
 
-    // Init on Page Load
     document.addEventListener("DOMContentLoaded", () => {
       generateDays();
       renderDateRail();
       renderTimeChips();
       updateSummary();
-      setupSliderInteraction("date-rail-container", "slider-prev-btn", "slider-next-btn");
+      syncAdminQr();
     });
   </script>
 </body>

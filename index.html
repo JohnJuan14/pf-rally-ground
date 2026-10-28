@@ -355,7 +355,107 @@
       opacity: 0.85;
     }
 
-        /* Slider Arrow Navigation Buttons */
+        
+    /* White Calendar Box & Date Rail Styles */
+    .date-rail {
+      display: flex;
+      gap: 0.65rem;
+      overflow-x: auto;
+      padding-top: 0.25rem;
+      padding-bottom: 0.75rem;
+      scrollbar-width: thin;
+      scrollbar-color: #CBD5E1 transparent;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      cursor: grab;
+      user-select: none;
+    }
+    .date-rail::-webkit-scrollbar {
+      height: 6px;
+    }
+    .date-rail::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    .date-rail.active-dragging {
+      cursor: grabbing;
+      scroll-behavior: auto;
+    }
+
+    .white-calendar-rail .date-tile {
+      text-align: center;
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 1.25rem;
+      min-width: 82px;
+      padding: 0.85rem 0.6rem;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      flex-shrink: 0;
+      color: #0F172A;
+    }
+    .white-calendar-rail .date-tile:hover {
+      border-color: #9BE600;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px -6px rgba(15, 23, 42, 0.15);
+    }
+    .white-calendar-rail .date-tile.date-tile-active {
+      border-color: #050E1D !important;
+      background: #050E1D !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 12px 24px -6px rgba(5, 14, 29, 0.35) !important;
+      transform: translateY(-2px);
+    }
+    .white-calendar-rail .date-tile.date-tile-active .tile-weekday {
+      color: #9BE600 !important;
+    }
+    .white-calendar-rail .date-tile.date-tile-active .tile-day {
+      color: #FFFFFF !important;
+    }
+    .white-calendar-rail .date-tile.date-tile-active .tile-month {
+      color: #E2E8F0 !important;
+      opacity: 0.9 !important;
+    }
+    .white-calendar-rail .date-tile .tile-weekday {
+      color: #64748B;
+    }
+    .white-calendar-rail .date-tile .tile-day {
+      color: #0F172A;
+    }
+    .white-calendar-rail .date-tile .tile-month {
+      color: #64748B;
+    }
+
+    .slider-arrow-btn-light {
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+      transition: all 0.18s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .slider-arrow-btn-light:hover {
+      background: #9BE600;
+      border-color: #9BE600;
+      color: #050E1D;
+      transform: scale(1.08);
+    }
+    .slider-arrow-btn-light:active {
+      transform: scale(0.95);
+    }
+
+    /* Slider Arrow Navigation Buttons */
     .slider-arrow-btn {
       width: 32px;
       height: 32px;
@@ -831,19 +931,22 @@
         </div>
       </div>
 
-      <!-- 30-Day Horizontal Date Carousel -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-2.5">
-          <label class="block text-xs font-black uppercase tracking-widest text-slate-400">1. Select Session Date</label>
+      <!-- 30-Day Horizontal Date Carousel (White Calendar Box) -->
+      <div class="mb-6 p-4 sm:p-6 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Session Date</span>
+            <label class="block text-sm sm:text-base font-black uppercase text-slate-900 font-display">1. Select Date</label>
+          </div>
           <div class="flex items-center gap-2">
-            <span id="selected-schedule-date-label" class="text-xs font-mono text-brand-lime font-bold bg-white/5 border border-white/10 px-3 py-1 rounded-full">Today</span>
+            <span id="selected-schedule-date-label" class="text-xs font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">Today</span>
             <div class="flex items-center gap-1.5">
-              <button type="button" id="sched-slider-prev" class="slider-arrow-btn" title="Previous Days" aria-label="Previous Days">&larr;</button>
-              <button type="button" id="sched-slider-next" class="slider-arrow-btn" title="Next Days" aria-label="Next Days">&rarr;</button>
+              <button type="button" id="sched-slider-prev" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
+              <button type="button" id="sched-slider-next" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
             </div>
           </div>
         </div>
-        <div id="date-carousel" class="date-rail"></div>
+        <div id="date-carousel" class="date-rail white-calendar-rail"></div>
       </div>
 
       <!-- Mobile & Tablet Court Filter Tabs (Optimizes Table View on Small Screens) -->
@@ -1164,21 +1267,24 @@
       <!-- Drawer Scrollable Body -->
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-6 overscroll-contain touch-scroll">
 
-        <!-- STEP 1: Authentic 31-Day Date Rail -->
-        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+        <!-- STEP 1: Authentic 31-Day Date Rail (White Calendar Box) -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200 space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">1. Choose a Date</span>
+            <div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 1</span>
+              <span class="text-sm font-black uppercase tracking-wider text-slate-900 font-display">Choose a Date</span>
+            </div>
             <div class="flex items-center gap-2">
-              <span id="drawer-selected-date-label" class="text-xs font-mono text-brand-lime font-bold bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">Today</span>
+              <span id="drawer-selected-date-label" class="text-xs font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">Today</span>
               <div class="flex items-center gap-1">
-                <button type="button" id="drawer-slider-prev" class="slider-arrow-btn" title="Previous Days" aria-label="Previous Days">&larr;</button>
-                <button type="button" id="drawer-slider-next" class="slider-arrow-btn" title="Next Days" aria-label="Next Days">&rarr;</button>
+                <button type="button" id="drawer-slider-prev" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
+                <button type="button" id="drawer-slider-next" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
               </div>
             </div>
           </div>
 
           <!-- Date Rail -->
-          <div class="date-rail" id="drawer-date-rail">
+          <div class="date-rail white-calendar-rail" id="drawer-date-rail">
             <!-- 31 days dynamically generated -->
           </div>
         </div>
@@ -1660,9 +1766,9 @@
         btn.type = 'button';
         btn.className = `date-tile ${isSelected ? 'date-tile-active' : ''}`;
         btn.innerHTML = `
-          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
-          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
-          <span class="tile-month mt-1 block text-xs font-bold opacity-70 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
+          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
+          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
+          <span class="tile-month mt-1 block text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
         `;
         btn.onclick = () => {
           selectedScheduleDateYMD = d.value;
@@ -1790,9 +1896,9 @@
         btn.onclick = () => selectDrawerDate(d.value, btn);
 
         btn.innerHTML = `
-          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
-          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
-          <span class="tile-month mt-1 block text-xs font-bold opacity-70 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
+          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
+          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
+          <span class="tile-month mt-1 block text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
         `;
         container.appendChild(btn);
       });
