@@ -355,6 +355,43 @@
       opacity: 0.85;
     }
 
+        /* Slider Arrow Navigation Buttons */
+    .slider-arrow-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .slider-arrow-btn:hover {
+      background: #9BE600;
+      border-color: #9BE600;
+      color: #050E1D;
+      transform: scale(1.08);
+    }
+    .slider-arrow-btn:active {
+      transform: scale(0.95);
+    }
+    .date-rail {
+      cursor: grab;
+      user-select: none;
+      scroll-behavior: smooth;
+    }
+    .date-rail.active-dragging {
+      cursor: grabbing;
+      scroll-behavior: auto;
+    }
+
     /* Authentic Time Chips */
     .time-chip {
       text-align: center;
@@ -798,7 +835,13 @@
       <div class="mb-6">
         <div class="flex items-center justify-between mb-2.5">
           <label class="block text-xs font-black uppercase tracking-widest text-slate-400">1. Select Session Date</label>
-          <span id="selected-schedule-date-label" class="text-xs font-mono text-brand-lime font-bold">Today</span>
+          <div class="flex items-center gap-2">
+            <span id="selected-schedule-date-label" class="text-xs font-mono text-brand-lime font-bold bg-white/5 border border-white/10 px-3 py-1 rounded-full">Today</span>
+            <div class="flex items-center gap-1.5">
+              <button type="button" id="sched-slider-prev" class="slider-arrow-btn" title="Previous Days" aria-label="Previous Days">&larr;</button>
+              <button type="button" id="sched-slider-next" class="slider-arrow-btn" title="Next Days" aria-label="Next Days">&rarr;</button>
+            </div>
+          </div>
         </div>
         <div id="date-carousel" class="date-rail"></div>
       </div>
@@ -1125,7 +1168,13 @@
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-black uppercase tracking-wider text-brand-lime">1. Choose a Date</span>
-            <span id="drawer-selected-date-label" class="text-xs font-mono text-brand-lime font-bold">Today</span>
+            <div class="flex items-center gap-2">
+              <span id="drawer-selected-date-label" class="text-xs font-mono text-brand-lime font-bold bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">Today</span>
+              <div class="flex items-center gap-1">
+                <button type="button" id="drawer-slider-prev" class="slider-arrow-btn" title="Previous Days" aria-label="Previous Days">&larr;</button>
+                <button type="button" id="drawer-slider-next" class="slider-arrow-btn" title="Next Days" aria-label="Next Days">&rarr;</button>
+              </div>
+            </div>
           </div>
 
           <!-- Date Rail -->
@@ -2134,6 +2183,76 @@ Total Amount: ₱${Number(total).toFixed(2)}`);
       }
     }
 
+    
+    // Smooth Wheel & Drag Slider Controls
+    function setupSliderInteraction(railId, prevBtnId, nextBtnId) {
+      const rail = document.getElementById(railId);
+      const prevBtn = document.getElementById(prevBtnId);
+      const nextBtn = document.getElementById(nextBtnId);
+      if (!rail) return;
+
+      function updateButtons() {
+        if (prevBtn) prevBtn.style.opacity = rail.scrollLeft <= 10 ? '0.4' : '1';
+        if (nextBtn) nextBtn.style.opacity = (rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 10) ? '0.4' : '1';
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          rail.scrollBy({ left: -260, behavior: 'smooth' });
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          rail.scrollBy({ left: 260, behavior: 'smooth' });
+        });
+      }
+
+      // Mouse wheel horizontal scroll
+      rail.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          rail.scrollLeft += e.deltaY;
+          updateButtons();
+        }
+      }, { passive: false });
+
+      // Click & drag to scroll
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+
+      rail.addEventListener('mousedown', (e) => {
+        isDown = true;
+        rail.classList.add('active-dragging');
+        startX = e.pageX - rail.offsetLeft;
+        scrollLeft = rail.scrollLeft;
+      });
+
+      rail.addEventListener('mouseleave', () => {
+        isDown = false;
+        rail.classList.remove('active-dragging');
+      });
+
+      rail.addEventListener('mouseup', () => {
+        isDown = false;
+        rail.classList.remove('active-dragging');
+      });
+
+      rail.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - rail.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        rail.scrollLeft = scrollLeft - walk;
+        updateButtons();
+      });
+
+      rail.addEventListener('scroll', updateButtons, { passive: true });
+      setTimeout(updateButtons, 100);
+    }
+
     function syncAdminPortalQr() {
       const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
       const qrImg = document.getElementById('locked-qr-img');
@@ -2156,6 +2275,8 @@ Total Amount: ₱${Number(total).toFixed(2)}`);
       renderDrawerDateRail();
       renderDrawerSlots();
       recalculateDrawerTotal();
+      setupSliderInteraction('date-carousel', 'sched-slider-prev', 'sched-slider-next');
+      setupSliderInteraction('drawer-date-rail', 'drawer-slider-prev', 'drawer-slider-next');
     });
   </script>
 </body>
