@@ -1,4 +1,6 @@
 // P&F Rally Ground - Shared Booking & Checkout Engine (HitPay & GHL)
+// Fully optimized for Mobile, Tablet Portrait, and Desktop
+
 let currentSelectedCourt = 1;
 let currentSelectedSlot = "06:00 PM";
 let isCurrentSlotPeak = true;
@@ -12,7 +14,15 @@ const courtNames = {
 
 function toggleMobileMenu() {
   const m = document.getElementById('mobile-menu');
-  if (m) m.classList.toggle('hidden');
+  const icon = document.getElementById('hamburger-icon');
+  if (m) {
+    const isHidden = m.classList.toggle('hidden');
+    if (icon) {
+      icon.innerHTML = isHidden 
+        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>'
+        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+    }
+  }
 }
 
 function initDrawerSlots() {
@@ -24,17 +34,19 @@ function initDrawerSlots() {
     const tStr = (hr % 12 || 12) + ':00 ' + (hr >= 12 ? 'PM' : 'AM');
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = `p-2 rounded-xl border text-center text-xs font-bold transition ${
-      tStr === currentSelectedSlot ? 'border-brand-lime bg-brand-lime text-brand-black' : (isPeak ? 'border-brand-clay/30 bg-brand-clay/10 text-white' : 'border-white/10 bg-brand-black text-slate-300')
+    btn.className = `min-h-[44px] p-2 rounded-xl border text-center text-xs font-bold transition touch-manipulation active:scale-95 ${
+      tStr === currentSelectedSlot 
+        ? 'border-brand-lime bg-brand-lime text-brand-black shadow-lg shadow-brand-lime/20' 
+        : (isPeak ? 'border-brand-clay/30 bg-brand-clay/10 text-white hover:border-brand-clay' : 'border-white/10 bg-brand-black text-slate-300 hover:border-brand-lime/40')
     }`;
     btn.innerHTML = `<span>${tStr}</span><small class="block text-[9px] ${tStr === currentSelectedSlot ? 'text-brand-black font-black' : (isPeak ? 'text-brand-clay' : 'text-brand-lime')}">₱${isPeak ? 500 : 400}</small>`;
     btn.onclick = () => {
       currentSelectedSlot = tStr;
       isCurrentSlotPeak = isPeak;
       document.querySelectorAll('#drawer-slot-buttons button').forEach(b => {
-        b.className = 'p-2 rounded-xl border text-center text-xs font-bold transition border-white/10 bg-brand-black text-slate-300';
+        b.className = 'min-h-[44px] p-2 rounded-xl border text-center text-xs font-bold transition touch-manipulation active:scale-95 border-white/10 bg-brand-black text-slate-300 hover:border-brand-lime/40';
       });
-      btn.className = 'p-2 rounded-xl border text-center text-xs font-bold transition border-brand-lime bg-brand-lime text-brand-black';
+      btn.className = 'min-h-[44px] p-2 rounded-xl border text-center text-xs font-bold transition touch-manipulation border-brand-lime bg-brand-lime text-brand-black shadow-lg shadow-brand-lime/20';
       const badge = document.getElementById('drawer-rate-badge');
       if (badge) badge.textContent = isPeak ? 'Peak Hour (₱500/hr)' : 'Regular Hour (₱400/hr)';
       recalculateDrawerTotal();
@@ -50,6 +62,7 @@ function openBookingDrawer(preSelectCourt = null) {
   const drawer = document.getElementById('booking-drawer');
   if (!drawer) return;
   drawer.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden'); // Lock body scroll on mobile
   initDrawerSlots();
   recalculateDrawerTotal();
 }
@@ -58,14 +71,15 @@ function closeBookingDrawer() {
   const drawer = document.getElementById('booking-drawer');
   if (!drawer) return;
   drawer.classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
 }
 
 function drawerSetCourt(c) {
   currentSelectedCourt = c;
   document.querySelectorAll('#drawer-court-buttons button').forEach((b, idx) => {
     b.className = (idx === c - 1)
-      ? 'drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left'
-      : 'drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left';
+      ? 'drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left transition'
+      : 'drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20';
     const label = b.querySelector('span:last-child');
     if (label) {
       label.className = (idx === c - 1) ? 'text-xs font-black text-brand-lime' : 'text-xs font-black text-white';
@@ -176,6 +190,15 @@ function downloadCalendarInvite() {
   link.click();
   document.body.removeChild(link);
 }
+
+// ESC key to close drawer/modals
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeBookingDrawer();
+    closeHitPayModal();
+    closeMatchPassModal();
+  }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   initDrawerSlots();

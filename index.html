@@ -41,37 +41,38 @@
     }
   </script>
 
-  <style>
+    <style>
+    html { -webkit-tap-highlight-color: transparent; }
+    .touch-scroll { -webkit-overflow-scrolling: touch; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #070A0F; }
     ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #D4FF00; }
-    
     .lime-glow { box-shadow: 0 0 35px -5px rgba(212, 255, 0, 0.35); }
     .card-glow:hover { border-color: rgba(212, 255, 0, 0.4); box-shadow: 0 10px 40px -10px rgba(212, 255, 0, 0.15); }
     .glass { background: rgba(18, 26, 42, 0.7); backdrop-filter: blur(16px); }
     .text-stroke-lime { -webkit-text-stroke: 1.5px #D4FF00; color: transparent; }
-    .hero-mask { background: linear-gradient(180deg, rgba(7, 10, 15, 0.2) 0%, rgba(7, 10, 15, 0.75) 60%, #070A0F 100%); }
+    .hero-mask { background: linear-gradient(180deg, rgba(7, 10, 15, 0.25) 0%, rgba(7, 10, 15, 0.8) 60%, #070A0F 100%); }
     .ticket-edge { background-image: radial-gradient(circle at 0 50%, transparent 12px, #121A2A 13px), radial-gradient(circle at 100% 50%, transparent 12px, #121A2A 13px); }
   </style>
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black overflow-x-hidden">
 
   <!-- ================= TOP NAVIGATION BAR ================= -->
-  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5 bg-brand-black/85 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5 bg-brand-black/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
       
       <!-- Brand Logo -->
-      <a href="index.html" class="flex items-center gap-3 group">
-        <div class="h-11 w-11 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl shadow-lg shadow-brand-lime/25 group-hover:scale-105 transition-transform">
+      <a href="index.html" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+        <div class="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-xl sm:text-2xl shadow-lg shadow-brand-lime/25 group-hover:scale-105 transition-transform flex-shrink-0">
           🎾
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xl font-black tracking-tight text-white uppercase">P&amp;F RALLY</span>
-            <span class="hidden sm:inline-block text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime border border-brand-lime/30">CLUB</span>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="text-base sm:text-xl font-black tracking-tight text-white uppercase">P&amp;F RALLY</span>
+            <span class="hidden min-[400px]:inline-block text-[9px] sm:text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime border border-brand-lime/30">CLUB</span>
           </div>
-          <span class="text-[10px] font-bold tracking-[0.2em] text-slate-400 block -mt-1 uppercase">Pickleball Ground</span>
+          <span class="hidden sm:block text-[10px] font-bold tracking-[0.2em] text-slate-400 -mt-1 uppercase">Pickleball Ground</span>
         </div>
       </a>
 
@@ -86,16 +87,16 @@
       </nav>
 
       <!-- Right CTAs -->
-      <div class="flex items-center gap-3">
-        <a href="check-booking.html" class="hidden sm:flex text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white px-3 py-2">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="check-booking.html" class="hidden lg:flex text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white px-3 py-2">
           Find Match
         </a>
-        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10" aria-label="Toggle menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <button onclick="openBookingDrawer()" class="h-9 sm:h-10 px-3.5 sm:px-5 rounded-full bg-brand-lime text-brand-black font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 hover:bg-brand-limeHover transition-all active:scale-95 lime-glow">
+          <span>Book</span><span class="hidden min-[380px]:inline">Court</span>
+          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
-        <button onclick="openBookingDrawer()" class="h-10 px-4 sm:px-6 rounded-full bg-brand-lime text-brand-black font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-brand-limeHover transition-all hover:scale-105 lime-glow">
-          <span>Book Court</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10 flex items-center justify-center transition active:scale-95" aria-label="Toggle menu">
+          <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
 
@@ -147,7 +148,7 @@
       </div>
 
       <!-- Giant Bold Title -->
-      <h1 class="text-5xl sm:text-7xl lg:text-9xl font-black uppercase tracking-tight leading-[0.88] text-white">
+      <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black uppercase tracking-tight leading-[0.92] text-white">
         PLAY.<br>
         COMPETE.<br>
         <span class="text-brand-lime">CONNECT.</span>
@@ -408,6 +409,12 @@
       <div class="mb-8">
         <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Select Session Date</label>
         <div id="date-carousel" class="flex gap-2.5 overflow-x-auto pb-4 scrollbar-none"></div>
+      </div>
+
+            <!-- Mobile / Tablet Swipe Indicator -->
+      <div class="lg:hidden flex items-center justify-between text-[11px] font-mono text-brand-lime bg-brand-lime/10 border border-brand-lime/20 rounded-2xl px-4 py-2.5 mb-4 touch-scroll">
+        <span class="flex items-center gap-1.5 font-bold"><span>↔</span> Swipe horizontally to view all 4 Courts</span>
+        <span class="text-[9px] uppercase tracking-widest text-slate-400">Courts 1–4</span>
       </div>
 
       <!-- 4-Court Visual Schedule Grid -->
@@ -713,15 +720,18 @@
         </div>
       </div>
 
-      <div class="pt-6 border-t border-white/10 mt-6">
-        <div class="flex items-baseline justify-between mb-4">
+      </div>
+
+      <!-- Drawer Footer (Sticky Pinned to Bottom on All Devices) -->
+      <div class="flex-shrink-0 p-4 sm:p-6 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20">
+        <div class="flex items-baseline justify-between mb-3">
           <div>
             <span class="text-xs text-slate-400 block font-semibold">Total to Pay</span>
-            <span class="text-[10px] text-brand-lime">🔒 Instant HitPay GCash Auto-Verify</span>
+            <span class="text-[10px] text-brand-lime font-mono">🔒 Instant HitPay GCash Auto-Verify</span>
           </div>
-          <span id="drawer-total-amount" class="text-3xl font-black text-brand-lime font-mono">₱400</span>
+          <span id="drawer-total-amount" class="text-2xl sm:text-3xl font-black text-brand-lime font-mono">₱400</span>
         </div>
-        <button onclick="launchHitPayCheckout()" class="w-full py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-sm hover:bg-brand-limeHover transition lime-glow flex items-center justify-center gap-2">
+        <button onclick="launchHitPayCheckout()" class="w-full py-3.5 sm:py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs sm:text-sm hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
           <span>Pay Instantly with GCash</span> ⚡
         </button>
       </div>

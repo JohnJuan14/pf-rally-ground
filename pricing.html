@@ -34,27 +34,34 @@
       }
     }
   </script>
-  <style>
+    <style>
+    html { -webkit-tap-highlight-color: transparent; }
+    .touch-scroll { -webkit-overflow-scrolling: touch; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070A0F; }
+    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4FF00; }
     .lime-glow { box-shadow: 0 0 35px -5px rgba(212, 255, 0, 0.35); }
     .card-glow:hover { border-color: rgba(212, 255, 0, 0.4); box-shadow: 0 10px 40px -10px rgba(212, 255, 0, 0.15); }
+    .glass { background: rgba(18, 26, 42, 0.7); backdrop-filter: blur(16px); }
   </style>
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black">
 
   <!-- ================= TOP NAVIGATION BAR ================= -->
-  <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-brand-black/85 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5 bg-brand-black/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
       
-      <a href="index.html" class="flex items-center gap-3 group">
-        <div class="h-11 w-11 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl shadow-lg shadow-brand-lime/25 group-hover:scale-105 transition-transform">
+      <a href="index.html" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+        <div class="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-xl sm:text-2xl shadow-lg shadow-brand-lime/25 group-hover:scale-105 transition-transform flex-shrink-0">
           🎾
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xl font-black tracking-tight text-white uppercase">P&amp;F RALLY</span>
-            <span class="hidden sm:inline-block text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime border border-brand-lime/30">CLUB</span>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="text-base sm:text-xl font-black tracking-tight text-white uppercase">P&amp;F RALLY</span>
+            <span class="hidden min-[400px]:inline-block text-[9px] sm:text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime border border-brand-lime/30">CLUB</span>
           </div>
-          <span class="text-[10px] font-bold tracking-[0.2em] text-slate-400 block -mt-1 uppercase">Pickleball Ground</span>
+          <span class="hidden sm:block text-[10px] font-bold tracking-[0.2em] text-slate-400 -mt-1 uppercase">Pickleball Ground</span>
         </div>
       </a>
 
@@ -66,31 +73,31 @@
         <a href="check-booking.html" class="hover:text-brand-lime transition-colors">My Booking</a>
       </nav>
 
-      <div class="flex items-center gap-3">
-        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10" aria-label="Toggle menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="openBookingDrawer()" class="h-9 sm:h-10 px-3.5 sm:px-5 rounded-full bg-brand-lime text-brand-black font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 hover:bg-brand-limeHover transition-all active:scale-95 lime-glow">
+          <span>Book</span><span class="hidden min-[380px]:inline">Court</span>
+          <span class="font-bold">→</span>
         </button>
-        <button onclick="openBookingDrawer()" class="h-10 px-5 rounded-full bg-brand-lime text-brand-black font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-brand-limeHover transition-all hover:scale-105 lime-glow">
-          <span>Book Court</span>
-          <span>→</span>
+        <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10 flex items-center justify-center transition active:scale-95" aria-label="Toggle menu">
+          <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
 
     </div>
-  
+
     <!-- Mobile Navigation Dropdown -->
-    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl px-4 py-4 space-y-2 text-xs font-bold uppercase tracking-wider">
-      <a href="courts.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Courts</a>
-      <a href="index.html#schedule" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Live Schedule</a>
-      <a href="open-play.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Open Play</a>
-      <a href="coaching.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Coaching (Coach Jerome)</a>
-      <a href="pricing.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Rates & Gear</a>
-      <a href="check-booking.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">My Booking</a>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-brand-dark/98 backdrop-blur-2xl px-4 py-4 space-y-1 text-xs font-black uppercase tracking-wider max-h-[calc(100dvh-4.5rem)] overflow-y-auto shadow-2xl">
+      <a href="courts.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition hover:text-brand-lime transition"><span>Courts</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="index.html#schedule" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition"><span>Live Schedule</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="open-play.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition hover:text-brand-lime transition"><span>Open Play (6 Sessions)</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="coaching.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition hover:text-brand-lime transition"><span>Coach Jerome (Academy)</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="pricing.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition text-brand-lime font-black"><span>Rates &amp; Gear</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="check-booking.html" class="flex items-center justify-between py-3 px-3 rounded-xl bg-brand-lime/10 text-brand-lime border border-brand-lime/30 rounded-xl mt-2 transition hover:text-brand-lime transition"><span>My Booking Pass</span> <span>🎫</span></a>
     </div>
   </header>
 
   <!-- ================= HERO ================= -->
-  <section class="pt-36 pb-16 bg-brand-dark border-b border-white/10 relative overflow-hidden">
+  <section class="pt-28 sm:pt-36 pb-12 sm:pb-16 bg-brand-dark border-b border-white/10 relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime block mb-2">PRICING POLICY</span>
       <h1 class="text-5xl sm:text-7xl font-black uppercase tracking-tight text-white">
@@ -232,64 +239,67 @@
 
   <!-- ================= INCLUDED DRAWER & MODALS ================= -->
   <div id="booking-drawer" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/80 backdrop-blur-sm "></div>
-    <div class="absolute right-0 top-0 bottom-0 w-full max-w-xl bg-brand-dark border-l border-white/10 shadow-2xl p-6 sm:p-8 overflow-y-auto  transform translate-x-full transition-transform duration-300 flex flex-col justify-between" id="drawer-panel">
-      <div>
-        <div class="flex items-center justify-between border-b border-white/10 pb-5">
-          <div class="flex items-center gap-2.5">
-            <span class="h-9 w-9 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black">🏓</span>
-            <div>
-              <h3 class="text-lg font-black uppercase tracking-tight text-white">Court Reservation</h3>
-              <p class="text-[11px] text-slate-400">Automated HitPay GCash Checkout</p>
-            </div>
+    <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-xl bg-brand-dark border-l border-white/10 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="drawer-panel">
+      
+      <!-- Drawer Header (Fixed) -->
+      <div class="flex-shrink-0 px-5 py-4 sm:px-6 sm:py-5 border-b border-white/10 flex items-center justify-between bg-brand-dark/90 backdrop-blur-md">
+        <div class="flex items-center gap-2.5">
+          <span class="h-9 w-9 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-lg flex-shrink-0">🏓</span>
+          <div>
+            <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white">Court Reservation</h3>
+            <p class="text-[10px] sm:text-[11px] text-slate-400">Automated HitPay GCash Checkout</p>
           </div>
-          <button onclick="closeBookingDrawer()" class="h-8 w-8 rounded-full bg-white/10 text-slate-400 hover:text-white flex items-center justify-center text-sm">✕</button>
         </div>
+        <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95" aria-label="Close drawer">✕</button>
+      </div>
 
-        <div class="mt-6">
+      <!-- Drawer Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto px-5 py-6 sm:px-6 space-y-6 overscroll-contain touch-scroll">
+        <div>
           <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">1. Select Court</label>
           <div class="grid grid-cols-2 gap-2" id="drawer-court-buttons">
-            <button onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left">
+            <button onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left transition">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 01</span>
               <span class="text-xs font-black text-brand-lime">Indoor Championship</span>
             </button>
-            <button onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+            <button onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 02</span>
               <span class="text-xs font-black text-white">Indoor Tournament</span>
             </button>
-            <button onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+            <button onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 03</span>
               <span class="text-xs font-black text-white">Covered Outdoor</span>
             </button>
-            <button onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left">
+            <button onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20">
               <span class="text-[10px] font-bold text-slate-400 block">COURT 04</span>
               <span class="text-xs font-black text-white">Pro Training Court</span>
             </button>
           </div>
         </div>
 
-        <div class="mt-6">
+        <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-black uppercase tracking-wider text-slate-400">2. Pick Hour</label>
             <span class="text-[10px] font-mono text-brand-lime" id="drawer-rate-badge">Regular: ₱400/hr</span>
           </div>
-          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1" id="drawer-slot-buttons"></div>
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-44 overflow-y-auto pr-1 touch-scroll" id="drawer-slot-buttons"></div>
         </div>
 
-        <div class="mt-6">
+        <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-black uppercase tracking-wider text-slate-400">3. Players Count</label>
-            <span class="text-[10px] text-slate-400">Up to 6 included (+₱100/player over 6)</span>
+            <span class="text-[10px] text-slate-400">Up to 6 included (+₱100/pax over 6)</span>
           </div>
           <div class="flex items-center gap-3 bg-brand-card border border-white/10 p-2 rounded-2xl w-fit">
-            <button onclick="changePlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20">-</button>
+            <button onclick="changePlayers(-1)" class="w-10 h-10 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-lg">-</button>
             <span id="player-count" class="font-mono font-black text-lg text-brand-lime px-2">4</span>
             <span class="text-xs text-slate-400">Players</span>
-            <button onclick="changePlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20">+</button>
+            <button onclick="changePlayers(1)" class="w-10 h-10 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-lg">+</button>
           </div>
         </div>
 
-        <div class="mt-6">
+        <div>
           <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">4. Add-ons &amp; Gear</label>
           <div class="space-y-2">
             <label class="flex items-center justify-between p-3 rounded-xl bg-brand-card border border-white/10 cursor-pointer hover:border-brand-lime/40">
@@ -307,24 +317,23 @@
           </div>
         </div>
 
-        <div class="mt-6 space-y-3">
+        <div class="space-y-3">
           <label class="block text-xs font-black uppercase tracking-wider text-slate-400">5. Guest Information</label>
-          <input type="text" id="cust-name" placeholder="Full Name" value="Dexter Lim" class="w-full bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
-          <div class="grid grid-cols-2 gap-2">
-            <input type="tel" id="cust-phone" placeholder="+63 9XX XXX XXXX" value="+63 999 883 2346" class="bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
-            <input type="email" id="cust-email" placeholder="Email Address" value="player@pfrally.ph" class="bg-brand-card border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-lime">
+          <input type="text" id="cust-name" placeholder="Full Name" value="Dexter Lim" class="w-full bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="tel" id="cust-phone" placeholder="+63 9XX XXX XXXX" value="+63 999 883 2346" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+            <input type="email" id="cust-email" placeholder="Email Address" value="player@pfrally.ph" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
           </div>
         </div>
-              <!-- Step 6: Payment Terms & Facility Rules -->
-        <div class="mt-6 p-4 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2.5">
+
+        <!-- Payment Terms & Rules -->
+        <div class="p-4 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2.5">
           <label class="flex items-start gap-2.5 cursor-pointer">
             <input type="checkbox" id="accept-terms" checked class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
             <span class="text-xs text-slate-300 leading-snug">
               I agree to the <button type="button" onclick="toggleTermsDetails()" class="text-brand-lime font-bold underline">Payment Terms, 48h Reschedule &amp; Rules</button>
             </span>
           </label>
-
-          <!-- Collapsible Terms Details -->
           <div id="terms-details" class="text-[11px] text-slate-400 space-y-1.5 pt-2 border-t border-white/10 leading-relaxed font-medium">
             <p>● <b class="text-white">Non-Refundable:</b> Payment is final upon HitPay/GCash confirmation.</p>
             <p>● <b class="text-white">48-Hour Rescheduling:</b> Move your session once if requested &ge; 48 hours in advance.</p>
@@ -334,15 +343,16 @@
         </div>
       </div>
 
-      <div class="pt-6 border-t border-white/10 mt-6">
-        <div class="flex items-baseline justify-between mb-4">
+      <!-- Drawer Footer (Sticky Pinned to Bottom on All Devices) -->
+      <div class="flex-shrink-0 p-4 sm:p-6 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20">
+        <div class="flex items-baseline justify-between mb-3">
           <div>
             <span class="text-xs text-slate-400 block font-semibold">Total to Pay</span>
-            <span class="text-[10px] text-brand-lime">🔒 Instant HitPay GCash Auto-Verify</span>
+            <span class="text-[10px] text-brand-lime font-mono">🔒 Instant HitPay GCash Auto-Verify</span>
           </div>
-          <span id="drawer-total-amount" class="text-3xl font-black text-brand-lime font-mono">₱400</span>
+          <span id="drawer-total-amount" class="text-2xl sm:text-3xl font-black text-brand-lime font-mono">₱400</span>
         </div>
-        <button onclick="launchHitPayCheckout()" class="w-full py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-sm hover:bg-brand-limeHover transition lime-glow flex items-center justify-center gap-2">
+        <button onclick="launchHitPayCheckout()" class="w-full py-3.5 sm:py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs sm:text-sm hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
           <span>Pay Instantly with GCash</span> ⚡
         </button>
       </div>
@@ -352,7 +362,7 @@
   <!-- HitPay Modal -->
   <div id="hitpay-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeHitPayModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-    <div class="relative z-10 w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/30 p-6 shadow-2xl text-center">
+    <div class="relative z-10 w-[94%] sm:w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/30 p-5 sm:p-7 shadow-2xl text-center touch-scroll">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lime/10 text-brand-lime border border-brand-lime/20 text-xs font-bold mb-4">
         <span>⚡ HitPay Gateway</span> • <span>Automated Webhook</span>
       </div>
@@ -374,7 +384,7 @@
   <!-- Match Pass Modal -->
   <div id="match-pass-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeMatchPassModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-    <div class="relative z-10 w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/40 p-6 sm:p-8 shadow-2xl text-center">
+    <div class="relative z-10 w-[94%] sm:w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/40 p-5 sm:p-7 shadow-2xl text-center touch-scroll">
       <div class="h-12 w-12 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl mx-auto mb-4">✓</div>
       <span class="text-[10px] font-black uppercase tracking-widest text-brand-lime block">MATCH PASS ISSUED</span>
       <h3 class="text-2xl font-black uppercase tracking-tight text-white mt-1">Digital Match Pass</h3>

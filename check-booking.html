@@ -34,27 +34,34 @@
       }
     }
   </script>
-  <style>
+    <style>
+    html { -webkit-tap-highlight-color: transparent; }
+    .touch-scroll { -webkit-overflow-scrolling: touch; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070A0F; }
+    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4FF00; }
     .lime-glow { box-shadow: 0 0 35px -5px rgba(212, 255, 0, 0.35); }
     .card-glow:hover { border-color: rgba(212, 255, 0, 0.4); box-shadow: 0 10px 40px -10px rgba(212, 255, 0, 0.15); }
+    .glass { background: rgba(18, 26, 42, 0.7); backdrop-filter: blur(16px); }
   </style>
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black">
 
   <!-- ================= TOP NAVIGATION BAR ================= -->
-  <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-brand-black/85 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/5 bg-brand-black/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
       
-      <a href="index.html" class="flex items-center gap-3 group">
-        <div class="h-11 w-11 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-2xl shadow-lg shadow-brand-lime/25 group-hover:scale-105 transition-transform">
+      <a href="index.html" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+        <div class="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-xl sm:text-2xl shadow-lg shadow-brand-lime/25 group-hover:scale-105 transition-transform flex-shrink-0">
           🎾
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xl font-black tracking-tight text-white uppercase">P&amp;F RALLY</span>
-            <span class="hidden sm:inline-block text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime border border-brand-lime/30">CLUB</span>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="text-base sm:text-xl font-black tracking-tight text-white uppercase">P&amp;F RALLY</span>
+            <span class="hidden min-[400px]:inline-block text-[9px] sm:text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-brand-lime/10 text-brand-lime border border-brand-lime/30">CLUB</span>
           </div>
-          <span class="text-[10px] font-bold tracking-[0.2em] text-slate-400 block -mt-1 uppercase">Pickleball Ground</span>
+          <span class="hidden sm:block text-[10px] font-bold tracking-[0.2em] text-slate-400 -mt-1 uppercase">Pickleball Ground</span>
         </div>
       </a>
 
@@ -66,31 +73,31 @@
         <a href="check-booking.html" class="text-brand-lime font-black border-b-2 border-brand-lime pb-1">My Booking</a>
       </nav>
 
-      <div class="flex items-center gap-3">
-        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10" aria-label="Toggle menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="openBookingDrawer()" class="h-9 sm:h-10 px-3.5 sm:px-5 rounded-full bg-brand-lime text-brand-black font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 hover:bg-brand-limeHover transition-all active:scale-95 lime-glow">
+          <span>Book</span><span class="hidden min-[380px]:inline">Court</span>
+          <span class="font-bold">→</span>
         </button>
-        <button onclick="openBookingDrawer()" class="h-10 px-5 rounded-full bg-brand-lime text-brand-black font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-brand-limeHover transition-all hover:scale-105 lime-glow">
-          <span>Book Court</span>
-          <span>→</span>
+        <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10 flex items-center justify-center transition active:scale-95" aria-label="Toggle menu">
+          <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
 
     </div>
-  
+
     <!-- Mobile Navigation Dropdown -->
-    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl px-4 py-4 space-y-2 text-xs font-bold uppercase tracking-wider">
-      <a href="courts.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Courts</a>
-      <a href="index.html#schedule" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Live Schedule</a>
-      <a href="open-play.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Open Play</a>
-      <a href="coaching.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Coaching (Coach Jerome)</a>
-      <a href="pricing.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">Rates & Gear</a>
-      <a href="check-booking.html" class="block py-2.5 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime">My Booking</a>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-brand-dark/98 backdrop-blur-2xl px-4 py-4 space-y-1 text-xs font-black uppercase tracking-wider max-h-[calc(100dvh-4.5rem)] overflow-y-auto shadow-2xl">
+      <a href="courts.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition hover:text-brand-lime transition"><span>Courts</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="index.html#schedule" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition"><span>Live Schedule</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="open-play.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition hover:text-brand-lime transition"><span>Open Play (6 Sessions)</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="coaching.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition hover:text-brand-lime transition"><span>Coach Jerome (Academy)</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="pricing.html" class="flex items-center justify-between py-3 px-3 rounded-xl hover:bg-white/5 hover:text-brand-lime border border-transparent hover:border-brand-lime/20 transition hover:text-brand-lime transition"><span>Rates &amp; Gear</span> <span class="text-brand-lime font-mono">→</span></a>
+      <a href="check-booking.html" class="flex items-center justify-between py-3 px-3 rounded-xl bg-brand-lime/10 text-brand-lime border border-brand-lime/30 rounded-xl mt-2 transition text-brand-lime font-black"><span>My Booking Pass</span> <span>🎫</span></a>
     </div>
   </header>
 
   <!-- ================= HERO & LOOKUP ================= -->
-  <section class="pt-36 pb-16 bg-brand-dark border-b border-white/10 relative overflow-hidden">
+  <section class="pt-28 sm:pt-36 pb-12 sm:pb-16 bg-brand-dark border-b border-white/10 relative overflow-hidden">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
       <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime block mb-2">SELF-SERVICE MATCH CENTER</span>
       <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white">
