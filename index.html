@@ -300,48 +300,97 @@
     }
 
   
-    /* GoHighLevel (GHL) Style Calendar & Slot Pills */
-    .ghl-calendar-cell {
-      aspect-ratio: 1 / 1;
+    /* Authentic Date Rail & Date Tiles */
+    .date-rail {
+      display: flex;
+      gap: 0.625rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .date-rail::-webkit-scrollbar {
+      height: 6px;
+    }
+    .date-rail::-webkit-scrollbar-thumb {
+      background: rgba(155, 230, 0, 0.3);
+      border-radius: 9999px;
+    }
+    .date-tile {
+      text-align: center;
+      background: #0A1628;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.25rem;
+      min-width: 82px;
+      padding: 0.85rem 0.6rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+    .date-tile:hover {
+      border-color: #9BE600;
+      background: rgba(155, 230, 0, 0.08);
+      transform: translateY(-2px);
+    }
+    .date-tile.date-tile-active {
+      border-color: #9BE600 !important;
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      box-shadow: 0 10px 25px -8px rgba(155, 230, 0, 0.45);
+      transform: translateY(-2px);
+    }
+    .date-tile.date-tile-active .tile-weekday {
+      color: #050E1D !important;
+      opacity: 0.85;
+    }
+    .date-tile.date-tile-active .tile-day {
+      color: #050E1D !important;
+    }
+    .date-tile.date-tile-active .tile-month {
+      color: #050E1D !important;
+      opacity: 0.85;
+    }
+
+    /* Authentic Time Chips */
+    .time-chip {
+      text-align: center;
+      border-radius: 0.875rem;
+      padding: 0.7rem 0.5rem;
+      font-size: 0.8125rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(10, 22, 40, 0.85);
+      color: #E2E8F0;
+      transition: all 0.18s ease;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 9999px;
-      font-size: 0.8125rem;
-      font-weight: 700;
-      transition: all 0.15s ease;
-      cursor: pointer;
+      user-select: none;
     }
-    .ghl-calendar-cell:hover:not(.disabled):not(.selected) {
-      background-color: rgba(155, 230, 0, 0.2);
-      color: #FFFFFF;
-    }
-    .ghl-calendar-cell.selected {
-      background-color: #9BE600 !important;
-      color: #050E1D !important;
-      font-weight: 900 !important;
-      box-shadow: 0 4px 14px rgba(155, 230, 0, 0.4);
-      transform: scale(1.06);
-    }
-    .ghl-calendar-cell.today-marker:not(.selected) {
-      border: 1.5px solid #9BE600;
-      color: #9BE600;
-    }
-    .ghl-calendar-cell.disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-    .ghl-slot-pill {
-      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .ghl-slot-pill.active {
-      background-color: #9BE600 !important;
-      color: #050E1D !important;
-      border-color: #9BE600 !important;
-      font-weight: 900 !important;
-      box-shadow: 0 4px 16px rgba(155, 230, 0, 0.35);
+    .time-chip:hover:not(:disabled) {
+      background: rgba(155, 230, 0, 0.15);
+      border-color: #9BE600;
       transform: translateY(-1px);
+    }
+    .time-chip.time-chip-active {
+      border-color: #9BE600 !important;
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      font-weight: 900 !important;
+      box-shadow: 0 8px 20px -4px rgba(155, 230, 0, 0.45);
+    }
+    .time-chip:disabled {
+      cursor: not-allowed;
+      opacity: 0.3;
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.06);
+      text-decoration: line-through;
     }
 
   </style>
@@ -740,7 +789,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-bold text-slate-300 bg-brand-black/80 px-4 py-3 rounded-2xl border border-white/15 shadow-lg">
-          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#10B981] shadow-sm shadow-[#10B981]/50"></span> Available (<b class="text-[#34D399] font-mono">₱400/hr</b>)</span>
+          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#10B981] shadow-sm shadow-[#10B981]/50"></span> Available: Daytime <b class="text-brand-lime font-mono">₱400/hr</b> &bull; Evening <b class="text-[#D4FF00] font-mono">₱500/hr</b></span>
           <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-slate-600"></span> Reserved / Blocked</span>
         </div>
       </div>
@@ -1043,7 +1092,7 @@
     </div>
   </footer>
 
-    <!-- ================= GHL-STYLE COURT RESERVATION DRAWER ================= -->
+      <!-- ================= AUTHENTIC DATE-RAIL COURT RESERVATION DRAWER ================= -->
   <div id="booking-drawer" class="fixed inset-0 z-50 hidden">
     <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
     <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-2xl lg:max-w-3xl bg-brand-dark border-l border-brand-lime/25 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="drawer-panel">
@@ -1055,13 +1104,13 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Reserve Your Court</h3>
-              <span class="px-2 py-0.5 rounded-full bg-brand-lime/20 text-brand-lime text-[10px] font-mono font-black">GHL CALENDAR</span>
+              <span class="px-2 py-0.5 rounded-full bg-brand-lime/20 text-brand-lime text-[10px] font-mono font-black">ONLINE BOOKING</span>
             </div>
-            <p class="text-[11px] text-slate-300 mt-1 font-semibold">Choose any date within the next 30 days &bull; ₱400.00 / hr</p>
+            <p class="text-[11px] text-slate-300 mt-1 font-semibold">Choose any date within the next 30 days &bull; Day: ₱400/hr &bull; Night: ₱500/hr</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <a href="book.html" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[11px] font-mono font-bold text-slate-200 transition" title="Open Full Screen Booking Portal">
+          <a href="book.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[11px] font-mono font-bold text-slate-200 transition" title="Open Full Screen Booking Portal">
             <span>Full Page</span>
             <span>↗</span>
           </a>
@@ -1072,108 +1121,90 @@
       <!-- Drawer Scrollable Body -->
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-6 overscroll-contain touch-scroll">
 
-        <!-- STEP 1: GHL Interactive Month Calendar & Available Time Slots -->
-        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-4">
+        <!-- STEP 1: Authentic 31-Day Date Rail -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">1. Select Date &amp; Time (GHL Calendar)</span>
-            <span class="text-[10px] font-mono text-slate-400">PHT (GMT+8)</span>
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">1. Choose a Date</span>
+            <span id="drawer-selected-date-label" class="text-xs font-mono text-brand-lime font-bold">Today</span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-            <!-- Left: Month Calendar Grid -->
-            <div class="md:col-span-6 bg-brand-black/70 rounded-2xl p-3.5 border border-white/10">
-              <div class="flex items-center justify-between mb-3 px-1">
-                <button type="button" onclick="ghlPrevMonth()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-slate-300 flex items-center justify-center font-bold text-sm transition">‹</button>
-                <span id="ghl-month-header" class="text-xs font-black uppercase tracking-wider text-white font-mono">October 2026</span>
-                <button type="button" onclick="ghlNextMonth()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-slate-300 flex items-center justify-center font-bold text-sm transition">›</button>
-              </div>
-
-              <!-- Weekdays Row -->
-              <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-mono font-black text-slate-400 mb-2 uppercase">
-                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-              </div>
-
-              <!-- 35/42 Days Grid -->
-              <div id="ghl-days-grid" class="grid grid-cols-7 gap-1 text-xs"></div>
-            </div>
-
-            <!-- Right: Available Slots for Selected Date -->
-            <div class="md:col-span-6 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/10">
-                  <span class="text-xs font-black uppercase text-white font-mono" id="ghl-selected-date-title">Today</span>
-                  <span class="text-[10px] font-mono text-brand-lime font-bold">1 Hour Slots</span>
-                </div>
-
-                <!-- Slot Duration Toggle -->
-                <div class="grid grid-cols-3 gap-1.5 mb-3 text-center">
-                  <button type="button" onclick="setDrawerDuration(1)" id="dur-btn-1" class="py-1.5 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black">1 hr (₱400)</button>
-                  <button type="button" onclick="setDrawerDuration(2)" id="dur-btn-2" class="py-1.5 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">2 hrs (₱800)</button>
-                  <button type="button" onclick="setDrawerDuration(3)" id="dur-btn-3" class="py-1.5 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">3 hrs (₱1,200)</button>
-                </div>
-
-                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Select Start Time:</div>
-                <!-- Vertical Scrollable Slots (GHL Style) -->
-                <div id="ghl-drawer-slots" class="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1 touch-scroll"></div>
-              </div>
-
-              <div class="mt-3 pt-2 border-t border-white/10 text-[10px] text-slate-400 flex items-center justify-between">
-                <span>Selected: <b class="text-brand-lime font-mono" id="ghl-selected-slot-badge">None</b></span>
-                <span class="text-slate-400">Operating: 6AM–12AM</span>
-              </div>
-            </div>
+          <!-- Date Rail -->
+          <div class="date-rail" id="drawer-date-rail">
+            <!-- 31 days dynamically generated -->
           </div>
         </div>
 
-        <!-- STEP 2: Select Court & Players -->
+        <!-- STEP 2: Select Court & Duration -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">2. Select Court &amp; Players</span>
-            <span class="text-[10px] font-mono text-slate-400">4 Pro Courts</span>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">2. Select Court &amp; Duration</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-300 font-semibold">Duration:</span>
+              <div class="inline-flex rounded-xl bg-brand-black p-1 border border-white/15 text-xs font-mono">
+                <button type="button" onclick="setDrawerDuration(1)" id="dur-btn-1" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black">1 hr</button>
+                <button type="button" onclick="setDrawerDuration(2)" id="dur-btn-2" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">2 hrs</button>
+                <button type="button" onclick="setDrawerDuration(3)" id="dur-btn-3" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">3 hrs</button>
+              </div>
+            </div>
           </div>
 
           <!-- 4 Courts Buttons -->
-          <div>
-            <label class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-2">Court Selection *</label>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="drawer-court-buttons">
-              <button type="button" onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/15 text-left transition">
-                <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 01</span>
-                <span class="text-xs font-black text-brand-lime block leading-tight">Championship</span>
-              </button>
-              <button type="button" onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-black text-left transition hover:border-white/20">
-                <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 02</span>
-                <span class="text-xs font-black text-white block leading-tight">Tournament</span>
-              </button>
-              <button type="button" onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-black text-left transition hover:border-white/20">
-                <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 03</span>
-                <span class="text-xs font-black text-white block leading-tight">Covered Outdoor</span>
-              </button>
-              <button type="button" onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-xl border border-white/10 bg-brand-black text-left transition hover:border-white/20">
-                <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 04</span>
-                <span class="text-xs font-black text-white block leading-tight">Training Court</span>
-              </button>
-            </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="drawer-court-buttons">
+            <button type="button" onclick="drawerSetCourt(1)" class="drawer-court active p-3 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition" data-court="1">
+              <span class="text-[9px] font-mono font-black text-brand-lime block uppercase">Court 01</span>
+              <span class="text-xs font-black text-white block mt-0.5">Championship</span>
+            </button>
+            <button type="button" onclick="drawerSetCourt(2)" class="drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20" data-court="2">
+              <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 02</span>
+              <span class="text-xs font-black text-white block mt-0.5">Tournament</span>
+            </button>
+            <button type="button" onclick="drawerSetCourt(3)" class="drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20" data-court="3">
+              <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 03</span>
+              <span class="text-xs font-black text-white block mt-0.5">Covered</span>
+            </button>
+            <button type="button" onclick="drawerSetCourt(4)" class="drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20" data-court="4">
+              <span class="text-[9px] font-mono font-bold text-slate-400 block uppercase">Court 04</span>
+              <span class="text-xs font-black text-white block mt-0.5">Pro Training</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Choose Time Slot (Authentic Time Chips) -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">3. Pick Your Time</span>
+            <span class="text-xs font-mono text-brand-lime font-bold" id="drawer-slot-rate-indicator">Day: ₱400/hr &bull; Night: ₱500/hr</span>
           </div>
 
-          <!-- Players Stepper -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-white/10">
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="drawer-time-chips">
+            <!-- 18 time chips -->
+          </div>
+
+          <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-slate-400">
+            <span>Selected Start: <b class="text-brand-lime" id="drawer-selected-slot-badge">06:00 AM</b></span>
+            <span>Operating: 6AM&ndash;12AM</span>
+          </div>
+        </div>
+
+        <!-- STEP 4: Number of Players -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
             <div>
-              <label class="block text-xs font-black uppercase tracking-wider text-white">Number of Players</label>
-              <p class="text-[10px] text-slate-400">Up to 6 players included. Add ₱100 per player above 6.</p>
+              <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">4. Number of Players</span>
+              <p class="text-[11px] text-slate-400 mt-0.5">Up to 6 players included free (+₱100/extra player beyond 6).</p>
             </div>
-            <div class="flex items-center gap-3 bg-brand-black border border-white/15 p-1.5 rounded-2xl w-fit">
-              <button type="button" onclick="changePlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">-</button>
+            <div class="flex items-center gap-3 bg-brand-black border border-white/15 p-1.5 rounded-2xl">
+              <button type="button" onclick="changePlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&minus;</button>
               <span id="player-count" class="font-mono font-black text-base text-brand-lime px-2">4</span>
-              <span class="text-xs text-slate-300 pr-1">Players</span>
-              <button type="button" onclick="changePlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">+</button>
+              <button type="button" onclick="changePlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&plus;</button>
             </div>
           </div>
         </div>
 
-        <!-- STEP 3: Exact Scraped Equipment Rentals -->
+        <!-- STEP 5: Exact Scraped Equipment Rentals -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">3. Optional Equipment Rentals</span>
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">5. Optional Equipment Rentals</span>
             <span class="text-[10px] font-mono text-slate-400">Official Club Rates</span>
           </div>
 
@@ -1183,7 +1214,7 @@
                 <span class="text-xs font-bold text-white block">Standard paddle</span>
                 <span class="text-[10px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
-              <input type="checkbox" id="rent-paddle-std" onchange="recalculateGhlDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+              <input type="checkbox" id="rent-paddle-std" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
 
             <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
@@ -1191,7 +1222,7 @@
                 <span class="text-xs font-bold text-white block">Carbon paddle</span>
                 <span class="text-[10px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
-              <input type="checkbox" id="rent-paddle-carbon" onchange="recalculateGhlDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+              <input type="checkbox" id="rent-paddle-carbon" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
 
             <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
@@ -1199,7 +1230,7 @@
                 <span class="text-xs font-bold text-white block">Branded carbon paddle</span>
                 <span class="text-[10px] font-mono text-brand-lime font-bold">₱200.00</span>
               </div>
-              <input type="checkbox" id="rent-paddle-branded" onchange="recalculateGhlDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+              <input type="checkbox" id="rent-paddle-branded" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
 
             <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
@@ -1207,7 +1238,7 @@
                 <span class="text-xs font-bold text-white block">Pickleball ball</span>
                 <span class="text-[10px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
-              <input type="checkbox" id="rent-ball-single" onchange="recalculateGhlDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+              <input type="checkbox" id="rent-ball-single" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
 
             <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
@@ -1215,7 +1246,7 @@
                 <span class="text-xs font-bold text-white block">Training balls (50 pcs)</span>
                 <span class="text-[10px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
-              <input type="checkbox" id="rent-balls-bucket" onchange="recalculateGhlDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+              <input type="checkbox" id="rent-balls-bucket" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
 
             <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
@@ -1223,15 +1254,15 @@
                 <span class="text-xs font-bold text-white block">Training machine (per hr)</span>
                 <span class="text-[10px] font-mono text-brand-lime font-bold">₱100.00 / hr</span>
               </div>
-              <input type="checkbox" id="rent-machine" onchange="recalculateGhlDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
+              <input type="checkbox" id="rent-machine" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
             </label>
           </div>
         </div>
 
-        <!-- STEP 4: Guest Details -->
+        <!-- STEP 6: Guest Details -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">4. Guest Contact Details *</span>
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">6. Guest Contact Details *</span>
             <span class="text-[10px] font-mono text-slate-400">Strict Validation</span>
           </div>
 
@@ -1254,67 +1285,49 @@
           </div>
         </div>
 
-        <!-- STEP 5: Exact 3 Policies Checkboxes (From Scraped Site) -->
+        <!-- STEP 7: Exact 3 Policies Checkboxes -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
-          <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">5. Policies and Guest Consent *</span>
-          
-          <div class="space-y-2 text-xs">
-            <label class="flex items-start gap-2.5 p-3 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <input type="checkbox" id="policy-waiver" class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
-              <span class="text-slate-300 text-[11px] leading-relaxed">
-                I agree to the <b class="text-white">Facility waiver and court conduct rules</b>. I understand that all players must wear non-marking court shoes and observe club etiquette.
-              </span>
+          <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">7. Policies and Guest Consent *</span>
+          <div class="space-y-2.5 text-xs text-slate-300">
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
+              <input type="checkbox" id="policy-waiver" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
+              <span class="text-[11px] leading-tight"><b>Liability Waiver:</b> I accept the facility waiver, playing rules, and safety responsibilities.</span>
             </label>
-
-            <label class="flex items-start gap-2.5 p-3 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <input type="checkbox" id="policy-cancellation" class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
-              <span class="text-slate-300 text-[11px] leading-relaxed">
-                I understand the <b class="text-white">Booking-change and cancellation policy</b>. Confirmed reservations are final and rescheduling requires at least 24 hours advance notice.
-              </span>
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
+              <input type="checkbox" id="policy-cancellation" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
+              <span class="text-[11px] leading-tight"><b>Cancellation &amp; Reschedule:</b> Confirmed reservations are final; advance rescheduling permitted up to 24h prior.</span>
             </label>
-
-            <label class="flex items-start gap-2.5 p-3 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <input type="checkbox" id="policy-nonrefundable" class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
-              <span class="text-slate-300 text-[11px] leading-relaxed">
-                I accept that payment processing and convenience charges are <b class="text-white">non-refundable</b> upon transmission of reservation.
-              </span>
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
+              <input type="checkbox" id="policy-nonrefundable" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
+              <span class="text-[11px] leading-tight"><b>Non-Refundable Fee:</b> Service charges and court reservation fees cannot be returned after booking.</span>
             </label>
           </div>
-        </div>
-
-        <!-- Real-Time Booking Summary Card -->
-        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border-2 border-brand-lime/40 shadow-2xl space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-black uppercase tracking-wider text-white">Booking Summary</span>
-            <span id="drawer-summary-meta" class="text-[10px] font-mono text-brand-lime font-bold">Court 1 &bull; 1 hr session</span>
-          </div>
-
-          <div class="space-y-1.5 text-xs font-mono border-t border-b border-white/10 py-2.5">
-            <div class="flex justify-between items-center text-slate-300">
-              <span id="drawer-row-court-label">Court Hire (1 hr)</span>
-              <span class="text-white font-bold" id="drawer-cost-court">₱400.00</span>
-            </div>
-            <div class="flex justify-between items-center text-slate-300">
-              <span>Equipment Add-Ons</span>
-              <span class="text-white font-bold" id="drawer-cost-equipment">₱0.00</span>
-            </div>
-            <div class="flex justify-between items-center text-slate-300">
-              <span id="drawer-row-players-label">Extra Players (0)</span>
-              <span class="text-white font-bold" id="drawer-cost-players">₱0.00</span>
-            </div>
-            <div class="pt-2 border-t border-white/10 flex justify-between items-baseline">
-              <span class="text-sm font-black uppercase text-white">Grand Total:</span>
-              <span class="text-2xl font-black text-brand-lime" id="drawer-cost-total">₱400.00</span>
-            </div>
-          </div>
-
-          <button type="button" onclick="handleGhlDrawerProceed()" class="w-full py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition active:scale-95 lime-glow shadow-xl flex items-center justify-center gap-2">
-            <span>Proceed to Payment &amp; QR Verification</span>
-            <span>→</span>
-          </button>
         </div>
 
       </div>
+
+      <!-- Drawer Sticky Footer -->
+      <div class="flex-shrink-0 p-4 sm:p-5 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div>
+            <span class="text-[10px] font-mono text-slate-400 block uppercase" id="drawer-summary-meta">Court 01 &bull; 1 hr session</span>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="text-white font-bold" id="drawer-row-court-label">Court Hire</span>
+              <span class="text-brand-lime font-mono font-bold" id="drawer-cost-court">₱400.00</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-mono text-slate-400 block uppercase">Total Amount</span>
+            <span class="text-2xl sm:text-3xl font-black text-brand-lime font-mono" id="drawer-cost-total">₱400.00</span>
+          </div>
+        </div>
+
+        <button type="button" onclick="handleDrawerProceed()" class="w-full py-3.5 rounded-2xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 shadow-lg shadow-brand-lime/25 flex items-center justify-center gap-2">
+          <span>Proceed to Payment &amp; QR Verification</span>
+          <span>&rarr;</span>
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -1568,28 +1581,16 @@
     }
 
     
-    // ================= GHL-STYLE INTERACTIVE CALENDAR SCRIPT =================
-    const GHL_STATE = {
-      viewDate: new Date(),
-      selectedDate: new Date(),
-      selectedDuration: 1, // hours
-      selectedSlot: '06:00 AM',
+    // ================= AUTHENTIC DATE-RAIL CALENDAR & DRAWER ENGINE =================
+    const DRAWER_STATE = {
+      daysList: [],
+      selectedDateVal: '',
+      selectedDateLabel: '',
       selectedCourt: 1,
-      players: 4,
-      equipment: {
-        stdPaddle: false,
-        carbonPaddle: false,
-        brandedPaddle: false,
-        singleBall: false,
-        ballBucket: false,
-        machine: false
-      }
+      selectedDuration: 1,
+      selectedStartSlot: '06:00 AM',
+      players: 4
     };
-
-    const MONTH_NAMES = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
 
     const ALL_HOURS_SLOTS = [
       '06:00 AM', '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM',
@@ -1597,104 +1598,121 @@
       '06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM'
     ];
 
-    function renderGhlCalendar() {
-      const header = document.getElementById('ghl-month-header');
-      const grid = document.getElementById('ghl-days-grid');
-      if (!header || !grid) return;
+    function getHourlyRate(slotStr) {
+      if (!slotStr) return 400;
+      let hour24 = parseInt(slotStr, 10);
+      if (slotStr.includes("PM") && hour24 !== 12) hour24 += 12;
+      if (slotStr.includes("AM") && hour24 === 12) hour24 = 0;
+      return hour24 >= 18 ? 500 : 400;
+    }
 
-      const year = GHL_STATE.viewDate.getFullYear();
-      const month = GHL_STATE.viewDate.getMonth();
-      header.textContent = `${MONTH_NAMES[month]} ${year}`;
-      grid.innerHTML = '';
-
-      const firstDay = new Date(year, month, 1).getDay();
-      const totalDays = new Date(year, month + 1, 0).getDate();
-
+    function generateDrawerDays() {
+      DRAWER_STATE.daysList = [];
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const pad2 = n => String(n).padStart(2, '0');
+      const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
-      const maxDate = new Date(today);
-      maxDate.setDate(maxDate.getDate() + 30);
-
-      // Padding for empty leading cells
-      for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'ghl-calendar-cell disabled opacity-0';
-        grid.appendChild(emptyCell);
+      for (let i = 0; i < 31; i++) {
+        const d = new Date(today);
+        d.setHours(12, 0, 0, 0);
+        d.setDate(today.getDate() + i);
+        DRAWER_STATE.daysList.push({
+          value: toYMD(d),
+          weekday: i === 0 ? "Today" : new Intl.DateTimeFormat("en-PH", { weekday: "short" }).format(d),
+          day: d.getDate(),
+          month: new Intl.DateTimeFormat("en-PH", { month: "short" }).format(d),
+          label: new Intl.DateTimeFormat("en-PH", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(d)
+        });
       }
+      if (!DRAWER_STATE.selectedDateVal) {
+        DRAWER_STATE.selectedDateVal = DRAWER_STATE.daysList[0].value;
+        DRAWER_STATE.selectedDateLabel = DRAWER_STATE.daysList[0].label;
+      }
+    }
 
-      // Populate day numbers
-      for (let day = 1; day <= totalDays; day++) {
-        const cellDate = new Date(year, month, day);
-        cellDate.setHours(0, 0, 0, 0);
+    function renderDrawerDateRail() {
+      const container = document.getElementById('drawer-date-rail');
+      if (!container) return;
+      container.innerHTML = '';
 
+      DRAWER_STATE.daysList.forEach(d => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.textContent = day;
-        btn.className = 'ghl-calendar-cell text-slate-200';
+        const isSelected = d.value === DRAWER_STATE.selectedDateVal;
+        btn.className = `date-tile ${isSelected ? 'date-tile-active' : ''}`;
+        btn.onclick = () => selectDrawerDate(d.value, btn);
 
-        const isToday = cellDate.getTime() === today.getTime();
-        const isSelected = cellDate.toDateString() === GHL_STATE.selectedDate.toDateString();
-        const isPast = cellDate < today;
-        const isTooFar = cellDate > maxDate;
+        btn.innerHTML = `
+          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
+          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
+          <span class="tile-month mt-1 block text-xs font-bold opacity-70 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
+        `;
+        container.appendChild(btn);
+      });
 
-        if (isToday) btn.classList.add('today-marker');
-        if (isSelected) btn.classList.add('selected');
+      const lbl = document.getElementById('drawer-selected-date-label');
+      if (lbl) lbl.textContent = DRAWER_STATE.selectedDateLabel;
+    }
 
-        if (isPast || isTooFar) {
-          btn.classList.add('disabled');
-        } else {
-          btn.onclick = () => {
-            GHL_STATE.selectedDate = cellDate;
-            renderGhlCalendar();
-            renderGhlSlots();
-            recalculateGhlDrawerTotal();
-          };
-        }
-        grid.appendChild(btn);
+    function selectDrawerDate(val, clickedBtn) {
+      DRAWER_STATE.selectedDateVal = val;
+      const found = DRAWER_STATE.daysList.find(d => d.value === val);
+      if (found) DRAWER_STATE.selectedDateLabel = found.label;
+
+      document.querySelectorAll('#drawer-date-rail .date-tile').forEach(b => {
+        b.classList.remove('date-tile-active');
+        b.querySelectorAll('span').forEach(s => s.classList.remove('text-[#050E1D]'));
+      });
+      if (clickedBtn) {
+        clickedBtn.classList.add('date-tile-active');
+        clickedBtn.querySelectorAll('span').forEach(s => s.classList.add('text-[#050E1D]'));
       }
+
+      const lbl = document.getElementById('drawer-selected-date-label');
+      if (lbl) lbl.textContent = DRAWER_STATE.selectedDateLabel;
+
+      renderDrawerSlots();
+      recalculateDrawerTotal();
     }
 
-    function ghlPrevMonth() {
-      GHL_STATE.viewDate.setMonth(GHL_STATE.viewDate.getMonth() - 1);
-      renderGhlCalendar();
-    }
-
-    function ghlNextMonth() {
-      GHL_STATE.viewDate.setMonth(GHL_STATE.viewDate.getMonth() + 1);
-      renderGhlCalendar();
+    function drawerSetCourt(courtNum) {
+      DRAWER_STATE.selectedCourt = courtNum;
+      document.querySelectorAll('#drawer-court-buttons button').forEach((btn, idx) => {
+        const c = Number(btn.getAttribute('data-court')) || (idx + 1);
+        if (c === courtNum) {
+          btn.className = 'drawer-court active p-3 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition';
+          btn.querySelector('span:first-child').className = 'text-[9px] font-mono font-black text-brand-lime block uppercase';
+        } else {
+          btn.className = 'drawer-court p-3 rounded-2xl border border-white/10 bg-brand-black text-left transition hover:border-white/20';
+          btn.querySelector('span:first-child').className = 'text-[9px] font-mono font-bold text-slate-400 block uppercase';
+        }
+      });
+      renderDrawerSlots();
+      recalculateDrawerTotal();
     }
 
     function setDrawerDuration(hours) {
-      GHL_STATE.selectedDuration = hours;
+      DRAWER_STATE.selectedDuration = hours;
       [1, 2, 3].forEach(h => {
         const btn = document.getElementById(`dur-btn-${h}`);
         if (!btn) return;
         if (h === hours) {
-          btn.className = 'py-1.5 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black';
+          btn.className = 'px-3 py-1 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black';
         } else {
-          btn.className = 'py-1.5 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40';
+          btn.className = 'px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40';
         }
       });
-      recalculateGhlDrawerTotal();
+      renderDrawerSlots();
+      recalculateDrawerTotal();
     }
 
-    function renderGhlSlots() {
-      const container = document.getElementById('ghl-drawer-slots');
-      const title = document.getElementById('ghl-selected-date-title');
+    function renderDrawerSlots() {
+      const container = document.getElementById('drawer-time-chips');
       if (!container) return;
-
-      const dateStr = GHL_STATE.selectedDate.toLocaleDateString('en-US', {
-        weekday: 'short', month: 'short', day: 'numeric'
-      });
-      if (title) title.textContent = dateStr;
-
       container.innerHTML = '';
 
-      // Live bookings from server
       const liveBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
-      const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
-      const courtLabel = 'Court 0' + GHL_STATE.selectedCourt;
+      const courtLabel = 'Court 0' + DRAWER_STATE.selectedCourt;
 
       ALL_HOURS_SLOTS.forEach(slot => {
         const btn = document.createElement('button');
@@ -1703,67 +1721,55 @@
         const isBooked = liveBookings.some(b => 
           b.court && b.court.includes(courtLabel) && 
           b.time && b.time.includes(slot) && 
-          b.time.includes(dateStr)
-        );
-        const isBlocked = liveBlocks.some(bl => 
-          bl.court && (bl.court.includes(courtLabel) || bl.court.includes('All')) && 
-          bl.hours && bl.hours.includes(slot)
+          (b.date === DRAWER_STATE.selectedDateVal || (b.time && b.time.includes(DRAWER_STATE.selectedDateVal)))
         );
 
-        if (isBooked || isBlocked) {
+        const isSelected = (slot === DRAWER_STATE.selectedStartSlot);
+
+        if (isBooked) {
           btn.disabled = true;
-          btn.className = 'ghl-slot-pill py-2.5 px-3 rounded-xl border border-white/5 bg-brand-black/40 text-slate-500 text-xs font-mono font-bold opacity-40 cursor-not-allowed flex items-center justify-between';
-          btn.innerHTML = `<span>${slot}</span><span class="text-[9px] uppercase font-bold text-slate-500">Reserved</span>`;
+          btn.className = 'time-chip disabled';
+          btn.textContent = slot;
         } else {
-          const isActive = GHL_STATE.selectedSlot === slot;
-          btn.className = `ghl-slot-pill py-2.5 px-3 rounded-xl border text-xs font-mono font-bold flex items-center justify-between transition ${
-            isActive ? 'active border-brand-lime bg-brand-lime text-brand-black font-black' : 'border-white/15 bg-brand-black text-slate-200 hover:border-brand-lime/50'
-          }`;
-          btn.innerHTML = `<span>${slot}</span><span class="text-[9px] uppercase font-mono font-bold opacity-75">₱400</span>`;
+          btn.className = `time-chip ${isSelected ? 'time-chip-active' : ''}`;
+          btn.textContent = slot;
           btn.onclick = () => {
-            GHL_STATE.selectedSlot = slot;
-            const badge = document.getElementById('ghl-selected-slot-badge');
+            DRAWER_STATE.selectedStartSlot = slot;
+            const badge = document.getElementById('drawer-selected-slot-badge');
             if (badge) badge.textContent = slot;
-            renderGhlSlots();
-            recalculateGhlDrawerTotal();
+            renderDrawerSlots();
+            recalculateDrawerTotal();
           };
         }
         container.appendChild(btn);
       });
 
-      const badge = document.getElementById('ghl-selected-slot-badge');
-      if (badge) badge.textContent = GHL_STATE.selectedSlot || '06:00 AM';
-    }
-
-    function drawerSetCourt(courtNum) {
-      GHL_STATE.selectedCourt = courtNum;
-      document.querySelectorAll('#drawer-court-buttons .drawer-court').forEach((btn, idx) => {
-        if (idx + 1 === courtNum) {
-          btn.className = 'drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/15 text-left transition';
-          const title = btn.querySelector('.text-white');
-          if (title) title.className = 'text-xs font-black text-brand-lime block leading-tight';
+      const currentRate = getHourlyRate(DRAWER_STATE.selectedStartSlot);
+      const indicator = document.getElementById('drawer-slot-rate-indicator');
+      if (indicator) {
+        if (currentRate === 500) {
+          indicator.textContent = 'Evening: ₱500/hr (6PM–12AM)';
+          indicator.className = 'text-xs font-mono text-[#D4FF00] font-bold';
         } else {
-          btn.className = 'drawer-court p-3 rounded-xl border border-white/10 bg-brand-black text-left transition hover:border-white/20';
-          const title = btn.querySelector('.text-brand-lime');
-          if (title) title.className = 'text-xs font-black text-white block leading-tight';
+          indicator.textContent = 'Daytime: ₱400/hr (6AM–6PM)';
+          indicator.className = 'text-xs font-mono text-brand-lime font-bold';
         }
-      });
-      renderGhlSlots();
-      recalculateGhlDrawerTotal();
+      }
     }
 
     function changePlayers(delta) {
-      GHL_STATE.players = Math.max(1, Math.min(16, GHL_STATE.players + delta));
+      DRAWER_STATE.players = Math.max(1, Math.min(16, DRAWER_STATE.players + delta));
       const el = document.getElementById('player-count');
-      if (el) el.textContent = GHL_STATE.players;
-      recalculateGhlDrawerTotal();
+      if (el) el.textContent = DRAWER_STATE.players;
+      recalculateDrawerTotal();
     }
 
-    function recalculateGhlDrawerTotal() {
-      const hours = GHL_STATE.selectedDuration || 1;
-      const courtCost = hours * 400.00;
+    function recalculateDrawerTotal() {
+      const hours = DRAWER_STATE.selectedDuration || 1;
+      const hourlyRate = getHourlyRate(DRAWER_STATE.selectedStartSlot);
+      const courtCost = hours * hourlyRate;
 
-      const extraPlayers = Math.max(0, GHL_STATE.players - 6);
+      const extraPlayers = Math.max(0, DRAWER_STATE.players - 6);
       const playersCost = extraPlayers * 100.00;
 
       let gearCost = 0.0;
@@ -1777,27 +1783,18 @@
       const total = courtCost + playersCost + gearCost;
 
       const meta = document.getElementById('drawer-summary-meta');
-      if (meta) meta.textContent = `Court ${GHL_STATE.selectedCourt} • ${hours} hr session`;
+      if (meta) meta.textContent = `Court 0${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
 
       const courtLbl = document.getElementById('drawer-row-court-label');
-      if (courtLbl) courtLbl.textContent = `Court Hire (${hours} hr${hours > 1 ? 's' : ''})`;
+      if (courtLbl) courtLbl.textContent = `Court Hire (${hours} hr @ ₱${hourlyRate}/hr)`;
 
       const courtCostEl = document.getElementById('drawer-cost-court');
       if (courtCostEl) courtCostEl.textContent = `₱${courtCost.toFixed(2)}`;
 
-      const gearCostEl = document.getElementById('drawer-cost-equipment');
-      if (gearCostEl) gearCostEl.textContent = `₱${gearCost.toFixed(2)}`;
-
-      const playersLbl = document.getElementById('drawer-row-players-label');
-      if (playersLbl) playersLbl.textContent = `Extra Players (${extraPlayers})`;
-
-      const playersCostEl = document.getElementById('drawer-cost-players');
-      if (playersCostEl) playersCostEl.textContent = `₱${playersCost.toFixed(2)}`;
-
       const totalEl = document.getElementById('drawer-cost-total');
       if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
 
-      // Update modal copy if open
+      // Update payment modal amount
       const modalAmt = document.getElementById('manual-modal-amount');
       if (modalAmt) modalAmt.textContent = `₱${total.toFixed(2)}`;
       const modalMayaAmt = document.getElementById('manual-modal-maya-amount');
@@ -1809,11 +1806,12 @@
     }
 
     function openBookingDrawer(courtNum, slotTime) {
+      generateDrawerDays();
       if (courtNum) drawerSetCourt(courtNum);
-      if (slotTime) GHL_STATE.selectedSlot = slotTime;
-      renderGhlCalendar();
-      renderGhlSlots();
-      recalculateGhlDrawerTotal();
+      if (slotTime) DRAWER_STATE.selectedStartSlot = slotTime;
+      renderDrawerDateRail();
+      renderDrawerSlots();
+      recalculateDrawerTotal();
 
       const drawer = document.getElementById('booking-drawer');
       if (drawer) drawer.classList.remove('hidden');
@@ -1824,7 +1822,7 @@
       if (drawer) drawer.classList.add('hidden');
     }
 
-    function handleGhlDrawerProceed() {
+    function handleDrawerProceed() {
       const name = document.getElementById('cust-name')?.value.trim();
       const phone = document.getElementById('cust-phone')?.value.trim();
 
@@ -1852,7 +1850,6 @@
         return;
       }
 
-      // Validate 3 Scraped Policies
       const p1 = document.getElementById('policy-waiver')?.checked;
       const p2 = document.getElementById('policy-cancellation')?.checked;
       const p3 = document.getElementById('policy-nonrefundable')?.checked;
@@ -1861,12 +1858,40 @@
         return;
       }
 
-      const total = recalculateGhlDrawerTotal();
-      const dateStr = GHL_STATE.selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const hours = DRAWER_STATE.selectedDuration || 1;
+      const hourlyRate = getHourlyRate(DRAWER_STATE.selectedStartSlot);
+      const courtCost = hours * hourlyRate;
+      const extraPlayers = Math.max(0, DRAWER_STATE.players - 6);
+      const extraCost = extraPlayers * 100.0;
+      let gearTotal = 0.0;
+      const orderItems = [`Court 0${DRAWER_STATE.selectedCourt} (${hours} hr @ ₱${hourlyRate}/hr)`];
+      if (extraCost > 0) orderItems.push(`Extra Players (${extraPlayers})`);
+
+      if (document.getElementById('rent-paddle-std')?.checked) { gearTotal += 50; orderItems.push('Standard paddle (₱50)'); }
+      if (document.getElementById('rent-paddle-carbon')?.checked) { gearTotal += 100; orderItems.push('Carbon paddle (₱100)'); }
+      if (document.getElementById('rent-paddle-branded')?.checked) { gearTotal += 200; orderItems.push('Branded carbon paddle (₱200)'); }
+      if (document.getElementById('rent-ball-single')?.checked) { gearTotal += 50; orderItems.push('Pickleball ball (₱50)'); }
+      if (document.getElementById('rent-balls-bucket')?.checked) { gearTotal += 100; orderItems.push('Training balls 50 pcs (₱100)'); }
+      if (document.getElementById('rent-machine')?.checked) { gearTotal += (100 * hours); orderItems.push(`Training machine (${hours} hr @ ₱100/hr)`); }
+
+      const total = courtCost + extraCost + gearTotal;
+
       const summaryCourt = document.getElementById('modal-summary-court');
       if (summaryCourt) {
-        summaryCourt.textContent = `Court 0${GHL_STATE.selectedCourt} • ${dateStr} • ${GHL_STATE.selectedSlot}`;
+        summaryCourt.textContent = `Court 0${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedDateLabel.split(',')[0]} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
       }
+
+      pendingOrderData = {
+        name: name,
+        phone: phone,
+        email: document.getElementById('cust-email')?.value.trim() || 'guest@pfrally.ph',
+        court: `Court 0${DRAWER_STATE.selectedCourt}`,
+        time: `${DRAWER_STATE.selectedStartSlot} (${hours} hr)`,
+        date: DRAWER_STATE.selectedDateVal,
+        total: total,
+        courtCost: courtCost,
+        items: orderItems
+      };
 
       closeBookingDrawer();
       openPaymentModal();
@@ -2049,17 +2074,19 @@ Total Amount: ₱${total.toFixed(2)}`);
           } else {
             return `<td class="p-1.5 sm:p-2 text-center">
               <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2.5 px-2 rounded-xl bg-[#0E8A2D]/20 border border-[#10B981]/45 text-[#34D399] hover:bg-[#10B981] hover:text-[#050E1D] transition text-xs font-black flex flex-col items-center justify-center leading-tight">
-                <span>Book ₱400</span>
+                <span>Book ₱${getHourlyRate(h.time)}</span>
                 <span class="text-[9px] font-mono uppercase tracking-wider opacity-85">Available</span>
               </button>
             </td>`;
           }
         }).join('');
 
+        const rate = getHourlyRate(h.time);
+        const rateColor = rate === 500 ? 'bg-[#D4FF00]/20 text-[#D4FF00]' : 'bg-[#10B981]/20 text-[#34D399]';
         return `<tr class="hover:bg-white/[0.02] transition">
-          <td class="py-2.5 px-2.5 sm:px-4 text-left font-mono text-slate-200 sticky left-0 bg-brand-card/95 border-l-4 border-l-[#10B981] backdrop-blur-md z-10 whitespace-nowrap">
+          <td class="py-2.5 px-2.5 sm:px-4 text-left font-mono text-slate-200 sticky left-0 bg-brand-card/95 border-l-4 ${rate === 500 ? 'border-l-[#D4FF00]' : 'border-l-[#10B981]'} backdrop-blur-md z-10 whitespace-nowrap">
             <span class="block text-xs font-black text-white">${h.time}</span>
-            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-[#10B981]/20 text-[#34D399]">₱400 / HR</span>
+            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${rateColor}">₱${rate} / HR</span>
           </td>
           ${cells}
         </tr>`;
@@ -2073,26 +2100,27 @@ Total Amount: ₱${total.toFixed(2)}`);
       const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 31; i++) {
         const d = new Date();
         d.setDate(d.getDate() + i);
+        const isToday = (i === 0);
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `flex-shrink-0 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border text-center transition ${
-          i === 0 ? 'border-brand-lime bg-brand-lime/10 text-brand-lime' : 'border-white/10 bg-brand-card hover:border-brand-lime/40 text-slate-300'
-        }`;
+        btn.className = `date-tile ${isToday ? 'date-tile-active' : ''}`;
         btn.innerHTML = `
-          <span class="text-[9px] uppercase font-bold text-slate-400 block">${months[d.getMonth()]}</span>
-          <span class="text-base sm:text-lg font-black block font-mono leading-none my-0.5">${d.getDate()}</span>
-          <span class="text-[9px] uppercase font-bold text-slate-500 block">${days[d.getDay()]}</span>
+          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isToday ? 'text-[#050E1D]' : 'text-slate-400'}">${isToday ? 'Today' : days[d.getDay()]}</span>
+          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isToday ? 'text-[#050E1D]' : 'text-white'}">${d.getDate()}</span>
+          <span class="tile-month mt-1 block text-xs font-bold opacity-70 ${isToday ? 'text-[#050E1D]' : 'text-slate-400'}">${months[d.getMonth()]}</span>
         `;
         btn.onclick = () => {
-          carousel.querySelectorAll('button').forEach(b => {
-            b.className = 'flex-shrink-0 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border text-center transition border-white/10 bg-brand-card hover:border-brand-lime/40 text-slate-300';
+          carousel.querySelectorAll('.date-tile').forEach(b => {
+            b.classList.remove('date-tile-active');
+            b.querySelectorAll('span').forEach(s => s.classList.remove('text-[#050E1D]'));
           });
-          btn.className = 'flex-shrink-0 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl border text-center transition border-brand-lime bg-brand-lime/10 text-brand-lime';
+          btn.classList.add('date-tile-active');
+          btn.querySelectorAll('span').forEach(s => s.classList.add('text-[#050E1D]'));
           const lbl = document.getElementById('selected-schedule-date-label');
-          if (lbl) lbl.textContent = i === 0 ? 'Today' : `${months[d.getMonth()]} ${d.getDate()}`;
+          if (lbl) lbl.textContent = isToday ? 'Today' : `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
           renderLiveScheduleMatrix();
         };
         carousel.appendChild(btn);
