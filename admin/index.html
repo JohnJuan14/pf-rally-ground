@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>P&amp;F Rally Ground | Staff Admin &amp; POS Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              black: '#050E1D',
+              dark: '#08182E',
+              card: '#0E2240',
+              border: 'rgba(155, 230, 0, 0.16)',
+              lime: '#9BE600',
+              limeHover: '#B4FF00',
+              blue: '#0072CE',
+              green: '#0E8A2D',
+              clay: '#FF5733',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { -webkit-tap-highlight-color: transparent; }
+    .touch-scroll { -webkit-overflow-scrolling: touch; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    .lime-glow { box-shadow: 0 0 30px -5px rgba(155, 230, 0, 0.35); }
+    .card-glow:hover { border-color: rgba(155, 230, 0, 0.3); }
+    @keyframes authShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .auth-shake { animation: authShake 0.4s ease-in-out; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #050E1D; }
+    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9BE600; }
+  </style>
+  <!-- Comprehensive Favicon Suite -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+</head>
+<body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
+
+  <!-- ================= ADMIN PORTAL DUAL AUTH GATE (PASSWORD OR OWNER GMAIL — NO PASSWORD SHOWN) ================= -->
+  <div id="admin-auth-gate" class="fixed inset-0 z-[100] bg-brand-black/95 backdrop-blur-2xl flex items-center justify-center p-4">
+    <div id="admin-auth-card" class="w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/40 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div class="flex items-center gap-3.5 mb-5">
+        <img src="assets/logo.png" alt="P&amp;F Rally Ground" class="w-14 h-14 rounded-2xl object-contain bg-white p-1 border border-brand-lime/50 shadow-lg flex-shrink-0">
+        <div>
+          <span class="text-[10px] font-mono font-black uppercase tracking-widest text-brand-lime block">AUTHORIZED ACCESS ONLY</span>
+          <h1 class="text-xl font-black uppercase tracking-tight text-white">Staff &amp; Owner Portal</h1>
+          <p class="text-[11px] text-slate-400">Unlock via Admin Password or Owner Gmail Account</p>
+        </div>
+      </div>
+
+      <!-- Mode Switch Tabs: Admin Password vs Owner Gmail -->
+      <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-brand-black border border-white/10 mb-5 text-xs font-black uppercase tracking-wider">
+        <button type="button" id="auth-tab-password" onclick="switchAuthGateMode('password')" class="py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black transition shadow-md">
+          Admin Password
+        </button>
+        <button type="button" id="auth-tab-gmail" onclick="switchAuthGateMode('gmail')" class="py-2.5 px-3 rounded-xl text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-[#EA4335]" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4.236l-8 5-8-5V6l8 5 8-5v2.236z"/></svg>
+          <span>Owner Gmail</span>
+        </button>
+      </div>
+
+      <!-- 1. PASSWORD LOGIN FORM (Zero password hints or plaintext passwords shown!) -->
+      <form id="auth-form-password" onsubmit="handleAdminPasswordLogin(event)" class="space-y-4">
+        <div>
+          <label for="admin-login-password" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 mb-1.5 font-bold">Enter Admin Password *</label>
+          <input type="password" id="admin-login-password" required autocomplete="off" placeholder="••••••••••" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
+        </div>
+
+        <p id="admin-login-error" class="hidden text-xs font-bold text-brand-clay"></p>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+          <span>Unlock with Password</span>
+        </button>
+      </form>
+
+      <!-- 2. OWNER GMAIL LOGIN FORM (Starts with no Gmail pre-registered) -->
+      <form id="auth-form-gmail" onsubmit="handleAdminGmailLogin(event)" class="hidden space-y-4">
+        <div class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 text-[11px] text-slate-300 leading-relaxed">
+          <span id="auth-gmail-status-note">Sign in using the Club Owner's main <b>@gmail.com</b> account. No Gmail is pre-registered by default.</span>
+        </div>
+
+        <div>
+          <label for="admin-login-gmail" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 mb-1.5 font-bold">Owner Gmail Address *</label>
+          <input type="email" id="admin-login-gmail" required autocomplete="off" placeholder="owner@gmail.com" value="" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
+        </div>
+
+        <p id="admin-gmail-error" class="hidden text-xs font-bold text-brand-clay"></p>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-white hover:bg-slate-100 text-[#050E1D] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2.5">
+          <svg class="w-4 h-4 text-[#EA4335]" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4.236l-8 5-8-5V6l8 5 8-5v2.236z"/></svg>
+          <span>Continue with Owner Gmail</span>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+        <a href="/" onclick="return openPublicSite(event, 'index.html')" class="text-slate-400 hover:text-brand-lime font-bold transition flex items-center gap-1.5">
+          <span>← Back to Public Booking Site</span>
+        </a>
+        <span class="text-[10px] font-mono text-slate-500">Secured Workspace</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE SIDEBAR BACKDROP -->
+  <div id="admin-sidebar-backdrop" onclick="toggleAdminMobileSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+
+  <!-- ================= LEFT SIDEBAR NAVIGATION (ZERO EMOJIS) ================= -->
+  <aside id="admin-sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-64 max-h-[100dvh] overflow-y-auto touch-scroll bg-brand-dark border-r border-white/10 flex flex-col justify-between flex-shrink-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
+    <div>
+      <!-- Brand Logo -->
+      <div class="p-5 border-b border-white/10 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <img src="assets/logo.png" alt="P&amp;F Rally Ground Logo" class="h-11 w-11 rounded-xl object-contain bg-white p-0.5 shadow-lg shadow-brand-lime/25 border border-brand-lime/50 flex-shrink-0">
+          <div>
+            <span class="text-sm font-black text-white tracking-tight uppercase block leading-none">P&amp;F Rally Ground</span>
+            <span class="text-[9px] font-bold text-brand-lime uppercase tracking-widest mt-1 block">Staff &amp; POS Workspace</span>
+          </div>
+        </div>
+        <button onclick="toggleAdminMobileSidebar()" class="lg:hidden w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold" aria-label="Close Sidebar">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="p-3 space-y-1 text-xs font-bold uppercase tracking-wider">
+        <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          <span>Overview</span>
+        </button>
+
+        <button onclick="switchTab('bookings')" id="nav-bookings" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <span>Bookings</span>
+          <span id="pending-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[9px] font-black">0</span>
+        </button>
+
+        <button onclick="switchTab('schedule')" id="nav-schedule" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span>Court Calendar</span>
+        </button>
+
+        <button onclick="switchTab('pos')" id="nav-pos" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Point of Sale</span>
+        </button>
+
+        <button onclick="switchTab('inventory')" id="nav-inventory" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span>Inventory</span>
+          <span id="inventory-count-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-white/10 text-slate-300 text-[9px] font-mono">0</span>
+        </button>
+
+        <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span>Sales &amp; Reports</span>
+        </button>
+
+        <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>Settings &amp; QR</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom Status -->
+    <div class="p-4 border-t border-white/10 bg-brand-black/40 text-[11px] text-slate-400 space-y-2.5">
+      <a href="/" onclick="return openPublicSite(event, 'index.html')" class="w-full py-2 px-3 rounded-xl bg-white/5 hover:bg-brand-lime/15 border border-white/10 hover:border-brand-lime/40 text-slate-200 hover:text-brand-lime font-bold text-xs flex items-center justify-between transition">
+        <span>Public Booking Site</span>
+        <span class="font-mono text-[10px]">8088</span>
+      </a>
+      <div class="flex items-center justify-between">
+        <span class="flex items-center gap-1.5 font-bold text-brand-lime"><span class="w-2 h-2 rounded-full bg-brand-lime animate-pulse"></span> Public Site Synced</span>
+        <span class="font-mono text-slate-500">8088↔8089</span>
+      </div>
+      <div class="text-[10px] text-slate-500 leading-tight">
+        Phase IV, Doña Maria Subd., Daraga, Albay
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT AREA ================= -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    
+    <!-- Top Header Bar (Responsive Mobile & Desktop with Cybersecurity Shield) -->
+    <header class="h-14 sm:h-16 border-b-2 border-slate-200 lg:border-b lg:border-white/10 bg-white lg:bg-brand-dark/95 backdrop-blur-xl px-2.5 sm:px-6 lg:px-8 flex items-center justify-between gap-1.5 sm:gap-3 flex-shrink-0 sticky top-0 z-30 shadow-md lg:shadow-none">
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <button type="button" onclick="toggleAdminMobileSidebar()" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#050E1D] border border-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] flex items-center justify-center flex-shrink-0 shadow-md active:scale-95 transition" aria-label="Toggle Menu">
+          <svg id="admin-hamburger-svg" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-[#050E1D] lg:text-white truncate" id="current-section-title">Inventory</span>
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#0E8A2D]/15 lg:bg-brand-lime/15 border border-[#0E8A2D]/30 lg:border-brand-lime/30 text-[#0E8A2D] lg:text-brand-lime text-[9px] font-mono font-black flex-shrink-0" title="Cybersecurity Shield Active: Brute-Force Lockout, Session Token, 15m Idle Lock & XSS Filter">
+              <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <span class="hidden xs:inline sm:inline">SHIELD</span>
+            </span>
+          </div>
+          <span class="hidden md:block text-[10px] font-mono text-[#0E8A2D] lg:text-brand-lime font-bold truncate" id="sync-status-indicator">Live Connected to Main Booking</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <button type="button" onclick="openAddInventoryModal()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-[#050E1D] lg:bg-white/5 hover:bg-[#0E2240] lg:hover:bg-white/10 border border-[#050E1D] lg:border-brand-lime/30 text-[#9BE600] font-black uppercase text-[10px] sm:text-xs tracking-wider transition whitespace-nowrap shadow-sm active:scale-95">
+          <span class="sm:hidden">+ Item</span>
+          <span class="hidden sm:inline">+ Add Inventory</span>
+        </button>
+        <button type="button" onclick="openNewBookingModal()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[10px] sm:text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center gap-1 whitespace-nowrap">
+          <span>+ Walk-In</span>
+        </button>
+        <button type="button" onclick="switchTab('settings')" id="header-gmail-btn" title="Owner Gmail &amp; Cybersecurity Settings" class="px-2 sm:px-3 py-2 rounded-xl bg-slate-100 lg:bg-white/5 hover:bg-brand-lime/20 border border-slate-300 lg:border-brand-lime/30 text-[#050E1D] lg:text-brand-lime font-black uppercase text-[10px] sm:text-xs tracking-wider transition flex items-center gap-1.5 whitespace-nowrap">
+          <svg class="w-3.5 h-3.5 text-[#EA4335] lg:text-brand-lime flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span id="header-gmail-label" class="hidden xl:inline">Owner Gmail</span>
+        </button>
+        <button type="button" onclick="lockAdminPortal()" title="Lock Admin Workspace" class="px-2 sm:px-3 py-2 rounded-xl bg-slate-100 lg:bg-white/5 hover:bg-brand-clay/20 border border-slate-300 lg:border-white/10 hover:border-brand-clay/40 text-[#050E1D] lg:text-slate-300 hover:text-brand-clay font-bold uppercase text-[10px] sm:text-xs tracking-wider transition flex items-center gap-1 whitespace-nowrap">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span class="hidden sm:inline">Lock</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Horizontal Quick-Tab Strip (All 7 Tabs Included & Auto-Centered) -->
+    <div id="admin-mobile-pill-strip" class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-2.5 py-2 bg-slate-100 border-b-2 border-slate-200 scrollbar-none text-[11px] font-black uppercase tracking-wider shadow-sm sticky top-14 sm:top-16 z-20">
+      <button type="button" onclick="switchTab('overview')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="overview">Overview</button>
+      <button type="button" onclick="switchTab('bookings')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="bookings">Bookings</button>
+      <button type="button" onclick="switchTab('schedule')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="schedule">Calendar</button>
+      <button type="button" onclick="switchTab('pos')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="pos">POS Register</button>
+      <button type="button" onclick="switchTab('inventory')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition" data-tab="inventory">Inventory</button>
+      <button type="button" onclick="switchTab('reports')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="reports">Reports</button>
+      <button type="button" onclick="switchTab('settings')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="settings">Settings &amp; Security</button>
+    </div>
+
+    <!-- Main Workspace Body -->
+    <main class="flex-1 p-3 sm:p-6 lg:p-8 pb-24 lg:pb-8 overflow-y-auto">
+
+      <!-- ================= 1. OVERVIEW TAB ================= -->
+      <section id="tab-overview" class="space-y-6">
+        
+        <!-- Metrics Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="p-5 rounded-3xl bg-brand-card border border-brand-border card-glow">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Today's Total Collections</span>
+            <span class="text-2xl sm:text-3xl font-black text-brand-lime font-mono" id="stat-total-revenue">₱0.00</span>
+            <span class="text-[11px] text-slate-400 block mt-1">Court Fees + Front Desk POS</span>
+          </div>
+
+          <div class="p-5 rounded-3xl bg-brand-card border border-brand-border card-glow">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Active Bookings Synced</span>
+            <span class="text-2xl sm:text-3xl font-black text-white font-mono" id="stat-court-bookings">0 Sessions</span>
+            <span class="text-[11px] text-brand-lime font-bold block mt-1">● Clean Live Calendar</span>
+          </div>
+
+          <div class="p-5 rounded-3xl bg-brand-card border border-brand-border card-glow">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Custom Inventory Items</span>
+            <span class="text-2xl sm:text-3xl font-black text-white font-mono" id="stat-inventory-count">0 Products</span>
+            <button onclick="switchTab('inventory')" class="text-[11px] text-brand-lime hover:underline font-bold block mt-1">+ Add Products with Photo →</button>
+          </div>
+
+          <div class="p-5 rounded-3xl bg-brand-card border border-brand-border card-glow">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Pending Reference Reviews</span>
+            <span class="text-2xl sm:text-3xl font-black text-amber-400 font-mono" id="stat-pending-reviews">0 Slips</span>
+            <button onclick="switchTab('bookings')" class="text-[11px] text-brand-lime hover:underline font-bold block mt-1">Verify Reference Numbers →</button>
+          </div>
+        </div>
+
+        <!-- Quick Desk Actions & Live Incoming Bookings -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Live Recent Bookings Feed -->
+          <div class="lg:col-span-8 rounded-3xl bg-brand-card border border-brand-border p-4 sm:p-6 card-glow">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4 mb-4">
+              <div>
+                <h3 class="text-sm font-black uppercase text-white tracking-wider">Live Incoming Reservations &amp; Payment References</h3>
+                <p class="text-[11px] text-slate-400">Starts empty. Any booking made on the public website appears here automatically.</p>
+              </div>
+              <button onclick="switchTab('bookings')" class="text-xs text-brand-lime font-bold hover:underline">Manage All Bookings →</button>
+            </div>
+            
+            <div class="space-y-3" id="overview-matches-list"></div>
+          </div>
+
+          <!-- Quick Front Desk Launcher -->
+          <div class="lg:col-span-4 rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 flex flex-col justify-between card-glow">
+            <div>
+              <h3 class="text-sm font-black uppercase text-white tracking-wider mb-2">Fast Desk Actions</h3>
+              <p class="text-xs text-slate-400 mb-4">Set up your custom inventory or log walk-in sessions.</p>
+              
+              <div class="space-y-2.5">
+                <button onclick="openAddInventoryModal()" class="w-full py-3 px-4 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider text-left flex items-center justify-between hover:bg-brand-limeHover transition">
+                  <span>+ Add Custom Inventory &amp; Photo</span> <span>→</span>
+                </button>
+                <button onclick="openNewBookingModal()" class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold uppercase tracking-wider text-left flex items-center justify-between transition">
+                  <span>+ Log Walk-In Court Booking</span> <span>→</span>
+                </button>
+                <button onclick="switchTab('pos')" class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold uppercase tracking-wider text-left flex items-center justify-between transition">
+                  <span>Ring Up POS Retail Sale</span> <span>→</span>
+                </button>
+                <button onclick="switchTab('schedule')" class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold uppercase tracking-wider text-left flex items-center justify-between transition">
+                  <span>View Clean Court Calendar</span> <span>→</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-white/10 text-[11px] text-slate-400">
+              Official GCash / Hotline: <b class="text-brand-lime font-mono">0999 883 2346</b>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================= 2. BOOKINGS TAB ================= -->
+      <section id="tab-bookings" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-border">
+          <div>
+            <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">REAL-TIME MAIN WEBSITE SYNC</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Guest Reservations &amp; Reference Ledger</h2>
+            <p class="text-xs text-slate-400">Starts clean. Bookings submitted on the public site appear here with their captured GCash Reference Number.</p>
+          </div>
+          <button onclick="openNewBookingModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:bg-brand-limeHover transition active:scale-95 self-start sm:self-auto">
+            + New Walk-In Booking
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input type="text" id="booking-search" oninput="filterBookings()" placeholder="Search guest name, booking ID (PF-...), or GCash Reference No..." class="flex-1 bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+          <select id="booking-status-filter" onchange="filterBookings()" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime font-bold">
+            <option value="ALL">All Statuses</option>
+            <option value="PENDING">Pending Verification</option>
+            <option value="CONFIRMED">Confirmed / Paid</option>
+            <option value="RESERVED">Reserved (Pay at Venue)</option>
+          </select>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto touch-scroll">
+            <table class="w-full text-left text-xs border-collapse min-w-[820px]">
+              <thead>
+                <tr class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px] bg-brand-black/40">
+                  <th class="py-3.5 px-4">Booking Ref ID</th>
+                  <th class="py-3.5 px-4">Customer Full Name &amp; Mobile</th>
+                  <th class="py-3.5 px-4">Reserved Court / Order Items</th>
+                  <th class="py-3.5 px-4">Scheduled Date &amp; Time</th>
+                  <th class="py-3.5 px-4">Payment Method &amp; Ref No.</th>
+                  <th class="py-3.5 px-4">Total Amount (₱)</th>
+                  <th class="py-3.5 px-4">Verification Status</th>
+                  <th class="py-3.5 px-4 text-right">Staff Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-bookings-tbody" class="divide-y divide-white/5"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. COURT CALENDAR & BLOCKER TAB (CLEAN EMPTY STATE) ================= -->
+      <section id="tab-schedule" class="hidden space-y-6">
+        
+        <div class="rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4 mb-6">
+            <div>
+              <h2 class="text-lg sm:text-xl font-black uppercase text-white">Live Court Calendar &amp; Window Blocker</h2>
+              <p class="text-xs text-slate-400">All 4 courts start 100% open &amp; available. Bookings and blocks sync automatically with the public website.</p>
+            </div>
+            <span class="text-xs font-mono text-brand-lime font-bold">● 4 COURTS OPEN (6AM–12AM)</span>
+          </div>
+
+          <!-- Court Blocker Form -->
+          <form onsubmit="handleAdminBlockSubmit(event)" class="p-4 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3 mb-6">
+            <span class="text-xs font-bold uppercase text-brand-clay block">Create Court Closure / Reservation Block</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">Target Court</label>
+                <select id="adm-block-court" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+                  <option value="Court 01">Court 01 (Indoor Championship)</option>
+                  <option value="Court 02">Court 02 (Indoor Tournament)</option>
+                  <option value="Court 03">Court 03 (Covered Outdoor)</option>
+                  <option value="Court 04">Court 04 (Pro Training)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">Date</label>
+                <input type="date" id="adm-block-date" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2.5 text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">Time Slot</label>
+                <select id="adm-block-hours" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+                  <option value="06:00 AM">06:00 AM</option>
+                  <option value="07:00 AM">07:00 AM</option>
+                  <option value="08:00 AM">08:00 AM</option>
+                  <option value="09:00 AM">09:00 AM</option>
+                  <option value="03:00 PM">03:00 PM</option>
+                  <option value="04:00 PM">04:00 PM</option>
+                  <option value="05:00 PM">05:00 PM</option>
+                  <option value="06:00 PM" selected>06:00 PM</option>
+                  <option value="07:00 PM">07:00 PM</option>
+                  <option value="08:00 PM">08:00 PM</option>
+                  <option value="09:00 PM">09:00 PM</option>
+                  <option value="10:00 PM">10:00 PM</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">Reason / Label</label>
+                <input type="text" id="adm-block-reason" placeholder="e.g. Private Event / Maintenance" required class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2.5 text-white">
+              </div>
+            </div>
+            <div class="flex justify-end pt-1">
+              <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-clay text-white font-bold text-xs uppercase hover:opacity-90 transition">
+                + Lock Court Slot
+              </button>
+            </div>
+          </form>
+
+          <!-- Active Blocks List -->
+          <div class="mb-6">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Active Court Blocks</h4>
+            <div id="admin-blocks-container" class="space-y-2"></div>
+          </div>
+
+          <!-- Clean Live 4-Court Calendar Matrix Preview -->
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Live 4-Court Availability Grid (Synced with Public Website)</h4>
+            <div class="overflow-x-auto rounded-2xl border border-white/10 bg-brand-black/50 p-3">
+              <table class="w-full text-xs border-collapse min-w-[600px]">
+                <thead>
+                  <tr class="border-b border-white/10 text-slate-400 text-[10px] uppercase">
+                    <th class="py-2.5 px-3 text-left">Time Slot</th>
+                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 01</th>
+                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 02</th>
+                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 03</th>
+                    <th class="py-2.5 px-3 text-center text-brand-lime">Court 04</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-calendar-matrix-tbody" class="divide-y divide-white/5"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 4. POINT OF SALE (POS) TAB ================= -->
+      <section id="tab-pos" class="hidden space-y-6">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- POS Product Catalog (Col 7) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 class="text-lg sm:text-xl font-black uppercase text-white">Front-Desk POS Register</h2>
+                <p class="text-xs text-slate-400">Displays your custom inventory items. Every sale automatically deducts from stock.</p>
+              </div>
+              <button onclick="openAddInventoryModal()" class="px-3.5 py-2 rounded-xl bg-brand-lime/15 border border-brand-lime/40 text-brand-lime text-xs font-black uppercase hover:bg-brand-lime hover:text-brand-black transition">
+                + Add Custom Product
+              </button>
+            </div>
+
+            <!-- POS Category Filter Pills -->
+            <div id="pos-category-filters" class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none"></div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="pos-catalog-grid"></div>
+          </div>
+
+          <!-- POS Current Order Panel (Col 5) -->
+          <div class="lg:col-span-5 rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 flex flex-col justify-between card-glow h-fit lg:sticky lg:top-20">
+            <div>
+              <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                <h3 class="text-sm font-black uppercase text-white">Current POS Order</h3>
+                <button onclick="clearPosOrder()" class="text-[10px] text-brand-clay hover:underline uppercase font-bold">Clear All</button>
+              </div>
+
+              <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1 touch-scroll mb-4" id="pos-order-items"></div>
+
+              <div class="py-3 border-y border-white/10 space-y-1.5 text-xs font-mono">
+                <div class="flex justify-between text-slate-400"><span>Items Subtotal:</span> <span id="pos-subtotal" class="text-white font-bold">₱0.00</span></div>
+                <div class="flex justify-between text-base font-black pt-1"><span>Total Due:</span> <span id="pos-total-due" class="text-brand-lime">₱0.00</span></div>
+              </div>
+
+              <div class="mt-4 space-y-3 text-xs">
+                <div>
+                  <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Method</label>
+                  <select id="pos-payment-mode" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+                    <option value="Cash">Cash</option>
+                    <option value="GCash">GCash (0999 883 2346)</option>
+                    <option value="Maya">Maya / Card Terminal</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                  </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Cash Received (₱)</label>
+                    <input type="number" id="pos-cash-received" oninput="calculatePosChange()" placeholder="0" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2 text-white font-mono font-bold">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Change Due (₱)</label>
+                    <div id="pos-change-due" class="w-full bg-brand-black/60 border border-white/10 rounded-xl px-3 py-2 text-brand-lime font-mono font-black text-sm">₱0.00</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <button onclick="completePosSale()" id="pos-complete-btn" class="mt-6 w-full py-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+              Complete POS Sale &amp; Deduct Stock →
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================= 5. INVENTORY TAB (CUSTOM INVENTORY WITH PICTURE & AUTO-DEDUCT) ================= -->
+      <section id="tab-inventory" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-border">
+          <div>
+            <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">CUSTOM INVENTORY &amp; REAL-TIME STOCK DEDUCTION</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Stock &amp; Product Inventory</h2>
+            <p class="text-xs text-slate-400">Add custom products with pictures. Products sync to the POS &amp; Public Website, and automatically deduct stock when purchased.</p>
+          </div>
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <button onclick="openAddInventoryModal()" class="px-5 py-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+              + Add Custom Product
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Category Creator & Filter Bar -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-brand-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1.5 flex-1 min-w-0">
+            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Filter by Category / Custom Categories</span>
+            <div id="inventory-category-filters" class="flex flex-wrap items-center gap-1.5"></div>
+          </div>
+
+          <form onsubmit="handleAddCustomCategoryBar(event)" class="flex items-center gap-2 flex-shrink-0">
+            <input type="text" id="new-custom-category-input" placeholder="New Custom Category (e.g. Snacks)" required class="bg-brand-black border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-bold focus:outline-none focus:border-brand-lime w-52 sm:w-60">
+            <button type="submit" class="px-3.5 py-2 rounded-xl bg-brand-lime/15 border border-brand-lime/40 text-brand-lime hover:bg-brand-lime hover:text-brand-black font-black text-xs uppercase tracking-wider transition whitespace-nowrap">
+              + Add Category
+            </button>
+          </form>
+        </div>
+
+        <div class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto touch-scroll">
+            <table class="w-full text-left text-xs border-collapse min-w-[680px]">
+              <thead>
+                <tr class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px] bg-brand-black/40">
+                  <th class="py-3.5 px-4">Product Photo &amp; Name</th>
+                  <th class="py-3.5 px-4">Product Category</th>
+                  <th class="py-3.5 px-4">Unit Price (₱)</th>
+                  <th class="py-3.5 px-4">Available Stock Qty</th>
+                  <th class="py-3.5 px-4">Stock Status</th>
+                  <th class="py-3.5 px-4 text-right">Manage Product</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody" class="divide-y divide-white/5"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 6. SALES & REPORTS TAB ================= -->
+      <section id="tab-reports" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-border">
+          <div>
+            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Sales &amp; Financial Ledger</h2>
+            <p class="text-xs text-slate-400">Consolidated collections across online bookings and front-desk POS sales.</p>
+          </div>
+          <button onclick="exportLedgerToCsv()" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold uppercase tracking-wider transition self-start sm:self-auto">
+            Export to CSV
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="p-5 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] text-slate-400 uppercase block mb-1">Court &amp; Booking Collections</span>
+            <span class="text-2xl font-black text-brand-lime font-mono" id="rep-court-rev">₱0.00</span>
+          </div>
+          <div class="p-5 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] text-slate-400 uppercase block mb-1">POS Retail Collections</span>
+            <span class="text-2xl font-black text-white font-mono" id="rep-pos-rev">₱0.00</span>
+          </div>
+          <div class="p-5 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] text-slate-400 uppercase block mb-1">Total Gross Revenue</span>
+            <span class="text-2xl font-black text-white font-mono" id="rep-total-rev">₱0.00</span>
+          </div>
+        </div>
+
+        <div class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden">
+          <div class="p-4 border-b border-white/10 text-xs font-bold uppercase text-white">Transaction History</div>
+          <div class="overflow-x-auto touch-scroll">
+            <table class="w-full text-left text-xs border-collapse min-w-[700px]">
+              <thead>
+                <tr class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px] bg-brand-black/40">
+                  <th class="py-3.5 px-4">Transaction Ref ID</th>
+                  <th class="py-3.5 px-4">Revenue Category</th>
+                  <th class="py-3.5 px-4">Customer &amp; Order Details</th>
+                  <th class="py-3.5 px-4">Payment Method &amp; Ref No.</th>
+                  <th class="py-3.5 px-4">Amount Collected (₱)</th>
+                  <th class="py-3.5 px-4">Date &amp; Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="reports-tbody" class="divide-y divide-white/5 font-mono"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 7. SETTINGS & QR TAB ================= -->
+      <section id="tab-settings" class="hidden space-y-6">
+        
+        <div class="rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div>
+              <h2 class="text-lg sm:text-xl font-black uppercase text-white">Workspace Configuration</h2>
+              <p class="text-xs text-slate-400">Configure GCash QR codes, court rates, or reset database records.</p>
+            </div>
+            <button onclick="resetAllDatabaseData()" class="px-4 py-2 rounded-xl bg-brand-clay/15 border border-brand-clay/40 text-brand-clay hover:bg-brand-clay hover:text-white text-xs font-bold uppercase transition">
+              Empty / Reset All Data
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3">
+              <span class="font-bold text-white uppercase block">GCash &amp; Bank QR Configuration</span>
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">GCash Account Name</label>
+                <input type="text" value="P&F Rally Ground" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">GCash Official Number</label>
+                <input type="text" value="0999 883 2346" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-brand-lime font-mono">
+              </div>
+              <button onclick="alert('Payment settings saved.')" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-bold uppercase text-[10px]">
+                Save Payment Settings
+              </button>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3">
+              <span class="font-bold text-white uppercase block">Court Hire Rates</span>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Regular (₱/hr)</label>
+                  <input type="number" value="400" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Peak (₱/hr)</label>
+                  <input type="number" value="500" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">Open Play Drop-In Rate (₱/player)</label>
+                <input type="number" value="150" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+              </div>
+              <button onclick="alert('Pricing updated.')" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-bold uppercase text-[10px]">
+                Save Rates
+              </button>
+            </div>
+          </div>
+
+          <!-- Gmail Account Link & Booking Email Notifications -->
+          <div class="p-5 rounded-2xl bg-brand-black/60 border border-brand-lime/40 space-y-4 text-xs">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-md flex-shrink-0">
+                  <svg class="w-6 h-6 text-[#EA4335]" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4.236l-8 5-8-5V6l8 5 8-5v2.236z"/></svg>
+                </div>
+                <div>
+                  <span class="font-black text-brand-lime uppercase block text-sm">Gmail Integration &amp; Booking Alerts</span>
+                  <p class="text-[11px] text-slate-300">Link your Club Gmail account to receive booking notifications and send 1-click Gmail confirmation passes to players.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="gmail-connection-badge" class="px-3 py-1 rounded-full bg-white/10 text-slate-300 font-mono font-bold text-[10px] uppercase">Not Linked Yet</span>
+                <a href="https://mail.google.com/" target="_blank" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold uppercase text-[10px] transition">
+                  Open Gmail Inbox ↗
+                </a>
+              </div>
+            </div>
+
+            <form onsubmit="handleSaveGmailConfig(event)" class="space-y-4 pt-2 border-t border-white/10">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Linked Club Admin Gmail Address *</label>
+                  <input type="email" id="settings-gmail-address" required placeholder="owner@gmail.com" value="" autocomplete="off" class="w-full bg-brand-card border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono">
+                  <span class="text-[10px] text-slate-400 block mt-1">Used for 1-click Gmail Compose &amp; booking notification alerts.</span>
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Google App Password (Optional — For Auto Background SMTP)</label>
+                  <input type="password" id="settings-gmail-app-pw" placeholder="16-character Google App Password (optional)" class="w-full bg-brand-card border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-brand-lime font-mono">
+                  <span class="text-[10px] text-slate-400 block mt-1" id="settings-gmail-pw-hint">Leave blank to use 1-Click Gmail Web Compose in Chrome without SMTP.</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-5 pt-1">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="settings-gmail-notify-admin" checked class="w-4 h-4 rounded accent-brand-lime">
+                  <span class="text-slate-200 font-semibold">Auto-alert Admin Gmail on new bookings</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="settings-gmail-send-receipt" checked class="w-4 h-4 rounded accent-brand-lime">
+                  <span class="text-slate-200 font-semibold">Send confirmation receipt to Customer's Email</span>
+                </label>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3 pt-1">
+                <button type="submit" class="py-2.5 px-5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[11px] tracking-wider hover:bg-brand-limeHover transition shadow-md">
+                  Save &amp; Link Owner Gmail
+                </button>
+                <button type="button" onclick="handleUnlinkOwnerGmail()" class="py-2.5 px-4 rounded-xl bg-brand-clay/15 hover:bg-brand-clay hover:text-white border border-brand-clay/40 text-brand-clay font-bold uppercase text-[11px] tracking-wider transition">
+                  Unlink Gmail
+                </button>
+                <button type="button" onclick="openGmailTestCompose()" class="py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold uppercase text-[11px] tracking-wider transition">
+                  Open Gmail Compose ↗
+                </button>
+              </div>
+            </form>
+            <p id="settings-gmail-feedback" class="hidden text-xs font-bold"></p>
+          </div>
+
+          <!-- Admin Password Update Card (Never displays actual password) -->
+          <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-4 text-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="font-bold text-white uppercase block">Admin Password Configuration</span>
+                <p class="text-[11px] text-slate-400">Update the password used to unlock the Admin Portal. Passwords are always masked.</p>
+              </div>
+              <button type="button" onclick="lockAdminPortal()" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-brand-clay/20 border border-white/10 hover:border-brand-clay/40 text-slate-200 hover:text-brand-clay font-bold uppercase text-[10px] transition">
+                Lock Portal Now
+              </button>
+            </div>
+            <form onsubmit="handleChangeAdminPassword(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">Current Password</label>
+                <input type="password" id="settings-current-pw" required autocomplete="off" placeholder="••••••••••" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 uppercase mb-1">New Password</label>
+                <input type="password" id="settings-new-pw" required minlength="4" autocomplete="off" placeholder="••••••••••" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-brand-lime font-mono">
+              </div>
+              <div>
+                <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[10px] tracking-wider hover:bg-brand-limeHover transition">
+                  Update Password
+                </button>
+              </div>
+            </form>
+            <p id="settings-pw-feedback" class="hidden text-xs font-bold"></p>
+          </div>
+          <!-- Cybersecurity Shield & Real-Time Access Audit Log -->
+          <div class="p-5 rounded-2xl bg-brand-black/75 border border-brand-lime/40 space-y-4 text-xs">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center shadow-md flex-shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <div>
+                  <span class="font-black text-brand-lime uppercase block text-sm">Cybersecurity Shield &amp; Intrusion Protection</span>
+                  <p class="text-[11px] text-slate-300">Active brute-force rate limiting (5 failed attempts = 60s lockout), cryptographic session tokens, 15-minute idle auto-lock, and XSS payload sanitization.</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-brand-lime/15 text-brand-lime border border-brand-lime/40 font-mono font-black text-[10px] uppercase">● 5/5 Protections Active</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+              <div class="p-3 rounded-xl bg-brand-card border border-white/10">
+                <span class="text-[9px] font-mono uppercase text-brand-lime font-bold block">Brute-Force Guard</span>
+                <span class="text-white font-black text-xs block mt-0.5">Max 5 Tries / 60s Lock</span>
+              </div>
+              <div class="p-3 rounded-xl bg-brand-card border border-white/10">
+                <span class="text-[9px] font-mono uppercase text-brand-lime font-bold block">Idle Session Lock</span>
+                <span class="text-white font-black text-xs block mt-0.5">15-Min Auto Timeout</span>
+              </div>
+              <div class="p-3 rounded-xl bg-brand-card border border-white/10">
+                <span class="text-[9px] font-mono uppercase text-brand-lime font-bold block">Input Sanitization</span>
+                <span class="text-white font-black text-xs block mt-0.5">Anti-XSS &amp; Anti-Bot</span>
+              </div>
+              <div class="p-3 rounded-xl bg-brand-card border border-white/10">
+                <span class="text-[9px] font-mono uppercase text-brand-lime font-bold block">HTTP Headers</span>
+                <span class="text-white font-black text-xs block mt-0.5">Nosniff &amp; SameOrigin</span>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-white/10">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">Recent Security &amp; Access Audit Log</span>
+                <span class="text-[10px] font-mono text-brand-lime" id="security-log-count">0 Events</span>
+              </div>
+              <div class="max-h-44 overflow-y-auto rounded-xl bg-brand-card border border-white/10 divide-y divide-white/5" id="security-audit-log-list">
+                <div class="p-3 text-center text-[11px] text-slate-400">No security events logged yet in this session.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Admin Workspace Footer -->
+    <footer class="border-t border-white/10 bg-brand-dark/90 px-4 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
+      <div>
+        © 2026 P&amp;F Rally Ground • Staff Admin &amp; POS Workspace (Daraga, Albay)
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="/" onclick="return openPublicSite(event, 'index.html')" class="text-brand-lime font-bold hover:underline">Open Public Booking Website (Port 8088) →</a>
+        <span>•</span>
+        <a href="/pricing.html" onclick="return openPublicSite(event, 'pricing.html')" class="hover:text-white transition">View Public Pro-Shop</a>
+      </div>
+    </footer>
+
+    <!-- Mobile Fixed Bottom App Navigation Bar (Thumb-Friendly 6-Tab Bar on < 1024px) -->
+    <nav id="admin-mobile-bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050E1D]/95 backdrop-blur-xl border-t border-brand-lime/30 px-1.5 py-1.5 grid grid-cols-6 gap-1 shadow-2xl" style="padding-bottom: max(0.375rem, env(safe-area-inset-bottom));">
+      <button type="button" onclick="switchTab('overview')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="overview">
+        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span class="text-[9px] font-bold uppercase tracking-tight">Home</span>
+      </button>
+      <button type="button" onclick="switchTab('bookings')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="bookings">
+        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        <span class="text-[9px] font-bold uppercase tracking-tight">Bookings</span>
+      </button>
+      <button type="button" onclick="switchTab('schedule')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="schedule">
+        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-[9px] font-bold uppercase tracking-tight">Courts</span>
+      </button>
+      <button type="button" onclick="switchTab('pos')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="pos">
+        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span class="text-[9px] font-bold uppercase tracking-tight">POS</span>
+      </button>
+      <button type="button" onclick="switchTab('inventory')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl bg-brand-lime/15 text-brand-lime border border-brand-lime/30 transition" data-tab="inventory">
+        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        <span class="text-[9px] font-black uppercase tracking-tight">Stock</span>
+      </button>
+      <button type="button" onclick="switchTab('settings')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="settings">
+        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <span class="text-[9px] font-bold uppercase tracking-tight">Security</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ================= MODAL: ADD / EDIT CUSTOM INVENTORY WITH PICTURE ================= -->
+  <div id="inventory-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+    <div onclick="closeInventoryModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/40 p-6 shadow-2xl touch-scroll">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+        <div>
+          <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">CUSTOM INVENTORY ITEM</span>
+          <h3 class="text-lg font-black uppercase text-white" id="inv-modal-title">Add Product with Picture</h3>
+        </div>
+        <button onclick="closeInventoryModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+      </div>
+
+      <form onsubmit="handleSaveInventoryItem(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="inv-item-id" value="">
+
+        <div>
+          <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Product Name *</label>
+          <input type="text" id="inv-item-name" required placeholder="e.g. Mineral Water 500ml, Franklin X-40 Ball, Carbon Paddle" class="w-full bg-brand-black border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-bold focus:outline-none focus:border-brand-lime">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-[10px] text-slate-400 uppercase font-bold">Category *</label>
+              <button type="button" onclick="toggleModalCustomCategoryInput()" id="toggle-custom-cat-btn" class="text-[9px] font-mono font-bold text-brand-lime hover:underline">+ Custom</button>
+            </div>
+            <select id="inv-item-cat" onchange="handleModalCategorySelectChange(this.value)" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-lime">
+              <option value="Refreshment">Refreshment / Drink</option>
+              <option value="Pro Shop">Pro Shop Gear</option>
+              <option value="Rental">Equipment Rental</option>
+              <option value="Court Access">Open Play / Pass</option>
+              <option value="__CUSTOM__">+ Type Custom Category...</option>
+            </select>
+            <input type="text" id="inv-item-custom-cat" placeholder="Type custom category name..." class="hidden mt-2 w-full bg-brand-black border border-brand-lime rounded-xl px-3 py-2 text-xs text-brand-lime font-bold focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Unit Price (₱) *</label>
+            <input type="number" id="inv-item-price" required min="0" step="1" placeholder="50" value="50" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-brand-lime font-mono font-black focus:outline-none focus:border-brand-lime">
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Starting Stock *</label>
+            <input type="number" id="inv-item-stock" required min="0" step="1" placeholder="24" value="24" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-mono font-black focus:outline-none focus:border-brand-lime">
+          </div>
+        </div>
+
+        <!-- Product Picture Upload & Live Preview -->
+        <div class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-[10px] text-brand-lime uppercase font-black tracking-wider">Product Picture (Upload or Pick Preset)</label>
+            <span class="text-[10px] text-slate-400 font-mono">Auto-Resized</span>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden bg-brand-card border border-brand-lime/40 flex-shrink-0 flex items-center justify-center">
+              <img id="inv-img-preview" src="assets/gear-water-500ml.jpg" alt="Product Preview" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 space-y-2">
+              <input type="file" id="inv-img-file" accept="image/*" onchange="handleInventoryImageUpload(event)" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-brand-lime file:text-brand-black hover:file:bg-brand-limeHover cursor-pointer">
+              <input type="text" id="inv-img-url" oninput="updateInventoryPreviewFromUrl(this.value)" placeholder="Or paste image URL / select preset below" value="assets/gear-water-500ml.jpg" class="w-full bg-brand-card border border-white/10 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 font-mono">
+            </div>
+          </div>
+
+          <!-- Quick Preset Thumbnails -->
+          <div>
+            <span class="text-[9px] font-mono uppercase text-slate-400 block mb-1.5">Or click a quick preset photo:</span>
+            <div class="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-water-500ml.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Water Bottle">
+                <img src="assets/gear-water-500ml.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-sports-drink.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Sports Drink">
+                <img src="assets/gear-sports-drink.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-carbon-paddle.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Carbon Paddle">
+                <img src="assets/gear-carbon-paddle.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-composite-paddle.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Standard Paddle">
+                <img src="assets/gear-composite-paddle.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-balls-x40.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Pickleball Balls">
+                <img src="assets/gear-balls-x40.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-overgrip.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Overgrip Tape">
+                <img src="assets/gear-overgrip.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-towel.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Sweat Towel">
+                <img src="assets/gear-towel.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+              <button type="button" onclick="selectPresetInventoryImage('assets/gear-ball-machine.jpg')" class="p-1 rounded-lg border border-white/10 hover:border-brand-lime bg-brand-card" title="Ball Machine">
+                <img src="assets/gear-ball-machine.jpg" class="w-full h-9 object-cover rounded">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+          Save Product to Inventory →
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: + NEW WALK-IN BOOKING ================= -->
+  <div id="new-booking-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+    <div onclick="closeNewBookingModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-border p-6 shadow-2xl touch-scroll">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+        <div>
+          <h3 class="text-lg font-black uppercase text-white">Create Walk-In / Phone Booking</h3>
+          <p class="text-xs text-slate-400">Instantly locks the court on the calendar and syncs with the public website.</p>
+        </div>
+        <button onclick="closeNewBookingModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+      </div>
+
+      <form onsubmit="handleManualBookingModalSubmit(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Select Court</label>
+            <select id="modal-court" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+              <option value="Court 01">Court 01 — Indoor Championship</option>
+              <option value="Court 02">Court 02 — Indoor Tournament</option>
+              <option value="Court 03">Court 03 — Covered Outdoor</option>
+              <option value="Court 04">Court 04 — Pro Training</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Date</label>
+            <input type="date" id="modal-date" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Time Slot</label>
+          <select id="modal-time" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+            <option value="06:00 AM">06:00 AM (Reg ₱400)</option>
+            <option value="07:00 AM">07:00 AM (Reg ₱400)</option>
+            <option value="08:00 AM">08:00 AM (Reg ₱400)</option>
+            <option value="09:00 AM">09:00 AM (Reg ₱400)</option>
+            <option value="03:00 PM">03:00 PM (Reg ₱400)</option>
+            <option value="04:00 PM">04:00 PM (Reg ₱400)</option>
+            <option value="05:00 PM">05:00 PM (Reg ₱400)</option>
+            <option value="06:00 PM" selected>06:00 PM (Peak ₱500)</option>
+            <option value="07:00 PM">07:00 PM (Peak ₱500)</option>
+            <option value="08:00 PM">08:00 PM (Peak ₱500)</option>
+            <option value="09:00 PM">09:00 PM (Peak ₱500)</option>
+            <option value="10:00 PM">10:00 PM (Peak ₱500)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Customer Full Name (First &amp; Last) <span class="text-brand-clay">*</span></label>
+            <input type="text" id="modal-guest-name" required oninput="clearFieldError('modal-guest-name')" placeholder="e.g. Juan Dela Cruz" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+            <p id="modal-guest-name-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Customer Mobile Number (11 Digits) <span class="text-brand-clay">*</span></label>
+            <input type="tel" id="modal-guest-phone" required oninput="clearFieldError('modal-guest-phone')" placeholder="e.g. 0917 123 4567" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-mono">
+            <p id="modal-guest-phone-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Method</label>
+            <select id="modal-pay-mode" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+              <option value="Cash (Desk)">Cash (Desk)</option>
+              <option value="GCash">GCash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Ref #</label>
+            <input type="text" id="modal-pay-ref" placeholder="WALK-IN / GCash #" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-brand-lime font-mono">
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Amount (₱)</label>
+            <input type="number" id="modal-amount" value="500" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-brand-lime font-mono font-black">
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow mt-4">
+          Save &amp; Sync Booking →
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: RECEIPT SCREENSHOT PREVIEW ================= -->
+  <div id="receipt-viewer-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+    <div onclick="closeReceiptViewerModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/40 p-5 shadow-2xl text-center">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+        <div class="text-left">
+          <span class="text-[10px] font-mono text-brand-lime uppercase block">UPLOADED PAYMENT PROOF</span>
+          <h3 class="text-base font-black uppercase text-white" id="rv-title">GCash Receipt</h3>
+        </div>
+        <button onclick="closeReceiptViewerModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold">✕</button>
+      </div>
+      <div class="bg-brand-black p-3 rounded-2xl border border-white/10 mb-3">
+        <img id="rv-img" src="" alt="Uploaded Receipt" class="max-h-[60dvh] w-auto mx-auto rounded-xl">
+      </div>
+      <p class="text-xs font-mono text-brand-lime font-bold mb-3" id="rv-ref"></p>
+      <button onclick="closeReceiptViewerModal()" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold uppercase">Close Preview</button>
+    </div>
+  </div>
+
+  <!-- ================= ADMIN REAL-TIME ENGINE (EMPTY INITIAL STATE + CUSTOM INVENTORY) ================= -->
+  <script>
+    
+// ================= STRICT INPUT VALIDATION (NO EMOJIS, NO GIBBERISH, VALID PH FORMATS) =================
+
+function pfHasEmoji(str) {
+  if (!str) return false;
+  const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F2FF}\u{1F900}-\u{1F9FF}\u{FE00}-\u{FE0F}\u200D]/u;
+  return emojiRegex.test(str);
+}
+
+function pfIsGibberishWord(word) {
+  if (!word) return false;
+  const clean = word.toLowerCase().replace(/[^a-zà-öø-ÿñ]/g, '');
+  if (!clean) return true;
+  // 4+ identical consecutive letters (e.g. "aaaa", "xxxx")
+  if (/(.)\1{3,}/i.test(clean)) return true;
+  // Keyboard mash / fake test words
+  const bannedWords = new Set([
+    'asdf', 'asdfg', 'asdfgh', 'qwerty', 'qwert', 'zxcv', 'zxcvb',
+    'test', 'testing', 'tester', 'none', 'null', 'undefined', 'admin',
+    'fake', 'sample', 'user', 'guest', 'player', 'name', 'fullname',
+    'idk', 'lol', 'haha', 'hehe', 'blah', 'xyz', 'abc', 'abcd', 'abcde',
+    'dexter', 'xxxx', 'zzzz', 'qqqq', 'wwww'
+  ]);
+  if (bannedWords.has(clean)) return true;
+  // Words >= 3 chars must contain at least one vowel
+  if (clean.length >= 3 && !/[aeiouyà-öø-ÿ]/i.test(clean)) return true;
+  // 5+ consecutive consonants
+  if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(clean)) return true;
+  return false;
+}
+
+function pfValidateField(type, rawValue, isRequired = true) {
+  const val = String(rawValue || '').trim();
+
+  if (!val) {
+    if (isRequired) {
+      return { valid: false, error: 'This field is required. Please enter valid information.' };
+    }
+    return { valid: true, error: '' };
+  }
+
+  if (pfHasEmoji(val)) {
+    return { valid: false, error: 'Emojis and special pictograms are not allowed. Please enter valid text.' };
+  }
+
+  if (type === 'name') {
+    if (val.length < 4 || val.length > 70) {
+      return { valid: false, error: 'Please enter your complete First and Last Name (4 to 70 characters).' };
+    }
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿÑñ\s.'\-]+$/.test(val)) {
+      return { valid: false, error: 'Full Name must contain letters only (no numbers, emojis, or special symbols).' };
+    }
+    const words = val.split(/\s+/).filter(Boolean);
+    if (words.length < 2) {
+      return { valid: false, error: 'Please enter both your First Name and Last Name (e.g. Juan Dela Cruz).' };
+    }
+    for (const w of words) {
+      const stripped = w.replace(/[.'\-]/g, '');
+      if (stripped.length < 2 && words.length < 3) {
+        return { valid: false, error: 'Each name part must be at least 2 letters.' };
+      }
+      if (pfIsGibberishWord(stripped)) {
+        return { valid: false, error: `"${w}" does not look like a valid real name. Please enter a real name.` };
+      }
+    }
+    return { valid: true, error: '' };
+  }
+
+  if (type === 'phone') {
+    if (/[A-Za-z]/.test(val)) {
+      return { valid: false, error: 'Mobile number cannot contain letters.' };
+    }
+    const digits = val.replace(/[\s\-()]/g, '');
+    let normalized = digits;
+    if (normalized.startsWith('+63')) normalized = '0' + normalized.slice(3);
+    else if (normalized.startsWith('63') && normalized.length === 12) normalized = '0' + normalized.slice(2);
+
+    if (!/^09\d{9}$/.test(normalized)) {
+      return { valid: false, error: 'Enter a valid 11-digit Philippine mobile number starting with 09 (e.g. 0917 123 4567).' };
+    }
+    if (/^09(\d)\1{8}$/.test(normalized) || normalized === '09123456789' || normalized === '09987654321') {
+      return { valid: false, error: 'Please enter a real active mobile number (repeating/test digits are not allowed).' };
+    }
+    return { valid: true, error: '' };
+  }
+
+  if (type === 'email') {
+    if (!/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(val)) {
+      return { valid: false, error: 'Please enter a valid email address (e.g. juan@email.com).' };
+    }
+    const [localPart, domainPart] = val.split('@');
+    const domainName = domainPart.split('.')[0];
+    if (pfIsGibberishWord(localPart.replace(/[0-9._%+\-]/g, '')) && localPart.replace(/[^a-zA-Z]/g, '').length >= 4) {
+      return { valid: false, error: 'Email username looks invalid. Please enter a real email address.' };
+    }
+    if (/(.)\1{3,}/i.test(domainName)) {
+      return { valid: false, error: 'Email domain looks invalid.' };
+    }
+    return { valid: true, error: '' };
+  }
+
+  if (type === 'ref') {
+    if (!/^[A-Za-z0-9\s\-]{6,25}$/.test(val)) {
+      return { valid: false, error: 'Reference Number must be 6 to 20 alphanumeric characters (no emojis or symbols).' };
+    }
+    const digitCount = (val.match(/\d/g) || []).length;
+    if (digitCount < 6) {
+      return { valid: false, error: 'Valid GCash / Bank Reference Numbers must contain at least 6 digits.' };
+    }
+    const onlyDigits = val.replace(/\D/g, '');
+    if (/^(\d)\1+$/.test(onlyDigits) || onlyDigits === '123456' || onlyDigits === '12345678' || onlyDigits === '123456789') {
+      return { valid: false, error: 'Fake or repeating reference numbers (e.g. 111111 / 123456) are not valid.' };
+    }
+    return { valid: true, error: '' };
+  }
+
+  if (type === 'lookup') {
+    if (val.length < 3 || val.length > 60) {
+      return { valid: false, error: 'Please enter a valid Booking ID (e.g. PF-12345), Reference No., or Full Name.' };
+    }
+    if (!/^[A-Za-z0-9À-ÖØ-öø-ÿÑñ\s.'\-]+$/.test(val)) {
+      return { valid: false, error: 'Search query contains invalid symbols or emojis.' };
+    }
+    return { valid: true, error: '' };
+  }
+
+  if (type === 'text') {
+    if (val.length < 2) {
+      return { valid: false, error: 'Please enter at least 2 valid characters.' };
+    }
+    if (/(.)\1{4,}/i.test(val)) {
+      return { valid: false, error: 'Please enter meaningful text (no repeated character mashing).' };
+    }
+    return { valid: true, error: '' };
+  }
+
+  return { valid: true, error: '' };
+}
+
+function showFieldError(fieldId, message) {
+  const input = document.getElementById(fieldId);
+  const errEl = document.getElementById(fieldId + '-error');
+  if (input) {
+    input.classList.add('border-brand-clay', 'bg-brand-clay/10');
+    input.classList.remove('border-white/15', 'border-white/10');
+    input.focus();
+  }
+  if (errEl) {
+    errEl.textContent = message;
+    errEl.classList.remove('hidden');
+  } else {
+    alert(message);
+  }
+}
+
+function clearFieldError(fieldId) {
+  const input = document.getElementById(fieldId);
+  const errEl = document.getElementById(fieldId + '-error');
+  if (input) {
+    input.classList.remove('border-brand-clay', 'bg-brand-clay/10');
+  }
+  if (errEl) {
+    errEl.textContent = '';
+    errEl.classList.add('hidden');
+  }
+}
+
+    // Starts completely empty — synced from /api/state
+    let bookings = [];
+    let salesLedger = [];
+    let courtBlocks = [];
+    let posCatalog = [];
+    let customCategories = [];
+    let activeInventoryCategoryFilter = 'ALL';
+    let activePosCategoryFilter = 'ALL';
+    let posOrder = [];
+    let currentUploadedInventoryImg = 'assets/gear-water-500ml.jpg';
+    const defaultBaseCategories = ['Refreshment', 'Pro Shop', 'Rental', 'Court Access'];
+
+    const calendarHours = [
+      { time: '06:00 AM', peak: false },
+      { time: '07:00 AM', peak: false },
+      { time: '08:00 AM', peak: false },
+      { time: '09:00 AM', peak: false },
+      { time: '03:00 PM', peak: false },
+      { time: '04:00 PM', peak: false },
+      { time: '05:00 PM', peak: false },
+      { time: '06:00 PM', peak: true },
+      { time: '07:00 PM', peak: true },
+      { time: '08:00 PM', peak: true },
+      { time: '09:00 PM', peak: true },
+      { time: '10:00 PM', peak: true }
+    ];
+
+    function openPublicSite(event, pagePath) {
+      if (event) event.preventDefault();
+      const host = window.location.hostname;
+      const port = window.location.port;
+      if ((host === 'localhost' || host === '127.0.0.1') && port === '8089') {
+        window.location.href = 'http://' + host + ':8088/' + (pagePath || 'index.html');
+      } else {
+        window.location.href = '/' + (pagePath || 'index.html');
+      }
+      return false;
+    }
+
+    function toggleAdminMobileSidebar() {
+      const sb = document.getElementById('admin-sidebar');
+      const bd = document.getElementById('admin-sidebar-backdrop');
+      const icon = document.getElementById('admin-hamburger-svg');
+      if (!sb || !bd) return;
+      const isHidden = sb.classList.contains('-translate-x-full');
+      if (isHidden) {
+        sb.classList.remove('-translate-x-full');
+        bd.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/>';
+      } else {
+        sb.classList.add('-translate-x-full');
+        bd.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"/>';
+      }
+    }
+
+    // ================= SERVER SYNC ENGINE (/api/state) =================
+    async function fetchAdminStateFromServer(showFeedback) {
+      try {
+        const res = await fetch('/api/state', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          bookings = data.bookings || [];
+          salesLedger = data.sales || data.salesLedger || [];
+          courtBlocks = data.blocks || [];
+          posCatalog = data.inventory || [];
+          customCategories = data.categories || [];
+          if (data.gmailConfig && typeof syncGmailUiState === 'function') {
+            syncGmailUiState(data.gmailConfig);
+          }
+          if (Array.isArray(data.securityLog) && typeof renderSecurityAuditLog === 'function') {
+            renderSecurityAuditLog(data.securityLog);
+          }
+          populateModalCategoryDropdown();
+          renderCategoryFilterBars();
+
+          updateOverviewMetrics();
+          renderBookingsTable();
+          renderScheduleBlocks();
+          renderPosCatalog();
+          renderInventoryTable();
+          renderReportsLedger();
+
+          const ind = document.getElementById('sync-status-indicator');
+          if (ind) {
+            ind.textContent = `Live Synced • ${bookings.length} Bookings • ${posCatalog.length} Items`;
+          }
+          return;
+        }
+      } catch (e) {}
+      updateOverviewMetrics();
+      renderBookingsTable();
+      renderScheduleBlocks();
+      renderPosCatalog();
+      renderInventoryTable();
+      renderReportsLedger();
+    }
+
+    // ================= TAB NAVIGATION =================
+    function switchTab(tabId) {
+      const tabNames = {
+        overview: 'Overview',
+        bookings: 'Bookings',
+        schedule: 'Court Calendar',
+        pos: 'POS Register',
+        inventory: 'Inventory',
+        reports: 'Sales & Reports',
+        settings: 'Settings & Security'
+      };
+      ['overview', 'bookings', 'schedule', 'pos', 'inventory', 'reports', 'settings'].forEach(t => {
+        const sec = document.getElementById('tab-' + t);
+        const nav = document.getElementById('nav-' + t);
+        if (sec) sec.classList.add('hidden');
+        if (nav) {
+          nav.className = 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left';
+        }
+      });
+
+      document.querySelectorAll('.mob-tab-pill').forEach(btn => {
+        if (btn.dataset.tab === tabId) {
+          btn.className = 'mob-tab-pill px-3.5 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition';
+          try { btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch (e) {}
+        } else {
+          btn.className = 'mob-tab-pill px-3.5 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition';
+        }
+      });
+
+      document.querySelectorAll('.mob-btm-btn').forEach(btn => {
+        if (btn.dataset.tab === tabId) {
+          btn.className = 'mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl bg-brand-lime/15 text-brand-lime border border-brand-lime/30 font-black transition';
+        } else {
+          btn.className = 'mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 hover:text-white transition';
+        }
+      });
+
+      const activeSec = document.getElementById('tab-' + tabId);
+      const activeNav = document.getElementById('nav-' + tabId);
+      const title = document.getElementById('current-section-title');
+
+      if (activeSec) activeSec.classList.remove('hidden');
+      if (activeNav) {
+        activeNav.className = 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-left';
+      }
+      if (title) title.textContent = tabNames[tabId] || (tabId.charAt(0).toUpperCase() + tabId.slice(1));
+
+      const sb = document.getElementById('admin-sidebar');
+      const bd = document.getElementById('admin-sidebar-backdrop');
+      const icon = document.getElementById('admin-hamburger-svg');
+      if (sb && !sb.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
+        sb.classList.add('-translate-x-full');
+        if (bd) bd.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"/>';
+      }
+
+      if (tabId === 'overview') updateOverviewMetrics();
+      if (tabId === 'bookings') renderBookingsTable();
+      if (tabId === 'schedule') renderScheduleBlocks();
+      if (tabId === 'pos') { renderPosCatalog(); renderPosOrder(); }
+      if (tabId === 'inventory') renderInventoryTable();
+      if (tabId === 'reports') renderReportsLedger();
+    }
+
+    // ================= OVERVIEW METRICS & FEED =================
+    function updateOverviewMetrics() {
+      const courtTotal = salesLedger.filter(s => s.type === 'Court Rental').reduce((a, b) => a + Number(b.amount || 0), 0);
+      const posTotal = salesLedger.filter(s => s.type !== 'Court Rental').reduce((a, b) => a + Number(b.amount || 0), 0);
+      const grandTotal = courtTotal + posTotal;
+
+      const revEl = document.getElementById('stat-total-revenue');
+      const cntEl = document.getElementById('stat-court-bookings');
+      const invEl = document.getElementById('stat-inventory-count');
+      const pndEl = document.getElementById('stat-pending-reviews');
+      const bdgEl = document.getElementById('pending-badge');
+      const invBdg = document.getElementById('inventory-count-badge');
+
+      if (revEl) revEl.textContent = '₱' + grandTotal.toLocaleString() + '.00';
+      if (cntEl) cntEl.textContent = bookings.length + ' Sessions';
+      if (invEl) invEl.textContent = posCatalog.length + ' Products';
+      if (invBdg) invBdg.textContent = posCatalog.length;
+
+      const pendingCount = bookings.filter(b => b.status === 'PENDING' || b.status === 'RESERVED').length;
+      if (pndEl) pndEl.textContent = pendingCount + ' Slips';
+      if (bdgEl) bdgEl.textContent = pendingCount;
+
+      const feed = document.getElementById('overview-matches-list');
+      if (feed) {
+        if (bookings.length === 0) {
+          feed.innerHTML = `
+            <div class="p-8 rounded-2xl bg-brand-black/40 border border-white/5 text-center space-y-2">
+              <span class="text-xs font-bold uppercase text-slate-400 block">Calendar &amp; Bookings Are Currently Empty</span>
+              <p class="text-[11px] text-slate-500 max-w-md mx-auto">When a guest books a court or buys an item on the public website (Port 8088), their booking and GCash Reference Number will appear here automatically.</p>
+            </div>`;
+        } else {
+          feed.innerHTML = bookings.slice(0, 6).map(b => `
+            <div class="p-3.5 rounded-2xl bg-brand-black/60 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div class="flex items-start sm:items-center gap-3">
+                <span class="px-2.5 py-1 rounded-lg bg-brand-lime/10 text-brand-lime font-mono font-bold text-[10px] flex-shrink-0">${b.ref}</span>
+                <div>
+                  <span class="font-bold text-white block">${b.name} <span class="text-slate-400 font-normal">(${b.phone || '0999 883 2346'})</span></span>
+                  <div class="my-1">${formatAdminItemsBullets(b)}</div><span class="text-brand-lime text-[11px] font-mono block">${b.time}</span>
+                  <span class="text-[10px] font-mono text-slate-400">Mode: <b class="text-white">${b.paymentMethod || b.paymentMode || 'GCash'}</b> • Ref #: <b class="text-brand-lime">${b.transactionRef || 'Walk-In'}</b></span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 self-end sm:self-center">
+                <span class="font-mono font-black text-white">₱${b.total}</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                  b.status === 'CONFIRMED' ? 'bg-brand-lime/15 text-brand-lime border border-brand-lime/30' : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                }">${b.status}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    // ================= BOOKINGS TABLE & SEARCH FILTER =================
+    function filterBookings() {
+      renderBookingsTable();
+    }
+
+    function renderBookingsTable() {
+      const tbody = document.getElementById('admin-bookings-tbody');
+      if (!tbody) return;
+
+      const searchVal = (document.getElementById('booking-search')?.value || '').trim().toUpperCase();
+      const statusFilter = document.getElementById('booking-status-filter')?.value || 'ALL';
+
+      const filtered = bookings.filter(b => {
+        const matchesStatus = (statusFilter === 'ALL') || (b.status && b.status.toUpperCase() === statusFilter);
+        const matchesSearch = !searchVal ||
+          (b.ref && b.ref.toUpperCase().includes(searchVal)) ||
+          (b.name && b.name.toUpperCase().includes(searchVal)) ||
+          (b.transactionRef && b.transactionRef.toUpperCase().includes(searchVal)) ||
+          (b.court && b.court.toUpperCase().includes(searchVal));
+        return matchesStatus && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-slate-500 text-xs">No reservations recorded yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(b => {
+        const hasReceipt = Boolean(b.receiptDataUrl);
+        return `
+        <tr class="hover:bg-white/5 transition">
+          <td class="py-3.5 px-4 font-mono font-bold text-brand-lime whitespace-nowrap">${b.ref}</td>
+          <td class="py-3.5 px-4">
+            <span class="font-bold text-white block">${b.name}</span>
+            <span class="text-[10px] font-mono text-slate-400">${b.phone || '0999 883 2346'}</span>
+          </td>
+          <td class="py-3.5 px-4 text-slate-200 min-w-[200px]">
+            ${formatAdminItemsBullets(b)}
+          </td>
+          <td class="py-3.5 px-4 text-slate-300 font-mono text-[11px] whitespace-nowrap">${b.time}</td>
+          <td class="py-3.5 px-4">
+            <span class="text-white font-bold block">${b.paymentMethod || b.paymentMode || 'GCash'}</span>
+            <span class="text-[11px] font-mono text-brand-lime font-bold block">Ref: ${b.transactionRef || 'N/A'}</span>
+            ${hasReceipt ? `<button onclick="previewReceipt('${b.ref}')" class="mt-1 px-2 py-0.5 rounded bg-brand-lime/15 text-brand-lime border border-brand-lime/30 text-[9px] font-mono font-bold hover:bg-brand-lime hover:text-brand-black transition">View Receipt Image</button>` : ''}
+          </td>
+          <td class="py-3.5 px-4 font-mono font-black text-white whitespace-nowrap">₱${Number(b.total || 0).toLocaleString()}</td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase ${
+              b.status === 'CONFIRMED' ? 'bg-brand-lime/15 text-brand-lime border border-brand-lime/30' : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+            }">
+              ${b.status}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-1.5">
+            ${b.status !== 'CONFIRMED' ? `<button onclick="approveBooking('${b.ref}')" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase hover:bg-brand-limeHover transition">Approve</button>` : ''}
+            <button onclick="sendBookingViaGmail('${b.ref}')" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-brand-lime/20 border border-white/15 hover:border-brand-lime/40 text-white hover:text-brand-lime text-[10px] font-bold uppercase transition" title="Send Booking Confirmation via Gmail">Gmail ↗</button>
+            <button onclick="deleteAdminBooking('${b.ref}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Remove</button>
+          </td>
+        </tr>
+      `}).join('');
+    }
+
+    function previewReceipt(ref) {
+      const b = bookings.find(item => item.ref === ref);
+      if (!b || !b.receiptDataUrl) return;
+      document.getElementById('rv-title').textContent = `Receipt • ${b.name} (${b.ref})`;
+      document.getElementById('rv-img').src = b.receiptDataUrl;
+      document.getElementById('rv-ref').textContent = `Captured Ref #: ${b.transactionRef || 'N/A'}`;
+      document.getElementById('receipt-viewer-modal').classList.remove('hidden');
+    }
+
+    function closeReceiptViewerModal() {
+      document.getElementById('receipt-viewer-modal').classList.add('hidden');
+    }
+
+    async function approveBooking(ref) {
+      try {
+        await fetch('/api/bookings/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ref: ref, status: 'CONFIRMED' })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+      alert('Booking ' + ref + ' verified and marked CONFIRMED!');
+    }
+
+    async function deleteAdminBooking(ref) {
+      if (!confirm('Remove reservation ' + ref + '?')) return;
+      try {
+        await fetch('/api/bookings/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ref: ref })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    // ================= NEW WALK-IN BOOKING MODAL =================
+    function openNewBookingModal() {
+      document.getElementById('new-booking-modal').classList.remove('hidden');
+      document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
+    }
+    function closeNewBookingModal() {
+      document.getElementById('new-booking-modal').classList.add('hidden');
+    }
+    async function handleManualBookingModalSubmit(e) {
+      e.preventDefault();
+      const court = document.getElementById('modal-court').value;
+      const date = document.getElementById('modal-date').value;
+      const time = document.getElementById('modal-time').value;
+      const name = document.getElementById('modal-guest-name').value;
+      const phone = document.getElementById('modal-guest-phone').value || '0999 883 2346';
+      const payMode = document.getElementById('modal-pay-mode').value;
+      const payRef = document.getElementById('modal-pay-ref').value || 'WALK-IN-DESK';
+      const amount = parseInt(document.getElementById('modal-amount').value) || 500;
+      const ref = 'PF-' + Math.floor(10000 + Math.random() * 90000);
+
+      const newBooking = {
+        ref: ref,
+        name: name,
+        phone: phone,
+        court: court,
+        time: 'Today • ' + time,
+        paymentMethod: payMode,
+        transactionRef: payRef,
+        total: amount,
+        status: 'CONFIRMED'
+      };
+
+      try {
+        await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newBooking)
+        });
+      } catch (e) {}
+
+      closeNewBookingModal();
+      await fetchAdminStateFromServer(true);
+      switchTab('bookings');
+    }
+
+    // ================= SCHEDULE CALENDAR & BLOCKS =================
+    function renderScheduleBlocks() {
+      const container = document.getElementById('admin-blocks-container');
+      if (container) {
+        if (courtBlocks.length === 0) {
+          container.innerHTML = `<div class="text-xs text-slate-500 py-3 px-4 rounded-xl bg-brand-black/40 border border-white/5">No court blocks active. All 4 courts are open.</div>`;
+        } else {
+          container.innerHTML = courtBlocks.map(b => `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 text-xs">
+              <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 rounded-lg bg-brand-clay/15 text-brand-clay font-mono font-bold text-[10px] uppercase">${b.court}</span>
+                <div>
+                  <span class="font-bold text-white block">${b.reason}</span>
+                  <span class="text-slate-400 text-[11px] font-mono">${b.date} • ${b.hours}</span>
+                </div>
+              </div>
+              <button onclick="removeAdminBlock('${b.id}')" class="px-3 py-1 rounded-xl border border-white/10 hover:border-brand-clay text-brand-clay text-[10px] font-bold self-end sm:self-center">Remove</button>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Render Live 4-Court Matrix
+      const matrixTbody = document.getElementById('admin-calendar-matrix-tbody');
+      if (!matrixTbody) return;
+
+      matrixTbody.innerHTML = calendarHours.map(h => {
+        const cols = [1, 2, 3, 4].map(cNum => {
+          const courtLabel = 'Court 0' + cNum;
+          const booked = bookings.find(b => b.court && b.court.includes(courtLabel) && b.time && b.time.includes(h.time));
+          const blocked = courtBlocks.find(bl => bl.court && bl.court.includes(courtLabel) && bl.hours && bl.hours.includes(h.time));
+          if (booked) {
+            return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-brand-lime/15 border border-brand-lime/40 text-brand-lime text-[10px] font-bold truncate" title="${booked.name}">${booked.name}</span></td>`;
+          }
+          const isPeakHr = ['06:00 PM','07:00 PM','08:00 PM','09:00 PM','10:00 PM','11:00 PM'].includes(h.time);
+          if (blocked) {
+            return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-brand-clay/15 border border-brand-clay/40 text-brand-clay text-[10px] font-bold truncate" title="${blocked.reason}">${blocked.reason}</span></td>`;
+          }
+          if (isPeakHr) {
+            return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-[#D4FF00]/25 border border-[#D4FF00] text-[#E6FF4D] text-[10px] font-mono font-bold">Peak • ₱500</span></td>`;
+          }
+          return `<td class="p-2 text-center"><span class="inline-block w-full py-1.5 px-2 rounded-lg bg-[#0E8A2D]/20 border border-[#10B981]/45 text-[#34D399] text-[10px] font-mono font-bold">Reg • ₱400</span></td>`;
+        }).join('');
+
+        const isPeakRow = ['06:00 PM','07:00 PM','08:00 PM','09:00 PM','10:00 PM','11:00 PM'].includes(h.time);
+        return `<tr class="${isPeakRow ? 'bg-[#D4FF00]/[0.08]' : ''}">
+          <td class="py-2 px-3 font-mono font-bold text-white whitespace-nowrap">
+            <span>${h.time}</span>
+            <span class="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${isPeakRow ? 'bg-[#D4FF00] text-[#050E1D]' : 'bg-[#10B981]/20 text-[#34D399]'}">${isPeakRow ? 'PEAK' : 'REG'}</span>
+          </td>
+          ${cols}
+        </tr>`;
+      }).join('');
+    }
+
+    async function handleAdminBlockSubmit(e) {
+      e.preventDefault();
+      const newBlock = {
+        id: 'b' + Date.now(),
+        court: document.getElementById('adm-block-court').value,
+        date: document.getElementById('adm-block-date').value || 'Today',
+        hours: document.getElementById('adm-block-hours').value,
+        reason: document.getElementById('adm-block-reason').value
+      };
+      try {
+        await fetch('/api/blocks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'add', block: newBlock })
+        });
+      } catch (err) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    async function removeAdminBlock(blockId) {
+      try {
+        await fetch('/api/blocks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'remove', id: blockId })
+        });
+      } catch (err) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    // ================= CUSTOM INVENTORY MANAGEMENT (WITH PICTURE UPLOAD) =================
+    // ================= CUSTOM CATEGORIES ENGINE =================
+    function getAllAvailableCategories() {
+      const set = new Set(defaultBaseCategories);
+      (customCategories || []).forEach(c => { if (c) set.add(c); });
+      (posCatalog || []).forEach(p => { if (p && p.cat) set.add(p.cat); });
+      return Array.from(set);
+    }
+
+    function populateModalCategoryDropdown(selectedCat) {
+      const sel = document.getElementById('inv-item-cat');
+      if (!sel) return;
+      const allCats = getAllAvailableCategories();
+      if (selectedCat && selectedCat !== '__CUSTOM__' && !allCats.includes(selectedCat)) {
+        allCats.push(selectedCat);
+      }
+      sel.innerHTML = allCats.map(c => `<option value="${c}">${c}</option>`).join('') +
+        `<option value="__CUSTOM__">+ Type Custom Category...</option>`;
+      if (selectedCat) {
+        sel.value = selectedCat;
+      }
+    }
+
+    function handleModalCategorySelectChange(val) {
+      const customInp = document.getElementById('inv-item-custom-cat');
+      if (!customInp) return;
+      if (val === '__CUSTOM__') {
+        customInp.classList.remove('hidden');
+        customInp.focus();
+      } else {
+        customInp.classList.add('hidden');
+      }
+    }
+
+    function toggleModalCustomCategoryInput() {
+      const sel = document.getElementById('inv-item-cat');
+      const customInp = document.getElementById('inv-item-custom-cat');
+      if (!sel || !customInp) return;
+      if (customInp.classList.contains('hidden')) {
+        sel.value = '__CUSTOM__';
+        customInp.classList.remove('hidden');
+        customInp.focus();
+      } else {
+        customInp.classList.add('hidden');
+        sel.value = getAllAvailableCategories()[0] || 'Refreshment';
+      }
+    }
+
+    async function handleAddCustomCategoryBar(event) {
+      event.preventDefault();
+      const inp = document.getElementById('new-custom-category-input');
+      if (!inp || !inp.value.trim()) return;
+      const newCat = inp.value.trim();
+      try {
+        await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'add', name: newCat })
+        });
+      } catch (e) {}
+      inp.value = '';
+      await fetchAdminStateFromServer(true);
+    }
+
+    async function deleteCustomCategory(catName) {
+      if (!confirm(`Remove custom category "${catName}"?`)) return;
+      try {
+        await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', name: catName })
+        });
+      } catch (e) {}
+      if (activeInventoryCategoryFilter === catName) activeInventoryCategoryFilter = 'ALL';
+      if (activePosCategoryFilter === catName) activePosCategoryFilter = 'ALL';
+      await fetchAdminStateFromServer(true);
+    }
+
+    function setInventoryCategoryFilter(cat) {
+      activeInventoryCategoryFilter = cat;
+      renderCategoryFilterBars();
+      renderInventoryTable();
+    }
+
+    function setPosCategoryFilter(cat) {
+      activePosCategoryFilter = cat;
+      renderCategoryFilterBars();
+      renderPosCatalog();
+    }
+
+    function renderCategoryFilterBars() {
+      const invBar = document.getElementById('inventory-category-filters');
+      const posBar = document.getElementById('pos-category-filters');
+      const allCats = getAllAvailableCategories();
+
+      if (invBar) {
+        invBar.innerHTML = [
+          `<button type="button" onclick="setInventoryCategoryFilter('ALL')" class="px-3 py-1.5 rounded-xl text-[11px] font-black uppercase transition ${
+            activeInventoryCategoryFilter === 'ALL' ? 'bg-brand-lime text-brand-black' : 'bg-brand-black text-slate-300 border border-white/10 hover:border-brand-lime/40'
+          }">All (${posCatalog.length})</button>`,
+          ...allCats.map(c => {
+            const count = posCatalog.filter(p => p.cat === c).length;
+            const isCustom = !defaultBaseCategories.includes(c);
+            const isActive = activeInventoryCategoryFilter === c;
+            const safeC = c.replace(/'/g, "\\'");
+            return `<div class="inline-flex items-center rounded-xl border ${
+              isActive ? 'bg-brand-lime text-brand-black border-brand-lime' : 'bg-brand-black text-slate-300 border-white/10 hover:border-brand-lime/40'
+            } overflow-hidden">
+              <button type="button" onclick="setInventoryCategoryFilter('${safeC}')" class="px-3 py-1.5 text-[11px] font-bold uppercase transition">${c} (${count})</button>
+              ${isCustom ? `<button type="button" onclick="deleteCustomCategory('${safeC}')" class="pr-2.5 pl-1 py-1.5 text-[10px] ${isActive ? 'text-brand-black hover:opacity-70' : 'text-brand-clay hover:text-white'} font-black" title="Remove Custom Category">×</button>` : ''}
+            </div>`;
+          })
+        ].join('');
+      }
+
+      if (posBar) {
+        posBar.innerHTML = [
+          `<button type="button" onclick="setPosCategoryFilter('ALL')" class="px-3 py-1.5 rounded-xl text-[11px] font-black uppercase transition flex-shrink-0 ${
+            activePosCategoryFilter === 'ALL' ? 'bg-brand-lime text-brand-black' : 'bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40'
+          }">All Items</button>`,
+          ...allCats.map(c => {
+            const safeC = c.replace(/'/g, "\\'");
+            const isActive = activePosCategoryFilter === c;
+            return `<button type="button" onclick="setPosCategoryFilter('${safeC}')" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase transition flex-shrink-0 ${
+              isActive ? 'bg-brand-lime text-brand-black font-black' : 'bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40'
+            }">${c}</button>`;
+          })
+        ].join('');
+      }
+    }
+
+    function openAddInventoryModal(editId) {
+      const modal = document.getElementById('inventory-modal');
+      if (!modal) return;
+      const titleEl = document.getElementById('inv-modal-title');
+      const idEl = document.getElementById('inv-item-id');
+      const nameEl = document.getElementById('inv-item-name');
+      const catEl = document.getElementById('inv-item-cat');
+      const priceEl = document.getElementById('inv-item-price');
+      const stockEl = document.getElementById('inv-item-stock');
+      const previewEl = document.getElementById('inv-img-preview');
+      const urlEl = document.getElementById('inv-img-url');
+      const fileEl = document.getElementById('inv-img-file');
+
+      if (fileEl) fileEl.value = '';
+
+      if (editId) {
+        const existing = posCatalog.find(x => x.id === editId);
+        if (existing) {
+          titleEl.textContent = 'Edit Inventory Product';
+          idEl.value = existing.id;
+          nameEl.value = existing.name;
+          populateModalCategoryDropdown(existing.cat || 'Pro Shop');
+          document.getElementById('inv-item-custom-cat')?.classList.add('hidden');
+          priceEl.value = existing.price;
+          stockEl.value = existing.stock;
+          currentUploadedInventoryImg = existing.img || 'assets/gear-water-500ml.jpg';
+          previewEl.src = currentUploadedInventoryImg;
+          urlEl.value = currentUploadedInventoryImg.startsWith('data:') ? '(Custom Uploaded Photo)' : currentUploadedInventoryImg;
+        }
+      } else {
+        titleEl.textContent = 'Add Custom Product with Picture';
+        idEl.value = '';
+        nameEl.value = '';
+        populateModalCategoryDropdown(activeInventoryCategoryFilter !== 'ALL' ? activeInventoryCategoryFilter : 'Refreshment');
+        const cInp = document.getElementById('inv-item-custom-cat');
+        if (cInp) { cInp.value = ''; cInp.classList.add('hidden'); }
+        priceEl.value = 50;
+        stockEl.value = 20;
+        currentUploadedInventoryImg = 'assets/gear-water-500ml.jpg';
+        previewEl.src = currentUploadedInventoryImg;
+        urlEl.value = currentUploadedInventoryImg;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeInventoryModal() {
+      const modal = document.getElementById('inventory-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function selectPresetInventoryImage(imgPath) {
+      currentUploadedInventoryImg = imgPath;
+      const previewEl = document.getElementById('inv-img-preview');
+      const urlEl = document.getElementById('inv-img-url');
+      if (previewEl) previewEl.src = imgPath;
+      if (urlEl) urlEl.value = imgPath;
+    }
+
+    function updateInventoryPreviewFromUrl(val) {
+      if (!val || val === '(Custom Uploaded Photo)') return;
+      currentUploadedInventoryImg = val.trim();
+      const previewEl = document.getElementById('inv-img-preview');
+      if (previewEl) previewEl.src = currentUploadedInventoryImg;
+    }
+
+    function handleInventoryImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 320;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          } else {
+            if (h > maxDim) { w = Math.round(w * (maxDim / h)); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          currentUploadedInventoryImg = dataUrl;
+          const previewEl = document.getElementById('inv-img-preview');
+          const urlEl = document.getElementById('inv-img-url');
+          if (previewEl) previewEl.src = dataUrl;
+          if (urlEl) urlEl.value = '(Custom Uploaded Photo)';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function handleSaveInventoryItem(event) {
+      event.preventDefault();
+      const id = document.getElementById('inv-item-id').value || ('inv-' + Date.now());
+      const name = document.getElementById('inv-item-name').value.trim();
+      const selCat = document.getElementById('inv-item-cat').value;
+      const customCatVal = (document.getElementById('inv-item-custom-cat')?.value || '').trim();
+      const cat = (selCat === '__CUSTOM__' || customCatVal) ? (customCatVal || 'Custom') : selCat;
+      const price = parseFloat(document.getElementById('inv-item-price').value) || 0;
+      const stock = parseInt(document.getElementById('inv-item-stock').value) || 0;
+
+      const itemObj = {
+        id: id,
+        name: name,
+        cat: cat,
+        price: price,
+        stock: stock,
+        img: currentUploadedInventoryImg || 'assets/gear-water-500ml.jpg'
+      };
+
+      try {
+        await fetch('/api/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'add', item: itemObj })
+        });
+      } catch (e) {}
+
+      closeInventoryModal();
+      await fetchAdminStateFromServer(true);
+      switchTab('inventory');
+    }
+
+    async function adjustInventoryStockDelta(id, delta) {
+      const prod = posCatalog.find(p => p.id === id);
+      if (!prod) return;
+      const newStock = Math.max(0, Number(prod.stock || 0) + delta);
+      try {
+        await fetch('/api/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'update_stock', id: id, stock: newStock })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    async function deleteInventoryItem(id) {
+      if (!confirm('Remove this product from inventory?')) return;
+      try {
+        await fetch('/api/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', id: id })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventory-tbody');
+      if (!tbody) return;
+
+      if (posCatalog.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-12 px-4 text-center">
+              <div class="max-w-md mx-auto space-y-3">
+                <span class="text-sm font-black uppercase text-white block">Your Inventory List Is Empty</span>
+                <p class="text-xs text-slate-400">Click the button below to add your custom products with a photo, category, price, and starting stock count. When customers or POS staff buy an item, stock automatically deducts.</p>
+                <button onclick="openAddInventoryModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition">
+                  + Add First Inventory Product
+                </button>
+              </div>
+            </td>
+          </tr>`;
+        return;
+      }
+
+      const filteredInv = activeInventoryCategoryFilter === 'ALL'
+        ? posCatalog
+        : posCatalog.filter(p => p.cat === activeInventoryCategoryFilter);
+      if (filteredInv.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-xs text-slate-400">No products in category "${activeInventoryCategoryFilter}" yet. Click <b>+ Add Custom Product</b> to add one!</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = filteredInv.map(p => {
+        const stockNum = Number(p.stock || 0);
+        let badgeCls = 'bg-brand-lime/15 text-brand-lime border border-brand-lime/30';
+        let badgeTxt = 'IN STOCK';
+        if (stockNum === 0) {
+          badgeCls = 'bg-brand-clay/20 text-brand-clay border border-brand-clay/40';
+          badgeTxt = 'OUT OF STOCK';
+        } else if (stockNum <= 5) {
+          badgeCls = 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
+          badgeTxt = 'LOW STOCK';
+        }
+
+        return `
+        <tr class="hover:bg-white/5 transition">
+          <td class="py-3.5 px-4 font-bold text-white flex items-center gap-3">
+            <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${p.name}" class="w-11 h-11 rounded-xl object-cover border border-white/15 flex-shrink-0 bg-brand-black">
+            <div>
+              <span class="block text-white font-bold">${p.name}</span>
+              <span class="text-[10px] font-mono text-slate-500">ID: ${p.id}</span>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 text-slate-300 font-semibold">${p.cat}</td>
+          <td class="py-3.5 px-4 font-mono font-black text-brand-lime">₱${Number(p.price).toFixed(2)}</td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-2">
+              <button onclick="adjustInventoryStockDelta('${p.id}', -1)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center">-</button>
+              <span class="font-mono text-white font-black text-sm min-w-[36px] text-center">${stockNum}</span>
+              <button onclick="adjustInventoryStockDelta('${p.id}', 1)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center">+</button>
+            </div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase ${badgeCls}">${badgeTxt}</span>
+          </td>
+          <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-2">
+            <button onclick="openAddInventoryModal('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-brand-lime text-[10px] font-bold uppercase transition">Edit</button>
+            <button onclick="deleteInventoryItem('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Delete</button>
+          </td>
+        </tr>
+      `}).join('');
+    }
+
+    // ================= POINT OF SALE (POS) =================
+    function renderPosCatalog() {
+      const grid = document.getElementById('pos-catalog-grid');
+      if (!grid) return;
+
+      if (posCatalog.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full p-8 rounded-3xl bg-brand-card border border-white/10 text-center space-y-3">
+            <span class="text-sm font-black uppercase text-white block">No Products in Inventory Yet</span>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">Add your custom drinks, balls, or paddle rentals to the Inventory first. They will appear here with their picture and live stock count.</p>
+            <button onclick="openAddInventoryModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition">
+              + Add Custom Product with Picture
+            </button>
+          </div>`;
+        return;
+      }
+
+      const filteredPos = activePosCategoryFilter === 'ALL'
+        ? posCatalog
+        : posCatalog.filter(p => p.cat === activePosCategoryFilter);
+      if (filteredPos.length === 0) {
+        grid.innerHTML = `<div class="col-span-full p-6 rounded-2xl bg-brand-card border border-white/10 text-center text-xs text-slate-400">No items in category "${activePosCategoryFilter}".</div>`;
+        return;
+      }
+      grid.innerHTML = filteredPos.map(p => {
+        const outOfStock = Number(p.stock || 0) <= 0;
+        return `
+        <div onclick="${outOfStock ? "alert('Out of stock! Please restock in the Inventory tab.')" : `addPosItem('${p.id}')`}" class="p-3.5 rounded-2xl bg-brand-card border ${outOfStock ? 'border-brand-clay/30 opacity-60 cursor-not-allowed' : 'border-white/10 hover:border-brand-lime/40 cursor-pointer active:scale-95'} transition flex flex-col justify-between">
+          <div>
+            <div class="h-28 w-full rounded-xl overflow-hidden bg-brand-black mb-2.5 border border-white/5 relative">
+              <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${p.name}" class="w-full h-full object-cover">
+              <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full ${outOfStock ? 'bg-brand-clay text-white' : 'bg-brand-black/85 text-brand-lime border border-brand-lime/30'} text-[9px] font-mono font-bold">
+                ${outOfStock ? '0 Left' : `Stock: ${p.stock}`}
+              </span>
+            </div>
+            <span class="text-[9px] font-mono uppercase text-slate-400 block">${p.cat}</span>
+            <h4 class="font-bold text-white text-xs mt-0.5 leading-snug">${p.name}</h4>
+          </div>
+          <span class="text-brand-lime font-mono font-black text-sm block mt-2">₱${Number(p.price).toFixed(2)}</span>
+        </div>
+      `}).join('');
+    }
+
+    function addPosItem(id) {
+      const prod = posCatalog.find(p => p.id === id);
+      if (!prod) return;
+      const existing = posOrder.find(o => o.id === id);
+      const currentInCart = existing ? existing.qty : 0;
+      if (currentInCart + 1 > Number(prod.stock || 0)) {
+        alert(`Only ${prod.stock} units of "${prod.name}" available in stock!`);
+        return;
+      }
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        posOrder.push({ ...prod, qty: 1 });
+      }
+      renderPosOrder();
+    }
+
+    function renderPosOrder() {
+      const list = document.getElementById('pos-order-items');
+      const subtotalEl = document.getElementById('pos-subtotal');
+      const totalEl = document.getElementById('pos-total-due');
+      if (!list) return;
+
+      if (posOrder.length === 0) {
+        list.innerHTML = `<div class="text-center py-8 text-xs text-slate-500">Tap products on the left to add to order.</div>`;
+        if (subtotalEl) subtotalEl.textContent = '₱0.00';
+        if (totalEl) totalEl.textContent = '₱0.00';
+        return;
+      }
+
+      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
+      if (subtotalEl) subtotalEl.textContent = '₱' + total.toFixed(2);
+      if (totalEl) totalEl.textContent = '₱' + total.toFixed(2);
+
+      list.innerHTML = posOrder.map((item, idx) => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-brand-black/60 border border-white/10 text-xs">
+          <div class="truncate flex-1 pr-2">
+            <span class="font-bold text-white block truncate">${item.name}</span>
+            <span class="text-[10px] text-brand-lime font-mono">₱${item.price} each</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="changePosQty(${idx}, -1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold">-</button>
+            <span class="font-mono text-white text-xs px-1">${item.qty}</span>
+            <button onclick="changePosQty(${idx}, 1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      calculatePosChange();
+    }
+
+    function changePosQty(idx, delta) {
+      const item = posOrder[idx];
+      const prod = posCatalog.find(p => p.id === item.id);
+      if (delta > 0 && prod && (item.qty + delta > Number(prod.stock || 0))) {
+        alert(`Cannot exceed available stock (${prod.stock} units).`);
+        return;
+      }
+      posOrder[idx].qty += delta;
+      if (posOrder[idx].qty <= 0) {
+        posOrder.splice(idx, 1);
+      }
+      renderPosOrder();
+    }
+
+    function clearPosOrder() {
+      posOrder = [];
+      renderPosOrder();
+    }
+
+    function calculatePosChange() {
+      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
+      const received = parseFloat(document.getElementById('pos-cash-received')?.value) || 0;
+      const changeEl = document.getElementById('pos-change-due');
+      if (changeEl) {
+        const change = Math.max(0, received - total);
+        changeEl.textContent = '₱' + change.toFixed(2);
+      }
+    }
+
+    async function completePosSale() {
+      if (posOrder.length === 0) {
+        alert('POS Order is empty!');
+        return;
+      }
+      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
+      const payMode = document.getElementById('pos-payment-mode').value;
+      const ref = 'POS-' + Math.floor(1000 + Math.random() * 9000);
+
+      const desc = posOrder.map(i => `${i.qty}x ${i.name}`).join(', ');
+      const salePayload = {
+        ref: ref,
+        type: 'POS Retail',
+        desc: desc,
+        method: payMode,
+        amount: total,
+        items: posOrder.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price }))
+      };
+
+      try {
+        await fetch('/api/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(salePayload)
+        });
+      } catch (e) {}
+
+      clearPosOrder();
+      document.getElementById('pos-cash-received').value = '';
+      calculatePosChange();
+      await fetchAdminStateFromServer(true);
+      alert('POS Sale Completed & Stock Deducted!\nRef: ' + ref + '\nTotal: ₱' + total.toFixed(2));
+    }
+
+    // ================= REPORTS & CSV EXPORT =================
+    function renderReportsLedger() {
+      const tbody = document.getElementById('reports-tbody');
+      if (!tbody) return;
+
+      const courtTotal = salesLedger.filter(s => s.type === 'Court Rental').reduce((a, b) => a + Number(b.amount || 0), 0);
+      const posTotal = salesLedger.filter(s => s.type !== 'Court Rental').reduce((a, b) => a + Number(b.amount || 0), 0);
+      document.getElementById('rep-court-rev').textContent = '₱' + courtTotal.toLocaleString() + '.00';
+      document.getElementById('rep-pos-rev').textContent = '₱' + posTotal.toLocaleString() + '.00';
+      document.getElementById('rep-total-rev').textContent = '₱' + (courtTotal + posTotal).toLocaleString() + '.00';
+
+      if (salesLedger.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-500 text-xs font-sans">No sales transactions recorded yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = salesLedger.map(s => `
+        <tr class="hover:bg-white/5 transition">
+          <td class="py-3 px-4 font-bold text-brand-lime">${s.ref}</td>
+          <td class="py-3 px-4 text-slate-300 font-sans">${s.type}</td>
+          <td class="py-3 px-4 text-white font-sans truncate max-w-xs" title="${s.desc}">${s.desc}</td>
+          <td class="py-3 px-4 text-slate-300 font-mono text-[11px]">${s.method}</td>
+          <td class="py-3 px-4 font-bold text-white">₱${Number(s.amount || 0).toFixed(2)}</td>
+          <td class="py-3 px-4 text-slate-500 text-[11px]">${s.date}</td>
+        </tr>
+      `).join('');
+    }
+
+    function exportLedgerToCsv() {
+      let csv = "Transaction Ref,Type,Description,Payment Method & Ref,Amount,Timestamp\n";
+      salesLedger.forEach(s => {
+        csv += `"${s.ref}","${s.type}","${s.desc}","${s.method}","${s.amount}","${s.date}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', 'pf-rally-ground-sales-report.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    async function resetAllDatabaseData() {
+      if (!confirm('Are you sure you want to empty all bookings, blocks, sales, and inventory?')) return;
+      try {
+        await fetch('/api/reset', { method: 'POST' });
+      } catch (e) {}
+      localStorage.clear();
+      await fetchAdminStateFromServer(true);
+      alert('All database records have been emptied.');
+    }
+
+    
+        // ================= DUAL AUTH GATE + CYBERSECURITY SHIELD =================
+    let adminGmailConfig = {
+      adminEmail: '',
+      hasAppPassword: false,
+      notifyOnNewBooking: true,
+      sendCustomerReceipt: true
+    };
+    let clientFailedAttempts = 0;
+    let clientLockoutUntil = 0;
+    let lockoutTimerInterval = null;
+    let idleTimeoutTimer = null;
+    const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes auto-lock
+
+    function pfEscapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function resetAdminIdleTimer() {
+      if (idleTimeoutTimer) clearTimeout(idleTimeoutTimer);
+      if (sessionStorage.getItem('pf_admin_unlocked') === 'true') {
+        idleTimeoutTimer = setTimeout(() => {
+          lockAdminPortal();
+        }, IDLE_TIMEOUT_MS);
+      }
+    }
+
+    ['mousemove', 'keydown', 'touchstart', 'click'].forEach(evt => {
+      window.addEventListener(evt, resetAdminIdleTimer, { passive: true });
+    });
+
+    function renderSecurityAuditLog(logs) {
+      const listEl = document.getElementById('security-audit-log-list');
+      const countEl = document.getElementById('security-log-count');
+      if (!listEl) return;
+      if (countEl) countEl.textContent = `${logs.length} Event${logs.length === 1 ? '' : 's'}`;
+      if (!logs || logs.length === 0) {
+        listEl.innerHTML = `<div class="p-3 text-center text-[11px] text-slate-400">No security events logged yet.</div>`;
+        return;
+      }
+      listEl.innerHTML = logs.slice(0, 15).map(item => {
+        const isWarn = String(item.event || '').includes('FAILED') || String(item.event || '').includes('LOCKOUT');
+        return `<div class="px-3.5 py-2 flex items-center justify-between gap-2 text-[11px]">
+          <div class="min-w-0">
+            <span class="font-mono font-black ${isWarn ? 'text-brand-clay' : 'text-brand-lime'} mr-2">[${pfEscapeHtml(item.event)}]</span>
+            <span class="text-slate-200">${pfEscapeHtml(item.detail)}</span>
+          </div>
+          <span class="font-mono text-[10px] text-slate-400 flex-shrink-0">${pfEscapeHtml(item.time)}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function startClientLockoutCountdown(seconds, errEl) {
+      clientLockoutUntil = Date.now() + (seconds * 1000);
+      if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
+      const tick = () => {
+        const rem = Math.ceil((clientLockoutUntil - Date.now()) / 1000);
+        if (rem <= 0) {
+          clearInterval(lockoutTimerInterval);
+          clientFailedAttempts = 0;
+          if (errEl) {
+            errEl.textContent = 'Lockout expired. You may try logging in again.';
+            errEl.className = 'text-xs font-bold text-brand-lime mt-2';
+          }
+          return;
+        }
+        if (errEl) {
+          errEl.classList.remove('hidden');
+          errEl.className = 'text-xs font-bold text-brand-clay mt-2';
+          errEl.textContent = `Cybersecurity Lockout: Too many failed attempts. Wait ${rem}s before retrying.`;
+        }
+      };
+      tick();
+      lockoutTimerInterval = setInterval(tick, 1000);
+    }
+
+    function checkAdminAuthGate() {
+      const gate = document.getElementById('admin-auth-gate');
+      if (!gate) return;
+      const unlocked = sessionStorage.getItem('pf_admin_unlocked') === 'true';
+      if (unlocked) {
+        gate.classList.add('hidden');
+        gate.style.display = 'none';
+        resetAdminIdleTimer();
+      } else {
+        gate.classList.remove('hidden');
+        gate.style.display = 'flex';
+      }
+    }
+
+    function switchAuthGateMode(mode) {
+      const pwTab = document.getElementById('auth-tab-password');
+      const gmTab = document.getElementById('auth-tab-gmail');
+      const pwForm = document.getElementById('auth-form-password');
+      const gmForm = document.getElementById('auth-form-gmail');
+      const pwErr = document.getElementById('admin-login-error');
+      const gmErr = document.getElementById('admin-gmail-error');
+      if (pwErr && Date.now() > clientLockoutUntil) pwErr.classList.add('hidden');
+      if (gmErr && Date.now() > clientLockoutUntil) gmErr.classList.add('hidden');
+
+      if (mode === 'gmail') {
+        if (gmTab) gmTab.className = 'py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black transition shadow-md flex items-center justify-center gap-1.5';
+        if (pwTab) pwTab.className = 'py-2.5 px-3 rounded-xl text-slate-300 hover:text-white transition';
+        if (pwForm) pwForm.classList.add('hidden');
+        if (gmForm) gmForm.classList.remove('hidden');
+        const gmInput = document.getElementById('admin-login-gmail');
+        if (gmInput) {
+          gmInput.value = '';
+          setTimeout(() => gmInput.focus(), 50);
+        }
+      } else {
+        if (pwTab) pwTab.className = 'py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black transition shadow-md';
+        if (gmTab) gmTab.className = 'py-2.5 px-3 rounded-xl text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5';
+        if (gmForm) gmForm.classList.add('hidden');
+        if (pwForm) pwForm.classList.remove('hidden');
+        const pwInput = document.getElementById('admin-login-password');
+        if (pwInput) {
+          pwInput.value = '';
+          setTimeout(() => pwInput.focus(), 50);
+        }
+      }
+    }
+
+    async function handleAdminPasswordLogin(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('admin-login-password');
+      const errEl = document.getElementById('admin-login-error');
+      const card = document.getElementById('admin-auth-card');
+
+      if (Date.now() < clientLockoutUntil) {
+        const rem = Math.ceil((clientLockoutUntil - Date.now()) / 1000);
+        if (errEl) {
+          errEl.classList.remove('hidden');
+          errEl.textContent = `Cybersecurity Lockout active. Please wait ${rem}s.`;
+        }
+        return false;
+      }
+
+      const entered = (input ? input.value : '').trim();
+      if (!entered) return false;
+
+      let authenticated = false;
+      let serverResponded = false;
+      let serverData = null;
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'password', password: entered })
+        });
+        serverResponded = true;
+        serverData = await res.json();
+        if (res.status === 429 && serverData && serverData.lockedOut) {
+          startClientLockoutCountdown(serverData.retryAfter || 60, errEl);
+          return false;
+        }
+        if (res.ok && serverData && serverData.ok && serverData.authenticated) {
+          authenticated = true;
+          if (serverData.token) sessionStorage.setItem('pf_admin_token', serverData.token);
+        }
+      } catch (err) {}
+
+      // Fallback if running without backend or default password matches
+      if (!serverResponded && entered === 'admin_123!') {
+        authenticated = true;
+      }
+
+      if (authenticated) {
+        clientFailedAttempts = 0;
+        sessionStorage.setItem('pf_admin_unlocked', 'true');
+        if (errEl) errEl.classList.add('hidden');
+        if (input) input.value = '';
+        checkAdminAuthGate();
+        fetchAdminStateFromServer(true);
+        return false;
+      }
+
+      clientFailedAttempts += 1;
+      if (clientFailedAttempts >= 5) {
+        startClientLockoutCountdown(60, errEl);
+      } else if (errEl) {
+        const remTries = 5 - clientFailedAttempts;
+        errEl.textContent = `Invalid admin password (${remTries} attempt${remTries === 1 ? '' : 's'} remaining before 60s lockout).`;
+        errEl.className = 'text-xs font-bold text-brand-clay mt-2';
+        errEl.classList.remove('hidden');
+      }
+      if (card) {
+        card.classList.remove('auth-shake');
+        void card.offsetWidth;
+        card.classList.add('auth-shake');
+      }
+      if (input) input.value = '';
+      return false;
+    }
+
+    async function handleAdminGmailLogin(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('admin-login-gmail');
+      const errEl = document.getElementById('admin-gmail-error');
+      const card = document.getElementById('admin-auth-card');
+
+      if (Date.now() < clientLockoutUntil) {
+        const rem = Math.ceil((clientLockoutUntil - Date.now()) / 1000);
+        if (errEl) {
+          errEl.classList.remove('hidden');
+          errEl.textContent = `Cybersecurity Lockout active. Please wait ${rem}s.`;
+        }
+        return false;
+      }
+
+      const enteredEmail = (input?.value || '').trim().toLowerCase();
+      if (!enteredEmail || !enteredEmail.endsWith('@gmail.com')) {
+        if (errEl) {
+          errEl.textContent = 'Please enter a valid @gmail.com address.';
+          errEl.classList.remove('hidden');
+        }
+        return false;
+      }
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'gmail', email: enteredEmail })
+        });
+        const data = await res.json();
+        if (res.status === 429 && data && data.lockedOut) {
+          startClientLockoutCountdown(data.retryAfter || 60, errEl);
+          return false;
+        }
+        if (data && data.ok && data.authenticated) {
+          clientFailedAttempts = 0;
+          sessionStorage.setItem('pf_admin_unlocked', 'true');
+          if (data.token) sessionStorage.setItem('pf_admin_token', data.token);
+          if (errEl) errEl.classList.add('hidden');
+          if (input) input.value = '';
+          checkAdminAuthGate();
+          await fetchAdminStateFromServer(true);
+          return false;
+        } else {
+          clientFailedAttempts += 1;
+          if (clientFailedAttempts >= 5) {
+            startClientLockoutCountdown(60, errEl);
+          } else if (errEl) {
+            errEl.textContent = (data && data.error) ? data.error : 'This Gmail does not match the registered Owner Gmail.';
+            errEl.classList.remove('hidden');
+          }
+        }
+      } catch (err) {
+        if (errEl) {
+          errEl.textContent = 'Could not verify Gmail login with server.';
+          errEl.classList.remove('hidden');
+        }
+      }
+
+      if (card) {
+        card.classList.remove('auth-shake');
+        void card.offsetWidth;
+        card.classList.add('auth-shake');
+      }
+      return false;
+    }
+
+    function lockAdminPortal() {
+      sessionStorage.removeItem('pf_admin_unlocked');
+      sessionStorage.removeItem('pf_admin_token');
+      const pwInput = document.getElementById('admin-login-password');
+      const gmInput = document.getElementById('admin-login-gmail');
+      if (pwInput) pwInput.value = '';
+      if (gmInput) gmInput.value = '';
+      checkAdminAuthGate();
+    }
+
+    async function handleChangeAdminPassword(e) {
+      e.preventDefault();
+      const curEl = document.getElementById('settings-current-pw');
+      const newEl = document.getElementById('settings-new-pw');
+      const fb = document.getElementById('settings-pw-feedback');
+      const currentPassword = (curEl?.value || '').trim();
+      const newPassword = (newEl?.value || '').trim();
+
+      try {
+        const res = await fetch('/api/auth/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const data = await res.json();
+        if (fb) {
+          fb.classList.remove('hidden');
+          if (data.ok) {
+            fb.className = 'text-xs font-bold text-brand-lime';
+            fb.textContent = data.message || 'Admin password updated!';
+            if (curEl) curEl.value = '';
+            if (newEl) newEl.value = '';
+          } else {
+            fb.className = 'text-xs font-bold text-brand-clay';
+            fb.textContent = data.error || 'Could not update password.';
+          }
+        }
+      } catch (err) {
+        alert('Error communicating with server.');
+      }
+    }
+
+    function syncGmailUiState(gcfg) {
+      if (!gcfg) return;
+      adminGmailConfig = {
+        adminEmail: gcfg.adminEmail || '',
+        hasAppPassword: Boolean(gcfg.hasAppPassword),
+        notifyOnNewBooking: gcfg.notifyOnNewBooking !== false,
+        sendCustomerReceipt: gcfg.sendCustomerReceipt !== false
+      };
+      const headerLbl = document.getElementById('header-gmail-label');
+      const badge = document.getElementById('gmail-connection-badge');
+      const emailInput = document.getElementById('settings-gmail-address');
+      const notifyChk = document.getElementById('settings-gmail-notify-admin');
+      const receiptChk = document.getElementById('settings-gmail-send-receipt');
+      const pwHint = document.getElementById('settings-gmail-pw-hint');
+      const gateNote = document.getElementById('auth-gmail-status-note');
+
+      if (emailInput && document.activeElement !== emailInput) {
+        emailInput.value = adminGmailConfig.adminEmail || '';
+      }
+      if (notifyChk) notifyChk.checked = adminGmailConfig.notifyOnNewBooking;
+      if (receiptChk) receiptChk.checked = adminGmailConfig.sendCustomerReceipt;
+      if (pwHint && adminGmailConfig.hasAppPassword) {
+        pwHint.textContent = 'Google App Password is saved and active for automatic SMTP emails.';
+        pwHint.className = 'text-[10px] text-brand-lime font-bold block mt-1';
+      }
+
+      if (adminGmailConfig.adminEmail) {
+        if (headerLbl) headerLbl.textContent = adminGmailConfig.adminEmail;
+        if (badge) {
+          badge.textContent = 'Linked: ' + adminGmailConfig.adminEmail;
+          badge.className = 'px-3 py-1 rounded-full bg-brand-lime/15 text-brand-lime border border-brand-lime/40 font-mono font-bold text-[10px]';
+        }
+        if (gateNote) {
+          gateNote.innerHTML = 'Enter the registered Owner Gmail address to unlock the Admin Workspace.';
+        }
+      } else {
+        if (headerLbl) headerLbl.textContent = 'Owner Gmail';
+        if (badge) {
+          badge.textContent = 'No Gmail Registered';
+          badge.className = 'px-3 py-1 rounded-full bg-white/10 text-slate-300 font-mono font-bold text-[10px] uppercase';
+        }
+        if (gateNote) {
+          gateNote.innerHTML = 'Log in with the Club Owner\'s main <b>@gmail.com</b> account to link and unlock the Admin Workspace.';
+        }
+      }
+    }
+
+    async function handleSaveGmailConfig(e) {
+      e.preventDefault();
+      const emailEl = document.getElementById('settings-gmail-address');
+      const pwEl = document.getElementById('settings-gmail-app-pw');
+      const notifyChk = document.getElementById('settings-gmail-notify-admin');
+      const receiptChk = document.getElementById('settings-gmail-send-receipt');
+      const fb = document.getElementById('settings-gmail-feedback');
+
+      const adminEmail = (emailEl?.value || '').trim().toLowerCase();
+      const appPassword = (pwEl?.value || '').trim();
+      if (!adminEmail || !adminEmail.endsWith('@gmail.com')) {
+        alert('Please enter a valid @gmail.com address.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/gmail/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            adminEmail,
+            appPassword,
+            notifyOnNewBooking: notifyChk ? notifyChk.checked : true,
+            sendCustomerReceipt: receiptChk ? receiptChk.checked : true
+          })
+        });
+        const data = await res.json();
+        if (data && data.gmailConfig) {
+          syncGmailUiState(data.gmailConfig);
+        }
+        if (pwEl) pwEl.value = '';
+        if (fb) {
+          fb.classList.remove('hidden');
+          fb.className = 'text-xs font-bold text-brand-lime';
+          fb.textContent = `Linked Owner Gmail (${adminEmail})!`;
+        }
+      } catch (err) {
+        alert('Could not save Owner Gmail configuration.');
+      }
+    }
+
+    async function handleUnlinkOwnerGmail() {
+      const fb = document.getElementById('settings-gmail-feedback');
+      try {
+        const res = await fetch('/api/gmail/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ unlink: true })
+        });
+        const data = await res.json();
+        if (data && data.gmailConfig) {
+          syncGmailUiState(data.gmailConfig);
+        }
+        const emailEl = document.getElementById('settings-gmail-address');
+        if (emailEl) emailEl.value = '';
+        if (fb) {
+          fb.classList.remove('hidden');
+          fb.className = 'text-xs font-bold text-slate-300';
+          fb.textContent = 'Owner Gmail unlinked. No Gmail is currently registered.';
+        }
+      } catch (err) {}
+    }
+
+    function sendBookingViaGmail(ref) {
+      const b = bookings.find(item => item.ref === ref);
+      if (!b) return;
+      const adminEmail = adminGmailConfig.adminEmail || '';
+      const guestEmail = (b.email && b.email.includes('@') && b.email !== 'guest@pfrally.ph') ? b.email : '';
+      const toAddr = guestEmail || adminEmail || '';
+      const subject = `[P&F Rally Ground] Booking Confirmation ${b.ref} — ${b.name}`;
+      const bulletItems = (Array.isArray(b.items) && b.items.length > 0)
+        ? b.items.map(i => `  • ${i.qty || 1}x ${i.name} (PHP ${(Number(i.price || 0) * Number(i.qty || 1)).toFixed(2)})`).join('\n')
+        : String(b.court || '').split(' + ').map(p => `  • ${p}`).join('\n');
+      const bodyText = [
+        `P&F RALLY GROUND PICKLEBALL CLUB (Daraga, Albay)`,
+        `--------------------------------------------------`,
+        `Booking Reference: ${b.ref}`,
+        `Customer Name: ${b.name}`,
+        `Mobile Number: ${b.phone || 'N/A'}`,
+        `Reserved Court & Products:`,
+        bulletItems,
+        `Schedule Date & Time: ${b.time}`,
+        `Payment Method: ${b.paymentMethod || b.paymentMode || 'GCash'}`,
+        `Transaction Ref #: ${b.transactionRef || 'N/A'}`,
+        `Total Amount: PHP ${b.total}`,
+        `Booking Status: ${b.status}`,
+        `--------------------------------------------------`,
+        `Thank you for choosing P&F Rally Ground! See you on court.`
+      ].join('\n');
+
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(toAddr)}${adminEmail && toAddr !== adminEmail ? '&cc=' + encodeURIComponent(adminEmail) : ''}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+      window.open(gmailUrl, '_blank');
+    }
+
+    function openGmailTestCompose() {
+      const emailEl = document.getElementById('settings-gmail-address');
+      const toAddr = (emailEl?.value || adminGmailConfig.adminEmail || '').trim();
+      const subject = `[P&F Rally Ground] Admin Portal Gmail Link`;
+      const bodyText = `P&F Rally Ground Admin & POS Portal Gmail Compose Test.`;
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(toAddr)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+      window.open(gmailUrl, '_blank');
+    }
+
+    // Auto Init & 3-Second Real-Time Polling
+    document.addEventListener('DOMContentLoaded', async () => {
+      localStorage.removeItem('pf_admin_gmail');
+      localStorage.removeItem('pf_all_bookings');
+      localStorage.removeItem('pf_sales_ledger');
+      checkAdminAuthGate();
+      await fetchAdminStateFromServer(false);
+      switchTab('inventory');
+      setInterval(() => {
+        fetchAdminStateFromServer(false);
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
