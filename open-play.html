@@ -363,7 +363,7 @@
             <li><a href="check-booking.html" class="hover:text-brand-lime transition">Check Booking Status</a></li>
             <li><a href="check-booking.html" class="hover:text-brand-lime transition">Venue Gate QR Pass</a></li>
             <li><a href="check-booking.html" class="hover:text-brand-lime transition">Google Calendar Sync</a></li>
-            <li><button onclick="openBookingDrawer()" class="text-brand-lime font-bold hover:underline">Instant GCash Booking →</button></li>
+            <li><button onclick="openBookingDrawer()" class="text-brand-lime font-bold hover:underline">Reserve Court →</button></li>
           </ul>
         </div>
 
@@ -375,18 +375,18 @@
           © 2026 P&amp;F Rally Ground. Play more. Rally together. All rights reserved.
         </div>
         <div class="flex items-center gap-4 text-slate-400">
-          <span>Powered by <b>HitPay</b> &amp; <b>GoHighLevel</b></span>
+          <span>Powered by <b>GCash</b> &amp; <b>GoHighLevel</b></span>
         </div>
       </div>
 
     </div>
   </footer>
-  <!-- ================= INTERACTIVE BOOKING DRAWER (MOBILE & DESKTOP OPTIMIZED) ================= -->
+    <!-- ================= INTERACTIVE BOOKING DRAWER (MANUAL PAYMENT WORKFLOW) ================= -->
   <div id="booking-drawer" class="fixed inset-0 z-50 hidden">
     <!-- Backdrop -->
     <div onclick="closeBookingDrawer()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
     
-    <!-- Slide-Over Panel (Full screen on mobile, max-w-xl on desktop) -->
+    <!-- Slide-Over Panel -->
     <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-xl bg-brand-dark border-l border-white/10 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="drawer-panel">
       
       <!-- Drawer Header (Fixed) -->
@@ -395,13 +395,13 @@
           <span class="h-9 w-9 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-lg flex-shrink-0">🏓</span>
           <div>
             <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Court Reservation</h3>
-            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1">Automated HitPay GCash Checkout</p>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1">Manual GCash, Bank Transfer, or Cash at Venue</p>
           </div>
         </div>
         <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95" aria-label="Close reservation drawer">✕</button>
       </div>
 
-      <!-- Drawer Body (Scrollable with touch momentum) -->
+      <!-- Drawer Body (Scrollable) -->
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-5 overscroll-contain touch-scroll">
         
         <!-- Step 1: Select Court -->
@@ -430,13 +430,13 @@
         <!-- Step 2: Pick Hour -->
         <div>
           <div class="flex items-center justify-between mb-2">
-            <label class="text-xs font-black uppercase tracking-wider text-slate-400">2. Pick Hour</label>
+            <label class="text-xs font-black uppercase tracking-wider text-slate-400">2. Pick Hour Slot</label>
             <span class="text-[10px] font-mono text-brand-lime" id="drawer-rate-badge">Regular: ₱400/hr</span>
           </div>
           <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1 touch-scroll" id="drawer-slot-buttons"></div>
         </div>
 
-        <!-- Step 3: Players Stepper -->
+        <!-- Step 3: Players Count -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-black uppercase tracking-wider text-slate-400">3. Players Count</label>
@@ -472,14 +472,44 @@
         <!-- Step 5: Guest Information -->
         <div class="space-y-3">
           <label class="block text-xs font-black uppercase tracking-wider text-slate-400">5. Guest Information</label>
-          <input type="text" id="cust-name" placeholder="Full Name" value="Dexter Lim" class="w-full bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+          <input type="text" id="cust-name" placeholder="Full Name *" value="Dexter Lim" class="w-full bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="tel" id="cust-phone" placeholder="+63 9XX XXX XXXX" value="+63 999 883 2346" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
-            <input type="email" id="cust-email" placeholder="Email Address" value="player@pfrally.ph" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+            <input type="tel" id="cust-phone" placeholder="Phone (e.g. 0999 883 2346) *" value="0999 883 2346" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
+            <input type="email" id="cust-email" placeholder="Email Address (Optional)" value="guest@pfrally.ph" class="bg-brand-card border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-lime">
           </div>
         </div>
 
-        <!-- Step 6: Payment Terms & Rules -->
+        <!-- Step 6: Mode of Payment (Manual Choices) -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-2">6. Mode of Payment</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" id="payment-mode-selector">
+            <label class="p-3 rounded-xl border border-brand-lime bg-brand-lime/10 cursor-pointer flex flex-col justify-between pay-mode-card" onclick="selectPayMode('gcash')">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">📱 GCash</span>
+                <input type="radio" name="pay-mode" value="gcash" checked class="accent-brand-lime">
+              </div>
+              <span class="text-[10px] text-brand-lime font-mono mt-1">Direct QR / No.</span>
+            </label>
+
+            <label class="p-3 rounded-xl border border-white/10 bg-brand-card cursor-pointer flex flex-col justify-between pay-mode-card" onclick="selectPayMode('bank')">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">🏦 Bank</span>
+                <input type="radio" name="pay-mode" value="bank" class="accent-brand-lime">
+              </div>
+              <span class="text-[10px] text-slate-400 font-mono mt-1">BDO / Maya</span>
+            </label>
+
+            <label class="p-3 rounded-xl border border-white/10 bg-brand-card cursor-pointer flex flex-col justify-between pay-mode-card" onclick="selectPayMode('cash')">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">💵 Cash</span>
+                <input type="radio" name="pay-mode" value="cash" class="accent-brand-lime">
+              </div>
+              <span class="text-[10px] text-slate-400 font-mono mt-1">Pay at Venue</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 7: Payment Terms & Rules -->
         <div class="p-4 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2.5">
           <label class="flex items-start gap-2.5 cursor-pointer">
             <input type="checkbox" id="accept-terms" checked class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
@@ -488,7 +518,7 @@
             </span>
           </label>
           <div id="terms-details" class="text-[11px] text-slate-400 space-y-1.5 pt-2 border-t border-white/10 leading-relaxed font-medium">
-            <p>● <b class="text-white">Non-Refundable:</b> Payment is final upon HitPay/GCash confirmation.</p>
+            <p>● <b class="text-white">Manual Verification:</b> After saving your booking, transfer via GCash or pay cash at the desk. Staff verify your reference number upon arrival.</p>
             <p>● <b class="text-white">48-Hour Rescheduling:</b> Move your session once if requested &ge; 48 hours in advance.</p>
             <p>● <b class="text-white">Court Shoes:</b> Strictly non-marking sports shoes only to protect cushion acrylic.</p>
             <p>● <b class="text-white">Player Surcharge:</b> 6 players included; +₱100/player above 6.</p>
@@ -497,61 +527,90 @@
 
       </div>
 
-      <!-- Drawer Footer (Sticky Pinned to Bottom on All Devices) -->
+      <!-- Drawer Footer -->
       <div class="flex-shrink-0 p-4 sm:p-6 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20">
         <div class="flex items-baseline justify-between mb-3">
           <div>
-            <span class="text-xs text-slate-400 block font-semibold">Total to Pay</span>
-            <span class="text-[10px] text-brand-lime font-mono">🔒 Instant HitPay GCash Auto-Verify</span>
+            <span class="text-xs text-slate-400 block font-semibold">Total Amount</span>
+            <span class="text-[10px] text-slate-400 font-mono" id="pay-mode-hint">Payment via GCash (Manual Verification)</span>
           </div>
           <span id="drawer-total-amount" class="text-2xl sm:text-3xl font-black text-brand-lime font-mono">₱400</span>
         </div>
-        <button onclick="launchHitPayCheckout()" class="w-full py-3.5 sm:py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs sm:text-sm hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
-          <span>Pay Instantly with GCash</span> ⚡
+        <button onclick="handleProceedToPayment()" class="w-full py-3.5 sm:py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs sm:text-sm hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
+          <span id="proceed-btn-text">Proceed to Payment Details →</span>
         </button>
       </div>
 
     </div>
   </div>
 
-  <!-- HitPay Modal (Mobile Scaled) -->
-  <div id="hitpay-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
-    <div onclick="closeHitPayModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-    <div class="relative z-10 w-[94%] sm:w-full max-w-md max-h-[88dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/30 p-5 sm:p-7 shadow-2xl text-center touch-scroll">
+  <!-- ================= MANUAL PAYMENT PROOF MODAL ================= -->
+  <div id="payment-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+    <div onclick="closePaymentModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-[94%] sm:w-full max-w-md max-h-[90dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/30 p-5 sm:p-7 shadow-2xl text-center touch-scroll">
+      
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lime/10 text-brand-lime border border-brand-lime/20 text-xs font-bold mb-3">
-        <span>⚡ HitPay Gateway</span> • <span>Automated Webhook</span>
+        <span>📍 P&amp;F Rally Ground</span> • <span>Manual Verification</span>
       </div>
-      <h3 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white">Scan with GCash / QR Ph</h3>
-      <p class="text-xs text-slate-400 mt-1">Point your GCash or Maya camera to complete payment instantly.</p>
-      <div class="my-5 p-3.5 rounded-2xl bg-white max-w-[200px] mx-auto shadow-xl">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HITPAY-GCASH-PFRALLY" alt="QR Code" class="w-full h-auto">
+      
+      <h3 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white" id="modal-payment-title">Scan GCash QR Code</h3>
+      <p class="text-xs text-slate-400 mt-1" id="modal-payment-desc">Scan the venue QR code or send payment to the official GCash number.</p>
+      
+      <!-- Static QR / Account Box -->
+      <div class="my-4 p-3.5 rounded-2xl bg-white max-w-[190px] mx-auto shadow-xl">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=09998832346-PFRALLY" alt="P&F Rally Ground GCash QR" class="w-full h-auto">
+        <span class="text-[9px] font-mono text-slate-800 font-bold uppercase block mt-1">Official Venue QR</span>
       </div>
-      <div class="bg-brand-black/60 rounded-xl p-3 border border-white/10 text-left text-xs space-y-1 mb-5 font-mono">
-        <div class="flex justify-between text-slate-400"><span>Merchant:</span> <span class="text-white">P&amp;F Rally Ground</span></div>
-        <div class="flex justify-between text-slate-400"><span>Court:</span> <span id="hitpay-modal-court" class="text-brand-lime">Court 01</span></div>
-        <div class="flex justify-between text-slate-400"><span>Amount:</span> <span id="hitpay-modal-amount" class="text-brand-lime font-bold">₱400.00</span></div>
+
+      <!-- Account Details Summary -->
+      <div class="bg-brand-black/70 rounded-xl p-3 border border-white/10 text-left text-xs space-y-1.5 mb-4 font-mono">
+        <div class="flex justify-between text-slate-400"><span>Merchant:</span> <span class="text-white font-bold">P&amp;F Rally Ground</span></div>
+        <div class="flex justify-between text-slate-400"><span>GCash Number:</span> <span class="text-brand-lime font-bold">0999 883 2346</span></div>
+        <div class="flex justify-between text-slate-400"><span>Court &amp; Time:</span> <span id="manual-modal-court" class="text-slate-200">Court 01</span></div>
+        <div class="flex justify-between text-slate-400"><span>Amount to Send:</span> <span id="manual-modal-amount" class="text-brand-lime font-black text-sm">₱400.00</span></div>
       </div>
-      <button onclick="simulateSuccessfulPayment()" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition active:scale-95">
-        Simulate Successful GCash Payment (Test)
+
+      <!-- Receipt / Reference Submission Form -->
+      <div class="space-y-3 text-left mb-5">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">GCash Reference / Transaction No. (Optional)</label>
+          <input type="text" id="manual-ref-input" placeholder="e.g. 1029 4819 0284" class="w-full bg-brand-black border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-brand-lime">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1">Upload Receipt Screenshot (Optional)</label>
+          <input type="file" id="manual-receipt-file" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-brand-lime file:text-brand-black hover:file:bg-brand-limeHover cursor-pointer">
+        </div>
+      </div>
+
+      <button onclick="submitManualPaymentConfirmation()" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+        Submit Booking &amp; Reference →
       </button>
-      <button onclick="closeHitPayModal()" class="mt-3 text-xs text-slate-500 hover:text-white font-bold">Cancel</button>
+      
+      <button onclick="closePaymentModal()" class="mt-3 text-xs text-slate-500 hover:text-white font-bold block mx-auto">Cancel</button>
     </div>
   </div>
 
-  <!-- Match Pass Modal (Mobile Scaled) -->
+  <!-- ================= MATCH PASS / VOUCHER MODAL ================= -->
   <div id="match-pass-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeMatchPassModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
     <div class="relative z-10 w-[94%] sm:w-full max-w-md max-h-[88dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/40 p-5 sm:p-7 shadow-2xl text-center ticket-edge touch-scroll">
+      
       <div class="h-11 w-11 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-xl mx-auto mb-3 shadow-lg shadow-brand-lime/25">✓</div>
-      <span class="text-[10px] font-black uppercase tracking-widest text-brand-lime block">MATCH PASS ISSUED &amp; VERIFIED</span>
+      <span class="text-[10px] font-black uppercase tracking-widest text-brand-lime block" id="pass-header-tag">BOOKING RECEIVED • PENDING VERIFICATION</span>
       <h3 class="text-xl sm:text-2xl font-black uppercase tracking-tight text-white mt-1">Digital Match Pass</h3>
       <p class="text-xs text-slate-400 mt-0.5">Ref: <span id="pass-ref" class="text-white font-mono font-bold">PF-84920</span></p>
       
-      <div class="my-5 rounded-2xl bg-brand-black border border-white/10 p-4 text-left text-xs space-y-2.5 font-sans">
+      <div class="my-4 rounded-2xl bg-brand-black border border-white/10 p-4 text-left text-xs space-y-2 font-sans">
         <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Guest</span><span id="pass-name" class="font-bold text-white">Dexter Lim</span></div>
         <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Court Reserved</span><span id="pass-court" class="font-bold text-brand-lime">Court 01</span></div>
         <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Schedule</span><span id="pass-time" class="font-bold text-white">Today • 06:00 PM</span></div>
-        <div class="flex justify-between items-center"><span class="text-slate-400">Status</span><span class="text-brand-lime font-bold">● PAID &amp; CONFIRMED</span></div>
+        <div class="flex justify-between items-center border-b border-white/10 pb-2"><span class="text-slate-400">Payment Mode</span><span id="pass-paymethod" class="font-bold text-slate-200">GCash (Manual)</span></div>
+        <div class="flex justify-between items-center"><span class="text-slate-400">Status</span><span id="pass-status" class="text-brand-lime font-bold">● PENDING VERIFICATION</span></div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-brand-lime/10 border border-brand-lime/20 text-left text-[11px] text-slate-300 mb-4 leading-relaxed">
+        ℹ️ <b>Front Desk Note:</b> Please save your reference code or screenshot. Show this pass upon arrival at P&amp;F Rally Ground (Doña Maria Subd., Daraga, Albay).
       </div>
 
       <div class="space-y-2">

@@ -295,7 +295,7 @@
           <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
             <div>
               <h3 class="text-lg sm:text-xl font-black uppercase text-white">Master Reservations Ledger</h3>
-              <p class="text-xs text-slate-400">All guest registrations, online HitPay checkouts, and front-desk walk-in bookings.</p>
+              <p class="text-xs text-slate-400">All guest registrations, online GCash checkouts, and front-desk walk-in bookings.</p>
             </div>
             <button onclick="renderBookingsTable()" class="text-xs text-brand-lime font-bold hover:underline">
               ↻ Refresh List
@@ -382,7 +382,7 @@
             <li><a href="check-booking.html" class="hover:text-brand-lime transition">Check Booking Status</a></li>
             <li><a href="check-booking.html" class="hover:text-brand-lime transition">Venue Gate QR Pass</a></li>
             <li><a href="check-booking.html" class="hover:text-brand-lime transition">Google Calendar Sync</a></li>
-            <li><button onclick="openBookingDrawer()" class="text-brand-lime font-bold hover:underline">Instant GCash Booking →</button></li>
+            <li><button onclick="openBookingDrawer()" class="text-brand-lime font-bold hover:underline">Reserve Court →</button></li>
           </ul>
         </div>
 
@@ -394,7 +394,7 @@
           © 2026 P&amp;F Rally Ground. Play more. Rally together. All rights reserved.
         </div>
         <div class="flex items-center gap-4 text-slate-400">
-          <span>Powered by <b>HitPay</b> &amp; <b>GoHighLevel</b></span>
+          <span>Phase IV, Doña Maria Subd., Tagas, Daraga, Albay • 0999 883 2346</span>
         </div>
       </div>
 
@@ -537,7 +537,7 @@
       // Seed default sample bookings if empty
       if (allBookings.length === 0) {
         allBookings = [
-          { ref: 'PF-84920', name: 'Dexter Lim', court: 'Court 01', time: 'Today • 06:00 PM', paymentMethod: 'HitPay GCash', total: '400', status: 'PAID & CONFIRMED' },
+          { ref: 'PF-84920', name: 'Dexter Lim', court: 'Court 01', time: 'Today • 06:00 PM', paymentMethod: 'GCash GCash', total: '400', status: 'PAID & CONFIRMED' },
           { ref: 'MAN-91482', name: 'Ate Grazie (Walk-in)', court: 'Court 04', time: 'Today • 08:00 PM', paymentMethod: 'Cash', total: '1,000', status: 'PAID & CONFIRMED' },
           { ref: 'MAN-74192', name: 'Nezar Balbin', court: 'Court 04', time: 'Today • 10:00 PM', paymentMethod: 'GCash Direct', total: '1,000', status: 'PAID & CONFIRMED' }
         ];
