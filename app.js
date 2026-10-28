@@ -181,7 +181,7 @@ let currentSelectedDateLabel = "Today";
 let currentSelectedSlot = "06:00 PM";
 let isCurrentSlotPeak = true;
 let playerCount = 4;
-let selectedPaymentMode = "gcash"; // 'gcash', 'bank', 'cash'
+let selectedPaymentMode = "gcash"; // 'gcash', 'bank' (Cash removed)
 let uploadedReceiptDataUrl = "";
 let activeScheduleCourtFilter = 0; // 0 = All 4 Courts, 1..4 = specific court
 
@@ -410,6 +410,8 @@ function changePlayers(delta) {
 }
 
 function selectPayMode(mode) {
+  // Cash at desk is removed per club policy - only verified GCash & Bank Transfer accepted
+  if (mode !== 'bank') mode = 'gcash';
   selectedPaymentMode = mode;
   const cards = document.querySelectorAll('.pay-mode-card');
   cards.forEach(c => {
@@ -430,7 +432,7 @@ function selectPayMode(mode) {
 
   const hint = document.getElementById('pay-mode-hint');
   if (hint) {
-    hint.textContent = mode === 'cash' ? 'Pay Cash at Venue Desk' : (mode === 'bank' ? 'Bank Transfer (BDO / Maya)' : 'GCash (Manual Transfer / QR)');
+    hint.textContent = mode === 'bank' ? 'Bank Transfer (BDO / BPI / Maya)' : 'GCash (Official QR Ph & Express Send)';
   }
 
   // Also update Payment Modal UI if open
@@ -499,41 +501,34 @@ function updatePaymentModalModeUI() {
   const descEl = document.getElementById('modal-payment-desc');
   const submitBtn = document.getElementById('modal-submit-btn');
 
+  if (cashBox) cashBox.classList.add('hidden'); // Cash at desk permanently removed
+
   // Highlight active payment method button inside #payment-modal
   document.querySelectorAll('[data-modal-pay]').forEach(btn => {
     const isAct = btn.getAttribute('data-modal-pay') === selectedPaymentMode;
     btn.className = isAct
-      ? 'py-2.5 px-2.5 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md'
-      : 'py-2.5 px-2.5 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition';
+      ? 'py-2.5 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md'
+      : 'py-2.5 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition';
   });
 
-  if (selectedPaymentMode === 'cash') {
-    if (qrBox) qrBox.classList.add('hidden');
-    if (bankBox) bankBox.classList.add('hidden');
-    if (cashBox) cashBox.classList.remove('hidden');
-    if (refBox) refBox.classList.add('hidden');
-    if (titleEl) titleEl.textContent = 'Front-Desk Cash Reservation';
-    if (descEl) descEl.textContent = 'Confirm your guest details below. You will settle payment in cash upon arrival at the Daraga front desk.';
-    if (submitBtn) submitBtn.textContent = 'Confirm Cash Reservation →';
-  } else if (selectedPaymentMode === 'bank') {
+  if (selectedPaymentMode === 'bank') {
     if (qrBox) qrBox.classList.add('hidden');
     if (bankBox) bankBox.classList.remove('hidden');
-    if (cashBox) cashBox.classList.add('hidden');
     if (refBox) refBox.classList.remove('hidden');
     if (refLabel) refLabel.innerHTML = 'Bank Transfer / InstaPay Reference No. <span class="text-brand-clay">*</span>';
     if (refInput) refInput.placeholder = 'Enter BDO / BPI / InstaPay Reference Number (e.g. FT262918392)';
-    if (titleEl) titleEl.textContent = 'Bank Transfer (BDO / BPI / InstaPay)';
-    if (descEl) descEl.textContent = 'Transfer to our official BDO or BPI account (or scan the InstaPay QR Ph code) and enter your Bank Reference Number below.';
+    if (titleEl) titleEl.textContent = 'Official Bank Transfer (BDO / BPI / InstaPay)';
+    if (descEl) descEl.textContent = 'Send via online banking or scan the InstaPay QR Ph code below. Then enter your transaction reference number to confirm.';
     if (submitBtn) submitBtn.textContent = 'Submit Bank Transfer & Reference →';
   } else {
+    selectedPaymentMode = 'gcash';
     if (qrBox) qrBox.classList.remove('hidden');
     if (bankBox) bankBox.classList.add('hidden');
-    if (cashBox) cashBox.classList.add('hidden');
     if (refBox) refBox.classList.remove('hidden');
     if (refLabel) refLabel.innerHTML = 'GCash Reference Number <span class="text-brand-clay">*</span>';
     if (refInput) refInput.placeholder = 'Enter GCash Reference Number (e.g. 9028 3746 1928)';
-    if (titleEl) titleEl.textContent = 'Scan GCash QR & Verify Ref #';
-    if (descEl) descEl.textContent = 'Scan the locked-amount QR code or send to 0999 883 2346. Upload your receipt or enter the GCash Reference No. below.';
+    if (titleEl) titleEl.textContent = 'Scan GCash QR Ph & Verify Ref #';
+    if (descEl) descEl.textContent = 'Scan the dynamic QR Ph code or send to 0999 883 2346 via GCash Express Send. Then enter your Reference No. below.';
     if (submitBtn) submitBtn.textContent = 'Submit GCash Booking & Reference →';
   }
 }
@@ -776,11 +771,9 @@ function openPaymentVerificationModal() {
   if (amtEl) amtEl.textContent = formattedTotal;
   const bankAmtEl = document.getElementById('manual-modal-bank-amount');
   if (bankAmtEl) bankAmtEl.textContent = formattedTotal;
-  const cashAmtEl = document.getElementById('manual-modal-cash-amount');
-  if (cashAmtEl) cashAmtEl.textContent = formattedTotal;
-  if (qrImg) qrImg.src = generateLockedQrUrl(total);
+  if (qrImg) qrImg.src = generateLockedQrUrl(total, 'gcash');
   const bankQrImg = document.getElementById('locked-bank-qr-img');
-  if (bankQrImg) bankQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent('INSTAPAY|BDO:004588029143|BPI:4891003274|PHP:' + total.toFixed(2))}`;
+  if (bankQrImg) bankQrImg.src = generateLockedQrUrl(total, 'bank');
   if (summaryEl) {
     summaryEl.innerHTML = formatCartItemsBulletHtml(cartItems);
   }
@@ -872,37 +865,25 @@ async function submitManualPaymentConfirmation() {
   const refInput = document.getElementById('manual-ref-input');
   const manualRef = refInput ? refInput.value.trim() : '';
 
-  if (selectedPaymentMode !== 'cash') {
-    const refCheck = pfValidateField('ref', manualRef, true);
-    if (!refCheck.valid) {
-      showFieldError('manual-ref-input', refCheck.error);
-      return;
-    }
-    clearFieldError('manual-ref-input');
+  // Both GCash and Bank Transfer require reference validation
+  const refCheck = pfValidateField('ref', manualRef, true);
+  if (!refCheck.valid) {
+    showFieldError('manual-ref-input', refCheck.error);
+    return;
   }
+  clearFieldError('manual-ref-input');
 
   const refCode = 'PF-' + Math.floor(10000 + Math.random() * 90000);
   closePaymentModal();
 
-  if (selectedPaymentMode === 'cash') {
-    await finalizeBookingRecord({
-      name: finalName,
-      phone: finalPhone,
-      mode: 'Cash (Pay at Venue Desk)',
-      status: 'RESERVED (PAY AT VENUE)',
-      transactionRef: 'PAY-AT-DESK',
-      refNo: refCode
-    });
-  } else {
-    await finalizeBookingRecord({
-      name: finalName,
-      phone: finalPhone,
-      mode: selectedPaymentMode === 'bank' ? 'Bank Transfer (BDO/Maya)' : 'GCash (Manual Transfer)',
-      status: 'PENDING VERIFICATION',
-      transactionRef: manualRef,
-      refNo: refCode
-    });
-  }
+  await finalizeBookingRecord({
+    name: finalName,
+    phone: finalPhone,
+    mode: selectedPaymentMode === 'bank' ? 'Bank Transfer (BDO / BPI / InstaPay)' : 'GCash (Official QR Ph / Express Send)',
+    status: 'PENDING VERIFICATION',
+    transactionRef: manualRef,
+    refNo: refCode
+  });
 }
 
 async function finalizeBookingRecord(details) {
@@ -1018,11 +999,59 @@ document.addEventListener('keydown', (e) => {
 
 // ================= AI RECEIPT SCANNER & DYNAMIC LOCKED QR =================
 
-function generateLockedQrUrl(amount) {
-  const amtStr = Number(amount || 400).toFixed(2);
-  const lenStr = amtStr.length < 10 ? '0' + amtStr.length : '' + amtStr.length;
-  const payload = `00020101021226500010com.gcash01120999883234652045999530360854${lenStr}${amtStr}5802PH5916PF RALLY GROUND6006DARAGA6304`;
-  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(payload)}`;
+// ================= MATHEMATICALLY VALID QR PH EMVCO GENERATOR =================
+function computeCrc16Ccitt(str) {
+  let crc = 0xFFFF;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= (str.charCodeAt(i) << 8);
+    for (let j = 0; j < 8; j++) {
+      if ((crc & 0x8000) !== 0) {
+        crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+      } else {
+        crc = (crc << 1) & 0xFFFF;
+      }
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
+function buildEmvcoPayload(channel, amount) {
+  const amtNum = Math.max(1, Number(amount || 400));
+  const amtStr = amtNum.toFixed(2);
+  const amtLen = String(amtStr.length).padStart(2, '0');
+
+  let merchantTag = '26';
+  let merchantInfo = '0010com.gcash011209998832346';
+  if (channel === 'bank') {
+    merchantTag = '28';
+    merchantInfo = '0015ph.gov.ngp.qrph0112004588029143';
+  }
+  const mInfoLen = String(merchantInfo.length).padStart(2, '0');
+
+  // EMVCo QR Ph standard TLV payload
+  let raw = '000201' +                // Tag 00: Payload format '01'
+            '010212' +                // Tag 01: Dynamic Point of Initiation '12'
+            merchantTag + mInfoLen + merchantInfo + // Tag 26 (GCash) or Tag 28 (National QR Ph)
+            '52045999' +              // Tag 52: Merchant Category Code '5999'
+            '5303608' +               // Tag 53: Currency Code '608' (PHP)
+            '54' + amtLen + amtStr +  // Tag 54: Amount
+            '5802PH' +                // Tag 58: Country Code 'PH'
+            '5916PF RALLY GROUND' +   // Tag 59: Merchant Name 'PF RALLY GROUND' (16 chars)
+            '6006DARAGA' +            // Tag 60: Merchant City 'DARAGA' (6 chars)
+            '6304';                   // Tag 63: CRC Tag (63) and Length (04)
+
+  const crc = computeCrc16Ccitt(raw);
+  return raw + crc;
+}
+
+function generateLockedQrUrl(amount, channel = 'gcash') {
+  // If custom merchant standee image was uploaded or set in Admin
+  const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
+  if (customStandee && channel === 'gcash') {
+    return customStandee;
+  }
+  const payload = buildEmvcoPayload(channel, amount);
+  return `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(payload)}`;
 }
 
 function extractRefNumberFromText(text) {
