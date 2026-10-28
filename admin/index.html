@@ -1405,6 +1405,26 @@ function clearFieldError(fieldId) {
       return hr >= rule.start && hr < rule.end;
     }
 
+    const ADMIN_OPEN_PLAY_BY_DAY = {
+      1: { start: 15, end: 18 },
+      2: { start: 15, end: 20 },
+      3: { start: 15, end: 20 },
+      4: { start: 15, end: 20 },
+      5: { start: 15, end: 23 },
+      6: { start: 18, end: 22 }
+    };
+
+    function isAdminOpenPlaySlot(slotStr) {
+      const dayInput = document.getElementById('adm-block-date')?.value;
+      const d = dayInput ? new Date(dayInput + 'T12:00:00') : new Date();
+      const rule = ADMIN_OPEN_PLAY_BY_DAY[d.getDay()];
+      if (!rule) return false;
+      let hr = parseInt(slotStr, 10);
+      if (slotStr.includes('PM') && hr !== 12) hr += 12;
+      if (slotStr.includes('AM') && hr === 12) hr = 0;
+      return hr >= rule.start && hr < rule.end;
+    }
+
     function openPublicSite(event, pagePath) {
       if (event) event.preventDefault();
       const host = window.location.hostname;
