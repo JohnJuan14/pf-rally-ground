@@ -356,22 +356,32 @@
     }
 
         
-    /* White Calendar Box & Date Rail Styles */
+    /* Mobile-Optimized White Calendar Box & Date Rail Styles */
     .date-rail {
       display: flex;
-      gap: 0.65rem;
+      gap: 0.45rem;
       overflow-x: auto;
-      padding-top: 0.25rem;
-      padding-bottom: 0.75rem;
-      scrollbar-width: thin;
-      scrollbar-color: #CBD5E1 transparent;
+      padding-top: 0.2rem;
+      padding-bottom: 0.5rem;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
       cursor: grab;
       user-select: none;
     }
+    @media (min-width: 640px) {
+      .date-rail {
+        gap: 0.65rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.75rem;
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E1 transparent;
+      }
+    }
     .date-rail::-webkit-scrollbar {
-      height: 6px;
+      height: 5px;
     }
     .date-rail::-webkit-scrollbar-thumb {
       background: #CBD5E1;
@@ -380,20 +390,30 @@
     .date-rail.active-dragging {
       cursor: grabbing;
       scroll-behavior: auto;
+      scroll-snap-type: none;
     }
 
     .white-calendar-rail .date-tile {
       text-align: center;
-      background: #FFFFFF;
+      background: #F8FAFC;
       border: 1.5px solid #E2E8F0;
-      border-radius: 1.25rem;
-      min-width: 82px;
-      padding: 0.85rem 0.6rem;
+      border-radius: 1rem;
+      min-width: 60px;
+      padding: 0.55rem 0.35rem;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       flex-shrink: 0;
+      scroll-snap-align: start;
       color: #0F172A;
+    }
+    @media (min-width: 640px) {
+      .white-calendar-rail .date-tile {
+        background: #FFFFFF;
+        border-radius: 1.25rem;
+        min-width: 82px;
+        padding: 0.85rem 0.6rem;
+      }
     }
     .white-calendar-rail .date-tile:hover {
       border-color: #9BE600;
@@ -404,8 +424,8 @@
       border-color: #050E1D !important;
       background: #050E1D !important;
       color: #FFFFFF !important;
-      box-shadow: 0 12px 24px -6px rgba(5, 14, 29, 0.35) !important;
-      transform: translateY(-2px);
+      box-shadow: 0 8px 18px -4px rgba(5, 14, 29, 0.35) !important;
+      transform: translateY(-1px);
     }
     .white-calendar-rail .date-tile.date-tile-active .tile-weekday {
       color: #9BE600 !important;
@@ -438,7 +458,7 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 15px;
+      font-size: 14px;
       transition: all 0.18s ease;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
       cursor: pointer;
@@ -455,49 +475,12 @@
       transform: scale(0.95);
     }
 
-    /* Slider Arrow Navigation Buttons */
-    .slider-arrow-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 15px;
-      transition: all 0.18s ease;
-      cursor: pointer;
-      user-select: none;
-      flex-shrink: 0;
-    }
-    .slider-arrow-btn:hover {
-      background: #9BE600;
-      border-color: #9BE600;
-      color: #050E1D;
-      transform: scale(1.08);
-    }
-    .slider-arrow-btn:active {
-      transform: scale(0.95);
-    }
-    .date-rail {
-      cursor: grab;
-      user-select: none;
-      scroll-behavior: smooth;
-    }
-    .date-rail.active-dragging {
-      cursor: grabbing;
-      scroll-behavior: auto;
-    }
-
     /* Authentic Time Chips */
     .time-chip {
       text-align: center;
       border-radius: 0.875rem;
-      padding: 0.7rem 0.5rem;
-      font-size: 0.8125rem;
+      padding: 0.65rem 0.4rem;
+      font-size: 0.75rem;
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       border: 1px solid rgba(255, 255, 255, 0.14);
@@ -506,9 +489,17 @@
       transition: all 0.18s ease;
       cursor: pointer;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       user-select: none;
+      min-height: 44px;
+    }
+    @media (min-width: 640px) {
+      .time-chip {
+        padding: 0.7rem 0.5rem;
+        font-size: 0.8125rem;
+      }
     }
     .time-chip:hover:not(:disabled) {
       background: rgba(155, 230, 0, 0.15);
@@ -539,7 +530,7 @@
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black overflow-x-hidden">
 
-                    <!-- MOBILE & TABLET MENU BACKDROP CURTAIN -->
+                      <!-- MOBILE & TABLET MENU BACKDROP CURTAIN -->
   <div id="mobile-menu-backdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
   <!-- ================= UNIFIED TOP NAVIGATION BAR ================= -->
@@ -939,45 +930,57 @@
         </div>
       </div>
 
-      <!-- 30-Day Horizontal Date Carousel (White Calendar Box) -->
-      <div class="mb-6 p-4 sm:p-6 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Session Date</span>
-            <label class="block text-sm sm:text-base font-black uppercase text-slate-900 font-display">1. Select Date</label>
-          </div>
+      <!-- 30-Day Horizontal Date Carousel (Mobile-Optimized White Calendar Box) -->
+      <div class="mb-5 p-3.5 sm:p-6 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5 sm:mb-3">
           <div class="flex items-center gap-2">
-            <span id="selected-schedule-date-label" class="text-xs font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">Today</span>
-            <div class="flex items-center gap-1.5">
-              <button type="button" id="sched-slider-prev" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
-              <button type="button" id="sched-slider-next" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
+            <div>
+              <span class="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block leading-none">Session Date</span>
+              <label class="block text-xs sm:text-base font-black uppercase text-slate-900 font-display mt-0.5">1. Select Date</label>
             </div>
+            <span id="selected-schedule-date-label" class="text-[11px] sm:text-xs font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full truncate max-w-[145px] sm:max-w-none">Today</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="date" id="sched-native-date-picker" onchange="jumpScheduleToDate(this.value)" class="h-8 px-2 rounded-lg bg-slate-100 border border-slate-300 text-[11px] font-mono font-bold text-slate-800 focus:outline-none focus:border-[#050E1D]" title="Pick Any Date">
+            <button type="button" id="sched-slider-prev" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
+            <button type="button" id="sched-slider-next" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
           </div>
         </div>
         <div id="date-carousel" class="date-rail white-calendar-rail"></div>
       </div>
 
-      <!-- White Filter Court View & Court Schedule Table Container -->
-      <div class="rounded-3xl bg-white text-slate-900 border border-slate-200 p-4 sm:p-6 shadow-2xl space-y-5">
+      <!-- Mobile-Optimized White Filter Court View & Court Schedule Table Container -->
+      <div class="rounded-3xl bg-white text-slate-900 border border-slate-200 p-3 sm:p-6 shadow-2xl space-y-3.5 sm:space-y-5">
         <!-- 2. Filter Court View Header inside White Box -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
-          <div>
-            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Court Matrix</span>
-            <label class="text-sm sm:text-base font-black uppercase tracking-tight text-slate-900 font-display block">2. Filter Court View</label>
-            <p class="text-[11px] text-slate-500 font-medium mt-0.5">Open Play schedule: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM</p>
+        <div class="space-y-3 pb-3.5 border-b border-slate-200">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div>
+              <span class="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block leading-none">Court Matrix</span>
+              <label class="text-xs sm:text-base font-black uppercase tracking-tight text-slate-900 font-display block mt-0.5">2. Filter Court View</label>
+              <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-0.5">Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM</p>
+            </div>
+            <!-- 5-Segment Court Selector (Fits 100% on Mobile with Zero Sideways Scroll) -->
+            <div class="grid grid-cols-5 sm:flex items-center gap-1 sm:gap-1.5 w-full sm:w-auto" id="schedule-court-filter">
+              <button type="button" onclick="setScheduleCourtFilter('ALL')" data-court="ALL" class="sched-filter-btn py-2 px-2 sm:px-3.5 rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-wider bg-[#050E1D] text-white shadow-md transition text-center"><span class="sm:hidden">All</span><span class="hidden sm:inline">All 4 Courts</span></button>
+              <button type="button" onclick="setScheduleCourtFilter(1)" data-court="1" class="sched-filter-btn py-2 px-2 sm:px-3.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition text-center"><span class="sm:hidden">C1</span><span class="hidden sm:inline">Court 01</span></button>
+              <button type="button" onclick="setScheduleCourtFilter(2)" data-court="2" class="sched-filter-btn py-2 px-2 sm:px-3.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition text-center"><span class="sm:hidden">C2</span><span class="hidden sm:inline">Court 02</span></button>
+              <button type="button" onclick="setScheduleCourtFilter(3)" data-court="3" class="sched-filter-btn py-2 px-2 sm:px-3.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition text-center"><span class="sm:hidden">C3</span><span class="hidden sm:inline">Court 03</span></button>
+              <button type="button" onclick="setScheduleCourtFilter(4)" data-court="4" class="sched-filter-btn py-2 px-2 sm:px-3.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition text-center"><span class="sm:hidden">C4</span><span class="hidden sm:inline">Court 04</span></button>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none" id="schedule-court-filter">
-            <button type="button" onclick="setScheduleCourtFilter('ALL')" data-court="ALL" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-[#050E1D] text-white shadow-md transition flex-shrink-0">All 4 Courts</button>
-            <button type="button" onclick="setScheduleCourtFilter(1)" data-court="1" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 01</button>
-            <button type="button" onclick="setScheduleCourtFilter(2)" data-court="2" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 02</button>
-            <button type="button" onclick="setScheduleCourtFilter(3)" data-court="3" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 03</button>
-            <button type="button" onclick="setScheduleCourtFilter(4)" data-court="4" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 04</button>
+
+          <!-- Quick Time-of-Day Filter Bar (Morning / Afternoon / Evening) -->
+          <div class="grid grid-cols-4 gap-1 sm:gap-2 p-1 rounded-xl bg-slate-100 border border-slate-200">
+            <button type="button" onclick="setScheduleTimePeriod('ALL')" data-period="ALL" class="sched-period-btn py-1.5 px-2 rounded-lg text-[10px] sm:text-xs font-black uppercase bg-[#9BE600] text-[#050E1D] shadow-sm transition text-center">All (18h)</button>
+            <button type="button" onclick="setScheduleTimePeriod('MORNING')" data-period="MORNING" class="sched-period-btn py-1.5 px-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase text-slate-600 hover:text-slate-900 transition text-center">Morning</button>
+            <button type="button" onclick="setScheduleTimePeriod('AFTERNOON')" data-period="AFTERNOON" class="sched-period-btn py-1.5 px-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase text-slate-600 hover:text-slate-900 transition text-center">Afternoon</button>
+            <button type="button" onclick="setScheduleTimePeriod('EVENING')" data-period="EVENING" class="sched-period-btn py-1.5 px-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase text-slate-600 hover:text-slate-900 transition text-center">Evening</button>
           </div>
         </div>
 
-        <!-- Responsive Court Schedule Table -->
-        <div class="rounded-2xl border border-slate-200 overflow-x-auto touch-scroll shadow-sm">
-          <table class="w-full min-w-[640px] border-collapse text-xs font-bold" id="schedule-table">
+        <!-- Responsive Court Schedule Table (Fits 100% on Mobile with Zero Horizontal Scroll!) -->
+        <div class="rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <table class="w-full table-fixed sm:table-auto border-collapse text-xs font-bold" id="schedule-table">
             <thead>
               <tr id="schedule-table-head" class="bg-[#050E1D] text-white uppercase tracking-wider text-[10px] sm:text-xs"></tr>
             </thead>

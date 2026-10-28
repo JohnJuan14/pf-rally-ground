@@ -466,7 +466,7 @@
             <div id="admin-blocks-container" class="space-y-2"></div>
           </div>
 
-          <!-- Clean White Live 4-Court Calendar Matrix Preview -->
+                    <!-- Clean White Live 4-Court Calendar Matrix Preview -->
           <div class="rounded-3xl bg-white border border-slate-200 p-4 sm:p-6 shadow-2xl text-slate-900 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -480,15 +480,15 @@
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 text-white border border-slate-900"><span class="w-2 h-2 rounded-full bg-slate-400"></span>Closed</span>
               </div>
             </div>
-            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <table class="w-full text-xs border-collapse min-w-[640px]">
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <table class="w-full table-fixed sm:table-auto text-xs border-collapse">
                 <thead>
-                  <tr class="bg-[#050E1D] text-white text-[11px] uppercase tracking-wider">
-                    <th class="py-3.5 px-4 text-left font-black sticky left-0 bg-[#050E1D] z-10">Time Slot</th>
-                    <th class="py-3.5 px-3 text-center font-black">Court 01</th>
-                    <th class="py-3.5 px-3 text-center font-black">Court 02</th>
-                    <th class="py-3.5 px-3 text-center font-black">Court 03</th>
-                    <th class="py-3.5 px-3 text-center font-black">Court 04</th>
+                  <tr class="bg-[#050E1D] text-white text-[10px] sm:text-[11px] uppercase tracking-wider">
+                    <th class="py-2.5 sm:py-3.5 px-2 sm:px-4 text-left font-black sticky left-0 bg-[#050E1D] z-10 w-[72px] sm:w-[125px]">Time</th>
+                    <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center font-black"><span class="sm:hidden">C1</span><span class="hidden sm:inline">Court 01</span></th>
+                    <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center font-black"><span class="sm:hidden">C2</span><span class="hidden sm:inline">Court 02</span></th>
+                    <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center font-black"><span class="sm:hidden">C3</span><span class="hidden sm:inline">Court 03</span></th>
+                    <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center font-black"><span class="sm:hidden">C4</span><span class="hidden sm:inline">Court 04</span></th>
                   </tr>
                 </thead>
                 <tbody id="admin-calendar-matrix-tbody" class="divide-y divide-slate-200 bg-white"></tbody>
@@ -1384,6 +1384,26 @@ function clearFieldError(fieldId) {
       { time: '10:00 PM', peak: true },
       { time: '11:00 PM', peak: true }
     ];
+
+    const ADMIN_OPEN_PLAY_BY_DAY = {
+      1: { start: 15, end: 18 },
+      2: { start: 15, end: 20 },
+      3: { start: 15, end: 20 },
+      4: { start: 15, end: 20 },
+      5: { start: 15, end: 23 },
+      6: { start: 18, end: 22 }
+    };
+
+    function isAdminOpenPlaySlot(slotStr) {
+      const dayInput = document.getElementById('adm-block-date')?.value;
+      const d = dayInput ? new Date(dayInput + 'T12:00:00') : new Date();
+      const rule = ADMIN_OPEN_PLAY_BY_DAY[d.getDay()];
+      if (!rule) return false;
+      let hr = parseInt(slotStr, 10);
+      if (slotStr.includes('PM') && hr !== 12) hr += 12;
+      if (slotStr.includes('AM') && hr === 12) hr = 0;
+      return hr >= rule.start && hr < rule.end;
+    }
 
     const ADMIN_OPEN_PLAY_BY_DAY = {
       1: { start: 15, end: 18 },
