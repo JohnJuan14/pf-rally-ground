@@ -268,35 +268,7 @@
 
           </div>
 
-          <!-- Open Play Schedule Informational Box (From Scraped Site) -->
-          <div class="p-4 rounded-2xl bg-brand-black/80 border border-white/10 text-xs space-y-1.5">
-            <div class="flex items-center gap-2 text-brand-lime font-bold font-mono text-[11px] uppercase">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <span>Weekly Open Play Schedule (Club Notice)</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-slate-300 text-[11px] leading-relaxed font-mono">
-              <div>&bull; Monday: 3:00 PM&ndash;6:00 PM</div>
-              <div>&bull; Tuesday: 3:00 PM&ndash;8:00 PM</div>
-              <div>&bull; Wednesday: 3:00 PM&ndash;8:00 PM</div>
-              <div>&bull; Thursday: 3:00 PM&ndash;8:00 PM</div>
-              <div>&bull; Friday: 3:00 PM&ndash;7:00 PM &amp; 7:00 PM&ndash;11:00 PM</div>
-              <div>&bull; Saturday: 6:00 PM&ndash;10:00 PM</div>
-            </div>
           </div>
-
-          <!-- Players Counter (Scraped Rule: Up to 6 included, +₱100/player above 6) -->
-          <div class="p-4 rounded-2xl bg-brand-black/80 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div>
-              <span class="font-bold text-white uppercase block text-xs">Number of Players</span>
-              <span class="text-[11px] text-slate-300">Up to 6 players included. Add <b class="text-brand-lime font-mono">₱100.00</b> per player above 6.</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <button type="button" onclick="adjustPlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black flex items-center justify-center transition active:scale-95">&minus;</button>
-              <span id="player-count-display" class="font-mono font-black text-sm text-white w-12 text-center">4</span>
-              <button type="button" onclick="adjustPlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black flex items-center justify-center transition active:scale-95">&plus;</button>
-            </div>
-          </div>
-
         </section>
 
         <!-- STEP 3: EQUIPMENT RENTALS (EXACT SCRAPED ITEMS & PRICES) -->
@@ -473,7 +445,7 @@
             <div id="book-pay-gcash" class="p-4 sm:p-5 rounded-2xl bg-brand-black border border-brand-lime/30 space-y-3">
               <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
                 <div class="sm:col-span-5 text-center p-3 bg-white rounded-2xl shadow-lg max-w-[160px] mx-auto">
-                  <img id="book-gcash-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=00020101021226280010com.gcash0112099988323465204599953036085406400.005802PH5916PF%20RALLY%20GROUND6006DARAGA6304B932" alt="Official GCash QR Ph" class="w-full h-auto">
+                  <img id="book-gcash-qr-img" src="assets/qr-gcash.png" alt="Official GCash QR Ph" class="w-full h-auto">
                   <span class="text-[9px] font-mono font-black text-slate-900 block mt-1 uppercase">Official GCash QR Ph</span>
                 </div>
                 <div class="sm:col-span-7 space-y-2 text-xs font-mono">
@@ -492,6 +464,9 @@
                       <button type="button" onclick="copyAmountDue(this)" class="px-2 py-0.5 rounded bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[9px] text-white font-sans font-bold transition">Copy</button>
                     </span>
                   </div>
+                  <p class="text-[10px] text-slate-400 font-sans leading-tight pt-1 border-t border-white/10">
+                    💡 <b>Tip:</b> If scanner says invalid, open GCash &gt; <b>Express Send</b> &gt; paste <b class="text-white">0999 883 2346</b>.
+                  </p>
                 </div>
               </div>
             </div>
@@ -706,7 +681,18 @@
     ];
 
     // Initialize
+    
+    function syncBookAdminQr() {
+      const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
+      const qrImg = document.getElementById('book-gcash-qr-img');
+      if (qrImg && customStandee) {
+        qrImg.src = customStandee;
+      }
+    }
+
+
     document.addEventListener('DOMContentLoaded', () => {
+      syncBookAdminQr();
       renderGhlCalendar();
       renderGhlTimeSlots();
       updateBookingSummary();

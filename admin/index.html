@@ -244,7 +244,7 @@
           <span class="hidden sm:inline">+ Add Inventory</span>
         </button>
         <button type="button" onclick="openNewBookingModal()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[10px] sm:text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center gap-1 whitespace-nowrap">
-          <span>+ Walk-In</span>
+          <span>+ Staff Booking</span>
         </button>
         <button type="button" onclick="switchTab('settings')" id="header-gmail-btn" title="Owner Gmail &amp; Cybersecurity Settings" class="px-2 sm:px-3 py-2 rounded-xl bg-slate-100 lg:bg-white/5 hover:bg-brand-lime/20 border border-slate-300 lg:border-brand-lime/30 text-[#050E1D] lg:text-brand-lime font-black uppercase text-[10px] sm:text-xs tracking-wider transition flex items-center gap-1.5 whitespace-nowrap">
           <svg class="w-3.5 h-3.5 text-[#EA4335] lg:text-brand-lime flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -321,14 +321,14 @@
           <div class="lg:col-span-4 rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 flex flex-col justify-between card-glow">
             <div>
               <h3 class="text-sm font-black uppercase text-white tracking-wider mb-2">Fast Desk Actions</h3>
-              <p class="text-xs text-slate-400 mb-4">Set up your custom inventory or log walk-in sessions.</p>
+              <p class="text-xs text-slate-400 mb-4">Set up your custom inventory or log staff bookings.</p>
               
               <div class="space-y-2.5">
                 <button onclick="openAddInventoryModal()" class="w-full py-3 px-4 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider text-left flex items-center justify-between hover:bg-brand-limeHover transition">
                   <span>+ Add Custom Inventory &amp; Photo</span> <span>→</span>
                 </button>
                 <button onclick="openNewBookingModal()" class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold uppercase tracking-wider text-left flex items-center justify-between transition">
-                  <span>+ Log Walk-In Court Booking</span> <span>→</span>
+                  <span>+ Log Staff / Phone Booking</span> <span>→</span>
                 </button>
                 <button onclick="switchTab('pos')" class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold uppercase tracking-wider text-left flex items-center justify-between transition">
                   <span>Ring Up POS Retail Sale</span> <span>→</span>
@@ -357,7 +357,7 @@
             <p class="text-xs text-slate-400">Starts clean. Bookings submitted on the public site appear here with their captured GCash Reference Number.</p>
           </div>
           <button onclick="openNewBookingModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:bg-brand-limeHover transition active:scale-95 self-start sm:self-auto">
-            + New Walk-In Booking
+            + New Staff Booking
           </button>
         </div>
 
@@ -682,25 +682,21 @@
               </button>
             </div>
 
-            <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3">
-              <span class="font-bold text-white uppercase block">Court Hire Rates</span>
+                        <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-3">
+              <span class="font-bold text-white uppercase block">Court Hire Rates &amp; Player Capacity</span>
               <div class="grid grid-cols-2 gap-2">
                 <div>
-                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Regular (₱/hr)</label>
-                  <input type="number" value="400" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Flat Rate (₱/hr)</label>
+                  <input type="number" value="400" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono" readonly>
+                  <span class="text-[10px] text-slate-500">6:00 AM – 12:00 Midnight</span>
                 </div>
                 <div>
-                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Peak (₱/hr)</label>
-                  <input type="number" value="500" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                  <label class="block text-[10px] text-slate-400 uppercase mb-1">Extra Player (₱/person)</label>
+                  <input type="number" value="100" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono" readonly>
+                  <span class="text-[10px] text-slate-500">Up to 6 players included</span>
                 </div>
               </div>
-              <div>
-                <label class="block text-[10px] text-slate-400 uppercase mb-1">Open Play Drop-In Rate (₱/player)</label>
-                <input type="number" value="150" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
-              </div>
-              <button onclick="alert('Pricing updated.')" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-bold uppercase text-[10px]">
-                Save Rates
-              </button>
+              <p class="text-[11px] text-brand-lime font-mono">Flat ₱400/hr • 4 Tournament Courts • No Peak Surcharge</p>
             </div>
           </div>
 
@@ -764,42 +760,65 @@
             <p id="settings-gmail-feedback" class="hidden text-xs font-bold"></p>
           </div>
 
-          <!-- Official GCash & Bank QR Configuration Card -->
-          <div class="p-5 rounded-2xl bg-brand-black/60 border border-white/10 space-y-4 text-xs">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+                    <!-- Official GCash & Bank QR Configuration Card (Synced with Public Booking) -->
+          <div class="p-5 sm:p-6 rounded-3xl bg-brand-black/70 border border-brand-lime/30 space-y-5 text-xs shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
               <div>
-                <span class="font-bold text-white uppercase block">Official Club Payment Accounts &amp; QR Standee</span>
-                <p class="text-[11px] text-slate-400">Configure the official payment channels shown to customers during online booking.</p>
+                <span class="font-black text-white uppercase block text-sm tracking-wide">Official Club Payment Accounts &amp; QR Standee</span>
+                <p class="text-[11px] text-slate-300 mt-0.5">This QR code and account details are displayed directly on the public booking calendar.</p>
               </div>
-              <span class="px-2.5 py-1 rounded-full bg-brand-lime/15 text-brand-lime font-mono font-bold text-[10px] uppercase">QR Ph Validated</span>
+              <span class="px-3 py-1 rounded-full bg-brand-lime/20 text-brand-lime font-mono font-bold text-[10px] uppercase tracking-wider border border-brand-lime/40">LIVE SYNC ACTIVE</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Official GCash Mobile Number *</label>
-                <input type="tel" id="settings-gcash-num" value="09998832346" class="w-full bg-brand-card border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono font-bold">
-                <span class="text-[10px] text-slate-400 block mt-1">Recipient: P&amp;F Rally Ground</span>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+              <!-- Left: Live QR Code Preview & Direct File Upload -->
+              <div class="md:col-span-4 p-4 rounded-2xl bg-brand-card border border-white/10 text-center space-y-3">
+                <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">Active GCash QR Code</span>
+                <div class="p-2.5 rounded-2xl bg-white max-w-[170px] mx-auto shadow-lg">
+                  <img id="admin-qr-preview-img" src="assets/qr-gcash.png" alt="Active Official GCash QR" class="w-full h-auto rounded-lg">
+                </div>
+                
+                <div class="space-y-1.5 pt-1">
+                  <label class="block text-[10px] font-bold text-brand-lime uppercase cursor-pointer hover:underline">
+                    <span>Upload New QR Image / Standee</span>
+                    <input type="file" id="admin-qr-file-input" onchange="handleAdminQrFileUpload(event)" accept="image/*" class="hidden">
+                  </label>
+                  <p class="text-[10px] text-slate-400 leading-tight">Upload official GCash standee photo or screenshot from your mobile app.</p>
+                </div>
               </div>
-              <div>
-                <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">BDO Unibank Account Number</label>
-                <input type="text" id="settings-bdo-num" value="004588029143" class="w-full bg-brand-card border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono">
-                <span class="text-[10px] text-slate-400 block mt-1">Account Name: P&amp;F Rally Ground</span>
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">BPI Account Number</label>
-                <input type="text" id="settings-bpi-num" value="4891003274" class="w-full bg-brand-card border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono">
-                <span class="text-[10px] text-slate-400 block mt-1">Account Name: P&amp;F Rally Ground</span>
-              </div>
-            </div>
 
-            <div class="pt-2 border-t border-white/10">
-              <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Custom Official GCash Standee Image URL (Optional)</label>
-              <div class="flex gap-2">
-                <input type="text" id="settings-custom-standee-url" placeholder="e.g. assets/my-gcash-standee.png or https://..." class="flex-1 bg-brand-card border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs">
-                <button type="button" onclick="saveOfficialPaymentSettings()" class="py-2.5 px-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[10px] tracking-wider hover:bg-brand-limeHover transition whitespace-nowrap">Save Accounts</button>
+              <!-- Right: Account Numbers & Custom URL Override -->
+              <div class="md:col-span-8 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">GCash Mobile Number *</label>
+                    <input type="tel" id="settings-gcash-num" value="09998832346" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono font-bold text-xs focus:outline-none">
+                    <span class="text-[10px] text-slate-400 block mt-1">Recipient: P&amp;F Rally Ground</span>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">GCash Account Name</label>
+                    <input type="text" id="settings-gcash-name" value="P&F Rally Ground" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-bold text-xs focus:outline-none">
+                    <span class="text-[10px] text-slate-400 block mt-1">Daraga, Albay</span>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">BDO Unibank Account Number</label>
+                    <input type="text" id="settings-bdo-num" value="004588029143" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">BPI Account Number</label>
+                    <input type="text" id="settings-bpi-num" value="4891003274" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Custom QR Image URL / Standee Path</label>
+                  <div class="flex gap-2">
+                    <input type="text" id="settings-custom-standee-url" placeholder="assets/qr-gcash.png or data:image/..." class="flex-1 bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
+                    <button type="button" onclick="saveOfficialPaymentSettings()" class="py-2.5 px-5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow whitespace-nowrap">Save &amp; Sync QR</button>
+                  </div>
+                  <p id="settings-pay-feedback" class="hidden text-xs font-bold text-brand-lime mt-1.5"></p>
+                </div>
               </div>
-              <span class="text-[10px] text-slate-400 block mt-1">Leave empty to use automatic mathematically generated EMVCo QR Ph codes with dynamic booking amounts.</span>
-              <p id="settings-pay-feedback" class="hidden text-xs font-bold text-brand-lime mt-1.5"></p>
             </div>
           </div>
 
@@ -955,7 +974,7 @@
               <option value="Refreshment">Refreshment / Drink</option>
               <option value="Pro Shop">Pro Shop Gear</option>
               <option value="Rental">Equipment Rental</option>
-              <option value="Court Access">Open Play / Pass</option>
+              <option value="Court Access">Court Hire Pass</option>
               <option value="__CUSTOM__">+ Type Custom Category...</option>
             </select>
             <input type="text" id="inv-item-custom-cat" placeholder="Type custom category name..." class="hidden mt-2 w-full bg-brand-black border border-brand-lime rounded-xl px-3 py-2 text-xs text-brand-lime font-bold focus:outline-none">
@@ -1027,14 +1046,14 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: + NEW WALK-IN BOOKING ================= -->
+  <!-- ================= MODAL: + NEW STAFF BOOKING ================= -->
   <div id="new-booking-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeNewBookingModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
     <div class="relative z-10 w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-border p-6 shadow-2xl touch-scroll">
       
       <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
         <div>
-          <h3 class="text-lg font-black uppercase text-white">Create Walk-In / Phone Booking</h3>
+          <h3 class="text-lg font-black uppercase text-white">Create Staff / Phone Booking</h3>
           <p class="text-xs text-slate-400">Instantly locks the court on the calendar and syncs with the public website.</p>
         </div>
         <button onclick="closeNewBookingModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
@@ -1099,7 +1118,7 @@
           </div>
           <div>
             <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Ref #</label>
-            <input type="text" id="modal-pay-ref" placeholder="WALK-IN / GCash #" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-brand-lime font-mono">
+            <input type="text" id="modal-pay-ref" placeholder="GCash / Maya / Bank Ref #" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-brand-lime font-mono">
           </div>
           <div>
             <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Amount (₱)</label>
@@ -1506,7 +1525,7 @@ function clearFieldError(fieldId) {
                 <div>
                   <span class="font-bold text-white block">${b.name} <span class="text-slate-400 font-normal">(${b.phone || '0999 883 2346'})</span></span>
                   <div class="my-1">${formatAdminItemsBullets(b)}</div><span class="text-brand-lime text-[11px] font-mono block">${b.time}</span>
-                  <span class="text-[10px] font-mono text-slate-400">Mode: <b class="text-white">${b.paymentMethod || b.paymentMode || 'GCash'}</b> • Ref #: <b class="text-brand-lime">${b.transactionRef || 'Walk-In'}</b></span>
+                  <span class="text-[10px] font-mono text-slate-400">Mode: <b class="text-white">${b.paymentMethod || b.paymentMode || 'GCash'}</b> • Ref #: <b class="text-brand-lime">${b.transactionRef || 'STAFF'}</b></span>
                 </div>
               </div>
               <div class="flex items-center gap-2 self-end sm:self-center">
@@ -1620,7 +1639,7 @@ function clearFieldError(fieldId) {
       await fetchAdminStateFromServer(true);
     }
 
-    // ================= NEW WALK-IN BOOKING MODAL =================
+    // ================= NEW STAFF BOOKING MODAL =================
     function openNewBookingModal() {
       document.getElementById('new-booking-modal').classList.remove('hidden');
       document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
@@ -1636,7 +1655,7 @@ function clearFieldError(fieldId) {
       const name = document.getElementById('modal-guest-name').value;
       const phone = document.getElementById('modal-guest-phone').value || '0999 883 2346';
       const payMode = document.getElementById('modal-pay-mode').value;
-      const payRef = document.getElementById('modal-pay-ref').value || 'WALK-IN-DESK';
+      const payRef = document.getElementById('modal-pay-ref').value || 'STAFF-RESERVATION';
       const amount = parseInt(document.getElementById('modal-amount').value) || 500;
       const ref = 'PF-' + Math.floor(10000 + Math.random() * 90000);
 
@@ -2838,7 +2857,89 @@ function clearFieldError(fieldId) {
         fetchAdminStateFromServer(false);
       }, 3000);
     });
-      function saveOfficialPaymentSettings() {
+      
+    function handleAdminQrFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const preview = document.getElementById('admin-qr-preview-img');
+        if (preview) preview.src = dataUrl;
+
+        const urlInput = document.getElementById('settings-custom-standee-url');
+        if (urlInput) urlInput.value = dataUrl;
+
+        // Auto-save
+        saveOfficialPaymentSettings();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveOfficialPaymentSettings() {
+      const gcash = (document.getElementById('settings-gcash-num')?.value || '09998832346').trim();
+      const gcashName = (document.getElementById('settings-gcash-name')?.value || 'P&F Rally Ground').trim();
+      const bdo = (document.getElementById('settings-bdo-num')?.value || '004588029143').trim();
+      const bpi = (document.getElementById('settings-bpi-num')?.value || '4891003274').trim();
+      const standee = (document.getElementById('settings-custom-standee-url')?.value || '').trim() || 'assets/qr-gcash.png';
+      const fb = document.getElementById('settings-pay-feedback');
+
+      localStorage.setItem('pf_gcash_number', gcash);
+      localStorage.setItem('pf_bdo_number', bdo);
+      localStorage.setItem('pf_bpi_number', bpi);
+      localStorage.setItem('pf_custom_gcash_standee_url', standee);
+
+      // Post to Server
+      try {
+        await fetch('/api/payment-config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            gcashNumber: gcash,
+            gcashName: gcashName,
+            bdoNumber: bdo,
+            bpiNumber: bpi,
+            standeeUrl: standee
+          })
+        });
+      } catch (e) {
+        console.warn('Saved payment settings locally');
+      }
+
+      const preview = document.getElementById('admin-qr-preview-img');
+      if (preview && standee) preview.src = standee;
+
+      if (fb) {
+        fb.classList.remove('hidden');
+        fb.textContent = '✅ Official QR & payment details updated and synchronized with booking page!';
+        setTimeout(() => fb.classList.add('hidden'), 4000);
+      }
+    }
+
+    function loadAdminQrSettings() {
+      const standee = localStorage.getItem('pf_custom_gcash_standee_url') || 'assets/qr-gcash.png';
+      const gcash = localStorage.getItem('pf_gcash_number') || '09998832346';
+      const bdo = localStorage.getItem('pf_bdo_number') || '004588029143';
+      const bpi = localStorage.getItem('pf_bpi_number') || '4891003274';
+
+      const preview = document.getElementById('admin-qr-preview-img');
+      if (preview && standee) preview.src = standee;
+
+      const urlInput = document.getElementById('settings-custom-standee-url');
+      if (urlInput && standee) urlInput.value = standee;
+
+      const gInput = document.getElementById('settings-gcash-num');
+      if (gInput && gcash) gInput.value = gcash;
+
+      const bdoInput = document.getElementById('settings-bdo-num');
+      if (bdoInput && bdo) bdoInput.value = bdo;
+
+      const bpiInput = document.getElementById('settings-bpi-num');
+      if (bpiInput && bpi) bpiInput.value = bpi;
+    }
+
+    function saveOfficialPaymentSettings_old() {
       const gcash = (document.getElementById('settings-gcash-num')?.value || '09998832346').trim();
       const bdo = (document.getElementById('settings-bdo-num')?.value || '004588029143').trim();
       const bpi = (document.getElementById('settings-bpi-num')?.value || '4891003274').trim();

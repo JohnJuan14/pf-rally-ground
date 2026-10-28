@@ -42,12 +42,12 @@
       "@id": "https://pfrallyground.com/#organization",
       "name": "P&F Rally Ground Pickleball Club",
       "alternateName": "P&F Rally Ground Daraga",
-      "description": "Premier 4-court covered tournament-grade pickleball club in Daraga, Albay (Bicol Region, Philippines) offering online court reservations, daily ₱150 Open Play mixers, pro coaching, and equipment rentals.",
+      "description": "Premier 4-court covered tournament-grade pickleball club in Daraga, Albay (Bicol Region, Philippines) offering online court reservations, online court reservations, tournament-grade cushion acrylic courts, and pro equipment rentals.",
       "url": "https://pfrallyground.com/",
       "telephone": "+63-999-883-2346",
       "priceRange": "₱100 - ₱1,200",
       "currenciesAccepted": "PHP",
-      "paymentAccepted": "GCash, Bank Transfer (BDO, BPI, InstaPay), Cash at Front Desk",
+      "paymentAccepted": "GCash, Bank Transfer (BDO, BPI, InstaPay), Bank Transfer (BDO, InstaPay)",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Phase IV, Doña Maria Subdivision, Velasco St., Brgy. Tagas",
@@ -97,7 +97,7 @@
       ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
-        "name": "Pickleball Court Rentals, Open Play & Coaching Rates",
+        "name": "Pickleball Court Rentals & Equipment Rates",
         "itemListElement": [
           {
             "@type": "Offer",
@@ -108,14 +108,14 @@
           },
           {
             "@type": "Offer",
-            "name": "Peak Hours Court Rental (6:00 PM – 12:00 Midnight)",
+            "name": "Regulars Court Rental (6:00 PM – 12:00 Midnight)",
             "price": "500.00",
             "priceCurrency": "PHP",
             "description": "1-hour evening stadium-lit pickleball court rental for up to 6 players."
           },
           {
             "@type": "Offer",
-            "name": "Open Play Social Mixer Pass",
+            "name": "Court Booking Social Mixer Pass",
             "price": "150.00",
             "priceCurrency": "PHP",
             "description": "Drop-in rotational social mixer pass per player including match balls and court rotation."
@@ -147,7 +147,7 @@
           "name": "How much are the pickleball court rates at P&F Rally Ground?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Regular Hours (6:00 AM to 6:00 PM) cost ₱400 per hour per court (up to 6 players; +₱100 per extra player beyond 6). Peak Hours (6:00 PM to 12:00 Midnight) cost ₱500 per hour per court. Daily Open Play drop-in sessions cost ₱150 per player."
+            "text": "Regular Hours (6:00 AM to 6:00 PM) cost ₱400 per hour per court (up to 6 players; +₱100 per extra player beyond 6). All Operating Hours (6AM to 12AM) cost ₱400 per hour per court. "
           }
         },
         {
@@ -487,7 +487,7 @@
 
         <!-- Venue Gate QR Code -->
         <div class="my-6 p-3.5 rounded-2xl bg-white max-w-[165px] mx-auto text-center shadow-lg">
-          <img id="res-gate-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=PF-RALLY-GATE-PASS" alt="Venue Check-in QR" class="w-full h-auto">
+          <img id="res-gate-qr" src="assets/qr-gcash.png" alt="Venue Check-in QR" class="w-full h-auto">
           <span class="text-[9px] font-mono text-slate-800 font-bold uppercase block mt-1">Venue Gate Pass</span>
         </div>
 
@@ -522,7 +522,7 @@
             </div>
           </a>
           <p class="text-slate-300 text-xs leading-relaxed">
-            Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay. Home of 4 championship cushion acrylic courts, Open Play mixers, and Club Staff's Academy.
+            Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay. Home of 4 championship cushion acrylic courts and pro equipment rentals in Daraga, Albay.
           </p>
           <div class="flex flex-wrap gap-2 text-[11px] font-mono pt-1">
             <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-lime/15 px-3 py-1 font-bold text-brand-lime border border-brand-lime/30">
@@ -627,7 +627,7 @@
           <img src="assets/logo.png" alt="P&amp;F Logo" class="h-9 w-9 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
           <div>
             <h3 class="text-base font-black uppercase tracking-tight text-white leading-none">Your Reservation Cart</h3>
-            <p class="text-[10px] text-slate-300 mt-1">Court Slots, Open Play Passes &amp; Live Inventory</p>
+            <p class="text-[10px] text-slate-300 mt-1">Court Reservations &amp; Pro Equipment Rentals</p>
           </div>
         </div>
         <button onclick="toggleCartDrawer()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95">✕</button>
@@ -647,7 +647,7 @@
         <div class="flex items-baseline justify-between mb-3">
           <div>
             <span class="text-xs text-slate-300 block font-semibold">Total Amount to Settle</span>
-            <span class="text-[10px] text-slate-400 font-mono">GCash QR / Bank Transfer / Cash at Desk</span>
+            <span class="text-[10px] text-slate-400 font-mono">GCash QR / Bank Transfer </span>
           </div>
           <span id="cart-total-amount" class="text-2xl font-black text-brand-lime font-mono">₱0</span>
         </div>
@@ -872,7 +872,7 @@
       <div id="modal-qr-section">
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/80 rounded-2xl p-3.5 border border-brand-lime/30 mb-4">
           <div class="sm:col-span-5 p-2.5 rounded-xl bg-white max-w-[150px] mx-auto text-center shadow-lg">
-            <img id="locked-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=09998832346-PFRALLY" alt="P&amp;F Rally Ground Locked QR" class="w-full h-auto">
+            <img id="locked-qr-img" src="assets/qr-gcash.png" alt="P&amp;F Rally Ground Locked QR" class="w-full h-auto">
             <div class="mt-1 text-[9px] font-mono text-slate-900 font-black uppercase">GCash Locked QR</div>
           </div>
           <div class="sm:col-span-7 text-xs space-y-2 font-mono">
@@ -897,7 +897,7 @@
       <div id="modal-bank-section" class="hidden">
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/80 rounded-2xl p-3.5 border border-[#0072CE]/60 mb-4">
           <div class="sm:col-span-5 p-2.5 rounded-xl bg-white max-w-[150px] mx-auto text-center shadow-lg">
-            <img id="locked-bank-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=INSTAPAY-BDO-004588029143-PFRALLY" alt="P&amp;F Bank Transfer InstaPay QR" class="w-full h-auto">
+            <img id="locked-bank-qr-img" src="assets/qr-gcash.png" alt="P&amp;F Bank Transfer InstaPay QR" class="w-full h-auto">
             <div class="mt-1 text-[9px] font-mono text-[#0072CE] font-black uppercase">InstaPay / QR Ph</div>
           </div>
           <div class="sm:col-span-7 text-xs space-y-2 font-mono">
@@ -1031,7 +1031,7 @@
         document.getElementById('res-status-badge').textContent = data.status || 'PENDING VERIFICATION';
       }
       if (document.getElementById('res-gate-qr') && data.ref) {
-        document.getElementById('res-gate-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(data.ref);
+        document.getElementById('res-gate-qr').src = 'assets/qr-gcash.png' + encodeURIComponent(data.ref);
       }
     }
 
