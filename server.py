@@ -5,6 +5,7 @@ import json
 import os
 import threading
 import urllib.parse
+import re
 import smtplib
 import secrets
 import time
@@ -32,6 +33,7 @@ DEFAULT_DB = {
     "salesLedger": [],
     "inventory": [],
     "categories": [],
+    "announcements": [],
     "securityLog": [],
     "adminPassword": "admin_123!",
     "gmailConfig": {
@@ -39,6 +41,13 @@ DEFAULT_DB = {
         "appPassword": "",
         "notifyOnNewBooking": True,
         "sendCustomerReceipt": True
+    },
+    "paymentConfig": {
+        "gcashNumber": "09998832346",
+        "gcashName": "P&F Rally Ground",
+        "bdoNumber": "004588029143",
+        "bpiNumber": "4891003274",
+        "standeeUrl": "assets/qr-gcash.png"
     }
 }
 
@@ -75,7 +84,7 @@ def load_db():
                 data = json.load(f)
                 if "adminPassword" not in data or not data["adminPassword"]:
                     data["adminPassword"] = "admin_123!"
-                for k in ["bookings", "blocks", "salesLedger", "inventory", "categories", "securityLog"]:
+                for k in ["bookings", "blocks", "salesLedger", "inventory", "categories", "announcements", "securityLog"]:
                     if k not in data or not isinstance(data[k], list):
                         data[k] = []
                 if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
@@ -215,6 +224,21 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(public_state).encode("utf-8"))
             return
+        elif parsed.path == "/api/announcements":
+            db = load_db()
+            self._send_json({"ok": True, "announcements": db.get("announcements", [])})
+            return
+        elif parsed.path == "/api/payment-config":
+            db = load_db()
+            cfg = db.get("paymentConfig") or {
+                "gcashNumber": "09998832346",
+                "gcashName": "P&F Rally Ground",
+                "bdoNumber": "004588029143",
+                "bpiNumber": "4891003274",
+                "standeeUrl": "assets/qr-gcash.png"
+            }
+            self._send_json(cfg)
+            return
         elif parsed.path.startswith("/api/booking/"):
             ref = parsed.path.split("/api/booking/")[1].strip().upper()
             db = load_db()
@@ -232,10 +256,13 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self.path = "/book.html"
         elif parsed.path in ("/my-booking", "/my-booking/", "/check-booking", "/check-booking/"):
             self.path = "/check-booking.html"
+        elif parsed.path in ("/courts", "/courts/"):
+            self.path = "/courts.html"
+        elif parsed.path in ("/pricing", "/pricing/"):
+            self.path = "/pricing.html"
         elif parsed.path in ("/admin", "/admin/"):
             self.path = "/admin/index.html"
-        elif parsed.path in ("/courts", "/courts/", "/pricing", "/pricing/"):
-            self.path = "/book.html"
+
 
         super().do_GET()
 
@@ -510,6 +537,39 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self._send_json({"ok": True, "state": db})
             return
 
+        elif parsed.path == "/api/announcements":
+            action = body.get("action", "add")
+            if "announcements" not in db or not isinstance(db["announcements"], list):
+                db["announcements"] = []
+            if action == "add":
+                item = body.get("announcement") or body
+                new_ann = {
+                    "id": sanitize_str(item.get("id") or ("ann-" + str(int(datetime.now().timestamp() * 1000))), 50),
+                    "title": sanitize_str(item.get("title", ""), 140),
+                    "message": sanitize_str(item.get("message", ""), 1200),
+                    "category": sanitize_str(item.get("category", "Club Update"), 50) or "Club Update",
+                    "img": item.get("img", ""),
+                    "pinned": bool(item.get("pinned", False)),
+                    "author": sanitize_str(item.get("author", "P&F Rally Ground Admin"), 60),
+                    "createdAt": sanitize_str(item.get("createdAt") or datetime.now().strftime("%b %d, %Y • %I:%M %p"), 50)
+                }
+                db["announcements"].insert(0, new_ann)
+            elif action == "toggle_pin":
+                aid = body.get("id")
+                for a in db["announcements"]:
+                    if a.get("id") == aid:
+                        a["pinned"] = not bool(a.get("pinned", False))
+                        break
+            elif action == "delete":
+                aid = body.get("id")
+                db["announcements"] = [a for a in db["announcements"] if a.get("id") != aid]
+            elif action == "clear":
+                db["announcements"] = []
+            save_db(db)
+            db["sales"] = db.get("salesLedger", [])
+            self._send_json({"ok": True, "announcements": db["announcements"], "state": db})
+            return
+
         elif parsed.path == "/api/categories":
             action = body.get("action", "add")
             cat_name = sanitize_str(body.get("name") or body.get("category") or "", 60)
@@ -577,6 +637,15 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self._send_json({"ok": True, "state": db})
             return
 
+        elif parsed.path == "/api/payment-config":
+            cfg = db.get("paymentConfig") or {}
+            for k in ["gcashNumber", "gcashName", "bdoNumber", "bpiNumber", "standeeUrl"]:
+                if k in body:
+                    cfg[k] = body[k]
+            db["paymentConfig"] = cfg
+            save_db(db)
+            self._send_json({"ok": True, "paymentConfig": cfg})
+            return
         elif parsed.path == "/api/reset":
             keep_pw = db.get("adminPassword", "admin_123!")
             db = {
@@ -585,6 +654,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 "salesLedger": [],
                 "inventory": [],
                 "categories": [],
+                "announcements": [],
                 "securityLog": [],
                 "adminPassword": keep_pw,
                 "gmailConfig": {

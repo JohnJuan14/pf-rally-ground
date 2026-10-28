@@ -459,7 +459,7 @@
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black">
 
-                      <!-- MOBILE & TABLET MENU BACKDROP CURTAIN -->
+                          <!-- MOBILE & TABLET MENU BACKDROP CURTAIN -->
   <div id="mobile-menu-backdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
   <!-- ================= UNIFIED TOP NAVIGATION BAR ================= -->
@@ -495,6 +495,13 @@
       <!-- Right Action Buttons -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
         
+        <!-- Live Announcements Board Button -->
+        <button type="button" onclick="toggleAnnouncementBoard()" class="whitespace-nowrap h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#9BE600]/40 text-white flex items-center gap-1.5 transition active:scale-95 shadow-md relative flex-shrink-0" title="Open Live Club Announcement Board">
+          <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
+          <span class="hidden md:inline text-xs font-bold uppercase tracking-wider text-[#9BE600]">Updates</span>
+          <span id="header-ann-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-black flex items-center justify-center leading-none">1</span>
+        </button>
+
         <!-- Live Cart Button -->
         <button type="button" onclick="toggleCartDrawer()" class="whitespace-nowrap h-10 px-3 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#050E1D] lg:border-brand-lime/30 text-white flex items-center gap-1.5 sm:gap-2 transition active:scale-95 shadow-md relative flex-shrink-0" title="View Reservation Cart">
           <svg class="w-4 h-4 text-[#9BE600] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
@@ -544,6 +551,10 @@
           <span>My Booking Pass &amp; Lookup</span>
           <span class="text-[#0E8A2D] font-mono font-black">→</span>
         </a>
+        <button type="button" onclick="toggleMobileMenu(); toggleAnnouncementBoard(true);" class="w-full flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#9BE600]/20 text-[#050E1D] font-black transition">
+          <span>📢 Live Announcement Board</span>
+          <span class="text-[#0E8A2D] font-mono font-black">LIVE →</span>
+        </button>
         <a href="/admin/" onclick="return openAdminPortal(event)" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] hover:bg-[#0E2240] text-white font-black transition mt-1 shadow-md">
           <span>Admin &amp; POS Portal</span>
           <span class="text-[#9BE600] font-mono font-black">↗</span>
@@ -711,7 +722,7 @@
     </div>
   </section>
 
-              <!-- ================= UNIFIED MOBILE-FIRST LUXURY FOOTER ================= -->
+                <!-- ================= UNIFIED MOBILE-FIRST LUXURY FOOTER ================= -->
   <footer class="bg-brand-black border-t border-brand-lime/20 text-xs text-slate-300 font-medium relative z-10 overflow-hidden">
     <!-- Top Court Accent Line -->
     <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
@@ -903,19 +914,20 @@
       <!-- Drawer Scrollable Body -->
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-6 overscroll-contain touch-scroll">
 
-        <!-- STEP 1: Authentic 31-Day Date Rail (White Calendar Box) -->
-        <div class="p-4 sm:p-5 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200 space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Step 1</span>
-              <span class="text-sm font-black uppercase tracking-wider text-slate-900 font-display">Choose a Date</span>
-            </div>
+        <!-- STEP 1: Authentic 31-Day Date Rail (Mobile-Optimized White Calendar Box) -->
+        <div class="p-3.5 sm:p-5 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
-              <span id="drawer-selected-date-label" class="text-xs font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">Today</span>
-              <div class="flex items-center gap-1">
-                <button type="button" id="drawer-slider-prev" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
-                <button type="button" id="drawer-slider-next" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
+              <div>
+                <span class="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block leading-none">Step 1</span>
+                <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900 font-display">Choose a Date</span>
               </div>
+              <span id="drawer-selected-date-label" class="text-[11px] font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full truncate max-w-[150px] sm:max-w-none">Today</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <input type="date" id="drawer-native-date-picker" onchange="jumpDrawerToDate(this.value)" class="h-8 px-2 rounded-lg bg-slate-100 border border-slate-300 text-[11px] font-mono font-bold text-slate-800 focus:outline-none focus:border-[#050E1D]" title="Jump to Date">
+              <button type="button" id="drawer-slider-prev" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
+              <button type="button" id="drawer-slider-next" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
             </div>
           </div>
 
@@ -960,11 +972,19 @@
           </div>
         </div>
 
-        <!-- STEP 3: Choose Time Slot (Authentic Time Chips) -->
+        <!-- STEP 3: Choose Time Slot (Mobile-Optimized Time Chips with Period Filter) -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="text-xs font-black uppercase tracking-wider text-brand-lime">3. Pick Your Time</span>
-            <span class="text-xs font-mono text-brand-lime font-bold" id="drawer-slot-rate-indicator">Day: ₱400/hr &bull; Night: ₱500/hr</span>
+            <span class="text-[11px] font-mono text-brand-lime font-bold" id="drawer-slot-rate-indicator">Day: ₱400/hr &bull; Night: ₱500/hr</span>
+          </div>
+
+          <!-- Mobile-Friendly Time-of-Day Filter Pills -->
+          <div class="grid grid-cols-4 gap-1.5 p-1 rounded-2xl bg-brand-black border border-white/10 text-[10px] sm:text-[11px] font-mono" id="drawer-period-filter">
+            <button type="button" onclick="setDrawerTimePeriod('ALL')" data-period="ALL" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-black uppercase bg-brand-lime text-brand-black transition">All (18h)</button>
+            <button type="button" onclick="setDrawerTimePeriod('MORNING')" data-period="MORNING" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition">Morning</button>
+            <button type="button" onclick="setDrawerTimePeriod('AFTERNOON')" data-period="AFTERNOON" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition">Afternoon</button>
+            <button type="button" onclick="setDrawerTimePeriod('EVENING')" data-period="EVENING" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition">Evening</button>
           </div>
 
           <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="drawer-time-chips">
@@ -1184,9 +1204,9 @@
       <!-- 1. GCash QR Code Section -->
       <div id="modal-qr-section" class="mb-4">
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-brand-lime/30">
-          <div class="sm:col-span-5 p-2 rounded-2xl bg-white max-w-[160px] mx-auto text-center shadow-xl">
-            <img id="locked-qr-img" src="assets/qr-gcash.png" alt="P&amp;F Rally Ground GCash QR" class="w-full h-auto rounded-lg">
-            <div class="mt-1 text-[8px] font-mono text-slate-900 font-black uppercase tracking-wider">Official GCash QR</div>
+          <div class="sm:col-span-5 p-2.5 rounded-2xl bg-white w-52 sm:w-full max-w-[210px] mx-auto text-center shadow-2xl border-2 border-brand-lime/40">
+            <img id="locked-qr-img" src="assets/qr-gcash.png" alt="P&amp;F Rally Ground GCash QR" class="w-full aspect-square object-contain rounded-lg">
+            <div class="mt-1.5 text-[9px] font-mono text-slate-900 font-black uppercase tracking-wider">Official GCash QR</div>
           </div>
           <div class="sm:col-span-7 text-xs space-y-2 font-mono">
             <div class="flex justify-between items-center text-slate-400">
@@ -1213,9 +1233,9 @@
       <!-- 2. Maya QR Code Section -->
       <div id="modal-maya-section" class="hidden mb-4">
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-[#002B49]/60">
-          <div class="sm:col-span-5 p-2 rounded-2xl bg-white max-w-[160px] mx-auto text-center shadow-xl">
-            <img id="locked-maya-qr-img" src="assets/qr-maya.png" alt="P&amp;F Rally Ground Maya QR" class="w-full h-auto rounded-lg">
-            <div class="mt-1 text-[8px] font-mono text-[#002B49] font-black uppercase tracking-wider">Official Maya QR</div>
+          <div class="sm:col-span-5 p-2.5 rounded-2xl bg-white w-52 sm:w-full max-w-[210px] mx-auto text-center shadow-2xl border-2 border-emerald-500/40">
+            <img id="locked-maya-qr-img" src="assets/qr-maya.png" alt="P&amp;F Rally Ground Maya QR" class="w-full aspect-square object-contain rounded-lg">
+            <div class="mt-1.5 text-[9px] font-mono text-[#002B49] font-black uppercase tracking-wider">Official Maya QR</div>
           </div>
           <div class="sm:col-span-7 text-xs space-y-2 font-mono">
             <div class="flex justify-between items-center text-slate-400">
@@ -1242,9 +1262,9 @@
       <!-- 3. Bank Transfer Section (BDO InstaPay) -->
       <div id="modal-bank-section" class="hidden mb-4">
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-[#0072CE]/60">
-          <div class="sm:col-span-5 p-2 rounded-2xl bg-white max-w-[160px] mx-auto text-center shadow-xl">
-            <img id="locked-bank-qr-img" src="assets/qr-bdo.png" alt="BDO InstaPay QR" class="w-full h-auto rounded-lg">
-            <div class="mt-1 text-[8px] font-mono text-[#0072CE] font-black uppercase tracking-wider">Official BDO InstaPay</div>
+          <div class="sm:col-span-5 p-2.5 rounded-2xl bg-white w-52 sm:w-full max-w-[210px] mx-auto text-center shadow-2xl border-2 border-[#0072CE]/40">
+            <img id="locked-bank-qr-img" src="assets/qr-bdo.png" alt="BDO InstaPay QR" class="w-full aspect-square object-contain rounded-lg">
+            <div class="mt-1.5 text-[9px] font-mono text-[#0072CE] font-black uppercase tracking-wider">Official BDO InstaPay</div>
           </div>
           <div class="sm:col-span-7 text-xs space-y-2 font-mono">
             <div class="flex justify-between items-center text-slate-400">
@@ -1306,6 +1326,75 @@
     </div>
   </div>
 
+  <!-- 3B. FLOATING LIVE CHAT-STYLE ANNOUNCEMENT BOARD (ADMIN CONTROLLED) -->
+  <div id="announcement-floating-root" class="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end">
+    
+    <!-- Expandable Live-Chat Style Announcement Window -->
+    <div id="announcement-board-window" class="hidden mb-3 w-[calc(100vw-1.5rem)] sm:w-[400px] max-h-[75dvh] rounded-3xl bg-[#050E1D] border-2 border-[#9BE600]/50 shadow-[0_25px_70px_rgba(0,0,0,0.88)] flex flex-col overflow-hidden">
+      <!-- Top Court Accent Line -->
+      <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D] flex-shrink-0"></div>
+
+      <!-- Chat Header -->
+      <div class="px-4 py-3.5 bg-[#0A1628] border-b border-white/10 flex items-center justify-between gap-2 flex-shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="relative flex-shrink-0">
+            <img src="assets/logo.png" alt="P&amp;F Admin" class="w-10 h-10 rounded-xl object-contain bg-white p-0.5 border border-[#9BE600]/50 shadow-md">
+            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#9BE600] ring-2 ring-[#0A1628] animate-pulse"></span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <h3 class="text-xs sm:text-sm font-black uppercase tracking-tight text-white truncate font-display">Club Announcement Board</h3>
+              <span class="px-1.5 py-0.5 rounded bg-[#9BE600]/20 text-[#9BE600] text-[9px] font-mono font-black uppercase">LIVE</span>
+            </div>
+            <p class="text-[10px] text-slate-300 truncate">Official Updates &amp; Photos from P&amp;F Admin</p>
+          </div>
+        </div>
+        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
+      </div>
+
+      <!-- Chat Feed Stream -->
+      <div id="public-announcement-feed" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3.5 bg-gradient-to-b from-[#071324] to-[#050E1D] overscroll-contain touch-scroll">
+        <!-- Dynamically populated by renderPublicAnnouncementBoard() -->
+      </div>
+
+      <!-- Chat Footer (Read-Only Broadcast Indicator + Quick Action) -->
+      <div class="px-4 py-2.5 bg-[#0A1628] border-t border-white/10 flex items-center justify-between gap-2 text-[10px] flex-shrink-0">
+        <span class="text-slate-400 font-mono flex items-center gap-1.5 truncate">
+          <span class="w-2 h-2 rounded-full bg-[#9BE600]"></span>
+          <span>Broadcast controlled by P&amp;F Admin</span>
+        </span>
+        <button type="button" onclick="toggleAnnouncementBoard(); openBookingDrawer();" class="px-3 py-1.5 rounded-xl bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-black uppercase tracking-wider text-[10px] transition flex-shrink-0 shadow-sm">
+          Book Court →
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Live Chat-Style Launcher Button -->
+    <button type="button" id="announcement-launcher-btn" onclick="toggleAnnouncementBoard()" class="group relative flex items-center gap-2.5 pl-3 pr-4 py-2.5 sm:py-3 rounded-full bg-[#050E1D] hover:bg-[#0A192F] text-white border-2 border-[#9BE600] shadow-[0_12px_35px_rgba(0,0,0,0.65)] transition-all active:scale-95">
+      <div class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9BE600] text-[#050E1D] shadow-md flex-shrink-0">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#050E1D] animate-ping"></span>
+      </div>
+      <div class="text-left pr-0.5">
+        <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#9BE600] block leading-none">Live Feed</span>
+        <span class="text-xs font-black uppercase tracking-wider text-white block leading-tight mt-0.5">Announcements</span>
+      </div>
+      <span id="ann-floating-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-mono font-black flex items-center justify-center leading-none shadow">1</span>
+    </button>
+  </div>
+
+  <!-- Full-Screen Announcement Photo Lightbox Modal -->
+  <div id="ann-photo-lightbox" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div onclick="closeAnnouncementLightbox()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 max-w-2xl w-full rounded-3xl bg-[#050E1D] border border-[#9BE600]/40 p-3 sm:p-5 shadow-2xl text-center">
+      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/10">
+        <span id="ann-lightbox-caption" class="text-xs font-black uppercase text-[#9BE600] truncate pr-2">Official Club Announcement Photo</span>
+        <button type="button" onclick="closeAnnouncementLightbox()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">✕</button>
+      </div>
+      <img id="ann-lightbox-img" src="" alt="Announcement Photo" class="max-h-[75dvh] w-auto mx-auto rounded-2xl object-contain border border-white/10">
+    </div>
+  </div>
+
   <!-- 4. DIGITAL MATCH PASS / VOUCHER MODAL -->
   <div id="match-pass-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeMatchPassModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
@@ -1346,6 +1435,8 @@
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
+    let currentSchedulePeriod = 'ALL';
+    let currentDrawerPeriod = 'ALL';
     let selectedDateStr = 'Today';
     let selectedScheduleDateYMD = '';
     let pendingOrderData = null;
@@ -1367,6 +1458,15 @@
     ];
 
     const baseHours = ALL_HOURS_SLOTS.map(t => ({ time: t }));
+
+    function matchesTimePeriod(slotStr, period) {
+      if (!period || period === 'ALL') return true;
+      const hr = slotTo24Hour(slotStr);
+      if (period === 'MORNING') return hr >= 6 && hr < 12;
+      if (period === 'AFTERNOON') return hr >= 12 && hr < 18;
+      if (period === 'EVENING') return hr >= 18 && hr <= 23;
+      return true;
+    }
 
     function getHourlyRate(slotStr) {
       if (!slotStr) return 400;
@@ -1391,12 +1491,13 @@
           weekday: i === 0 ? 'Today' : new Intl.DateTimeFormat('en-PH', { weekday: 'short' }).format(d),
           day: d.getDate(),
           month: new Intl.DateTimeFormat('en-PH', { month: 'short' }).format(d),
+          shortLabel: i === 0 ? `Today (${new Intl.DateTimeFormat('en-PH', { month: 'short', day: 'numeric' }).format(d)})` : new Intl.DateTimeFormat('en-PH', { weekday: 'short', month: 'short', day: 'numeric' }).format(d),
           label: new Intl.DateTimeFormat('en-PH', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(d)
         });
       }
       if (!DRAWER_STATE.selectedDateVal && DRAWER_STATE.daysList.length > 0) {
         DRAWER_STATE.selectedDateVal = DRAWER_STATE.daysList[0].value;
-        DRAWER_STATE.selectedDateLabel = DRAWER_STATE.daysList[0].label;
+        DRAWER_STATE.selectedDateLabel = DRAWER_STATE.daysList[0].shortLabel;
       }
       if (!selectedScheduleDateYMD && DRAWER_STATE.daysList.length > 0) {
         selectedScheduleDateYMD = DRAWER_STATE.daysList[0].value;
@@ -1430,6 +1531,37 @@
       return hr >= rule.start && hr < rule.end;
     }
 
+    function jumpScheduleToDate(ymd) {
+      if (!ymd) return;
+      selectedScheduleDateYMD = ymd;
+      DRAWER_STATE.selectedDateVal = ymd;
+      const found = DRAWER_STATE.daysList.find(d => d.value === ymd);
+      if (found) {
+        DRAWER_STATE.selectedDateLabel = found.shortLabel;
+      } else {
+        const dt = new Date(ymd + 'T12:00:00');
+        DRAWER_STATE.selectedDateLabel = new Intl.DateTimeFormat('en-PH', { weekday: 'short', month: 'short', day: 'numeric' }).format(dt);
+      }
+      initScheduleDateCarousel();
+      renderLiveScheduleMatrix();
+    }
+
+    function jumpDrawerToDate(ymd) {
+      if (!ymd) return;
+      selectedScheduleDateYMD = ymd;
+      DRAWER_STATE.selectedDateVal = ymd;
+      const found = DRAWER_STATE.daysList.find(d => d.value === ymd);
+      if (found) {
+        DRAWER_STATE.selectedDateLabel = found.shortLabel;
+      } else {
+        const dt = new Date(ymd + 'T12:00:00');
+        DRAWER_STATE.selectedDateLabel = new Intl.DateTimeFormat('en-PH', { weekday: 'short', month: 'short', day: 'numeric' }).format(dt);
+      }
+      renderDrawerDateRail();
+      renderDrawerSlots();
+      recalculateDrawerTotal();
+    }
+
     // 1. Landing Page Schedule Date-Rail (#date-carousel)
     function initScheduleDateCarousel() {
       const carousel = document.getElementById('date-carousel');
@@ -1437,38 +1569,42 @@
       if (DRAWER_STATE.daysList.length === 0) generateDrawerDays();
       carousel.innerHTML = '';
 
+      const nativePicker = document.getElementById('sched-native-date-picker');
+      if (nativePicker && selectedScheduleDateYMD) nativePicker.value = selectedScheduleDateYMD;
+
       DRAWER_STATE.daysList.forEach((d, idx) => {
         const isSelected = d.value === selectedScheduleDateYMD || (idx === 0 && !selectedScheduleDateYMD);
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = `date-tile ${isSelected ? 'date-tile-active' : ''}`;
         btn.innerHTML = `
-          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
-          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
-          <span class="tile-month mt-1 block text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
+          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
+          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
+          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
         `;
         btn.onclick = () => {
           selectedScheduleDateYMD = d.value;
           selectedDateStr = idx === 0 ? 'Today' : `${d.weekday}, ${d.month} ${d.day}`;
           DRAWER_STATE.selectedDateVal = d.value;
-          DRAWER_STATE.selectedDateLabel = d.label;
+          DRAWER_STATE.selectedDateLabel = d.shortLabel;
+          if (nativePicker) nativePicker.value = d.value;
 
           carousel.querySelectorAll('.date-tile').forEach(b => {
             b.classList.remove('date-tile-active');
             const spans = b.querySelectorAll('span');
-            if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-500';
-            if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-slate-900';
-            if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-500';
+            if (spans[0]) spans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-500';
+            if (spans[1]) spans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-slate-900';
+            if (spans[2]) spans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-500';
           });
 
           btn.classList.add('date-tile-active');
           const activeSpans = btn.querySelectorAll('span');
-          if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-brand-lime';
-          if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
-          if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-200';
+          if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-brand-lime';
+          if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-white';
+          if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-200';
 
           const lbl = document.getElementById('selected-schedule-date-label');
-          if (lbl) lbl.textContent = idx === 0 ? `Today (${d.month} ${d.day})` : d.label;
+          if (lbl) lbl.textContent = d.shortLabel;
 
           renderLiveScheduleMatrix();
         };
@@ -1478,27 +1614,27 @@
       const lbl = document.getElementById('selected-schedule-date-label');
       if (lbl && DRAWER_STATE.daysList[0]) {
         const cur = DRAWER_STATE.daysList.find(x => x.value === selectedScheduleDateYMD) || DRAWER_STATE.daysList[0];
-        lbl.textContent = cur.weekday === 'Today' ? `Today (${cur.month} ${cur.day})` : cur.label;
+        lbl.textContent = cur.shortLabel;
       }
     }
 
-    // 2. Landing Page Court Timeline Matrix (#schedule-table)
+    // 2. Landing Page Court Timeline Matrix (#schedule-table) — 100% Mobile-Fit (Zero Horizontal Scroll)
     function renderLiveScheduleMatrix() {
       const thead = document.getElementById('schedule-table-head');
       const tbody = document.getElementById('schedule-matrix-rows');
       if (!thead || !tbody) return;
 
-      const courtsToShow = currentScheduleFilter === 'ALL' ? [1, 2, 3, 4] : [Number(currentScheduleFilter)];
-      const courtColumnLabels = {
-        1: 'Court 1',
-        2: 'Court 2',
-        3: 'Court 3',
-        4: 'Court 4'
-      };
+      const isSingleCourt = currentScheduleFilter !== 'ALL';
+      const courtsToShow = isSingleCourt ? [Number(currentScheduleFilter)] : [1, 2, 3, 4];
 
       thead.innerHTML = `
-        <th class="py-3.5 px-3 sm:px-4 text-left sticky left-0 bg-[#050E1D] z-20 min-w-[115px] text-white font-black">Time</th>
-        ${courtsToShow.map(c => `<th class="py-3.5 px-2 sm:px-3 text-center min-w-[135px] text-white font-black">${courtColumnLabels[c]}</th>`).join('')}
+        <th class="py-2.5 sm:py-3.5 px-2 sm:px-4 text-left sticky left-0 bg-[#050E1D] z-20 w-[72px] sm:w-[125px] text-white font-black">Time</th>
+        ${courtsToShow.map(c => `
+          <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center text-white font-black">
+            <span class="sm:hidden">${isSingleCourt ? 'Court 0' + c : 'C' + c}</span>
+            <span class="hidden sm:inline">Court 0${c}</span>
+          </th>
+        `).join('')}
       `;
 
       const serverBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
@@ -1509,9 +1645,12 @@
       const liveBookings = [...serverBookings, ...localBookings];
       const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
 
-      tbody.innerHTML = baseHours.map(h => {
+      const filteredHours = baseHours.filter(h => matchesTimePeriod(h.time, currentSchedulePeriod));
+
+      tbody.innerHTML = filteredHours.map(h => {
         const rate = getHourlyRate(h.time);
         const openPlayActive = isOpenPlaySlot(selectedScheduleDateYMD, h.time);
+        const compactTime = h.time.replace(':00 ', ' ');
 
         const cells = courtsToShow.map(cNum => {
           const courtLabelZero = 'Court 0' + cNum;
@@ -1536,28 +1675,30 @@
           });
 
           if (isLiveBlocked) {
-            return `<td class="p-1.5 text-center">
-              <span class="block w-full py-2.5 px-2 rounded-xl bg-slate-800 text-white border border-slate-900 text-xs font-black shadow-sm">
+            return `<td class="p-1 sm:p-1.5 text-center">
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-800 text-white border border-slate-900 text-[10px] sm:text-xs font-black shadow-sm truncate">
                 Closed
               </span>
             </td>`;
           } else if (isLiveBooked) {
-            return `<td class="p-1.5 text-center">
-              <span class="block w-full py-2.5 px-2 rounded-xl bg-rose-100/95 text-rose-700 border border-rose-300 text-xs font-black shadow-sm">
+            return `<td class="p-1 sm:p-1.5 text-center">
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-rose-100/95 text-rose-700 border border-rose-300 text-[10px] sm:text-xs font-black shadow-sm truncate">
                 Booked
               </span>
             </td>`;
           } else if (openPlayActive) {
-            return `<td class="p-1.5 text-center">
-              <span class="block w-full py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-black shadow-sm" title="Reserved for Open Play">
-                Open Play
+            return `<td class="p-1 sm:p-1.5 text-center">
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[10px] sm:text-xs font-black shadow-sm truncate" title="Reserved for Open Play">
+                <span class="sm:hidden">${isSingleCourt ? 'Open Play' : 'Open'}</span>
+                <span class="hidden sm:inline">Open Play</span>
               </span>
             </td>`;
           } else {
-            return `<td class="p-1.5 text-center">
-              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2 px-2 rounded-xl bg-emerald-100/90 hover:bg-[#9BE600] text-emerald-800 hover:text-[#050E1D] border border-emerald-300 hover:border-[#65a30d] transition text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm">
-                <span>Available</span>
-                <span class="text-[10px] font-mono font-bold opacity-85">Book ₱${rate}</span>
+            return `<td class="p-1 sm:p-1.5 text-center">
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-1.5 sm:py-2 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-emerald-100/90 hover:bg-[#9BE600] active:bg-[#9BE600] text-emerald-800 hover:text-[#050E1D] border border-emerald-300 hover:border-[#65a30d] transition text-[10px] sm:text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm">
+                <span class="sm:hidden">${isSingleCourt ? 'Available • ₱' + rate : '₱' + rate}</span>
+                <span class="hidden sm:inline">Available</span>
+                <span class="hidden sm:inline text-[10px] font-mono font-bold opacity-85">Book ₱${rate}</span>
               </button>
             </td>`;
           }
@@ -1568,9 +1709,9 @@
           : 'bg-emerald-50 text-emerald-800 border border-emerald-200';
 
         return `<tr class="hover:bg-slate-50 transition">
-          <td class="py-2.5 px-3 sm:px-4 text-left font-mono sticky left-0 bg-white border-r border-slate-200 border-l-4 ${rate === 500 ? 'border-l-amber-500' : 'border-l-emerald-500'} z-10 whitespace-nowrap">
-            <span class="block text-xs sm:text-sm font-black text-slate-900">${h.time}</span>
-            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${rateBadgeClass}">₱${rate}/HR</span>
+          <td class="py-2 sm:py-2.5 px-2 sm:px-4 text-left font-mono sticky left-0 bg-white border-r border-slate-200 border-l-4 ${rate === 500 ? 'border-l-amber-500' : 'border-l-emerald-500'} z-10 whitespace-nowrap">
+            <span class="block text-[11px] sm:text-sm font-black text-slate-900 leading-tight"><span class="sm:hidden">${compactTime}</span><span class="hidden sm:inline">${h.time}</span></span>
+            <span class="inline-block mt-0.5 px-1 sm:px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase ${rateBadgeClass}">₱${rate}/HR</span>
           </td>
           ${cells}
         </tr>`;
@@ -1581,12 +1722,36 @@
       currentScheduleFilter = filterVal;
       document.querySelectorAll('.sched-filter-btn').forEach(btn => {
         if (String(btn.dataset.court) === String(filterVal)) {
-          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-[#050E1D] text-white shadow-md transition flex-shrink-0';
+          btn.className = 'sched-filter-btn py-2 px-2 sm:px-3.5 rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-wider bg-[#050E1D] text-white shadow-md transition text-center';
         } else {
-          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0';
+          btn.className = 'sched-filter-btn py-2 px-2 sm:px-3.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition text-center';
         }
       });
       renderLiveScheduleMatrix();
+    }
+
+    function setScheduleTimePeriod(period) {
+      currentSchedulePeriod = period;
+      document.querySelectorAll('.sched-period-btn').forEach(btn => {
+        if (btn.dataset.period === period) {
+          btn.className = 'sched-period-btn py-1.5 px-2 rounded-lg text-[10px] sm:text-xs font-black uppercase bg-[#9BE600] text-[#050E1D] shadow-sm transition text-center';
+        } else {
+          btn.className = 'sched-period-btn py-1.5 px-2 rounded-lg text-[10px] sm:text-xs font-bold uppercase text-slate-600 hover:text-slate-900 transition text-center';
+        }
+      });
+      renderLiveScheduleMatrix();
+    }
+
+    function setDrawerTimePeriod(period) {
+      currentDrawerPeriod = period;
+      document.querySelectorAll('.drawer-period-btn').forEach(btn => {
+        if (btn.dataset.period === period) {
+          btn.className = 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-black uppercase bg-brand-lime text-brand-black transition';
+        } else {
+          btn.className = 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition';
+        }
+      });
+      renderDrawerSlots();
     }
 
     // 3. Drawer Date Rail & Time Chips (#booking-drawer)
@@ -1596,6 +1761,9 @@
       if (DRAWER_STATE.daysList.length === 0) generateDrawerDays();
       container.innerHTML = '';
 
+      const nativePicker = document.getElementById('drawer-native-date-picker');
+      if (nativePicker && DRAWER_STATE.selectedDateVal) nativePicker.value = DRAWER_STATE.selectedDateVal;
+
       DRAWER_STATE.daysList.forEach(d => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -1604,9 +1772,9 @@
         btn.onclick = () => selectDrawerDate(d.value, btn);
 
         btn.innerHTML = `
-          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
-          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
-          <span class="tile-month mt-1 block text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
+          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
+          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
+          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
         `;
         container.appendChild(btn);
       });
@@ -1618,21 +1786,23 @@
     function selectDrawerDate(val, clickedBtn) {
       DRAWER_STATE.selectedDateVal = val;
       const found = DRAWER_STATE.daysList.find(d => d.value === val);
-      if (found) DRAWER_STATE.selectedDateLabel = found.label;
+      if (found) DRAWER_STATE.selectedDateLabel = found.shortLabel;
+      const nativePicker = document.getElementById('drawer-native-date-picker');
+      if (nativePicker) nativePicker.value = val;
 
       document.querySelectorAll('#drawer-date-rail .date-tile').forEach(b => {
         b.classList.remove('date-tile-active');
         const spans = b.querySelectorAll('span');
-        if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-500';
-        if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-slate-900';
-        if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-500';
+        if (spans[0]) spans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-500';
+        if (spans[1]) spans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-slate-900';
+        if (spans[2]) spans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-500';
       });
       if (clickedBtn) {
         clickedBtn.classList.add('date-tile-active');
         const activeSpans = clickedBtn.querySelectorAll('span');
-        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-brand-lime';
-        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
-        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-200';
+        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-brand-lime';
+        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-white';
+        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-200';
       }
 
       const lbl = document.getElementById('drawer-selected-date-label');
@@ -1690,7 +1860,7 @@
       const courtLabelZero = 'Court 0' + DRAWER_STATE.selectedCourt;
       const courtLabelPlain = 'Court ' + DRAWER_STATE.selectedCourt;
 
-      ALL_HOURS_SLOTS.forEach(slot => {
+      ALL_HOURS_SLOTS.filter(slot => matchesTimePeriod(slot, currentDrawerPeriod)).forEach(slot => {
         const btn = document.createElement('button');
         btn.type = 'button';
 

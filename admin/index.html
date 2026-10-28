@@ -180,6 +180,12 @@
           <span>Court Calendar</span>
         </button>
 
+        <button onclick="switchTab('announcements')" id="nav-announcements" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+          <span>Announcements</span>
+          <span id="admin-ann-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[9px] font-black">0</span>
+        </button>
+
         <button onclick="switchTab('pos')" id="nav-pos" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           <span>Point of Sale</span>
@@ -264,6 +270,7 @@
       <button type="button" onclick="switchTab('overview')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="overview">Overview</button>
       <button type="button" onclick="switchTab('bookings')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="bookings">Bookings</button>
       <button type="button" onclick="switchTab('schedule')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="schedule">Calendar</button>
+      <button type="button" onclick="switchTab('announcements')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="announcements">📢 Announcements</button>
       <button type="button" onclick="switchTab('pos')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="pos">POS Register</button>
       <button type="button" onclick="switchTab('inventory')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition" data-tab="inventory">Inventory</button>
       <button type="button" onclick="switchTab('reports')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="reports">Reports</button>
@@ -326,7 +333,10 @@
               <p class="text-xs text-slate-400 mb-4">Set up your custom inventory or log staff bookings.</p>
               
               <div class="space-y-2.5">
-                <button onclick="openAddInventoryModal()" class="w-full py-3 px-4 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider text-left flex items-center justify-between hover:bg-brand-limeHover transition">
+                <button onclick="switchTab('announcements')" class="w-full py-3 px-4 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider text-left flex items-center justify-between hover:bg-brand-limeHover transition shadow-md">
+                  <span>📢 Post Announcement / Photo Live</span> <span>→</span>
+                </button>
+                <button onclick="openAddInventoryModal()" class="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/15 border border-brand-lime/30 text-brand-lime text-xs font-black uppercase tracking-wider text-left flex items-center justify-between transition">
                   <span>+ Add Custom Inventory &amp; Photo</span> <span>→</span>
                 </button>
                 <button onclick="openNewBookingModal()" class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold uppercase tracking-wider text-left flex items-center justify-between transition">
@@ -466,7 +476,7 @@
             <div id="admin-blocks-container" class="space-y-2"></div>
           </div>
 
-                    <!-- Clean White Live 4-Court Calendar Matrix Preview -->
+                                        <!-- Clean White Live 4-Court Calendar Matrix Preview -->
           <div class="rounded-3xl bg-white border border-slate-200 p-4 sm:p-6 shadow-2xl text-slate-900 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -495,6 +505,106 @@
               </table>
             </div>
           </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 3B. LIVE ANNOUNCEMENT BOARD STUDIO TAB ================= -->
+      <section id="tab-announcements" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-lime/40 shadow-xl">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center shadow-lg flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block font-bold">REAL-TIME PUBLIC BROADCAST FEED</span>
+              <h2 class="text-lg sm:text-xl font-black uppercase text-white">Live Announcement Board Studio</h2>
+              <p class="text-xs text-slate-300">Post club updates, Open Play alerts, tournament posters, or court advisories with photos directly to the public website's live chat announcement board.</p>
+            </div>
+          </div>
+          <a href="/" onclick="return openPublicSite(event, 'index.html')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-brand-lime hover:text-brand-black text-white text-xs font-black uppercase tracking-wider transition self-start sm:self-auto whitespace-nowrap">
+            Preview on Website ↗
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- Left Column (5 Cols): Admin Announcement & Photo Composer -->
+          <form onsubmit="handlePostAnnouncement(event)" class="lg:col-span-5 rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 space-y-4 card-glow">
+            <div class="border-b border-white/10 pb-3 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-mono font-bold uppercase text-brand-lime block">ADMIN COMPOSER</span>
+                <h3 class="text-sm sm:text-base font-black uppercase text-white">Post Announcement / Photo</h3>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-brand-lime/15 text-brand-lime text-[10px] font-mono font-bold">Instant Sync</span>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Announcement Category</label>
+                <select id="ann-category-input" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-bold focus:outline-none">
+                  <option value="Club Update">📢 Club Update</option>
+                  <option value="Open Play Alert">🎾 Open Play Alert (Yellow-Green)</option>
+                  <option value="Tournament / Event">🏆 Tournament / Event</option>
+                  <option value="Promo & Rates">🔥 Promo &amp; Rates</option>
+                  <option value="Court Advisory">⚠️ Court Advisory / Weather</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Headline / Title (Optional)</label>
+                <input type="text" id="ann-title-input" placeholder="e.g. Tonight's Friday Open Play is ON! (3PM–11PM)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-bold focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Announcement Message *</label>
+                <textarea id="ann-message-input" rows="4" required placeholder="Write your announcement message for players and guests..." class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white leading-relaxed focus:outline-none"></textarea>
+              </div>
+
+              <!-- Picture / Poster Upload -->
+              <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-dashed border-brand-lime/40 space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <label class="text-[10px] font-black uppercase tracking-wider text-brand-lime block">Attach Picture / Event Poster (Optional)</label>
+                  <button type="button" id="ann-clear-photo-btn" onclick="clearAnnouncementPhotoSelection()" class="hidden text-[10px] font-bold text-brand-clay hover:underline">Remove Photo</button>
+                </div>
+                <input type="file" id="ann-photo-input" onchange="handleAnnouncementPhotoSelect(event)" accept="image/*" class="w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-brand-lime file:text-brand-black hover:file:bg-brand-limeHover cursor-pointer">
+                <div id="ann-photo-preview-wrap" class="hidden pt-2">
+                  <img id="ann-photo-preview-img" src="" alt="Announcement Preview" class="w-full max-h-48 object-cover rounded-xl border border-brand-lime/40 shadow-md">
+                </div>
+              </div>
+
+              <label class="flex items-center gap-2.5 p-3 rounded-xl bg-brand-black/60 border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
+                <input type="checkbox" id="ann-pin-checkbox" class="w-4 h-4 rounded accent-brand-lime">
+                <span class="text-xs font-bold text-slate-200">📌 Pin to top of Live Announcement Board</span>
+              </label>
+            </div>
+
+            <button type="submit" id="ann-submit-btn" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow shadow-lg">
+              Publish to Live Announcement Board →
+            </button>
+          </form>
+
+          <!-- Right Column (7 Cols): Live Chat-Style Announcement Stream & Manager -->
+          <div class="lg:col-span-7 rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 space-y-4 card-glow">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-lime animate-pulse"></span>
+                <div>
+                  <h3 class="text-sm sm:text-base font-black uppercase text-white">Live Broadcast Stream (Player View)</h3>
+                  <p class="text-[11px] text-slate-400">Pin important advisories or delete outdated posts anytime.</p>
+                </div>
+              </div>
+              <button type="button" onclick="clearAllAnnouncements()" class="px-3 py-1.5 rounded-xl bg-brand-clay/15 hover:bg-brand-clay text-brand-clay hover:text-white border border-brand-clay/30 text-[10px] font-bold uppercase transition">
+                Clear All Posts
+              </button>
+            </div>
+
+            <div id="admin-announcements-list" class="space-y-3.5 max-h-[600px] overflow-y-auto pr-1 touch-scroll">
+              <!-- Populated by renderAdminAnnouncements() -->
+            </div>
+          </div>
+
         </div>
 
       </section>
@@ -1405,46 +1515,6 @@ function clearFieldError(fieldId) {
       return hr >= rule.start && hr < rule.end;
     }
 
-    const ADMIN_OPEN_PLAY_BY_DAY = {
-      1: { start: 15, end: 18 },
-      2: { start: 15, end: 20 },
-      3: { start: 15, end: 20 },
-      4: { start: 15, end: 20 },
-      5: { start: 15, end: 23 },
-      6: { start: 18, end: 22 }
-    };
-
-    function isAdminOpenPlaySlot(slotStr) {
-      const dayInput = document.getElementById('adm-block-date')?.value;
-      const d = dayInput ? new Date(dayInput + 'T12:00:00') : new Date();
-      const rule = ADMIN_OPEN_PLAY_BY_DAY[d.getDay()];
-      if (!rule) return false;
-      let hr = parseInt(slotStr, 10);
-      if (slotStr.includes('PM') && hr !== 12) hr += 12;
-      if (slotStr.includes('AM') && hr === 12) hr = 0;
-      return hr >= rule.start && hr < rule.end;
-    }
-
-    const ADMIN_OPEN_PLAY_BY_DAY = {
-      1: { start: 15, end: 18 },
-      2: { start: 15, end: 20 },
-      3: { start: 15, end: 20 },
-      4: { start: 15, end: 20 },
-      5: { start: 15, end: 23 },
-      6: { start: 18, end: 22 }
-    };
-
-    function isAdminOpenPlaySlot(slotStr) {
-      const dayInput = document.getElementById('adm-block-date')?.value;
-      const d = dayInput ? new Date(dayInput + 'T12:00:00') : new Date();
-      const rule = ADMIN_OPEN_PLAY_BY_DAY[d.getDay()];
-      if (!rule) return false;
-      let hr = parseInt(slotStr, 10);
-      if (slotStr.includes('PM') && hr !== 12) hr += 12;
-      if (slotStr.includes('AM') && hr === 12) hr = 0;
-      return hr >= rule.start && hr < rule.end;
-    }
-
     function openPublicSite(event, pagePath) {
       if (event) event.preventDefault();
       const host = window.location.hostname;
@@ -1487,6 +1557,7 @@ function clearFieldError(fieldId) {
           courtBlocks = data.blocks || [];
           posCatalog = data.inventory || [];
           customCategories = data.categories || [];
+          announcements = data.announcements || [];
           if (data.gmailConfig && typeof syncGmailUiState === 'function') {
             syncGmailUiState(data.gmailConfig);
           }
@@ -1502,6 +1573,7 @@ function clearFieldError(fieldId) {
           renderPosCatalog();
           renderInventoryTable();
           renderReportsLedger();
+          if (typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
 
           const ind = document.getElementById('sync-status-indicator');
           if (ind) {
@@ -1524,12 +1596,13 @@ function clearFieldError(fieldId) {
         overview: 'Overview',
         bookings: 'Bookings',
         schedule: 'Court Calendar',
+        announcements: 'Announcements',
         pos: 'POS Register',
         inventory: 'Inventory',
         reports: 'Sales & Reports',
         settings: 'Settings & Security'
       };
-      ['overview', 'bookings', 'schedule', 'pos', 'inventory', 'reports', 'settings'].forEach(t => {
+      ['overview', 'bookings', 'schedule', 'announcements', 'pos', 'inventory', 'reports', 'settings'].forEach(t => {
         const sec = document.getElementById('tab-' + t);
         const nav = document.getElementById('nav-' + t);
         if (sec) sec.classList.add('hidden');
@@ -1578,6 +1651,7 @@ function clearFieldError(fieldId) {
       if (tabId === 'overview') updateOverviewMetrics();
       if (tabId === 'bookings') renderBookingsTable();
       if (tabId === 'schedule') renderScheduleBlocks();
+      if (tabId === 'announcements' && typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
       if (tabId === 'pos') { renderPosCatalog(); renderPosOrder(); }
       if (tabId === 'inventory') renderInventoryTable();
       if (tabId === 'reports') renderReportsLedger();
@@ -3070,6 +3144,213 @@ function clearFieldError(fieldId) {
         fb.textContent = 'Payment account details and QR Ph configuration saved successfully!';
         setTimeout(() => fb.classList.add('hidden'), 3500);
       }
+    }
+
+
+    // ================= ADMIN ANNOUNCEMENT BOARD STUDIO ENGINE =================
+    let announcements = [];
+    let currentAnnouncementPhotoDataUrl = '';
+
+    function handleAnnouncementPhotoSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 900;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          currentAnnouncementPhotoDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          const wrap = document.getElementById('ann-photo-preview-wrap');
+          const prev = document.getElementById('ann-photo-preview-img');
+          const clrBtn = document.getElementById('ann-clear-photo-btn');
+          if (prev) prev.src = currentAnnouncementPhotoDataUrl;
+          if (wrap) wrap.classList.remove('hidden');
+          if (clrBtn) clrBtn.classList.remove('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearAnnouncementPhotoSelection() {
+      currentAnnouncementPhotoDataUrl = '';
+      const inp = document.getElementById('ann-photo-input');
+      const wrap = document.getElementById('ann-photo-preview-wrap');
+      const prev = document.getElementById('ann-photo-preview-img');
+      const clrBtn = document.getElementById('ann-clear-photo-btn');
+      if (inp) inp.value = '';
+      if (prev) prev.src = '';
+      if (wrap) wrap.classList.add('hidden');
+      if (clrBtn) clrBtn.classList.add('hidden');
+    }
+
+    async function handlePostAnnouncement(e) {
+      e.preventDefault();
+      const cat = document.getElementById('ann-category-input')?.value || 'Club Update';
+      const title = (document.getElementById('ann-title-input')?.value || '').trim();
+      const message = (document.getElementById('ann-message-input')?.value || '').trim();
+      const pinned = Boolean(document.getElementById('ann-pin-checkbox')?.checked);
+
+      if (!message && !currentAnnouncementPhotoDataUrl) {
+        alert('Please enter an announcement message or attach a photo.');
+        return;
+      }
+
+      const newAnn = {
+        id: 'ann-' + Date.now(),
+        category: cat,
+        title: title,
+        message: message,
+        img: currentAnnouncementPhotoDataUrl || '',
+        pinned: pinned,
+        author: 'P&F Rally Ground Admin',
+        createdAt: new Date().toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+      };
+
+      const btn = document.getElementById('ann-submit-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Publishing Live...';
+      }
+
+      try {
+        const res = await fetch('/api/announcements', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'add', announcement: newAnn })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.announcements)) {
+            announcements = data.announcements;
+            localStorage.setItem('pf_announcements', JSON.stringify(announcements));
+          }
+        }
+      } catch (err) {
+        announcements.unshift(newAnn);
+        localStorage.setItem('pf_announcements', JSON.stringify(announcements));
+      }
+
+      if (document.getElementById('ann-title-input')) document.getElementById('ann-title-input').value = '';
+      if (document.getElementById('ann-message-input')) document.getElementById('ann-message-input').value = '';
+      if (document.getElementById('ann-pin-checkbox')) document.getElementById('ann-pin-checkbox').checked = false;
+      clearAnnouncementPhotoSelection();
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Publish to Live Announcement Board →';
+      }
+
+      await fetchAdminStateFromServer(true);
+      renderAdminAnnouncements();
+    }
+
+    async function togglePinAnnouncement(id) {
+      try {
+        await fetch('/api/announcements', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'toggle_pin', id: id })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+      renderAdminAnnouncements();
+    }
+
+    async function deleteAnnouncement(id) {
+      if (!confirm('Delete this announcement from the public board?')) return;
+      try {
+        await fetch('/api/announcements', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', id: id })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+      renderAdminAnnouncements();
+    }
+
+    async function clearAllAnnouncements() {
+      if (!confirm('Clear all announcements from the Live Announcement Board?')) return;
+      try {
+        await fetch('/api/announcements', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'clear' })
+        });
+      } catch (e) {}
+      localStorage.removeItem('pf_announcements');
+      await fetchAdminStateFromServer(true);
+      renderAdminAnnouncements();
+    }
+
+    function renderAdminAnnouncements() {
+      const container = document.getElementById('admin-announcements-list');
+      const badge = document.getElementById('admin-ann-badge');
+      if (badge) badge.textContent = String(announcements.length);
+      if (!container) return;
+
+      try {
+        localStorage.setItem('pf_announcements', JSON.stringify(announcements));
+      } catch (e) {}
+
+      if (announcements.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 rounded-2xl bg-brand-black/50 border border-white/10 text-center space-y-2">
+            <span class="text-xs font-black uppercase text-brand-lime block">No Custom Announcements Posted Yet</span>
+            <p class="text-[11px] text-slate-400 max-w-md mx-auto">Use the composer on the left to post Open Play alerts, tournament posters, court advisories, or photos. They will appear immediately on the public website's Live Announcement Board!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const sorted = [...announcements].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+      container.innerHTML = sorted.map(ann => {
+        const hasImg = Boolean(ann.img && String(ann.img).trim());
+        return `
+          <div class="p-4 rounded-2xl bg-brand-black/80 border ${ann.pinned ? 'border-brand-lime/60' : 'border-white/10'} space-y-2.5 text-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-0.5 rounded-full bg-brand-lime/15 text-brand-lime border border-brand-lime/30 text-[10px] font-mono font-black uppercase">${pfEscapeHtml(ann.category || 'Club Update')}</span>
+                ${ann.pinned ? '<span class="px-2 py-0.5 rounded bg-brand-lime text-brand-black text-[9px] font-mono font-black uppercase">📌 PINNED</span>' : ''}
+                <span class="text-[10px] font-mono text-slate-400">${pfEscapeHtml(ann.createdAt || '')}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="togglePinAnnouncement('${ann.id}')" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-slate-200 text-[10px] font-bold uppercase transition">
+                  ${ann.pinned ? 'Unpin' : '📌 Pin'}
+                </button>
+                <button type="button" onclick="deleteAnnouncement('${ann.id}')" class="px-2.5 py-1 rounded-lg bg-brand-clay/15 hover:bg-brand-clay text-brand-clay hover:text-white text-[10px] font-bold uppercase transition">
+                  Delete
+                </button>
+              </div>
+            </div>
+            ${ann.title ? `<h4 class="text-sm font-black text-white">${pfEscapeHtml(ann.title)}</h4>` : ''}
+            ${ann.message ? `<p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">${pfEscapeHtml(ann.message)}</p>` : ''}
+            ${hasImg ? `
+              <div class="pt-1">
+                <img src="${ann.img}" alt="Announcement Photo" class="max-h-56 w-auto rounded-xl border border-white/15 object-cover">
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
     }
 
   </script>

@@ -191,7 +191,8 @@ let cartItems = JSON.parse(localStorage.getItem('pf_cart_items') || '[]');
 // Live Shared State Cache (synced from /api/state)
 let sharedServerState = {
   bookings: JSON.parse(localStorage.getItem('pf_all_bookings') || '[]'),
-  blocks: []
+  blocks: [],
+  announcements: JSON.parse(localStorage.getItem('pf_announcements') || '[]')
 };
 window.sharedServerState = sharedServerState;
 
@@ -228,8 +229,14 @@ async function syncStateFromServer() {
           if (typeof renderLiveScheduleMatrix === 'function') {
             renderLiveScheduleMatrix();
           }
+          if (Array.isArray(data.announcements)) {
+            localStorage.setItem('pf_announcements', JSON.stringify(data.announcements));
+          }
           if (typeof renderPublicInventoryCatalog === 'function') {
             renderPublicInventoryCatalog();
+          }
+          if (typeof renderPublicAnnouncementBoard === 'function') {
+            renderPublicAnnouncementBoard();
           }
           return data;
         }
@@ -1378,3 +1385,133 @@ function renderPublicInventoryCatalog() {
     `;
   }).join('');
 }
+
+
+// ================= LIVE CHAT-STYLE ANNOUNCEMENT BOARD ENGINE (ADMIN SYNCED) =================
+let isAnnouncementBoardOpen = false;
+
+function getDefaultWelcomeAnnouncements() {
+  return [
+    {
+      id: 'welcome-pf-2026',
+      title: 'Welcome to P&F Rally Ground Pickleball Club!',
+      message: 'All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Check here anytime for official Open Play alerts, tournament posters, and club advisories from Admin!',
+      category: 'Club Update',
+      img: '',
+      pinned: true,
+      author: 'P&F Rally Ground Admin',
+      createdAt: 'Official Broadcast'
+    }
+  ];
+}
+
+function getLiveAnnouncementsList() {
+  if (sharedServerState && Array.isArray(sharedServerState.announcements) && sharedServerState.announcements.length > 0) {
+    return sharedServerState.announcements;
+  }
+  try {
+    const cached = JSON.parse(localStorage.getItem('pf_announcements') || 'null');
+    if (Array.isArray(cached) && cached.length > 0) return cached;
+  } catch (e) {}
+  return getDefaultWelcomeAnnouncements();
+}
+
+function toggleAnnouncementBoard(forceState) {
+  const win = document.getElementById('announcement-board-window');
+  if (!win) return;
+  if (typeof forceState === 'boolean') {
+    isAnnouncementBoardOpen = forceState;
+  } else {
+    isAnnouncementBoardOpen = win.classList.contains('hidden');
+  }
+  win.classList.toggle('hidden', !isAnnouncementBoardOpen);
+  if (isAnnouncementBoardOpen) {
+    renderPublicAnnouncementBoard();
+    try {
+      const list = getLiveAnnouncementsList();
+      if (list.length > 0 && list[0].id) {
+        localStorage.setItem('pf_last_seen_ann_id', String(list[0].id));
+      }
+    } catch (e) {}
+  }
+}
+
+function openAnnouncementLightbox(imgSrc, captionText) {
+  const modal = document.getElementById('ann-photo-lightbox');
+  const img = document.getElementById('ann-lightbox-img');
+  const cap = document.getElementById('ann-lightbox-caption');
+  if (!modal || !img) return;
+  img.src = imgSrc;
+  if (cap) cap.textContent = captionText || 'Official Club Announcement Photo';
+  modal.classList.remove('hidden');
+}
+
+function closeAnnouncementLightbox() {
+  const modal = document.getElementById('ann-photo-lightbox');
+  if (modal) modal.classList.add('hidden');
+}
+
+function renderPublicAnnouncementBoard() {
+  const feed = document.getElementById('public-announcement-feed');
+  const badge = document.getElementById('ann-floating-badge');
+  const headerBadge = document.getElementById('header-ann-badge');
+  const rawList = getLiveAnnouncementsList();
+
+  // Sort pinned first, preserving chronological order
+  const sorted = [...rawList].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+  if (badge) {
+    badge.textContent = String(sorted.length);
+  }
+  if (headerBadge) {
+    headerBadge.textContent = String(sorted.length);
+  }
+
+  if (!feed) return;
+
+  const catColors = {
+    'Open Play Alert': 'bg-[#d9f99d] text-[#365314] border-[#84cc16]',
+    'Tournament / Event': 'bg-amber-400/20 text-amber-300 border-amber-400/40',
+    'Promo & Rates': 'bg-[#0072CE]/25 text-sky-300 border-sky-400/40',
+    'Court Advisory': 'bg-rose-500/20 text-rose-300 border-rose-400/40',
+    'Club Update': 'bg-[#9BE600]/20 text-[#9BE600] border-[#9BE600]/40'
+  };
+
+  feed.innerHTML = sorted.map(ann => {
+    const cat = ann.category || 'Club Update';
+    const pillCls = catColors[cat] || catColors['Club Update'];
+    const safeTitle = pfEscapeHtml(ann.title || '');
+    const safeMsg = pfEscapeHtml(ann.message || '').replace(/\n/g, '<br>');
+    const safeAuthor = pfEscapeHtml(ann.author || 'P&F Rally Ground Admin');
+    const safeTime = pfEscapeHtml(ann.createdAt || 'Just now');
+    const hasImg = Boolean(ann.img && String(ann.img).trim());
+    const safeCaption = (ann.title || cat || 'Club Update').replace(/'/g, "\'");
+
+    return `
+      <div class="flex items-start gap-2.5">
+        <img src="assets/logo.png" alt="Admin" class="w-8 h-8 rounded-xl object-contain bg-white p-0.5 border border-[#9BE600]/50 flex-shrink-0 mt-0.5 shadow">
+        <div class="flex-1 min-w-0 rounded-2xl rounded-tl-sm bg-[#0E2240]/95 border ${ann.pinned ? 'border-[#9BE600]/60 shadow-[0_0_20px_rgba(155,230,0,0.12)]' : 'border-white/10'} p-3.5 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[11px] font-black text-white">${safeAuthor}</span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-black uppercase border ${pillCls}">${pfEscapeHtml(cat)}</span>
+              ${ann.pinned ? '<span class="px-1.5 py-0.5 rounded bg-[#9BE600] text-[#050E1D] text-[8px] font-mono font-black uppercase">📌 PINNED</span>' : ''}
+            </div>
+            <span class="text-[9px] font-mono text-slate-400">${safeTime}</span>
+          </div>
+          ${safeTitle ? `<h4 class="text-xs sm:text-sm font-black text-[#9BE600] leading-snug">${safeTitle}</h4>` : ''}
+          ${safeMsg ? `<p class="text-xs text-slate-200 leading-relaxed break-words">${safeMsg}</p>` : ''}
+          ${hasImg ? `
+            <div class="pt-1">
+              <div onclick="openAnnouncementLightbox('${ann.img}', '${safeCaption}')" class="group relative rounded-2xl overflow-hidden border border-white/15 bg-black/40 cursor-pointer">
+                <img src="${ann.img}" alt="${safeTitle || 'Announcement Photo'}" class="w-full max-h-60 object-cover group-hover:scale-[1.02] transition-transform duration-200">
+                <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-black/75 text-white text-[9px] font-mono font-bold">🔍 View Full Photo</span>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
