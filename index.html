@@ -925,9 +925,11 @@
           </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-bold text-slate-300 bg-brand-black/80 px-4 py-3 rounded-2xl border border-white/15 shadow-lg">
-          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#10B981] shadow-sm shadow-[#10B981]/50"></span> Available: Daytime <b class="text-brand-lime font-mono">₱400/hr</b> &bull; Evening <b class="text-[#D4FF00] font-mono">₱500/hr</b></span>
-          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-slate-600"></span> Reserved / Blocked</span>
+        <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 text-[11px] sm:text-xs font-bold text-slate-800 bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-lg">
+          <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-emerald-100 border border-emerald-400"></span> <span>Available (<b class="text-emerald-700 font-mono">₱400</b>/<b class="text-emerald-700 font-mono">₱500</b>)</span></span>
+          <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#365314]">Open Play</span></span>
+          <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-rose-100 border border-rose-400"></span> <span class="text-rose-700">Booked</span></span>
+          <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-slate-800 border border-slate-900"></span> <span class="text-slate-800">Closed</span></span>
         </div>
       </div>
 
@@ -949,26 +951,33 @@
         <div id="date-carousel" class="date-rail white-calendar-rail"></div>
       </div>
 
-      <!-- Mobile & Tablet Court Filter Tabs (Optimizes Table View on Small Screens) -->
-      <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <label class="text-xs font-black uppercase tracking-widest text-slate-400">2. Filter Court View</label>
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none" id="schedule-court-filter">
-          <button type="button" onclick="setScheduleCourtFilter('ALL')" data-court="ALL" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-brand-lime text-brand-black transition flex-shrink-0">All 4 Courts</button>
-          <button type="button" onclick="setScheduleCourtFilter(1)" data-court="1" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40 transition flex-shrink-0">Court 01</button>
-          <button type="button" onclick="setScheduleCourtFilter(2)" data-court="2" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40 transition flex-shrink-0">Court 02</button>
-          <button type="button" onclick="setScheduleCourtFilter(3)" data-court="3" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40 transition flex-shrink-0">Court 03</button>
-          <button type="button" onclick="setScheduleCourtFilter(4)" data-court="4" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40 transition flex-shrink-0">Court 04</button>
+      <!-- White Filter Court View & Court Schedule Table Container -->
+      <div class="rounded-3xl bg-white text-slate-900 border border-slate-200 p-4 sm:p-6 shadow-2xl space-y-5">
+        <!-- 2. Filter Court View Header inside White Box -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+          <div>
+            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block">Court Matrix</span>
+            <label class="text-sm sm:text-base font-black uppercase tracking-tight text-slate-900 font-display block">2. Filter Court View</label>
+            <p class="text-[11px] text-slate-500 font-medium mt-0.5">Open Play schedule: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM</p>
+          </div>
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none" id="schedule-court-filter">
+            <button type="button" onclick="setScheduleCourtFilter('ALL')" data-court="ALL" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-[#050E1D] text-white shadow-md transition flex-shrink-0">All 4 Courts</button>
+            <button type="button" onclick="setScheduleCourtFilter(1)" data-court="1" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 01</button>
+            <button type="button" onclick="setScheduleCourtFilter(2)" data-court="2" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 02</button>
+            <button type="button" onclick="setScheduleCourtFilter(3)" data-court="3" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 03</button>
+            <button type="button" onclick="setScheduleCourtFilter(4)" data-court="4" class="sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0">Court 04</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Responsive Court Schedule Table -->
-      <div class="rounded-3xl bg-brand-card border border-brand-border p-3 sm:p-6 shadow-2xl overflow-x-auto touch-scroll">
-        <table class="w-full border-collapse text-xs font-bold" id="schedule-table">
-          <thead>
-            <tr id="schedule-table-head" class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px] sm:text-xs"></tr>
-          </thead>
-          <tbody id="schedule-matrix-rows" class="divide-y divide-white/5"></tbody>
-        </table>
+        <!-- Responsive Court Schedule Table -->
+        <div class="rounded-2xl border border-slate-200 overflow-x-auto touch-scroll shadow-sm">
+          <table class="w-full min-w-[640px] border-collapse text-xs font-bold" id="schedule-table">
+            <thead>
+              <tr id="schedule-table-head" class="bg-[#050E1D] text-white uppercase tracking-wider text-[10px] sm:text-xs"></tr>
+            </thead>
+            <tbody id="schedule-matrix-rows" class="divide-y divide-slate-200 bg-white"></tbody>
+          </table>
+        </div>
       </div>
 
     </div>
@@ -1748,6 +1757,33 @@
       }
     }
 
+    // Helper: Exact Open Play Schedule from Main Website (Mon 3-6PM, Tue-Thu 3-8PM, Fri 3-11PM, Sat 6-10PM)
+    const OPEN_PLAY_HOURS_BY_DAY = {
+      1: { start: 15, end: 18 }, // Monday: 3:00 PM - 6:00 PM
+      2: { start: 15, end: 20 }, // Tuesday: 3:00 PM - 8:00 PM
+      3: { start: 15, end: 20 }, // Wednesday: 3:00 PM - 8:00 PM
+      4: { start: 15, end: 20 }, // Thursday: 3:00 PM - 8:00 PM
+      5: { start: 15, end: 23 }, // Friday: 3:00 PM - 11:00 PM
+      6: { start: 18, end: 22 }  // Saturday: 6:00 PM - 10:00 PM
+    };
+
+    function slotTo24Hour(slotStr) {
+      if (!slotStr) return 0;
+      let hour24 = parseInt(slotStr, 10);
+      if (slotStr.includes('PM') && hour24 !== 12) hour24 += 12;
+      if (slotStr.includes('AM') && hour24 === 12) hour24 = 0;
+      return hour24;
+    }
+
+    function isOpenPlaySlot(dateYMD, slotStr) {
+      if (!dateYMD || !/^\d{4}-\d{2}-\d{2}$/.test(dateYMD)) return false;
+      const dayOfWeek = new Date(`${dateYMD}T12:00:00`).getDay();
+      const rule = OPEN_PLAY_HOURS_BY_DAY[dayOfWeek];
+      if (!rule) return false;
+      const hr = slotTo24Hour(slotStr);
+      return hr >= rule.start && hr < rule.end;
+    }
+
     // 1. Landing Page Schedule Date-Rail (#date-carousel)
     function initScheduleDateCarousel() {
       const carousel = document.getElementById('date-carousel');
@@ -1774,16 +1810,16 @@
           carousel.querySelectorAll('.date-tile').forEach(b => {
             b.classList.remove('date-tile-active');
             const spans = b.querySelectorAll('span');
-            if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-400';
-            if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
-            if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-slate-400';
+            if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-500';
+            if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-slate-900';
+            if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-500';
           });
 
           btn.classList.add('date-tile-active');
           const activeSpans = btn.querySelectorAll('span');
-          if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-[#050E1D]';
-          if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-[#050E1D]';
-          if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-[#050E1D]';
+          if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-brand-lime';
+          if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
+          if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-200';
 
           const lbl = document.getElementById('selected-schedule-date-label');
           if (lbl) lbl.textContent = idx === 0 ? `Today (${d.month} ${d.day})` : d.label;
@@ -1808,56 +1844,87 @@
 
       const courtsToShow = currentScheduleFilter === 'ALL' ? [1, 2, 3, 4] : [Number(currentScheduleFilter)];
       const courtColumnLabels = {
-        1: 'COURT 01 • CHAMPIONSHIP',
-        2: 'COURT 02 • TOURNAMENT',
-        3: 'COURT 03 • COVERED OUTDOOR',
-        4: 'COURT 04 • PRO TRAINING'
+        1: 'Court 1',
+        2: 'Court 2',
+        3: 'Court 3',
+        4: 'Court 4'
       };
 
       thead.innerHTML = `
-        <th class="py-3 px-2.5 sm:px-4 text-left sticky left-0 bg-brand-card z-20 min-w-[105px] text-white">TIME SLOT (PHT)</th>
-        ${courtsToShow.map(c => `<th class="py-3 px-2 sm:px-3 text-center min-w-[135px] text-brand-lime">${courtColumnLabels[c]}</th>`).join('')}
+        <th class="py-3.5 px-3 sm:px-4 text-left sticky left-0 bg-[#050E1D] z-20 min-w-[115px] text-white font-black">Time</th>
+        ${courtsToShow.map(c => `<th class="py-3.5 px-2 sm:px-3 text-center min-w-[135px] text-white font-black">${courtColumnLabels[c]}</th>`).join('')}
       `;
 
-      const liveBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
+      const serverBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
+      let localBookings = [];
+      try {
+        localBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      } catch (e) {}
+      const liveBookings = [...serverBookings, ...localBookings];
       const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
 
       tbody.innerHTML = baseHours.map(h => {
         const rate = getHourlyRate(h.time);
+        const openPlayActive = isOpenPlaySlot(selectedScheduleDateYMD, h.time);
+
         const cells = courtsToShow.map(cNum => {
-          const courtLabel = 'Court 0' + cNum;
+          const courtLabelZero = 'Court 0' + cNum;
+          const courtLabelPlain = 'Court ' + cNum;
+
+          const isLiveBlocked = liveBlocks.some(bl => {
+            if (!bl.court) return false;
+            const matchesCourt = bl.court.includes(courtLabelZero) || bl.court.includes(courtLabelPlain) || bl.court.toLowerCase().includes('all');
+            if (!matchesCourt) return false;
+            if (bl.date && selectedScheduleDateYMD && bl.date !== selectedScheduleDateYMD) return false;
+            return bl.hours && bl.hours.includes(h.time);
+          });
+
           const isLiveBooked = liveBookings.some(b => {
-            if (!b.court || !b.court.includes(courtLabel)) return false;
-            if (!b.time || !b.time.includes(h.time)) return false;
+            if (b.status === 'CANCELLED') return false;
+            if (!b.court) return false;
+            const matchesCourt = String(b.court).includes(courtLabelZero) || String(b.court).includes(courtLabelPlain) || String(b.court) === String(cNum);
+            if (!matchesCourt) return false;
+            if (!b.time || !String(b.time).includes(h.time)) return false;
             if (b.date && selectedScheduleDateYMD) return b.date === selectedScheduleDateYMD;
             return true;
           });
-          const isLiveBlocked = liveBlocks.some(bl =>
-            bl.court && (bl.court.includes(courtLabel) || bl.court.includes('All')) &&
-            bl.hours && bl.hours.includes(h.time)
-          );
 
-          if (isLiveBooked || isLiveBlocked) {
-            return `<td class="p-1.5 sm:p-2 text-center">
-              <span class="inline-block w-full py-2.5 px-2 rounded-xl bg-white/5 text-slate-500 text-[10px] sm:text-xs uppercase font-bold">
-                Reserved
+          if (isLiveBlocked) {
+            return `<td class="p-1.5 text-center">
+              <span class="block w-full py-2.5 px-2 rounded-xl bg-slate-800 text-white border border-slate-900 text-xs font-black shadow-sm">
+                Closed
+              </span>
+            </td>`;
+          } else if (isLiveBooked) {
+            return `<td class="p-1.5 text-center">
+              <span class="block w-full py-2.5 px-2 rounded-xl bg-rose-100/95 text-rose-700 border border-rose-300 text-xs font-black shadow-sm">
+                Booked
+              </span>
+            </td>`;
+          } else if (openPlayActive) {
+            return `<td class="p-1.5 text-center">
+              <span class="block w-full py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-black shadow-sm" title="Reserved for Open Play">
+                Open Play
               </span>
             </td>`;
           } else {
-            return `<td class="p-1.5 sm:p-2 text-center">
-              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2.5 px-2 rounded-xl bg-[#0E8A2D]/20 border border-[#10B981]/45 text-[#34D399] hover:bg-[#10B981] hover:text-[#050E1D] transition text-xs font-black flex flex-col items-center justify-center leading-tight">
-                <span>Book ₱${rate}</span>
-                <span class="text-[9px] font-mono uppercase tracking-wider opacity-85">Available</span>
+            return `<td class="p-1.5 text-center">
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2 px-2 rounded-xl bg-emerald-100/90 hover:bg-[#9BE600] text-emerald-800 hover:text-[#050E1D] border border-emerald-300 hover:border-[#65a30d] transition text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm">
+                <span>Available</span>
+                <span class="text-[10px] font-mono font-bold opacity-85">Book ₱${rate}</span>
               </button>
             </td>`;
           }
         }).join('');
 
-        const rateColor = rate === 500 ? 'bg-[#D4FF00]/20 text-[#D4FF00]' : 'bg-[#10B981]/20 text-[#34D399]';
-        return `<tr class="hover:bg-white/[0.02] transition">
-          <td class="py-2.5 px-2.5 sm:px-4 text-left font-mono text-slate-200 sticky left-0 bg-brand-card/95 border-l-4 ${rate === 500 ? 'border-l-[#D4FF00]' : 'border-l-[#10B981]'} backdrop-blur-md z-10 whitespace-nowrap">
-            <span class="block text-xs font-black text-white">${h.time}</span>
-            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${rateColor}">₱${rate} / HR</span>
+        const rateBadgeClass = rate === 500
+          ? 'bg-amber-100 text-amber-900 border border-amber-300'
+          : 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+
+        return `<tr class="hover:bg-slate-50 transition">
+          <td class="py-2.5 px-3 sm:px-4 text-left font-mono sticky left-0 bg-white border-r border-slate-200 border-l-4 ${rate === 500 ? 'border-l-amber-500' : 'border-l-emerald-500'} z-10 whitespace-nowrap">
+            <span class="block text-xs sm:text-sm font-black text-slate-900">${h.time}</span>
+            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${rateBadgeClass}">₱${rate}/HR</span>
           </td>
           ${cells}
         </tr>`;
@@ -1868,9 +1935,9 @@
       currentScheduleFilter = filterVal;
       document.querySelectorAll('.sched-filter-btn').forEach(btn => {
         if (String(btn.dataset.court) === String(filterVal)) {
-          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-brand-lime text-brand-black transition flex-shrink-0';
+          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-[#050E1D] text-white shadow-md transition flex-shrink-0';
         } else {
-          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-brand-card text-slate-300 border border-white/10 hover:border-brand-lime/40 transition flex-shrink-0';
+          btn.className = 'sched-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-400 transition flex-shrink-0';
         }
       });
       renderLiveScheduleMatrix();
@@ -1910,16 +1977,16 @@
       document.querySelectorAll('#drawer-date-rail .date-tile').forEach(b => {
         b.classList.remove('date-tile-active');
         const spans = b.querySelectorAll('span');
-        if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-400';
-        if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
-        if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-slate-400';
+        if (spans[0]) spans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-500';
+        if (spans[1]) spans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-slate-900';
+        if (spans[2]) spans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-500';
       });
       if (clickedBtn) {
         clickedBtn.classList.add('date-tile-active');
         const activeSpans = clickedBtn.querySelectorAll('span');
-        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-[#050E1D]';
-        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-[#050E1D]';
-        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-70 text-[#050E1D]';
+        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[10px] font-black uppercase tracking-widest text-brand-lime';
+        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-1 block text-2xl font-black leading-none font-mono text-white';
+        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-1 block text-xs font-bold opacity-75 text-slate-200';
       }
 
       const lbl = document.getElementById('drawer-selected-date-label');
@@ -1967,25 +2034,45 @@
       if (!container) return;
       container.innerHTML = '';
 
-      const liveBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
-      const courtLabel = 'Court 0' + DRAWER_STATE.selectedCourt;
+      const serverBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
+      let localBookings = [];
+      try {
+        localBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      } catch (e) {}
+      const liveBookings = [...serverBookings, ...localBookings];
+      const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
+      const courtLabelZero = 'Court 0' + DRAWER_STATE.selectedCourt;
+      const courtLabelPlain = 'Court ' + DRAWER_STATE.selectedCourt;
 
       ALL_HOURS_SLOTS.forEach(slot => {
         const btn = document.createElement('button');
         btn.type = 'button';
 
-        const isBooked = liveBookings.some(b =>
-          b.court && b.court.includes(courtLabel) &&
-          b.time && b.time.includes(slot) &&
-          (b.date === DRAWER_STATE.selectedDateVal || (b.time && b.time.includes(DRAWER_STATE.selectedDateVal)))
+        const isBlocked = liveBlocks.some(bl =>
+          bl.court && (bl.court.includes(courtLabelZero) || bl.court.includes(courtLabelPlain) || bl.court.toLowerCase().includes('all')) &&
+          bl.hours && bl.hours.includes(slot)
         );
-
+        const isBooked = liveBookings.some(b =>
+          b.status !== 'CANCELLED' &&
+          b.court && (String(b.court).includes(courtLabelZero) || String(b.court).includes(courtLabelPlain)) &&
+          b.time && String(b.time).includes(slot) &&
+          (b.date === DRAWER_STATE.selectedDateVal || (b.time && String(b.time).includes(DRAWER_STATE.selectedDateVal)))
+        );
+        const isOpenPlay = isOpenPlaySlot(DRAWER_STATE.selectedDateVal, slot);
         const isSelected = (slot === DRAWER_STATE.selectedStartSlot);
 
-        if (isBooked) {
+        if (isBlocked) {
           btn.disabled = true;
-          btn.className = 'time-chip disabled';
-          btn.textContent = slot;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-slate-400">Closed</span>`;
+        } else if (isBooked) {
+          btn.disabled = true;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-700 font-black">Booked</span>`;
+        } else if (isOpenPlay) {
+          btn.disabled = true;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#365314] font-black">Open Play</span>`;
         } else {
           btn.className = `time-chip ${isSelected ? 'time-chip-active' : ''}`;
           btn.textContent = slot;
@@ -1999,18 +2086,6 @@
         }
         container.appendChild(btn);
       });
-
-      const currentRate = getHourlyRate(DRAWER_STATE.selectedStartSlot);
-      const indicator = document.getElementById('drawer-slot-rate-indicator');
-      if (indicator) {
-        if (currentRate === 500) {
-          indicator.textContent = 'Evening: ₱500/hr (6PM–12AM)';
-          indicator.className = 'text-xs font-mono text-[#D4FF00] font-bold';
-        } else {
-          indicator.textContent = 'Daytime: ₱400/hr (6AM–6PM)';
-          indicator.className = 'text-xs font-mono text-brand-lime font-bold';
-        }
-      }
     }
 
     function changePlayers(delta) {

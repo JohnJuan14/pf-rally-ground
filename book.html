@@ -396,10 +396,12 @@
             </div>
           </div>
 
-          <div class="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-slate-400 font-mono">
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-lime"></span> Selected</span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-card border border-white/20"></span> Available</span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white/10 opacity-40"></span> Booked / Past</span>
+          <div class="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-slate-300 font-mono">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-lime"></span> Selected</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-card border border-white/25"></span> Available</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#b7f34a]">Open Play</span></span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-100 border border-rose-400"></span> <span class="text-rose-400">Booked</span></span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-800 border border-slate-600"></span> <span class="text-slate-400">Closed</span></span>
           </div>
         </section>
 
@@ -923,30 +925,68 @@
       updateSummary();
     }
 
-    // 5. Time Chips
+    // 5. Time Chips (with Open Play, Booked Red, Closed Dark)
+    const BOOK_OPEN_PLAY_BY_DAY = {
+      1: { start: 15, end: 18 },
+      2: { start: 15, end: 20 },
+      3: { start: 15, end: 20 },
+      4: { start: 15, end: 20 },
+      5: { start: 15, end: 23 },
+      6: { start: 18, end: 22 }
+    };
+
+    function isBookOpenPlay(dateYMD, slotStr) {
+      if (!dateYMD || !/^\d{4}-\d{2}-\d{2}$/.test(dateYMD)) return false;
+      const day = new Date(`${dateYMD}T12:00:00`).getDay();
+      const rule = BOOK_OPEN_PLAY_BY_DAY[day];
+      if (!rule) return false;
+      let hr = parseInt(slotStr, 10);
+      if (slotStr.includes("PM") && hr !== 12) hr += 12;
+      if (slotStr.includes("AM") && hr === 12) hr = 0;
+      return hr >= rule.start && hr < rule.end;
+    }
+
     function renderTimeChips() {
       const container = document.getElementById("time-chips-container");
       if (!container) return;
       container.innerHTML = "";
 
-      const allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      const localBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      const serverBookings = (window.sharedServerState && window.sharedServerState.bookings) ? window.sharedServerState.bookings : [];
+      const allBookings = [...serverBookings, ...localBookings];
+      const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
+      const courtZero = 'Court 0' + selectedCourt;
+      const courtPlain = 'Court ' + selectedCourt;
 
       ALL_SLOTS.forEach(slot => {
-        const isOccupied = allBookings.some(b => {
-          return b.status !== 'CANCELLED' && 
+        const isClosed = liveBlocks.some(bl =>
+          bl.court && (bl.court.includes(courtZero) || bl.court.includes(courtPlain) || bl.court.toLowerCase().includes('all')) &&
+          bl.hours && bl.hours.includes(slot)
+        );
+        const isBooked = allBookings.some(b => {
+          return b.status !== 'CANCELLED' &&
                  b.date === selectedDateValue &&
-                 String(b.court).includes(String(selectedCourt)) && 
+                 (String(b.court).includes(courtZero) || String(b.court).includes(courtPlain) || String(b.court) === String(selectedCourt)) &&
                  String(b.time).includes(slot);
         });
+        const isOpenPlay = isBookOpenPlay(selectedDateValue, slot);
 
         const btn = document.createElement("button");
         btn.type = "button";
         const isSelected = (slot === selectedStartSlot);
 
-        if (isOccupied) {
-          btn.className = "time-chip disabled";
+        if (isClosed) {
+          btn.className = "py-2.5 px-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-xs font-mono font-bold cursor-not-allowed leading-tight";
           btn.disabled = true;
-          btn.textContent = slot;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-slate-400">Closed</span>`;
+        } else if (isBooked) {
+          btn.className = "py-2.5 px-2 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 text-xs font-mono font-bold cursor-not-allowed leading-tight";
+          btn.disabled = true;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-700 font-black">Booked</span>`;
+        } else if (isOpenPlay) {
+          btn.className = "py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-mono font-bold cursor-not-allowed leading-tight";
+          btn.disabled = true;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#365314] font-black">Open Play</span>`;
         } else {
           btn.className = `time-chip ${isSelected ? 'time-chip-active' : ''}`;
           btn.textContent = slot;
@@ -958,18 +998,6 @@
         }
         container.appendChild(btn);
       });
-
-      const currentRate = getHourlyRate(selectedStartSlot);
-      const indicator = document.getElementById("slot-rate-indicator");
-      if (indicator) {
-        if (currentRate === 500) {
-          indicator.textContent = `₱500.00 / hr (Evening 6PM–12AM)`;
-          indicator.className = "text-xs font-mono text-[#D4FF00] font-bold";
-        } else {
-          indicator.textContent = `₱400.00 / hr (Daytime 6AM–6PM)`;
-          indicator.className = "text-xs font-mono text-brand-lime font-bold";
-        }
-      }
     }
 
     // 6. Players
