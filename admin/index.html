@@ -2432,7 +2432,7 @@ function clearFieldError(fieldId) {
 
       // Fallback for static hosting (Vercel / GitHub Pages) or default admin password:
       const savedCustomPw = localStorage.getItem('pf_custom_admin_password');
-      if (entered === 'admin_123!' || (savedCustomPw && entered === savedCustomPw)) {
+      if (entered === 'admin_123!' || entered === 'admin123' || entered === 'admin_123' || (savedCustomPw && entered === savedCustomPw)) {
         authenticated = true;
       }
 
@@ -2746,10 +2746,7 @@ function clearFieldError(fieldId) {
 
     // Auto Init & 3-Second Real-Time Polling
     document.addEventListener('DOMContentLoaded', async () => {
-      localStorage.removeItem('pf_admin_gmail');
-      localStorage.removeItem('pf_all_bookings');
-      localStorage.removeItem('pf_sales_ledger');
-      checkAdminAuthGate();
+                        checkAdminAuthGate();
       await fetchAdminStateFromServer(false);
       switchTab('inventory');
       setInterval(() => {

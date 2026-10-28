@@ -280,11 +280,10 @@ function openAdminPortal(event) {
   if (event) event.preventDefault();
   const host = window.location.hostname;
   const port = window.location.port;
-  // If running locally on port 8088, open port 8089 if available, or /admin/ on hosted domain
   if ((host === 'localhost' || host === '127.0.0.1') && port === '8088') {
-    window.open('http://' + host + ':8089/', '_blank');
+    window.location.href = 'http://' + host + ':8089/';
   } else {
-    window.open('/admin/', '_blank');
+    window.location.href = '/admin/';
   }
   return false;
 }
