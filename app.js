@@ -1658,7 +1658,7 @@ function applySiteConfig(incomingCfg) {
   if (cfg.court3Name) courtNames[3] = cfg.court3Name;
   if (cfg.court4Name) courtNames[4] = cfg.court4Name;
 
-  // 2. Render or update Live Top Update Banner (#live-site-update-banner)
+  // 2. Render or update Moving Live Top Update Banner (#live-site-update-banner)
   let bannerEl = document.getElementById('live-site-update-banner');
   const headerEl = document.querySelector('header');
   const bannerText = String(cfg.liveBannerText || '').trim();
@@ -1667,17 +1667,44 @@ function applySiteConfig(incomingCfg) {
     if (!bannerEl && headerEl) {
       bannerEl = document.createElement('div');
       bannerEl.id = 'live-site-update-banner';
-      bannerEl.className = 'bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] border-b border-[#9BE600]/40 text-white px-3 py-1.5 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow-md';
       headerEl.insertBefore(bannerEl, headerEl.children[1] || headerEl.firstChild);
     }
     if (bannerEl) {
       bannerEl.classList.remove('hidden');
       bannerEl.style.display = 'flex';
-      bannerEl.innerHTML = `
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9BE600] text-[#050E1D] font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
-        <span id="live-site-update-banner-text" class="text-slate-100 font-semibold truncate max-w-[78vw] sm:max-w-none">${pfEscapeHtml(bannerText)}</span>
-        <button type="button" onclick="toggleAnnouncementBoard(true)" class="hidden sm:inline-flex items-center gap-1 text-[#9BE600] hover:underline font-mono text-[10px] font-black ml-1 flex-shrink-0">View Feed →</button>
-      `;
+      const safeBanner = pfEscapeHtml(bannerText);
+      const existingTxt = document.getElementById('live-site-update-banner-text');
+      if (existingTxt && bannerEl.querySelector('.pf-live-ticker-track')) {
+        existingTxt.textContent = bannerText;
+        bannerEl.querySelectorAll('.pf-live-ticker-clone').forEach(el => { el.textContent = bannerText; });
+      } else {
+        bannerEl.innerHTML = `
+          <span class="pf-live-ticker-badge">
+            <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
+            <span>LIVE UPDATE</span>
+          </span>
+          <div class="pf-live-ticker-viewport">
+            <div class="pf-live-ticker-track" id="live-site-update-banner-track">
+              <div class="pf-live-ticker-item">
+                <span id="live-site-update-banner-text">${safeBanner}</span>
+                <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+                <span class="pf-live-ticker-clone">${safeBanner}</span>
+                <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+              </div>
+              <div class="pf-live-ticker-item" aria-hidden="true">
+                <span class="pf-live-ticker-clone">${safeBanner}</span>
+                <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+                <span class="pf-live-ticker-clone">${safeBanner}</span>
+                <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta">
+            <span class="hidden sm:inline">Updates</span>
+            <span>Feed →</span>
+          </button>
+        `;
+      }
     }
   } else if (bannerEl) {
     bannerEl.classList.add('hidden');

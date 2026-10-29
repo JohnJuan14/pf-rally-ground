@@ -326,7 +326,7 @@
       text-align: center;
       background: #F8FAFC;
       border: 1.5px solid #E2E8F0;
-      border-radius: 1rem;
+      border-radius: 5px;
       min-width: 60px;
       padding: 0.55rem 0.35rem;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -339,7 +339,7 @@
     @media (min-width: 640px) {
       .white-calendar-rail .date-tile {
         background: #FFFFFF;
-        border-radius: 1.25rem;
+        border-radius: 5px;
         min-width: 82px;
         padding: 0.85rem 0.6rem;
       }
@@ -407,7 +407,7 @@
     /* Authentic Time Chips */
     .time-chip {
       text-align: center;
-      border-radius: 0.875rem;
+      border-radius: 5px;
       padding: 0.65rem 0.4rem;
       font-size: 0.75rem;
       font-family: 'JetBrains Mono', monospace;
@@ -449,8 +449,7 @@
       border-color: rgba(255, 255, 255, 0.06);
       text-decoration: line-through;
     }
-
-  </style>
+</style>
   <!-- Comprehensive Favicon Suite -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
@@ -466,11 +465,32 @@
   <header class="fixed top-0 left-0 right-0 w-full max-w-[100vw] z-50 transition-all duration-300 bg-white lg:bg-brand-black/95 border-b-2 border-slate-200 lg:border-b lg:border-brand-lime/20 shadow-lg lg:shadow-none lg:backdrop-blur-xl">
     <!-- Official Logo Court Color Stripe -->
     <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
-    <!-- Live Site Update Top Banner (Synced from Admin Website Editor) -->
-    <div id="live-site-update-banner" class="bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] border-b border-[#9BE600]/40 text-white px-3 py-1.5 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow-md">
-      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9BE600] text-[#050E1D] font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
-      <span id="live-site-update-banner-text" class="text-slate-100 font-semibold truncate max-w-[78vw] sm:max-w-none">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
-      <button type="button" onclick="toggleAnnouncementBoard(true)" class="hidden sm:inline-flex items-center gap-1 text-[#9BE600] hover:underline font-mono text-[10px] font-black ml-1 flex-shrink-0">View Feed →</button>
+    <!-- Live Site Update Top Banner (Moving Marquee Ticker Synced from Admin Website Editor) -->
+    <div id="live-site-update-banner">
+      <span class="pf-live-ticker-badge">
+        <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
+        <span>LIVE UPDATE</span>
+      </span>
+      <div class="pf-live-ticker-viewport">
+        <div class="pf-live-ticker-track" id="live-site-update-banner-track">
+          <div class="pf-live-ticker-item">
+            <span id="live-site-update-banner-text">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
+            <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+            <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
+            <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+          </div>
+          <div class="pf-live-ticker-item" aria-hidden="true">
+            <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
+            <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+            <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
+            <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta">
+        <span class="hidden sm:inline">Updates</span>
+        <span>Feed →</span>
+      </button>
     </div>
     <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-3">
       
