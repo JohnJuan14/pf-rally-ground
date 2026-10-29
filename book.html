@@ -2301,7 +2301,9 @@
 
     // Init on Load
     
+    let _isSubmittingReservationFinal = false;
     async function submitReservationFinal() {
+      if (_isSubmittingReservationFinal) return;
       // If Guest arrived via Cart Checkout (not Drawer), use submitManualPaymentConfirmation if available and pendingOrderData is null
       if (!pendingOrderData && typeof cartItems !== 'undefined' && cartItems.length > 0 && typeof submitManualPaymentConfirmation === 'function') {
         return submitManualPaymentConfirmation();
@@ -2333,6 +2335,7 @@
       const generatedRef = 'PF-' + Math.floor(100000 + Math.random() * 900000);
       const payMethod = (typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode) ? String(selectedPaymentMode).toUpperCase() : 'GCASH';
 
+      _isSubmittingReservationFinal = true;
       const submitBtn = document.getElementById('modal-submit-btn');
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -2403,6 +2406,7 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>Submit Payment &amp; Confirm Booking</span>';
       }
+      _isSubmittingReservationFinal = false;
       closePaymentModal();
 
       alert(`✅ Reservation Submitted to Front Desk!
@@ -2486,6 +2490,74 @@ Your booking is now waiting in the Admin Portal for approval!`);
 
       rail.addEventListener('scroll', updateButtons, { passive: true });
       setTimeout(updateButtons, 100);
+    }
+
+    
+    function jumpDrawerToDate(ymd) {
+      if (!ymd) return;
+      if (typeof DRAWER_STATE !== 'undefined') {
+        DRAWER_STATE.selectedDateVal = ymd;
+        const found = (DRAWER_STATE.daysList || []).find(d => d.value === ymd);
+        if (found) {
+          DRAWER_STATE.selectedDateLabel = found.shortLabel;
+        }
+      }
+      if (typeof renderDrawerDateRail === 'function') renderDrawerDateRail();
+      if (typeof renderDrawerSlots === 'function') renderDrawerSlots();
+      if (typeof recalculateDrawerTotal === 'function') recalculateDrawerTotal();
+    }
+
+    function setDrawerDuration(hours) {
+      if (typeof DRAWER_STATE !== 'undefined') DRAWER_STATE.selectedDuration = hours;
+      [1, 2, 3].forEach(h => {
+        const btn = document.getElementById(`dur-btn-${h}`);
+        if (!btn) return;
+        btn.className = (h === hours)
+          ? 'px-3 py-1 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black'
+          : 'px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40';
+      });
+      if (typeof renderDrawerSlots === 'function') renderDrawerSlots();
+      if (typeof recalculateDrawerTotal === 'function') recalculateDrawerTotal();
+    }
+
+    function setDrawerTimePeriod(period) {
+      if (typeof currentDrawerPeriod !== 'undefined') currentDrawerPeriod = period;
+      document.querySelectorAll('.drawer-period-btn').forEach(btn => {
+        btn.className = (btn.dataset.period === period)
+          ? 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-black uppercase bg-brand-lime text-brand-black transition'
+          : 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition';
+      });
+      if (typeof renderDrawerSlots === 'function') renderDrawerSlots();
+    }
+
+    function handleDrawerProceed() {
+      const name = document.getElementById('cust-name')?.value.trim();
+      const phone = document.getElementById('cust-phone')?.value.trim();
+      const nameErr = document.getElementById('cust-name-error');
+      const phoneErr = document.getElementById('cust-phone-error');
+      if (nameErr) nameErr.classList.add('hidden');
+      if (phoneErr) phoneErr.classList.add('hidden');
+
+      if (!name || name.length < 3) {
+        if (nameErr) {
+          nameErr.textContent = 'Please enter your full first & last name.';
+          nameErr.classList.remove('hidden');
+        }
+        document.getElementById('cust-name')?.focus();
+        return;
+      }
+      const cleanPhone = (phone || '').replace(/[^0-9]/g, '');
+      if (cleanPhone.length < 10) {
+        if (phoneErr) {
+          phoneErr.textContent = 'Please enter a valid Philippine mobile number.';
+          phoneErr.classList.remove('hidden');
+        }
+        document.getElementById('cust-phone')?.focus();
+        return;
+      }
+      if (typeof openPaymentModal === 'function') {
+        openPaymentModal();
+      }
     }
 
     function openBookingDrawer(courtNum, slotTime) {

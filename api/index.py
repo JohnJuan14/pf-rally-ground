@@ -165,12 +165,51 @@ def save_db(data):
         pass
 
 
-def deduct_inventory_for_items(db, items):
+def parse_amount(val, default=400.0):
+    if val is None:
+        return float(default)
+    if isinstance(val, (int, float)):
+        return float(val)
+    s = re.sub(r"[^0-9.\-]", "", str(val))
+    try:
+        return float(s) if s else float(default)
+    except Exception:
+        return float(default)
+
+
+def has_emoji(s):
+    if not s:
+        return False
+    for ch in str(s):
+        cp = ord(ch)
+        if (0x1F300 <= cp <= 0x1FAFF) or (0x2600 <= cp <= 0x27BF) or (0x1F000 <= cp <= 0x1F2FF):
+            return True
+    return False
+
+
+def compute_and_deduct_inventory_for_items(db, items, deduct_stock=True):
+    total_cogs = 0.0
     if not items or not isinstance(items, list):
-        return
+        return 0.0
     inventory = db.get("inventory", [])
+    sc = db.get("siteConfig") or {}
     for cart_item in items:
-        if not isinstance(cart_item, dict) or cart_item.get("isCourt"):
+        if isinstance(cart_item, str):
+            s_low = cart_item.lower()
+            for inv in inventory:
+                inv_name = str(inv.get("name", "")).strip().lower()
+                if inv_name and inv_name in s_low:
+                    unit_cost = float(inv.get("costPrice", 0) or 0)
+                    if unit_cost <= 0 and float(inv.get("pcsPerBox", 0) or 0) > 0:
+                        unit_cost = round(float(inv.get("costPerBox", 0) or 0) / float(inv.get("pcsPerBox", 1)), 2)
+                    total_cogs += unit_cost
+                    break
+            continue
+        if not isinstance(cart_item, dict):
+            continue
+        if cart_item.get("isCourt"):
+            hrs = max(1, int(cart_item.get("qty", 1) or 1))
+            total_cogs += float(sc.get("costCourtPerHour", 0) or 0) * hrs
             continue
         cid = str(cart_item.get("id", "")).strip()
         cname = str(cart_item.get("name", "")).strip().lower()
@@ -179,9 +218,24 @@ def deduct_inventory_for_items(db, items):
             inv_id = str(inv.get("id", "")).strip()
             inv_name = str(inv.get("name", "")).strip().lower()
             if (cid and cid == inv_id) or (cname and cname == inv_name) or (cname and inv_name and (inv_name in cname or cname in inv_name)):
-                current_stock = int(inv.get("stock", 0) or 0)
-                inv["stock"] = max(0, current_stock - qty)
+                if deduct_stock:
+                    current_stock = int(inv.get("stock", 0) or 0)
+                    inv["stock"] = max(0, current_stock - qty)
+                    inv["soldCount"] = int(inv.get("soldCount", 0) or 0) + qty
+                unit_cost = float(inv.get("costPrice", 0) or 0)
+                if unit_cost <= 0 and float(inv.get("pcsPerBox", 0) or 0) > 0:
+                    unit_cost = round(float(inv.get("costPerBox", 0) or 0) / float(inv.get("pcsPerBox", 1)), 2)
+                total_cogs += unit_cost * qty
                 break
+    return round(total_cogs, 2)
+
+
+def deduct_inventory_for_items(db, items):
+    return compute_and_deduct_inventory_for_items(db, items, deduct_stock=True)
+
+
+def trigger_booking_gmail_notifications(db, booking):
+    return
 
 
 class handler(http.server.BaseHTTPRequestHandler):
@@ -227,36 +281,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             cfg = dict(def_pc)
             if isinstance(db.get("paymentConfig"), dict):
                 cfg.update(db["paymentConfig"])
-            if body.get("action") == "reset":
-                ch = str(body.get("channel") or "all").lower()
-                if ch == "gcash":
-                    for k in ["gcashName", "gcashNumber", "gcashQrUrl", "standeeUrl"]:
-                        cfg[k] = def_pc.get(k, "")
-                elif ch == "maya":
-                    for k in ["mayaName", "mayaNumber", "mayaQrUrl"]:
-                        cfg[k] = def_pc.get(k, "")
-                elif ch in ("bank", "bdo"):
-                    for k in ["bdoName", "bdoNumber", "bankQrUrl"]:
-                        cfg[k] = def_pc.get(k, "")
-                else:
-                    cfg = dict(def_pc)
-            else:
-                for k in [
-                    "gcashNumber", "gcashName", "gcashQrUrl", "standeeUrl",
-                    "mayaNumber", "mayaName", "mayaQrUrl",
-                    "bdoNumber", "bdoName", "bankQrUrl",
-                    "bpiNumber"
-                ]:
-                    if k in body and body[k] is not None:
-                        cfg[k] = str(body[k]).strip()
-                if "gcashQrUrl" in body and body["gcashQrUrl"]:
-                    cfg["standeeUrl"] = str(body["gcashQrUrl"]).strip()
-                elif "standeeUrl" in body and body["standeeUrl"]:
-                    cfg["gcashQrUrl"] = str(body["standeeUrl"]).strip()
-            cfg["updatedAt"] = int(time.time() * 1000)
-            db["paymentConfig"] = cfg
-            save_db(db)
-            self._send_json({"ok": True, "paymentConfig": cfg, "state": db})
+            self._send_json({"ok": True, "paymentConfig": cfg})
             return
         elif parsed.path.startswith("/api/booking/"):
             ref = parsed.path.split("/api/booking/")[1].strip().upper()
@@ -388,6 +413,21 @@ class handler(http.server.BaseHTTPRequestHandler):
                 "items": items if items else [f"{court_val} ({display_time})"],
                 "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
             }
+            # Deduplicate identical rapid double-click booking submissions
+            dup_existing = next((
+                b for b in db["bookings"]
+                if b.get("ref") == new_booking["ref"] or (
+                    b.get("court") == new_booking["court"]
+                    and b.get("time") == new_booking["time"]
+                    and b.get("transactionRef") == new_booking["transactionRef"]
+                    and new_booking["transactionRef"] not in ("", "N/A")
+                )
+            ), None)
+            if dup_existing and dup_existing.get("ref") != new_booking["ref"]:
+                db["sales"] = db.get("salesLedger", [])
+                self._send_json({"ok": True, "ref": dup_existing["ref"], "booking": dup_existing, "deduplicated": True, "state": db})
+                return
+
             deduct_inventory_for_items(db, items)
 
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != new_booking["ref"]]
@@ -913,8 +953,14 @@ class handler(http.server.BaseHTTPRequestHandler):
 
         elif parsed.path == "/api/reset":
             keep_pw = db.get("adminPassword", "")
+            keep_sc = db.get("siteConfig")
+            keep_pc = db.get("paymentConfig")
             db = json.loads(json.dumps(DEFAULT_DB))
             db["adminPassword"] = keep_pw
+            if isinstance(keep_sc, dict):
+                db["siteConfig"] = keep_sc
+            if isinstance(keep_pc, dict):
+                db["paymentConfig"] = keep_pc
             save_db(db)
             public_state = {k: v for k, v in db.items() if k != "adminPassword"}
             public_state["sales"] = []

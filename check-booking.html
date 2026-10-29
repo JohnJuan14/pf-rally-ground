@@ -2391,7 +2391,9 @@
       });
     }
 
+    let _isSubmittingReservationFinal = false;
     async function submitReservationFinal() {
+      if (_isSubmittingReservationFinal) return;
       // If Guest arrived via Cart Checkout (not Drawer), use submitManualPaymentConfirmation if available and pendingOrderData is null
       if (!pendingOrderData && typeof cartItems !== 'undefined' && cartItems.length > 0 && typeof submitManualPaymentConfirmation === 'function') {
         return submitManualPaymentConfirmation();
@@ -2423,6 +2425,7 @@
       const generatedRef = 'PF-' + Math.floor(100000 + Math.random() * 900000);
       const payMethod = (typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode) ? String(selectedPaymentMode).toUpperCase() : 'GCASH';
 
+      _isSubmittingReservationFinal = true;
       const submitBtn = document.getElementById('modal-submit-btn');
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -2493,6 +2496,7 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>Submit Payment &amp; Confirm Booking</span>';
       }
+      _isSubmittingReservationFinal = false;
       closePaymentModal();
 
       alert(`✅ Reservation Submitted to Front Desk!
@@ -2588,6 +2592,158 @@ Your booking is now waiting in the Admin Portal for approval!`);
         bookQrImg.src = typeof pfGetOfficialQrUrl === 'function' ? pfGetOfficialQrUrl('gcash', 'qr') : 'assets/qr-gcash.png?v=20261029v9';
       }
     }
+
+    
+    let currentLoadedPassData = null;
+
+    function populateBookingCard(data) {
+      if (!data) return;
+      currentLoadedPassData = data;
+      const emptyEl = document.getElementById('booking-empty-state');
+      const cardEl = document.getElementById('booking-result-card');
+      if (emptyEl) emptyEl.classList.add('hidden');
+      if (cardEl) cardEl.classList.remove('hidden');
+
+      const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      setTxt('res-ref', data.ref || '—');
+      setTxt('res-name', data.name || data.customerName || '—');
+      setTxt('res-phone', data.phone || data.customerPhone || '—');
+      const courtEl = document.getElementById('res-court');
+      if (courtEl) {
+        courtEl.innerHTML = typeof formatBookingItemsBulletHtml === 'function'
+          ? formatBookingItemsBulletHtml(data)
+          : (data.court || '—');
+      }
+      setTxt('res-time', data.time || (data.date ? `${data.date}` : '—'));
+      setTxt('res-paymethod', data.paymentMethod || data.paymentMode || 'GCash');
+      setTxt('res-payref', data.transactionRef || 'N/A');
+      const amt = Number(data.total || 0);
+      setTxt('res-total', '₱' + amt.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      setTxt('res-status-badge', data.status || 'PENDING VERIFICATION');
+      const gateQr = document.getElementById('res-gate-qr');
+      if (gateQr && data.ref) {
+        gateQr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(data.ref);
+      }
+    }
+
+    async function lookupBooking() {
+      const inputEl = document.getElementById('lookup-ref');
+      const rawVal = (inputEl ? inputEl.value : '').trim();
+      if (typeof pfValidateField === 'function') {
+        const check = pfValidateField('lookup', rawVal, true);
+        if (!check.valid) {
+          if (typeof showFieldError === 'function') showFieldError('lookup-ref', check.error);
+          return;
+        }
+      } else if (!rawVal) {
+        return;
+      }
+      if (typeof clearFieldError === 'function') clearFieldError('lookup-ref');
+      const refInput = rawVal.toUpperCase();
+
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          const state = await res.json();
+          const match = (state.bookings || []).find(b =>
+            (b.ref && String(b.ref).toUpperCase() === refInput) ||
+            (b.transactionRef && String(b.transactionRef).toUpperCase().includes(refInput)) ||
+            (b.name && String(b.name).toUpperCase().includes(refInput))
+          );
+          if (match) {
+            populateBookingCard(match);
+            return;
+          }
+        }
+      } catch (e) {}
+
+      const stored = localStorage.getItem('booking_' + refInput);
+      if (stored) {
+        try {
+          populateBookingCard(JSON.parse(stored));
+          return;
+        } catch (e) {}
+      }
+      const allLocal = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      const localMatch = allLocal.find(b =>
+        (b.ref && String(b.ref).toUpperCase() === refInput) ||
+        (b.transactionRef && String(b.transactionRef).toUpperCase().includes(refInput)) ||
+        (b.name && String(b.name).toUpperCase().includes(refInput))
+      );
+      if (localMatch) {
+        populateBookingCard(localMatch);
+        return;
+      }
+
+      if (typeof showFieldError === 'function') {
+        showFieldError('lookup-ref', 'No booking found matching "' + rawVal + '". Please check your Booking ID or Reference Number.');
+      } else {
+        const errEl = document.getElementById('lookup-ref-error');
+        if (errEl) {
+          errEl.textContent = 'No booking found matching "' + rawVal + '". Please check your Booking ID or Reference Number.';
+          errEl.classList.remove('hidden');
+        }
+      }
+    }
+
+    function downloadCalendarInvite() {
+      const b = currentLoadedPassData || JSON.parse(localStorage.getItem('latest_booking') || 'null');
+      const ref = (b && b.ref) || document.getElementById('res-ref')?.textContent || 'PF-BOOKING';
+      const court = (b && b.court) || 'Court 01';
+      const timeStr = (b && b.time) || 'Scheduled Slot';
+      const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//P&F Rally Ground//Pickleball Club//EN',
+        'BEGIN:VEVENT',
+        'SUMMARY:P&F Rally Ground Pickleball (' + court + ' - ' + ref + ')',
+        'LOCATION:Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay',
+        'DESCRIPTION:Official Match Pass Reference: ' + ref + ' | Slot: ' + timeStr,
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = ref + '-match-pass.ics';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const qRef = (params.get('ref') || '').trim();
+      const inp = document.getElementById('lookup-ref');
+      if (qRef && inp) {
+        inp.value = qRef;
+        await lookupBooking();
+        return;
+      }
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          const state = await res.json();
+          if (state.bookings && state.bookings.length > 0) {
+            populateBookingCard(state.bookings[0]);
+            if (inp) inp.value = state.bookings[0].ref || '';
+            return;
+          }
+        }
+      } catch (e) {}
+      const latest = localStorage.getItem('latest_booking');
+      if (latest) {
+        try {
+          const parsed = JSON.parse(latest);
+          populateBookingCard(parsed);
+          if (inp && parsed.ref) inp.value = parsed.ref;
+        } catch (e) {}
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       syncAdminPortalQr();

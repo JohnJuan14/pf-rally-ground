@@ -504,6 +504,20 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             deduct_inventory_for_items(db, items)
 
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != new_booking["ref"]]
+            # Prevent rapid double-click duplicate booking for same court + time + transactionRef
+            dup_existing = next(
+                (b for b in db["bookings"]
+                 if b.get("court") == new_booking["court"]
+                 and b.get("time") == new_booking["time"]
+                 and b.get("status") != "DECLINED"
+                 and (b.get("ref") == new_booking["ref"] or (new_booking["transactionRef"] and b.get("transactionRef") == new_booking["transactionRef"]))),
+                None
+            )
+            if dup_existing:
+                db["sales"] = db.get("salesLedger", [])
+                self._send_json({"ok": True, "ref": dup_existing["ref"], "booking": dup_existing, "state": db, "deduplicated": True})
+                return
+
             db["bookings"].insert(0, new_booking)
 
             if new_booking["status"] == "CONFIRMED":
@@ -1146,6 +1160,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             return
         elif parsed.path == "/api/reset":
             keep_pw = db.get("adminPassword", "")
+            keep_site = db.get("siteConfig", dict(DEFAULT_DB["siteConfig"]))
+            keep_pay = db.get("paymentConfig", dict(DEFAULT_DB["paymentConfig"]))
             db = {
                 "bookings": [],
                 "blocks": [],
@@ -1156,6 +1172,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 "announcements": [],
                 "securityLog": [],
                 "adminPassword": keep_pw,
+                "siteConfig": keep_site,
+                "paymentConfig": keep_pay,
                 "gmailConfig": {
                     "adminEmail": "",
                     "appPassword": "",
@@ -1172,14 +1190,37 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
 
         self._send_json({"ok": False, "error": "Unknown endpoint"}, status=404)
 
+    def log_message(self, format, *args):
+        try:
+            super().log_message(format, *args)
+        except Exception:
+            pass
+
+    def do_OPTIONS(self):
+        try:
+            self.send_response(200)
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            self.end_headers()
+        except Exception:
+            pass
+
     def _send_json(self, obj, status=200):
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(json.dumps(obj).encode("utf-8"))
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            self.end_headers()
+            self.wfile.write(json.dumps(obj).encode("utf-8"))
+        except Exception:
+            pass
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
+    daemon_threads = True
 
 def run_server(port, directory):
     handler = lambda *args, **kwargs: UnifiedHandler(*args, directory=directory, **kwargs)
@@ -1187,7 +1228,28 @@ def run_server(port, directory):
         print(f"Serving {directory} on port {port} with live API sync & Cybersecurity Shield...")
         httpd.serve_forever()
 
+def cleanup_existing_port_listeners(ports):
+    import subprocess
+    my_pid = os.getpid()
+    try:
+        out = subprocess.check_output("netstat -ano", shell=True, text=True, stderr=subprocess.DEVNULL)
+        pids = set()
+        for line in out.splitlines():
+            if "LISTENING" in line:
+                for pt in ports:
+                    if f":{pt} " in line:
+                        parts = line.split()
+                        if parts and parts[-1].isdigit():
+                            pid = int(parts[-1])
+                            if pid != my_pid and pid > 4:
+                                pids.add(pid)
+        for pid in pids:
+            subprocess.call(f"taskkill /F /T /PID {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
 if __name__ == "__main__":
+    cleanup_existing_port_listeners([8088, 8089])
     load_db()
     pub_port = int(os.environ.get("PORT", 8088))
     adm_port = int(os.environ.get("ADMIN_PORT", 8089))

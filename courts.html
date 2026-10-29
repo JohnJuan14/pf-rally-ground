@@ -2431,7 +2431,9 @@
       });
     }
 
+    let _isSubmittingReservationFinal = false;
     async function submitReservationFinal() {
+      if (_isSubmittingReservationFinal) return;
       // If Guest arrived via Cart Checkout (not Drawer), use submitManualPaymentConfirmation if available and pendingOrderData is null
       if (!pendingOrderData && typeof cartItems !== 'undefined' && cartItems.length > 0 && typeof submitManualPaymentConfirmation === 'function') {
         return submitManualPaymentConfirmation();
@@ -2463,6 +2465,7 @@
       const generatedRef = 'PF-' + Math.floor(100000 + Math.random() * 900000);
       const payMethod = (typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode) ? String(selectedPaymentMode).toUpperCase() : 'GCASH';
 
+      _isSubmittingReservationFinal = true;
       const submitBtn = document.getElementById('modal-submit-btn');
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -2533,6 +2536,7 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>Submit Payment &amp; Confirm Booking</span>';
       }
+      _isSubmittingReservationFinal = false;
       closePaymentModal();
 
       alert(`✅ Reservation Submitted to Front Desk!

@@ -4111,7 +4111,283 @@ function clearFieldError(fieldId) {
       }
     }
 
-        // ================= WHOLESALE-TO-RETAIL CAPITAL, INVENTORY & NET PROFIT ENGINE =================
+        
+    function closeInventoryModal() {
+      const modal = document.getElementById('inventory-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function selectPresetInventoryImage(imgPath) {
+      currentUploadedInventoryImg = imgPath;
+      const previewEl = document.getElementById('inv-img-preview');
+      const urlEl = document.getElementById('inv-img-url');
+      if (previewEl) previewEl.src = imgPath;
+      if (urlEl) urlEl.value = imgPath;
+    }
+
+    function updateInventoryPreviewFromUrl(val) {
+      if (!val || val === '(Custom Uploaded Photo)') return;
+      currentUploadedInventoryImg = val.trim();
+      const previewEl = document.getElementById('inv-img-preview');
+      if (previewEl) previewEl.src = currentUploadedInventoryImg;
+    }
+
+    function handleInventoryImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 320;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          } else {
+            if (h > maxDim) { w = Math.round(w * (maxDim / h)); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          currentUploadedInventoryImg = dataUrl;
+          const previewEl = document.getElementById('inv-img-preview');
+          const urlEl = document.getElementById('inv-img-url');
+          if (previewEl) previewEl.src = dataUrl;
+          if (urlEl) urlEl.value = '(Custom Uploaded Photo)';
+          if (typeof uploadAssetToServer === 'function') {
+            uploadAssetToServer('inv', dataUrl).then(savedUrl => {
+              if (savedUrl) {
+                currentUploadedInventoryImg = savedUrl;
+                if (urlEl && !savedUrl.startsWith('data:')) urlEl.value = savedUrl;
+              }
+            }).catch(() => {});
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function adjustInventoryStockDelta(id, delta) {
+      const prod = posCatalog.find(p => p.id === id);
+      if (!prod) return;
+      const newStock = Math.max(0, Number(prod.stock || 0) + delta);
+      try {
+        await fetch('/api/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'update_stock', id: id, stock: newStock })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    async function deleteInventoryItem(id) {
+      if (!confirm('Remove this product from inventory?')) return;
+      try {
+        await fetch('/api/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', id: id })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    // ================= POINT OF SALE (POS) REGISTER =================
+    let isSubmittingPosSale = false;
+
+    function renderPosCatalog() {
+      const grid = document.getElementById('pos-catalog-grid');
+      if (!grid) return;
+
+      if (posCatalog.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full p-8 rounded-3xl bg-brand-card border border-white/10 text-center space-y-3">
+            <span class="text-sm font-black uppercase text-white block">No Products in Inventory Yet</span>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">Add your custom drinks, balls, or paddle rentals to the Inventory first. They will appear here with their picture and live stock count.</p>
+            <button onclick="openAddInventoryModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition">
+              + Add Custom Product with Picture
+            </button>
+          </div>`;
+        return;
+      }
+
+      const filteredPos = activePosCategoryFilter === 'ALL'
+        ? posCatalog
+        : posCatalog.filter(p => p.cat === activePosCategoryFilter);
+      if (filteredPos.length === 0) {
+        grid.innerHTML = `<div class="col-span-full p-6 rounded-2xl bg-brand-card border border-white/10 text-center text-xs text-slate-400">No items in category "${activePosCategoryFilter}".</div>`;
+        return;
+      }
+      grid.innerHTML = filteredPos.map(p => {
+        const outOfStock = Number(p.stock || 0) <= 0;
+        const unitCost = getResolvedItemUnitCost(p);
+        const unitProfit = Math.max(0, Number(p.price || 0) - unitCost);
+        return `
+        <div onclick="${outOfStock ? "alert('Out of stock! Please restock in the Inventory tab.')" : `addPosItem('${p.id}')`}" class="p-3.5 rounded-2xl bg-brand-card border ${outOfStock ? 'border-brand-clay/30 opacity-60 cursor-not-allowed' : 'border-white/10 hover:border-brand-lime/40 cursor-pointer active:scale-95'} transition flex flex-col justify-between">
+          <div>
+            <div class="h-28 w-full rounded-xl overflow-hidden bg-brand-black mb-2.5 border border-white/5 relative">
+              <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${pfEscapeHtml(p.name)}" class="w-full h-full object-cover">
+              <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full ${outOfStock ? 'bg-brand-clay text-white' : 'bg-brand-black/85 text-brand-lime border border-brand-lime/30'} text-[9px] font-mono font-bold">
+                ${outOfStock ? '0 Left' : `Stock: ${p.stock}`}
+              </span>
+            </div>
+            <span class="text-[9px] font-mono uppercase text-slate-400 block">${pfEscapeHtml(p.cat)}</span>
+            <h4 class="font-bold text-white text-xs mt-0.5 leading-snug">${pfEscapeHtml(p.name)}</h4>
+          </div>
+          <div class="flex items-center justify-between mt-2">
+            <span class="text-brand-lime font-mono font-black text-sm">₱${Number(p.price).toFixed(2)}</span>
+            <span class="text-[9px] font-mono text-emerald-300">+₱${unitProfit.toFixed(0)} profit</span>
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    function addPosItem(id) {
+      const prod = posCatalog.find(p => p.id === id);
+      if (!prod) return;
+      const existing = posOrder.find(o => o.id === id);
+      const currentInCart = existing ? existing.qty : 0;
+      if (currentInCart + 1 > Number(prod.stock || 0)) {
+        alert(`Only ${prod.stock} units of "${prod.name}" available in stock!`);
+        return;
+      }
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        posOrder.push({ ...prod, qty: 1 });
+      }
+      renderPosOrder();
+    }
+
+    function renderPosOrder() {
+      const list = document.getElementById('pos-order-items');
+      const subtotalEl = document.getElementById('pos-subtotal');
+      const totalEl = document.getElementById('pos-total-due');
+      if (!list) return;
+
+      if (posOrder.length === 0) {
+        list.innerHTML = `<div class="text-center py-8 text-xs text-slate-500">Tap products on the left to add to order.</div>`;
+        if (subtotalEl) subtotalEl.textContent = '₱0.00';
+        if (totalEl) totalEl.textContent = '₱0.00';
+        return;
+      }
+
+      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
+      if (subtotalEl) subtotalEl.textContent = '₱' + total.toFixed(2);
+      if (totalEl) totalEl.textContent = '₱' + total.toFixed(2);
+
+      list.innerHTML = posOrder.map((item, idx) => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-brand-black/60 border border-white/10 text-xs">
+          <div class="truncate flex-1 pr-2">
+            <span class="font-bold text-white block truncate">${pfEscapeHtml(item.name)}</span>
+            <span class="text-[10px] text-brand-lime font-mono">₱${item.price} each</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="changePosQty(${idx}, -1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold">-</button>
+            <span class="font-mono text-white text-xs px-1">${item.qty}</span>
+            <button type="button" onclick="changePosQty(${idx}, 1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      calculatePosChange();
+    }
+
+    function changePosQty(idx, delta) {
+      const item = posOrder[idx];
+      if (!item) return;
+      const prod = posCatalog.find(p => p.id === item.id);
+      if (delta > 0 && prod && (item.qty + delta > Number(prod.stock || 0))) {
+        alert(`Cannot exceed available stock (${prod.stock} units).`);
+        return;
+      }
+      posOrder[idx].qty += delta;
+      if (posOrder[idx].qty <= 0) {
+        posOrder.splice(idx, 1);
+      }
+      renderPosOrder();
+    }
+
+    function clearPosOrder() {
+      posOrder = [];
+      renderPosOrder();
+    }
+
+    function calculatePosChange() {
+      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
+      const received = parseFloat(document.getElementById('pos-cash-received')?.value) || 0;
+      const changeEl = document.getElementById('pos-change-due');
+      if (changeEl) {
+        const change = Math.max(0, received - total);
+        changeEl.textContent = '₱' + change.toFixed(2);
+      }
+    }
+
+    async function completePosSale() {
+      if (isSubmittingPosSale) return;
+      if (posOrder.length === 0) {
+        alert('POS Order is empty!');
+        return;
+      }
+      isSubmittingPosSale = true;
+      const btn = document.getElementById('pos-complete-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Recording Sale...';
+      }
+      try {
+        const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
+        const totalCost = posOrder.reduce((acc, item) => acc + (getResolvedItemUnitCost(item) * item.qty), 0);
+        const payMode = document.getElementById('pos-payment-mode')?.value || 'CASH';
+        const ref = 'POS-' + Math.floor(1000 + Math.random() * 9000);
+
+        const desc = posOrder.map(i => `${i.qty}x ${i.name}`).join(', ');
+        const salePayload = {
+          ref: ref,
+          type: 'POS Retail',
+          desc: desc,
+          method: payMode,
+          amount: total,
+          cost: Math.round(totalCost * 100) / 100,
+          profit: Math.round((total - totalCost) * 100) / 100,
+          items: posOrder.map(i => ({
+            id: i.id,
+            name: i.name,
+            qty: i.qty,
+            price: i.price,
+            costPrice: getResolvedItemUnitCost(i)
+          }))
+        };
+
+        await fetch('/api/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(salePayload)
+        });
+
+        clearPosOrder();
+        const cashInp = document.getElementById('pos-cash-received');
+        if (cashInp) cashInp.value = '';
+        calculatePosChange();
+        await fetchAdminStateFromServer(true);
+        alert('POS Sale Completed & Stock Deducted!\nRef: ' + ref + '\nTotal: ₱' + total.toFixed(2));
+      } catch (e) {
+      } finally {
+        isSubmittingPosSale = false;
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Complete POS Sale & Deduct Stock';
+        }
+      }
+    }
+
+    // ================= WHOLESALE-TO-RETAIL CAPITAL, INVENTORY & NET PROFIT ENGINE =================
     let clubExpenses = [];
     let activeReportsPeriod = 'ALL';
 
