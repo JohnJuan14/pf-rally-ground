@@ -1526,8 +1526,7 @@ function renderPublicAnnouncementBoard() {
     const cat = ann.category || 'Club Update';
     const pillCls = catColors[cat] || catColors['Club Update'];
     const safeTitle = pfEscapeHtml(ann.title || '');
-    const safeMsg = pfEscapeHtml(ann.message || '').replace(/
-/g, '<br>');
+    const safeMsg = pfEscapeHtml(ann.message || '').replace(/\n/g, '<br>');
     const safeAuthor = pfEscapeHtml(ann.author || 'P&F Rally Ground Admin');
     const safeTime = pfEscapeHtml(ann.createdAt || 'Just now');
     const hasImg = Boolean(ann.img && String(ann.img).trim());
