@@ -1,3 +1,4 @@
+import hashlib
 # -*- coding: utf-8 -*-
 import http.server
 import json
@@ -24,7 +25,7 @@ DEFAULT_DB = {
     "categories": [],
     "announcements": [],
     "securityLog": [],
-    "adminPassword": "admin_123!",
+    "adminPassword": "",
     "gmailConfig": {
         "adminEmail": "",
         "appPassword": "",
@@ -139,7 +140,7 @@ def load_db():
         with open(DB_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
             if "adminPassword" not in data or not data["adminPassword"]:
-                data["adminPassword"] = "admin_123!"
+                data["adminPassword"] = ""
             for k in ["bookings", "blocks", "salesLedger", "inventory", "categories", "announcements", "securityLog"]:
                 if k not in data or not isinstance(data[k], list):
                     data[k] = []
@@ -415,16 +416,17 @@ class handler(http.server.BaseHTTPRequestHandler):
         elif parsed.path == "/api/auth/login":
             mode = str(body.get("mode", "password")).strip().lower()
             entered_pw = str(body.get("password", "")).strip()
-            official_keys = {
-                "PFRallyOwner#2026": "Club Owner (Key #1)",
-                "PFManager@8089": "General Manager (Key #2)",
-                "PFCourtDesk!01": "Front Desk Staff (Key #3)",
-                "PFCashierPOS#02": "POS Cashier (Key #4)",
-                "DaragaPickle#99": "Emergency Backup (Key #5)",
+            official_key_hashes = {
+                "ca1023ba604e3f989f59b853ff3de14470f8ac5d8911d59cf1d33027a8ffb05b": "Club Owner (Key #1)",
+                "b79c480a8e32c4a3259688150ea360d2d8a7062544cf9403fc16caa5ffedf959": "General Manager (Key #2)",
+                "777298d14860a3730c4faca49cbb2e0a421d033c3ebef3fc83ce56a26406c8ee": "Front Desk Staff (Key #3)",
+                "b1f1adb6f95964cd7cf5616cd52c95d4b6cea2824205071e95fecc3d30567e69": "POS Cashier (Key #4)",
+                "88a30711924a8fd5c7eecf1f0e3ca2a7ec5436a4ad887b64baea0db8331c8b44": "Emergency Backup (Key #5)"
             }
+            entered_hash = hashlib.sha256(("PF_RALLY_GROUND_v2_SALT_2026::" + entered_pw).encode("utf-8")).hexdigest()
             custom_pw = str(db.get("adminPassword", "")).strip()
-            matched_role = official_keys.get(entered_pw)
-            if not matched_role and custom_pw and custom_pw != "admin_123!" and entered_pw == custom_pw:
+            matched_role = official_key_hashes.get(entered_hash)
+            if not matched_role and custom_pw and custom_pw != "" and entered_pw == custom_pw:
                 matched_role = "Custom Owner Key"
             if not matched_role:
                 self._send_json({"ok": False, "authenticated": False, "error": "Invalid Staff/Owner Access Key"}, status=401)
@@ -910,7 +912,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             return
 
         elif parsed.path == "/api/reset":
-            keep_pw = db.get("adminPassword", "admin_123!")
+            keep_pw = db.get("adminPassword", "")
             db = json.loads(json.dumps(DEFAULT_DB))
             db["adminPassword"] = keep_pw
             save_db(db)
