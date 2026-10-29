@@ -3649,7 +3649,9 @@ function clearFieldError(fieldId) {
       if (modal) modal.classList.add('hidden');
     }
 
+    let _isAdminSubmittingReschedule = false;
     async function adminSubmitReschedule() {
+      if (_isAdminSubmittingReschedule) return;
       const ref = document.getElementById('adm-resched-ref')?.value;
       const newDate = document.getElementById('adm-resched-date')?.value;
       const newCourt = document.getElementById('adm-resched-court')?.value || 'Court 1';
@@ -3678,6 +3680,7 @@ function clearFieldError(fieldId) {
         rescheduledAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
         isReschedule: true
       });
+      _isAdminSubmittingReschedule = true;
       try {
         const res = await fetch('/api/bookings', {
           method: 'POST',
@@ -3686,6 +3689,7 @@ function clearFieldError(fieldId) {
         });
         const respData = await res.json().catch(() => ({}));
         if (res.status === 409 || (respData && respData.ok === false)) {
+          _isAdminSubmittingReschedule = false;
           if (errEl) {
             errEl.innerHTML = `❌ <b>${admEscapeHtml(respData.error || 'Schedule Already Booked Error')}</b>`;
             errEl.className = 'text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-2.5 rounded-xl block';
@@ -3693,6 +3697,7 @@ function clearFieldError(fieldId) {
           return;
         }
       } catch (e) {}
+      _isAdminSubmittingReschedule = false;
       Object.assign(b, updated);
       saveAdminState();
       renderBookingsTable();
@@ -6327,8 +6332,21 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (typeof loadAdminQrSettings === 'function') {
         loadAdminQrSettings();
       }
+      const handleAdminHashRoute = () => {
+        const h = String(window.location.hash || '').trim();
+        if (h.startsWith('#se-panel-')) {
+          switchTab('site-editor');
+          const targetEl = document.querySelector(h);
+          if (targetEl) {
+            setTimeout(() => targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+          }
+        }
+      };
+      window.addEventListener('hashchange', handleAdminHashRoute);
       switchTab('site-editor');
+      handleAdminHashRoute();
       await fetchAdminStateFromServer(false);
+      handleAdminHashRoute();
       setInterval(() => {
         fetchAdminStateFromServer(false);
       }, 3000);
@@ -7309,9 +7327,30 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       return v;
     }
 
+    function sanitizeAdminSiteConfigObject(rawCfg) {
+      const cfg = { ...DEFAULT_SITE_CONFIG, ...(rawCfg || {}) };
+      [1, 2, 3, 4].forEach(n => {
+        const k = 'court' + n + 'Name';
+        const v = String(cfg[k] || '').replace(/\ufffd/g, '•').trim();
+        if (!v || /Indoor Championship|Indoor Tournament|Covered Outdoor|Pro Training/i.test(v) || /^Court\s*0[1-4]$/i.test(v)) {
+          cfg[k] = 'Court ' + n;
+        } else {
+          cfg[k] = v;
+        }
+      });
+      if (!cfg.heroPrimaryBtn || cfg.heroPrimaryBtn === 'Book Your Court') cfg.heroPrimaryBtn = 'Reserve a court';
+      if (!cfg.heroSecondaryBtn || cfg.heroSecondaryBtn === 'View Live Schedule') cfg.heroSecondaryBtn = 'Check my booking';
+      Object.keys(cfg).forEach(k => {
+        if (typeof cfg[k] === 'string' && cfg[k].includes('\ufffd')) {
+          cfg[k] = DEFAULT_SITE_CONFIG[k] || cfg[k].replace(/\ufffd/g, '•');
+        }
+      });
+      return cfg;
+    }
+
     function loadSiteConfigIntoEditor(serverCfg, forceOverwrite = false) {
       if ((siteEditorDirty || siteEditorSaving || Date.now() < siteConfigLockUntil) && !forceOverwrite) return;
-      const cfg = { ...DEFAULT_SITE_CONFIG, ...(serverCfg || currentSiteConfig) };
+      const cfg = sanitizeAdminSiteConfigObject(serverCfg || currentSiteConfig);
       currentSiteConfig = cfg;
       try { localStorage.setItem('pf_site_config', JSON.stringify(cfg)); } catch (e) {}
 

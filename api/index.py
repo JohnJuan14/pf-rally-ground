@@ -55,8 +55,8 @@ DEFAULT_DB = {
         "heroTitleLine2": "COMPETE.",
         "heroTitleAccent": "CONNECT.",
         "heroSubtitle": "Your home court in Daraga, Albay for premier rallies, tournament-grade cushion surfaces, pro equipment rentals, and verified online booking.",
-        "heroPrimaryBtn": "Book Your Court",
-        "heroSecondaryBtn": "View Live Schedule",
+        "heroPrimaryBtn": "Reserve a court",
+        "heroSecondaryBtn": "Check my booking",
         "heroSlide1": "assets/hero-slide-1.jpg",
         "heroSlide2": "assets/hero-slide-2.jpg",
         "heroSlide3": "assets/hero-slide-3.jpg",
@@ -95,10 +95,10 @@ DEFAULT_DB = {
         "costBallSingle": 30,
         "costBallsBucket": 0,
         "costMachine": 0,
-        "court1Name": "Court 01 — Indoor Championship",
-        "court2Name": "Court 02 — Indoor Tournament",
-        "court3Name": "Court 03 — Covered Outdoor",
-        "court4Name": "Court 04 — Pro Training Court",
+        "court1Name": "Court 1",
+        "court2Name": "Court 2",
+        "court3Name": "Court 3",
+        "court4Name": "Court 4",
         "clubAddress": "Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay",
         "clubPhone": "0999 883 2346",
         "clubHours": "6:00 AM – 12:00 AM",
@@ -166,13 +166,30 @@ def save_db(data):
 
 
 
+ALL_18_SLOTS = [
+    "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
+    "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM",
+    "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM", "11:00 PM"
+]
+
 def normalize_court_num(court_str):
     m = re.search(r"court\s*0*([1-4])", str(court_str or ""), re.I) or re.search(r"\b([1-4])\b", str(court_str or ""))
     return int(m.group(1)) if m else 1
 
 def extract_slot_time(time_str):
-    m = re.search(r"(\d{1,2}:\d{2}\s*(?:AM|PM))", str(time_str or ""), re.I)
-    return m.group(1).upper() if m else ""
+    m = re.search(r"(\d{1,2}):(\d{2})\s*(AM|PM)", str(time_str or ""), re.I)
+    if not m:
+        return ""
+    return f"{int(m.group(1)):02d}:{m.group(2)} {m.group(3).upper()}"
+
+def extract_covered_slots(time_str):
+    start_slot = extract_slot_time(time_str)
+    if not start_slot or start_slot not in ALL_18_SLOTS:
+        return [start_slot] if start_slot else []
+    dur_m = re.search(r"\((\d+)\s*hr", str(time_str or ""), re.I)
+    dur = max(1, int(dur_m.group(1))) if dur_m else 1
+    idx = ALL_18_SLOTS.index(start_slot)
+    return ALL_18_SLOTS[idx:idx + dur]
 
 def extract_date_ymd(date_str, time_str):
     today_ymd = datetime.now().strftime("%Y-%m-%d")
@@ -268,7 +285,7 @@ class handler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Token")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Token")
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
         self.end_headers()
         self.wfile.write(json.dumps(obj).encode("utf-8"))
@@ -455,32 +472,33 @@ class handler(http.server.BaseHTTPRequestHandler):
             is_reschedule_req = bool(body.get("isReschedule"))
             target_cnum = normalize_court_num(new_booking["court"])
             target_ymd = extract_date_ymd(new_booking["date"], new_booking["time"])
-            target_slot = extract_slot_time(new_booking["time"])
-            if target_slot:
+            target_slots = extract_covered_slots(new_booking["time"])
+            if target_slots:
                 for b in db.get("bookings", []):
                     if b.get("status") in ("CANCELLED", "DECLINED"):
                         continue
                     b_cnum = normalize_court_num(b.get("court"))
                     b_ymd = extract_date_ymd(b.get("date"), b.get("time"))
-                    b_slot = extract_slot_time(b.get("time"))
-                    if b_cnum == target_cnum and b_ymd == target_ymd and b_slot == target_slot:
+                    b_slots = extract_covered_slots(b.get("time"))
+                    overlap = [s for s in target_slots if s in b_slots]
+                    if b_cnum == target_cnum and b_ymd == target_ymd and overlap:
+                        conflict_slot_str = overlap[0]
                         if b.get("ref") == new_booking["ref"]:
                             if is_reschedule_req:
                                 self._send_json({
                                     "ok": False,
-                                    "error": f"Schedule Already Booked Error: Court {target_cnum} at {target_slot} on {target_ymd} is already booked by your current reservation ({new_booking['ref']}). Please choose a different available date, court, or time slot."
+                                    "error": f"Schedule Already Booked Error: Court {target_cnum} at {conflict_slot_str} on {target_ymd} is already booked by your current reservation ({new_booking['ref']}). Please choose a different available date, court, or time slot."
                                 }, status=409)
                                 return
                         else:
-                            # Allow rapid double-click deduplication only if not a reschedule and same transactionRef
+                            # Allow rapid double-click deduplication only if not a reschedule and same non-empty transactionRef
                             if not is_reschedule_req and new_booking["transactionRef"] not in ("", "N/A") and b.get("transactionRef") == new_booking["transactionRef"]:
                                 continue
-                            if is_reschedule_req:
-                                self._send_json({
-                                    "ok": False,
-                                    "error": f"Schedule Already Booked Error: Court {target_cnum} at {target_slot} on {target_ymd} is already booked by another player. Please select an available date, court, or time slot."
-                                }, status=409)
-                                return
+                            self._send_json({
+                                "ok": False,
+                                "error": f"Schedule Already Booked Error: Court {target_cnum} at {conflict_slot_str} on {target_ymd} is already booked by another player. Please select an available date, court, or time slot."
+                            }, status=409)
+                            return
 
             existing_bk = next((b for b in db["bookings"] if b.get("ref") == new_booking["ref"]), None)
             if not existing_bk:

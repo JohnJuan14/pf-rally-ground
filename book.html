@@ -1527,7 +1527,7 @@
       <div class="flex-shrink-0 p-4 sm:p-5 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20 space-y-3">
         <div class="flex items-center justify-between text-xs">
           <div>
-            <span class="text-[10px] font-mono text-slate-400 block uppercase" id="drawer-summary-meta">Court 01 &bull; 1 hr session</span>
+            <span class="text-[10px] font-mono text-slate-400 block uppercase" id="drawer-summary-meta">Court 1 &bull; 1 hr session</span>
             <div class="flex items-center gap-2 mt-0.5">
               <span class="text-white font-bold" id="drawer-row-court-label">Court Hire</span>
               <span class="text-brand-lime font-mono font-bold" id="drawer-cost-court">₱400.00</span>
@@ -1568,7 +1568,7 @@
       <div class="mb-4 p-3.5 rounded-2xl bg-brand-black/90 border border-white/10 text-xs font-mono space-y-1">
         <div class="flex justify-between items-center text-slate-300">
           <span>Session / Order:</span>
-          <b class="text-white" id="modal-summary-court">Court 01 &bull; 6:00 AM</b>
+          <b class="text-white" id="modal-summary-court">Court 1 &bull; 6:00 AM</b>
         </div>
         <div class="flex justify-between items-center text-slate-300">
           <span>Amount Due:</span>
@@ -1833,7 +1833,7 @@
   </div>
 
   
-  <script src="app.js?v=20261029v12"></script>
+  <script src="app.js?v=20261029v13"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>
@@ -2172,11 +2172,27 @@
     }
 
     // 12. Submit Reservation
+    let _isSubmittingBookReservation = false;
     async function submitReservation() {
+      if (_isSubmittingBookReservation) return;
       if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(selectedDateValue, selectedStartSlot)) {
         pfShowExpiredSlotBanner('book-expired-time-error', selectedStartSlot, selectedDateLabel || selectedDateValue);
         alert(`⚠️ Expired Time Slot: ${selectedStartSlot} on ${selectedDateLabel || selectedDateValue} has already passed. Please choose an upcoming time slot.`);
         return;
+      }
+      if (typeof pfCheckRescheduleConflict === 'function') {
+        const conf = pfCheckRescheduleConflict(selectedDateValue, selectedCourt, selectedStartSlot, selectedDuration || 1, '');
+        if (!conf.ok) {
+          const errBanner = document.getElementById('book-expired-time-error');
+          if (errBanner) {
+            errBanner.innerHTML = conf.html;
+            errBanner.classList.remove('hidden');
+            errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } else {
+            alert(conf.html.replace(/<[^>]+>/g, ''));
+          }
+          return;
+        }
       }
       const name = (document.getElementById("book-cust-name")?.value || "").trim();
       const phone = (document.getElementById("book-cust-phone")?.value || "").trim();
@@ -2193,18 +2209,24 @@
         return;
       }
 
-      if (!name) {
+      if (!name || name.length < 2) {
         alert("Please enter your full name.");
         document.getElementById("book-cust-name")?.focus();
         return;
       }
-      if (!phone || phone.length < 10) {
-        alert("Please enter a valid 11-digit mobile number.");
+      const phoneDigits = phone.replace(/[^0-9]/g, '');
+      if (phoneDigits.length < 10) {
+        alert("Please enter a valid 11-digit mobile number (e.g. 0917 123 4567).");
         document.getElementById("book-cust-phone")?.focus();
         return;
       }
-      if (!ref) {
-        alert("Please enter your Payment Reference Number.");
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Please enter a valid email address or leave the optional email field blank.");
+        document.getElementById("book-cust-email")?.focus();
+        return;
+      }
+      if (!ref || ref.length < 4) {
+        alert("Please enter a valid Payment Reference Number.");
         document.getElementById("book-payment-ref")?.focus();
         return;
       }
@@ -2237,7 +2259,7 @@
         customerPhone: phone,
         email: email || "guest@pfrally.ph",
         customerEmail: email || "guest@pfrally.ph",
-        court: `Court 0${selectedCourt}`,
+        court: `Court ${selectedCourt}`,
         date: selectedDateValue,
         time: `${selectedDateValue} • ${selectedStartSlot} (${selectedDuration} hr)`,
         players: selectedPlayerCount,
@@ -2253,8 +2275,17 @@
         createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
       };
 
-      // 1. Send to server (/api/bookings) so Admin Portal can Approve or Decline
-      const endpoints = ["/api/bookings", "http://localhost:8088/api/bookings", "http://localhost:8089/api/bookings"];
+      _isSubmittingBookReservation = true;
+      const submitBtn = document.getElementById("btn-submit-booking");
+      const origBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Submitting Reservation...</span>';
+      }
+
+      // 1. Send to server (/api/bookings) and verify no 409 schedule conflict
+      let serverConflictErr = null;
+      const endpoints = ["/api/bookings", "http://localhost:8088/api/bookings", "http://127.0.0.1:8089/api/bookings", "http://localhost:8089/api/bookings"];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -2262,9 +2293,32 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(bookingPayload)
           });
+          const data = await res.json().catch(() => ({}));
+          if (res.status === 409 || (data && data.ok === false)) {
+            serverConflictErr = data.error || "This court and time slot is already booked. Please choose another available slot.";
+            break;
+          }
           if (res.ok) break;
         } catch (err) {}
       }
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origBtnHtml;
+      }
+      _isSubmittingBookReservation = false;
+
+      if (serverConflictErr) {
+        const errBanner = document.getElementById('book-expired-time-error');
+        if (errBanner) {
+          errBanner.innerHTML = `❌ <b>${serverConflictErr}</b>`;
+          errBanner.classList.remove('hidden');
+          errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        alert('❌ ' + serverConflictErr);
+        return;
+      }
+
       localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
       localStorage.setItem('booking_' + newRef, JSON.stringify(bookingPayload));
 
@@ -2337,7 +2391,7 @@
 
       const orderItems = (pendingOrderData && Array.isArray(pendingOrderData.items) && pendingOrderData.items.length > 0)
         ? pendingOrderData.items
-        : [`Court 0${courtNum} (${durationHrs} hr • ${startSlot})`];
+        : [`Court ${courtNum} (${durationHrs} hr • ${startSlot})`];
 
       const bookingPayload = {
         ref: generatedRef,
@@ -2347,7 +2401,7 @@
         customerPhone: phone,
         email: email,
         customerEmail: email,
-        court: `Court 0${courtNum}`,
+        court: `Court ${courtNum}`,
         date: (DRAWER_STATE && DRAWER_STATE.selectedDateVal) || dateStr,
         time: `${dateStr} • ${startSlot} (${durationHrs} hr)`,
         players: (DRAWER_STATE && DRAWER_STATE.players) || 2,
@@ -2361,19 +2415,10 @@
         createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
       };
 
-      // Always store locally first so Check Booking Pass works immediately
-      try {
-        let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
-        allBookings = allBookings.filter(b => b.ref !== bookingPayload.ref);
-        allBookings.unshift(bookingPayload);
-        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
-        localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
-        localStorage.setItem('booking_' + bookingPayload.ref, JSON.stringify(bookingPayload));
-      } catch (e) {}
-
       let syncedToServer = false;
+      let serverConflictErr = null;
       let finalRef = generatedRef;
-      const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://localhost:8089/api/bookings'];
+      const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://127.0.0.1:8089/api/bookings', 'http://localhost:8089/api/bookings'];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -2381,16 +2426,19 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bookingPayload)
           });
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.ok) {
-              syncedToServer = true;
-              finalRef = data.ref || (data.booking && data.booking.ref) || generatedRef;
-              if (data.state && Array.isArray(data.state.bookings)) {
-                localStorage.setItem('pf_all_bookings', JSON.stringify(data.state.bookings));
-              }
-              break;
+          const data = await res.json().catch(() => ({}));
+          if (res.status === 409 || (data && data.ok === false)) {
+            serverConflictErr = data.error || 'This court and time slot is already booked. Please choose another available slot.';
+            break;
+          }
+          if (res.ok && data && data.ok) {
+            syncedToServer = true;
+            finalRef = data.ref || (data.booking && data.booking.ref) || generatedRef;
+            bookingPayload.ref = finalRef;
+            if (data.state && Array.isArray(data.state.bookings)) {
+              localStorage.setItem('pf_all_bookings', JSON.stringify(data.state.bookings));
             }
+            break;
           }
         } catch (err) {}
       }
@@ -2400,13 +2448,33 @@
         submitBtn.innerHTML = '<span>Submit Payment &amp; Confirm Booking</span>';
       }
       _isSubmittingReservationFinal = false;
+
+      if (serverConflictErr) {
+        if (refErr) {
+          refErr.textContent = '❌ ' + serverConflictErr;
+          refErr.classList.remove('hidden');
+        } else {
+          alert('❌ ' + serverConflictErr);
+        }
+        return;
+      }
+
+      try {
+        let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+        allBookings = allBookings.filter(b => b.ref !== bookingPayload.ref);
+        allBookings.unshift(bookingPayload);
+        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+        localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
+        localStorage.setItem('booking_' + bookingPayload.ref, JSON.stringify(bookingPayload));
+      } catch (e) {}
+
       closePaymentModal();
 
       alert(`✅ Reservation Submitted to Front Desk!
 
 Booking ID: ${finalRef}
 Payment Ref #: ${refVal}
-Court: Court 0${courtNum}
+Court: Court ${courtNum}
 Date & Time: ${dateStr} • ${startSlot} (${durationHrs} hr)
 Total Amount: ₱${numericTotal.toFixed(2)}
 Status: PENDING ADMIN APPROVAL
@@ -2526,6 +2594,26 @@ Your booking is now waiting in the Admin Portal for approval!`);
     function handleDrawerProceed() {
       if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot)) {
         pfShowExpiredSlotBanner('drawer-expired-time-error', DRAWER_STATE.selectedStartSlot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
+        return;
+      }
+      if (typeof pfCheckRescheduleConflict === 'function') {
+        const conf = pfCheckRescheduleConflict(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, DRAWER_STATE.selectedStartSlot, DRAWER_STATE.selectedDuration || 1, '');
+        if (!conf.ok) {
+          const errBanner = document.getElementById('drawer-expired-time-error');
+          if (errBanner) {
+            errBanner.innerHTML = conf.html;
+            errBanner.classList.remove('hidden');
+            errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } else {
+            alert(conf.html.replace(/<[^>]+>/g, ''));
+          }
+          return;
+        }
+      }
+      const rawEmailVal = (document.getElementById('cust-email')?.value || '').trim();
+      if (rawEmailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmailVal)) {
+        alert('Please enter a valid email address (e.g. name@example.com) or leave the optional email field blank.');
+        document.getElementById('cust-email')?.focus();
         return;
       }
       const name = document.getElementById('cust-name')?.value.trim();

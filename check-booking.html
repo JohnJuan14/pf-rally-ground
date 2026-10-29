@@ -1392,7 +1392,7 @@
       <div class="flex-shrink-0 p-4 sm:p-5 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20 space-y-3">
         <div class="flex items-center justify-between text-xs">
           <div>
-            <span class="text-[10px] font-mono text-slate-400 block uppercase" id="drawer-summary-meta">Court 01 &bull; 1 hr session</span>
+            <span class="text-[10px] font-mono text-slate-400 block uppercase" id="drawer-summary-meta">Court 1 &bull; 1 hr session</span>
             <div class="flex items-center gap-2 mt-0.5">
               <span class="text-white font-bold" id="drawer-row-court-label">Court Hire</span>
               <span class="text-brand-lime font-mono font-bold" id="drawer-cost-court">₱400.00</span>
@@ -1433,7 +1433,7 @@
       <div class="mb-4 p-3.5 rounded-2xl bg-brand-black/90 border border-white/10 text-xs font-mono space-y-1">
         <div class="flex justify-between items-center text-slate-300">
           <span>Session / Order:</span>
-          <b class="text-white" id="modal-summary-court">Court 01 &bull; 6:00 AM</b>
+          <b class="text-white" id="modal-summary-court">Court 1 &bull; 6:00 AM</b>
         </div>
         <div class="flex justify-between items-center text-slate-300">
           <span>Amount Due:</span>
@@ -1733,7 +1733,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261029v12"></script>
+  <script src="app.js?v=20261029v13"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -1937,7 +1937,7 @@
         ${courtsToShow.map(c => `
           <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center text-white font-black">
             <span class="sm:hidden">${isSingleCourt ? 'Court 0' + c : 'C' + c}</span>
-            <span class="hidden sm:inline">Court 0${c}</span>
+            <span class="hidden sm:inline">Court ${c}</span>
           </th>
         `).join('')}
       `;
@@ -2238,7 +2238,7 @@
       const total = courtCost + playersCost + gearCost;
 
       const meta = document.getElementById('drawer-summary-meta');
-      if (meta) meta.textContent = `Court 0${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
+      if (meta) meta.textContent = `Court ${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
 
       const courtLbl = document.getElementById('drawer-row-court-label');
       if (courtLbl) courtLbl.textContent = `Court Hire (${hours} hr @ ₱${hourlyRate}/hr)`;
@@ -2296,6 +2296,26 @@
         pfShowExpiredSlotBanner('drawer-expired-time-error', DRAWER_STATE.selectedStartSlot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
         return;
       }
+      if (typeof pfCheckRescheduleConflict === 'function') {
+        const conf = pfCheckRescheduleConflict(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, DRAWER_STATE.selectedStartSlot, DRAWER_STATE.selectedDuration || 1, '');
+        if (!conf.ok) {
+          const errBanner = document.getElementById('drawer-expired-time-error');
+          if (errBanner) {
+            errBanner.innerHTML = conf.html;
+            errBanner.classList.remove('hidden');
+            errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } else {
+            alert(conf.html.replace(/<[^>]+>/g, ''));
+          }
+          return;
+        }
+      }
+      const rawEmailVal = (document.getElementById('cust-email')?.value || '').trim();
+      if (rawEmailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmailVal)) {
+        alert('Please enter a valid email address (e.g. name@example.com) or leave the optional email field blank.');
+        document.getElementById('cust-email')?.focus();
+        return;
+      }
       const name = document.getElementById('cust-name')?.value.trim();
       const phone = document.getElementById('cust-phone')?.value.trim();
 
@@ -2347,7 +2367,7 @@
       const extraPlayers = Math.max(0, DRAWER_STATE.players - incPl);
       const extraCost = extraPlayers * extFee;
       let gearTotal = 0.0;
-      const orderItems = [`Court 0${DRAWER_STATE.selectedCourt} (${hours} hr @ ₱${hourlyRate}/hr)`];
+      const orderItems = [`Court ${DRAWER_STATE.selectedCourt} (${hours} hr @ ₱${hourlyRate}/hr)`];
       if (extraCost > 0) orderItems.push(`Extra Players (${extraPlayers})`);
 
       if (document.getElementById('rent-paddle-std')?.checked) { gearTotal += pStd; orderItems.push(`Standard paddle (₱${pStd})`); }
@@ -2361,7 +2381,7 @@
 
       const summaryCourt = document.getElementById('modal-summary-court');
       if (summaryCourt) {
-        summaryCourt.textContent = `Court 0${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedDateLabel.split(',')[0]} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
+        summaryCourt.textContent = `Court ${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedDateLabel.split(',')[0]} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
       }
       const modalName = document.getElementById('modal-cust-name');
       const modalPhone = document.getElementById('modal-cust-phone');
@@ -2372,7 +2392,7 @@
         name: name,
         phone: phone,
         email: document.getElementById('cust-email')?.value.trim() || 'guest@pfrally.ph',
-        court: `Court 0${DRAWER_STATE.selectedCourt}`,
+        court: `Court ${DRAWER_STATE.selectedCourt}`,
         time: `${DRAWER_STATE.selectedStartSlot} (${hours} hr)`,
         date: DRAWER_STATE.selectedDateVal,
         total: total,
@@ -2502,7 +2522,7 @@
 
       const orderItems = (pendingOrderData && Array.isArray(pendingOrderData.items) && pendingOrderData.items.length > 0)
         ? pendingOrderData.items
-        : [`Court 0${courtNum} (${durationHrs} hr • ${startSlot})`];
+        : [`Court ${courtNum} (${durationHrs} hr • ${startSlot})`];
 
       const bookingPayload = {
         ref: generatedRef,
@@ -2512,7 +2532,7 @@
         customerPhone: phone,
         email: email,
         customerEmail: email,
-        court: `Court 0${courtNum}`,
+        court: `Court ${courtNum}`,
         date: (DRAWER_STATE && DRAWER_STATE.selectedDateVal) || dateStr,
         time: `${dateStr} • ${startSlot} (${durationHrs} hr)`,
         players: (DRAWER_STATE && DRAWER_STATE.players) || 2,
@@ -2526,19 +2546,10 @@
         createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
       };
 
-      // Always store locally first so Check Booking Pass works immediately
-      try {
-        let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
-        allBookings = allBookings.filter(b => b.ref !== bookingPayload.ref);
-        allBookings.unshift(bookingPayload);
-        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
-        localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
-        localStorage.setItem('booking_' + bookingPayload.ref, JSON.stringify(bookingPayload));
-      } catch (e) {}
-
       let syncedToServer = false;
+      let serverConflictErr = null;
       let finalRef = generatedRef;
-      const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://localhost:8089/api/bookings'];
+      const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://127.0.0.1:8089/api/bookings', 'http://localhost:8089/api/bookings'];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -2546,16 +2557,19 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bookingPayload)
           });
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.ok) {
-              syncedToServer = true;
-              finalRef = data.ref || (data.booking && data.booking.ref) || generatedRef;
-              if (data.state && Array.isArray(data.state.bookings)) {
-                localStorage.setItem('pf_all_bookings', JSON.stringify(data.state.bookings));
-              }
-              break;
+          const data = await res.json().catch(() => ({}));
+          if (res.status === 409 || (data && data.ok === false)) {
+            serverConflictErr = data.error || 'This court and time slot is already booked. Please choose another available slot.';
+            break;
+          }
+          if (res.ok && data && data.ok) {
+            syncedToServer = true;
+            finalRef = data.ref || (data.booking && data.booking.ref) || generatedRef;
+            bookingPayload.ref = finalRef;
+            if (data.state && Array.isArray(data.state.bookings)) {
+              localStorage.setItem('pf_all_bookings', JSON.stringify(data.state.bookings));
             }
+            break;
           }
         } catch (err) {}
       }
@@ -2565,13 +2579,33 @@
         submitBtn.innerHTML = '<span>Submit Payment &amp; Confirm Booking</span>';
       }
       _isSubmittingReservationFinal = false;
+
+      if (serverConflictErr) {
+        if (refErr) {
+          refErr.textContent = '❌ ' + serverConflictErr;
+          refErr.classList.remove('hidden');
+        } else {
+          alert('❌ ' + serverConflictErr);
+        }
+        return;
+      }
+
+      try {
+        let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+        allBookings = allBookings.filter(b => b.ref !== bookingPayload.ref);
+        allBookings.unshift(bookingPayload);
+        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+        localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
+        localStorage.setItem('booking_' + bookingPayload.ref, JSON.stringify(bookingPayload));
+      } catch (e) {}
+
       closePaymentModal();
 
       alert(`✅ Reservation Submitted to Front Desk!
 
 Booking ID: ${finalRef}
 Payment Ref #: ${refVal}
-Court: Court 0${courtNum}
+Court: Court ${courtNum}
 Date & Time: ${dateStr} • ${startSlot} (${durationHrs} hr)
 Total Amount: ₱${numericTotal.toFixed(2)}
 Status: PENDING ADMIN APPROVAL
@@ -2761,7 +2795,7 @@ Your booking is now waiting in the Admin Portal for approval!`);
     function downloadCalendarInvite() {
       const b = currentLoadedPassData || JSON.parse(localStorage.getItem('latest_booking') || 'null');
       const ref = (b && b.ref) || document.getElementById('res-ref')?.textContent || 'PF-BOOKING';
-      const court = (b && b.court) || 'Court 01';
+      const court = (b && b.court) || 'Court 1';
       const timeStr = (b && b.time) || 'Scheduled Slot';
       const icsContent = [
         'BEGIN:VCALENDAR',

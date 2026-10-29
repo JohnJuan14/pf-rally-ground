@@ -206,7 +206,7 @@ const courtNames = {
 // ================= REAL-TIME SERVER SYNC =================
 
 async function syncStateFromServer() {
-  const endpoints = ['/api/state', 'http://localhost:8088/api/state', 'http://localhost:8089/api/state'];
+  const endpoints = ['/api/state', 'http://localhost:8088/api/state', 'http://127.0.0.1:8089/api/state', 'http://localhost:8089/api/state'];
   for (const url of endpoints) {
     try {
       const res = await fetch(url, { cache: 'no-store' });
@@ -2147,6 +2147,24 @@ function applySiteConfig(incomingCfg) {
   const pBucket = Number(cfg.priceBallsBucket ?? 100);
   const pMach = Number(cfg.priceMachine ?? 100);
 
+  // 0. Sanitize any legacy court names or corrupted replacement chars
+  const sanitizeCourtLabelEarly = (val, num) => {
+    const s = String(val || '').replace(/\ufffd/g, '•').trim();
+    if (!s || /Indoor Championship|Indoor Tournament|Covered Outdoor|Pro Training/i.test(s) || /^Court\s*0[1-4]$/i.test(s)) {
+      return 'Court ' + num;
+    }
+    return s;
+  };
+  cfg.court1Name = sanitizeCourtLabelEarly(cfg.court1Name, 1);
+  cfg.court2Name = sanitizeCourtLabelEarly(cfg.court2Name, 2);
+  cfg.court3Name = sanitizeCourtLabelEarly(cfg.court3Name, 3);
+  cfg.court4Name = sanitizeCourtLabelEarly(cfg.court4Name, 4);
+  ['clubSubtitle', 'heroTagline', 'liveBannerText', 'openPlayScheduleText', 'clubHours', 'clubAddress'].forEach(k => {
+    if (typeof cfg[k] === 'string' && cfg[k].includes('\ufffd')) {
+      cfg[k] = DEFAULT_PF_SITE_CONFIG[k] || cfg[k].replace(/\ufffd/g, '•');
+    }
+  });
+
   // 1. Update courtNames map
   if (cfg.court1Name) courtNames[1] = cfg.court1Name;
   if (cfg.court2Name) courtNames[2] = cfg.court2Name;
@@ -3174,7 +3192,9 @@ async function pfToggleRescheduleForm(forceOpen = null) {
   }
 }
 
+let _pfIsSubmittingReschedule = false;
 async function pfSubmitBookingReschedule() {
+  if (_pfIsSubmittingReschedule) return;
   const refEl = document.getElementById('res-ref');
   const refId = refEl ? refEl.textContent.trim() : '';
   if (!refId || refId === '—') {
@@ -3241,8 +3261,15 @@ async function pfSubmitBookingReschedule() {
     });
   }
 
+  _pfIsSubmittingReschedule = true;
+  const saveBtn = document.querySelector('#reschedule-booking-form-panel button[onclick*="pfSubmitBookingReschedule"]');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = '0.65';
+  }
+
   // Send to server and verify no 409 conflict from backend
-  const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://localhost:8089/api/bookings'];
+  const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://127.0.0.1:8089/api/bookings', 'http://localhost:8089/api/bookings'];
   let serverRejected = null;
   for (const url of endpoints) {
     try {
@@ -3266,6 +3293,12 @@ async function pfSubmitBookingReschedule() {
       }
     } catch (e) {}
   }
+
+  if (saveBtn) {
+    saveBtn.disabled = false;
+    saveBtn.style.opacity = '1';
+  }
+  _pfIsSubmittingReschedule = false;
 
   if (serverRejected) {
     pfShowRescheduleErrorBanner(msgEl, `❌ <b>${pfEscapeHtml(serverRejected)}</b>`);
