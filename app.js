@@ -229,6 +229,12 @@ async function syncStateFromServer() {
           if (typeof renderLiveScheduleMatrix === 'function') {
             renderLiveScheduleMatrix();
           }
+          if (typeof renderDrawerSlots === 'function') {
+            try { renderDrawerSlots(); } catch (e) {}
+          }
+          if (typeof renderTimeChips === 'function') {
+            try { renderTimeChips(); } catch (e) {}
+          }
           if (Array.isArray(data.announcements)) {
             sharedServerState.announcements = data.announcements;
             localStorage.setItem('pf_announcements', JSON.stringify(data.announcements));
@@ -1917,3 +1923,107 @@ window.addEventListener('focus', () => {
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && typeof syncStateFromServer === 'function') syncStateFromServer();
 });
+
+
+// ================= ADMIN-SYNCED COURT SLOT STATUS ENGINE =================
+function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings) {
+  const cNum = Number(courtNum || 1);
+  const courtZero = 'Court 0' + cNum;
+  const courtPlain = 'Court ' + cNum;
+  const now = new Date();
+  const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const targetDate = (dateYMD && dateYMD !== 'Today') ? String(dateYMD) : todayYMD;
+
+  // 1. Check active bookings first
+  const bookingsArr = Array.isArray(liveBookings)
+    ? liveBookings
+    : ((window.sharedServerState && Array.isArray(window.sharedServerState.bookings)) ? window.sharedServerState.bookings : []);
+  const bookedMatch = bookingsArr.find(b => {
+    if (!b || b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
+    const bCourt = String(b.court || '');
+    const matchesCourt = bCourt.includes(courtZero) || bCourt.includes(courtPlain) || bCourt.trim() === String(cNum);
+    if (!matchesCourt) return false;
+    const bTime = String(b.time || '');
+    if (!bTime.includes(slotStr)) return false;
+    if (b.date) {
+      if (b.date === targetDate) return true;
+      if (b.date === 'Today' && targetDate === todayYMD) return true;
+      return false;
+    }
+    if (bTime.includes(targetDate)) return true;
+    return false;
+  });
+  if (bookedMatch) {
+    return { status: 'BOOKED', booking: bookedMatch, reason: bookedMatch.name || 'Booked' };
+  }
+
+  // 2. Check Admin Calendar Overrides (blocks)
+  const blocksArr = Array.isArray(liveBlocks)
+    ? liveBlocks
+    : ((window.sharedServerState && Array.isArray(window.sharedServerState.blocks)) ? window.sharedServerState.blocks : []);
+
+  // Pass 2A: Look for specific slot + specific court match first (latest wins)
+  let matchedBlock = null;
+  for (let i = blocksArr.length - 1; i >= 0; i--) {
+    const bl = blocksArr[i];
+    if (!bl || !bl.court) continue;
+    const blCourt = String(bl.court).trim();
+    const isSpecificCourt = blCourt.includes(courtZero) || blCourt.includes(courtPlain) || blCourt === String(cNum);
+    const isAllCourts = blCourt.toUpperCase() === 'ALL' || blCourt.toLowerCase().includes('all');
+    if (!isSpecificCourt && !isAllCourts) continue;
+
+    const blDate = String(bl.date || 'Today').trim();
+    const matchesDate = (blDate === targetDate) || (blDate === 'Today' && targetDate === todayYMD) || (blDate.toUpperCase() === 'ALL');
+    if (!matchesDate) continue;
+
+    const blHours = String(bl.hours || '').trim();
+    const isSpecificHour = blHours.includes(slotStr);
+    const isAllHours = blHours.toUpperCase() === 'ALL' || blHours.toLowerCase().includes('all day');
+    if (!isSpecificHour && !isAllHours) continue;
+
+    // Prefer exact court+hour match over ALL wildcard
+    if (isSpecificCourt && isSpecificHour) {
+      matchedBlock = bl;
+      break;
+    }
+    if (!matchedBlock) {
+      matchedBlock = bl;
+    }
+  }
+
+  if (matchedBlock) {
+    const st = String(matchedBlock.statusType || 'CLOSED').toUpperCase();
+    if (st === 'OPEN' || st === 'AVAILABLE') {
+      return { status: 'AVAILABLE', override: matchedBlock, reason: matchedBlock.reason || 'Open Court' };
+    }
+    if (st === 'OPEN_PLAY') {
+      return { status: 'OPEN_PLAY', override: matchedBlock, reason: matchedBlock.reason || 'Open Play' };
+    }
+    return { status: 'CLOSED', override: matchedBlock, reason: matchedBlock.reason || 'Closed' };
+  }
+
+  // 3. Default schedule fallback (Open Play hours by day of week)
+  const openPlayByDay = {
+    1: { start: 15, end: 18 },
+    2: { start: 15, end: 20 },
+    3: { start: 15, end: 20 },
+    4: { start: 15, end: 20 },
+    5: { start: 15, end: 23 },
+    6: { start: 18, end: 22 }
+  };
+  if (/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
+    const dayOfWeek = new Date(`${targetDate}T12:00:00`).getDay();
+    const rule = openPlayByDay[dayOfWeek];
+    if (rule) {
+      let hr = parseInt(slotStr, 10);
+      if (slotStr.includes('PM') && hr !== 12) hr += 12;
+      if (slotStr.includes('AM') && hr === 12) hr = 0;
+      if (hr >= rule.start && hr < rule.end) {
+        return { status: 'OPEN_PLAY', override: null, reason: 'Open Play' };
+      }
+    }
+  }
+
+  return { status: 'AVAILABLE', override: null, reason: 'Available' };
+}
+window.pfResolveCourtSlot = pfResolveCourtSlot;

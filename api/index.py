@@ -396,15 +396,91 @@ class handler(http.server.BaseHTTPRequestHandler):
 
         elif parsed.path == "/api/blocks":
             action = body.get("action", "add")
-            if action == "add":
+            if "blocks" not in db or not isinstance(db["blocks"], list):
+                db["blocks"] = []
+
+            if action in ("add", "set", "set_slot"):
                 blk = body.get("block") or body
+                court_val = sanitize_str(blk.get("court", "Court 01"), 60) or "Court 01"
+                date_val = sanitize_str(blk.get("date", "Today"), 40) or "Today"
+                hours_val = sanitize_str(blk.get("hours", "06:00 PM"), 60) or "06:00 PM"
+                status_type = sanitize_str(blk.get("statusType", "CLOSED"), 30).upper() or "CLOSED"
+                reason_val = sanitize_str(blk.get("reason", ""), 120)
+                if not reason_val:
+                    if status_type in ("OPEN", "AVAILABLE"):
+                        reason_val = "Open Court"
+                    elif status_type == "OPEN_PLAY":
+                        reason_val = "Open Play"
+                    else:
+                        reason_val = "Closed"
+
+                # Remove any existing override for the exact same (court, date, hours)
+                db["blocks"] = [
+                    b for b in db["blocks"]
+                    if not (
+                        str(b.get("court", "")).strip().lower() == court_val.lower()
+                        and str(b.get("date", "")).strip().lower() == date_val.lower()
+                        and str(b.get("hours", "")).strip().lower() == hours_val.lower()
+                    )
+                ]
+                # If setting a specific court or specific hour on a date, and there was an ALL override on that date, keep specific after ALL so specific wins
                 db["blocks"].append({
                     "id": sanitize_str(blk.get("id") or ("blk-" + str(int(datetime.now().timestamp() * 1000))), 40),
-                    "court": sanitize_str(blk.get("court", "Court 01"), 60),
-                    "date": sanitize_str(blk.get("date", "Today"), 40),
-                    "hours": sanitize_str(blk.get("hours", "06:00 PM"), 60),
-                    "reason": sanitize_str(blk.get("reason", "Reserved Block"), 120)
+                    "court": court_val,
+                    "date": date_val,
+                    "hours": hours_val,
+                    "statusType": status_type,
+                    "reason": reason_val
                 })
+            elif action == "bulk_set":
+                date_val = sanitize_str(body.get("date", "Today"), 40) or "Today"
+                court_val = sanitize_str(body.get("court", "ALL"), 60) or "ALL"
+                status_type = sanitize_str(body.get("statusType", "OPEN"), 30).upper() or "OPEN"
+                reason_val = sanitize_str(body.get("reason", ""), 120)
+                if not reason_val:
+                    reason_val = "Open Court" if status_type in ("OPEN", "AVAILABLE") else ("Open Play" if status_type == "OPEN_PLAY" else "Closed")
+                # Clear existing overrides on that date (for that court or all courts)
+                if court_val.upper() == "ALL" or "all" in court_val.lower():
+                    db["blocks"] = [b for b in db["blocks"] if str(b.get("date", "")).strip() != date_val]
+                    db["blocks"].append({
+                        "id": "blk-" + str(int(datetime.now().timestamp() * 1000)),
+                        "court": "ALL",
+                        "date": date_val,
+                        "hours": "ALL",
+                        "statusType": status_type,
+                        "reason": reason_val
+                    })
+                else:
+                    db["blocks"] = [
+                        b for b in db["blocks"]
+                        if not (str(b.get("date", "")).strip() == date_val and str(b.get("court", "")).strip().lower() == court_val.lower())
+                    ]
+                    db["blocks"].append({
+                        "id": "blk-" + str(int(datetime.now().timestamp() * 1000)),
+                        "court": court_val,
+                        "date": date_val,
+                        "hours": "ALL",
+                        "statusType": status_type,
+                        "reason": reason_val
+                    })
+            elif action == "reset_slot":
+                court_val = sanitize_str(body.get("court", ""), 60).lower()
+                date_val = sanitize_str(body.get("date", ""), 40).lower()
+                hours_val = sanitize_str(body.get("hours", ""), 60).lower()
+                db["blocks"] = [
+                    b for b in db["blocks"]
+                    if not (
+                        str(b.get("court", "")).strip().lower() == court_val
+                        and str(b.get("date", "")).strip().lower() == date_val
+                        and str(b.get("hours", "")).strip().lower() == hours_val
+                    )
+                ]
+            elif action == "clear_date":
+                date_val = sanitize_str(body.get("date", ""), 40)
+                if not date_val or date_val.upper() == "ALL":
+                    db["blocks"] = []
+                else:
+                    db["blocks"] = [b for b in db["blocks"] if str(b.get("date", "")).strip() != date_val]
             elif action == "remove":
                 bid = body.get("id")
                 db["blocks"] = [b for b in db["blocks"] if b.get("id") != bid]

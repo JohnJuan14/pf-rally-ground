@@ -686,8 +686,14 @@
 
     /* Responsive Optimization: Mobile (< 640px), Tablet (640px - 1023px), Desktop (>= 1024px) */
     @media (max-width: 639px) {
-      header .h-16 {
-        height: 3.75rem !important;
+            header .h-16, header .h-14 {
+        height: 3.4rem !important;
+      }
+      header button[onclick*="toggleAnnouncementBoard"] {
+        display: none !important;
+      }
+      .pf-live-ticker-cta {
+        display: none !important;
       }
       #live-site-update-banner {
         padding: 4px 8px !important;
@@ -801,16 +807,16 @@
         <span>Feed →</span>
       </button>
     </div>
-    <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-3">
+    <div class="w-full max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-14 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3">
       
       <!-- Official Brand Logo + Club Name (Connected to Admin Login Portal) -->
-      <div class="flex items-center gap-2.5 flex-shrink-0">
+      <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 lg:flex-initial">
         <a href="index.html" class="group flex-shrink-0" aria-label="P&amp;F Rally Ground Home">
-          <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Official Logo" class="h-11 w-11 sm:h-14 sm:w-14 rounded-xl object-contain bg-white p-0.5 shadow-md border border-slate-200 lg:border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
+          <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Official Logo" class="h-9 w-9 sm:h-13 sm:w-13 rounded-xl object-contain bg-white p-0.5 shadow-md border border-slate-200 lg:border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
         </a>
-        <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left focus:outline-none">
-          <span class="text-sm sm:text-base font-black uppercase tracking-tight text-[#050E1D] lg:text-white group-hover:text-[#0E8A2D] lg:group-hover:text-brand-lime transition-colors block leading-none font-display" data-site-club-name="1">P&amp;F Rally Ground</span>
-          <span class="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-[#0E8A2D] lg:text-brand-lime block mt-0.5" data-site-club-subtitle="1">Pickleball Club &bull; Daraga</span>
+        <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left focus:outline-none min-w-0 truncate">
+          <span class="text-xs sm:text-base font-black uppercase tracking-tight text-[#050E1D] lg:text-white group-hover:text-[#0E8A2D] lg:group-hover:text-brand-lime transition-colors block leading-none font-display truncate" data-site-club-name="1">P&amp;F Rally Ground</span>
+          <span class="text-[8px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-[#0E8A2D] lg:text-brand-lime block mt-0.5 truncate" data-site-club-subtitle="1">Pickleball Club &bull; Daraga</span>
         </a>
       </div>
 
@@ -831,27 +837,27 @@
       <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
         
         <!-- Live Announcements Board Button -->
-        <button type="button" onclick="toggleAnnouncementBoard()" class="whitespace-nowrap h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#9BE600]/40 text-white flex items-center gap-1.5 transition active:scale-95 shadow-md relative flex-shrink-0" title="Open Live Club Announcement Board">
+        <button type="button" onclick="toggleAnnouncementBoard()" class="whitespace-nowrap h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#9BE600]/40 text-white hidden md:flex items-center gap-1.5 transition active:scale-95 shadow-md relative flex-shrink-0" title="Open Live Club Announcement Board">
           <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
           <span class="hidden md:inline text-xs font-bold uppercase tracking-wider text-[#9BE600]">Updates</span>
           <span id="header-ann-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-black flex items-center justify-center leading-none">1</span>
         </button>
 
         <!-- Live Cart Button -->
-        <button type="button" onclick="toggleCartDrawer()" class="whitespace-nowrap h-10 px-3 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#050E1D] lg:border-brand-lime/30 text-white flex items-center gap-1.5 sm:gap-2 transition active:scale-95 shadow-md relative flex-shrink-0" title="View Reservation Cart">
+        <button type="button" onclick="toggleCartDrawer()" class="whitespace-nowrap h-9 sm:h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#050E1D] lg:border-brand-lime/30 text-white flex items-center gap-1.5 sm:gap-2 transition active:scale-95 shadow-md relative flex-shrink-0" title="View Reservation Cart">
           <svg class="w-4 h-4 text-[#9BE600] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           <span class="hidden sm:inline text-xs font-bold uppercase tracking-wider">Cart</span>
           <span id="header-cart-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-black flex items-center justify-center leading-none">0</span>
         </button>
 
         <!-- Book Court CTA -->
-        <button type="button" onclick="openBookingDrawer()" class="whitespace-nowrap btn-sheen h-10 px-3.5 sm:px-4 xl:px-5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] border-2 border-[#050E1D]/15 lg:border-transparent font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 shadow-md flex-shrink-0">
+        <button type="button" onclick="openBookingDrawer()" class="whitespace-nowrap btn-sheen h-9 sm:h-10 px-2.5 sm:px-4 xl:px-5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] border-2 border-[#050E1D]/15 lg:border-transparent font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 shadow-md flex-shrink-0">
           <span>Book Court</span>
           <svg class="hidden sm:inline-block w-3.5 h-3.5 arrow-nudge flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
 
         <!-- Mobile & Tablet Menu Toggle -->
-        <button type="button" onclick="toggleMobileMenu()" class="lg:hidden w-10 h-10 rounded-xl bg-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] border border-[#050E1D] flex items-center justify-center transition active:scale-95 shadow-md flex-shrink-0" aria-label="Toggle navigation menu">
+        <button type="button" onclick="toggleMobileMenu()" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] border border-[#050E1D] flex items-center justify-center transition active:scale-95 shadow-md flex-shrink-0" aria-label="Toggle navigation menu">
           <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
@@ -859,7 +865,7 @@
     </div>
 
     <!-- Mobile & Tablet Crisp White Navigation Drawer -->
-    <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-4 sm:px-6 py-5 space-y-4 text-xs font-black uppercase tracking-wider max-h-[calc(100dvh-4.25rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
+    <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-3.5 sm:px-6 py-3.5 space-y-2.5 text-xs font-black uppercase tracking-wider max-h-[calc(100dvh-5.5rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
       <div class="space-y-1.5">
         <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">COURTS &amp; SCHEDULE</span>
         <a href="index.html" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#050E1D] text-[#9BE600] font-black shadow-md transition">
@@ -886,10 +892,6 @@
           <span>My Booking Pass &amp; Lookup</span>
           <span class="text-[#0E8A2D] font-mono font-black">→</span>
         </a>
-        <button type="button" onclick="toggleMobileMenu(); toggleAnnouncementBoard(true);" class="w-full flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#9BE600]/20 text-[#050E1D] font-black transition">
-          <span>📢 Live Announcement Board</span>
-          <span class="text-[#0E8A2D] font-mono font-black">LIVE →</span>
-        </button>
         <a href="/admin/" onclick="return openAdminPortal(event)" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] hover:bg-[#0E2240] text-white font-black transition mt-1 shadow-md">
           <span>Admin &amp; POS Portal</span>
           <span class="text-[#9BE600] font-mono font-black">↗</span>
@@ -2053,7 +2055,7 @@
             <p class="text-[10px] text-slate-600 font-semibold truncate">Official Updates &amp; Photos from P&amp;F Admin</p>
           </div>
         </div>
-        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-700 hover:text-white border border-slate-300 flex items-center justify-center text-xs font-black transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
+        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-700 hover:text-white border border-slate-300 hidden md:flex items-center justify-center text-xs font-black transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
       </div>
 
       <!-- Chat Feed Stream (Clean Light/White Studio Feed) -->
@@ -2135,7 +2137,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261029v7"></script>
+  <script src="app.js?v=20261029v8"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -2360,40 +2362,25 @@
         const compactTime = h.time.replace(':00 ', ' ');
 
         const cells = courtsToShow.map(cNum => {
-          const courtLabelZero = 'Court 0' + cNum;
-          const courtLabelPlain = 'Court ' + cNum;
+          const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
+            ? window.pfResolveCourtSlot(selectedScheduleDateYMD, cNum, h.time, liveBlocks, liveBookings)
+            : { status: openPlayActive ? 'OPEN_PLAY' : 'AVAILABLE', reason: '' };
 
-          const isLiveBlocked = liveBlocks.some(bl => {
-            if (!bl.court) return false;
-            const matchesCourt = bl.court.includes(courtLabelZero) || bl.court.includes(courtLabelPlain) || bl.court.toLowerCase().includes('all');
-            if (!matchesCourt) return false;
-            if (bl.date && selectedScheduleDateYMD && bl.date !== selectedScheduleDateYMD) return false;
-            return bl.hours && bl.hours.includes(h.time);
-          });
-
-          const isLiveBooked = liveBookings.some(b => {
-            if (b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
-            if (!b.court) return false;
-            const matchesCourt = String(b.court).includes(courtLabelZero) || String(b.court).includes(courtLabelPlain) || String(b.court) === String(cNum);
-            if (!matchesCourt) return false;
-            if (!b.time || !String(b.time).includes(h.time)) return false;
-            if (b.date && selectedScheduleDateYMD) return b.date === selectedScheduleDateYMD;
-            return true;
-          });
-
-          if (isLiveBlocked) {
+          if (slotInfo.status === 'CLOSED') {
+            const cReason = (slotInfo.reason && slotInfo.reason !== 'Closed') ? `Closed • ${pfEscapeHtml(slotInfo.reason)}` : 'Closed';
             return `<td class="p-1 sm:p-1.5 text-center">
-              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-800 text-white border border-slate-900 text-[10px] sm:text-xs font-black shadow-sm truncate">
-                Closed
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-800 text-white border border-slate-900 text-[10px] sm:text-xs font-black shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'Closed')}">
+                <span class="sm:hidden">Closed</span>
+                <span class="hidden sm:inline">${cReason}</span>
               </span>
             </td>`;
-          } else if (isLiveBooked) {
+          } else if (slotInfo.status === 'BOOKED') {
             return `<td class="p-1 sm:p-1.5 text-center">
               <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-rose-100/95 text-rose-700 border border-rose-300 text-[10px] sm:text-xs font-black shadow-sm truncate">
                 Booked
               </span>
             </td>`;
-          } else if (openPlayActive) {
+          } else if (slotInfo.status === 'OPEN_PLAY') {
             return `<td class="p-1 sm:p-1.5 text-center">
               <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[10px] sm:text-xs font-black shadow-sm truncate" title="Reserved for Open Play">
                 <span class="sm:hidden">${isSingleCourt ? 'Open Play' : 'Open'}</span>
@@ -2564,35 +2551,25 @@
       } catch (e) {}
       const liveBookings = [...serverBookings, ...localBookings];
       const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
-      const courtLabelZero = 'Court 0' + DRAWER_STATE.selectedCourt;
-      const courtLabelPlain = 'Court ' + DRAWER_STATE.selectedCourt;
 
       ALL_HOURS_SLOTS.filter(slot => matchesTimePeriod(slot, currentDrawerPeriod)).forEach(slot => {
         const btn = document.createElement('button');
         btn.type = 'button';
 
-        const isBlocked = liveBlocks.some(bl =>
-          bl.court && (bl.court.includes(courtLabelZero) || bl.court.includes(courtLabelPlain) || bl.court.toLowerCase().includes('all')) &&
-          bl.hours && bl.hours.includes(slot)
-        );
-        const isBooked = liveBookings.some(b =>
-          b.status !== 'CANCELLED' && b.status !== 'DECLINED' &&
-          b.court && (String(b.court).includes(courtLabelZero) || String(b.court).includes(courtLabelPlain)) &&
-          b.time && String(b.time).includes(slot) &&
-          (b.date === DRAWER_STATE.selectedDateVal || (b.time && String(b.time).includes(DRAWER_STATE.selectedDateVal)))
-        );
-        const isOpenPlay = isOpenPlaySlot(DRAWER_STATE.selectedDateVal, slot);
+        const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
+          ? window.pfResolveCourtSlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, slot, liveBlocks, liveBookings)
+          : { status: isOpenPlaySlot(DRAWER_STATE.selectedDateVal, slot) ? 'OPEN_PLAY' : 'AVAILABLE' };
         const isSelected = (slot === DRAWER_STATE.selectedStartSlot);
 
-        if (isBlocked) {
+        if (slotInfo.status === 'CLOSED') {
           btn.disabled = true;
           btn.className = 'py-2.5 px-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-mono font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-slate-400">Closed</span>`;
-        } else if (isBooked) {
+        } else if (slotInfo.status === 'BOOKED') {
           btn.disabled = true;
           btn.className = 'py-2.5 px-2 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 text-[11px] font-mono font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-700 font-black">Booked</span>`;
-        } else if (isOpenPlay) {
+        } else if (slotInfo.status === 'OPEN_PLAY') {
           btn.disabled = true;
           btn.className = 'py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[11px] font-mono font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#365314] font-black">Open Play</span>`;
