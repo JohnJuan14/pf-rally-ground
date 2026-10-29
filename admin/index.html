@@ -302,14 +302,14 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+            <button type="button" onclick="restoreMainWebsiteDefaultDesign()" class="py-3 px-5 rounded-2xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border-2 border-[#9BE600] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-md flex items-center gap-2" title="Instantly restore the original main design, photos, text, and prices of the website">
+              <span>⭐ Default (Main Website Design)</span>
+            </button>
             <button type="button" onclick="saveSiteConfigToServer(false)" id="se-save-all-btn" class="py-3 px-5 rounded-2xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-md flex items-center gap-2">
               <span>💾 Save &amp; Publish All Changes Live</span>
               <span>→</span>
             </button>
-            <button type="button" onclick="resetSiteConfigToDefaults()" class="py-3 px-4 rounded-2xl bg-slate-100 hover:bg-rose-50 border border-slate-300 hover:border-rose-400 text-slate-700 hover:text-rose-700 font-bold uppercase text-xs transition">
-              ↺ Reset Defaults
-            </button>
-            <a href="/" onclick="return openPublicSite(event, 'index.html')" class="py-3 px-4 rounded-2xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-xs transition flex items-center gap-1.5 shadow">
+            <a href="/" onclick="return openPublicSite(event, 'index.html')" class="py-3 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black uppercase text-xs transition flex items-center gap-1.5 shadow">
               <span>View Live Site</span>
               <span>↗</span>
             </a>
@@ -348,9 +348,14 @@
               <h3 class="text-lg font-black uppercase text-slate-900">Change Hero Carousel Photos, Court 01–04 Photos &amp; Live Website Banner</h3>
               <p class="text-xs text-slate-600 font-medium">Upload any photo from your device (automatically optimized &amp; saved to the website server) or pick a preset below.</p>
             </div>
-            <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
-              💾 Save Photos &amp; Banner →
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="restoreDefaultHeroAndCourtAssets()" class="py-2.5 px-4 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border border-[#050E1D] font-black uppercase text-xs transition shadow">
+                ⭐ Default (Main Website Photos)
+              </button>
+              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+                💾 Save Photos &amp; Banner →
+              </button>
+            </div>
           </div>
 
           <!-- 1A. Live Update Top Ticker Banner Control (White/Light Emerald Box) -->
@@ -416,7 +421,7 @@
                 <div class="pt-2 border-t border-slate-200">
                   <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1.5">Quick Presets:</span>
                   <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/hero-slide-1.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Default 1</button>
+                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/hero-slide-1.jpg')" class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[10px] font-black shadow-sm">⭐ Default (Main Design)</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/court-aerial-angled.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Aerial Court</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/court-aerial-vertical.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Top View</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/hero.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Club Hero</button>
@@ -446,7 +451,7 @@
                 <div class="pt-2 border-t border-slate-200">
                   <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1.5">Quick Presets:</span>
                   <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/hero-slide-2.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Default 2</button>
+                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/hero-slide-2.jpg')" class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[10px] font-black shadow-sm">⭐ Default (Main Design)</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/court-aerial-angled.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Aerial Court</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/court-aerial-vertical.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Top View</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/hero.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Club Hero</button>
@@ -476,7 +481,7 @@
                 <div class="pt-2 border-t border-slate-200">
                   <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1.5">Quick Presets:</span>
                   <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/hero-slide-3.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Default 3</button>
+                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/hero-slide-3.jpg')" class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[10px] font-black shadow-sm">⭐ Default (Main Design)</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/hero.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Club Hero</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/court-aerial-angled.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Aerial Court</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/court-aerial-vertical.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Top View</button>
@@ -512,7 +517,7 @@
                   <input type="text" id="se-court-img-1" oninput="updateAssetPreviewFromInput('court1Img', 'se-preview-court-1', this.value)" value="assets/court-aerial-vertical.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/court-aerial-vertical.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Default</button>
+                  <button type="button" onclick="setWebsiteAssetPreset('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/court-aerial-vertical.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Angled</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/hero-slide-1.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Slide 1</button>
                 </div>
@@ -532,7 +537,7 @@
                   <input type="text" id="se-court-img-2" oninput="updateAssetPreviewFromInput('court2Img', 'se-preview-court-2', this.value)" value="assets/court-aerial-angled.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Default</button>
+                  <button type="button" onclick="setWebsiteAssetPreset('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/court-aerial-vertical.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Top View</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/hero-slide-2.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Slide 2</button>
                 </div>
@@ -552,7 +557,7 @@
                   <input type="text" id="se-court-img-3" oninput="updateAssetPreviewFromInput('court3Img', 'se-preview-court-3', this.value)" value="assets/hero.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/hero.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Default</button>
+                  <button type="button" onclick="setWebsiteAssetPreset('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/hero.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Angled</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/hero-slide-3.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Slide 3</button>
                 </div>
@@ -572,7 +577,7 @@
                   <input type="text" id="se-court-img-4" oninput="updateAssetPreviewFromInput('court4Img', 'se-preview-court-4', this.value)" value="assets/court-aerial-angled.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Default</button>
+                  <button type="button" onclick="setWebsiteAssetPreset('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/court-aerial-vertical.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Top View</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/hero.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Club Hero</button>
                 </div>
@@ -591,9 +596,14 @@
               <h3 class="text-lg font-black uppercase text-slate-900">Edit the Prices &amp; Photos of Anything on the Main Website</h3>
               <p class="text-xs text-slate-600 font-medium">Changing any rate or equipment photo below automatically updates all price cards, schedule matrix slots, and checkout calculators across Home, Courts, Rates &amp; Gear, and Book pages.</p>
             </div>
-            <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
-              💾 Save All Prices &amp; Gear Live →
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="restoreDefaultPricesAndGear()" class="py-2.5 px-4 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border border-[#050E1D] font-black uppercase text-xs transition shadow">
+                ⭐ Default (Main Prices &amp; Gear)
+              </button>
+              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+                💾 Save All Prices &amp; Gear Live →
+              </button>
+            </div>
           </div>
 
           <!-- A. Court Hire & Player Rates -->
@@ -662,6 +672,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearStdImg', 'se-preview-gear-std', 'se-gear-img-std', event)" class="hidden">
                       </label>
+                      <button type="button" onclick="setWebsiteAssetPreset('gearStdImg', 'se-preview-gear-std', 'se-gear-img-std', 'assets/gear-composite-paddle.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
                       <input type="hidden" id="se-gear-img-std" value="assets/gear-composite-paddle.jpg">
                     </div>
                   </div>
@@ -683,6 +694,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearCarbonImg', 'se-preview-gear-carbon', 'se-gear-img-carbon', event)" class="hidden">
                       </label>
+                      <button type="button" onclick="setWebsiteAssetPreset('gearCarbonImg', 'se-preview-gear-carbon', 'se-gear-img-carbon', 'assets/gear-carbon-paddle.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
                       <input type="hidden" id="se-gear-img-carbon" value="assets/gear-carbon-paddle.jpg">
                     </div>
                   </div>
@@ -697,14 +709,15 @@
               <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
                 <div class="flex items-center justify-between gap-3">
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <img id="se-preview-gear-branded" src="assets/gear-joola-perseus.jpg" onerror="this.src='assets/gear-joola-perseus.jpg'" class="w-12 h-12 rounded-xl object-cover border border-slate-300 flex-shrink-0">
+                    <img id="se-preview-gear-branded" src="assets/gear-carbon-paddle.jpg" onerror="this.src='assets/gear-carbon-paddle.jpg'" class="w-12 h-12 rounded-xl object-cover border border-slate-300 flex-shrink-0">
                     <div class="min-w-0">
                       <span class="font-black text-slate-900 block truncate">Branded Carbon Paddle</span>
                       <label class="inline-block mt-1 px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[10px] font-bold text-slate-800 cursor-pointer shadow-sm">
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearBrandedImg', 'se-preview-gear-branded', 'se-gear-img-branded', event)" class="hidden">
                       </label>
-                      <input type="hidden" id="se-gear-img-branded" value="assets/gear-joola-perseus.jpg">
+                      <button type="button" onclick="setWebsiteAssetPreset('gearBrandedImg', 'se-preview-gear-branded', 'se-gear-img-branded', 'assets/gear-carbon-paddle.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <input type="hidden" id="se-gear-img-branded" value="assets/gear-carbon-paddle.jpg">
                     </div>
                   </div>
                   <div class="flex items-center gap-1 w-24 flex-shrink-0">
@@ -725,6 +738,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearBallImg', 'se-preview-gear-ball', 'se-gear-img-ball', event)" class="hidden">
                       </label>
+                      <button type="button" onclick="setWebsiteAssetPreset('gearBallImg', 'se-preview-gear-ball', 'se-gear-img-ball', 'assets/gear-balls-x40.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
                       <input type="hidden" id="se-gear-img-ball" value="assets/gear-balls-x40.jpg">
                     </div>
                   </div>
@@ -739,14 +753,15 @@
               <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
                 <div class="flex items-center justify-between gap-3">
                   <div class="flex items-center gap-2.5 min-w-0">
-                    <img id="se-preview-gear-bucket" src="assets/gear-ball-basket.jpg" onerror="this.src='assets/gear-ball-basket.jpg'" class="w-12 h-12 rounded-xl object-cover border border-slate-300 flex-shrink-0">
+                    <img id="se-preview-gear-bucket" src="assets/gear-balls-x40.jpg" onerror="this.src='assets/gear-balls-x40.jpg'" class="w-12 h-12 rounded-xl object-cover border border-slate-300 flex-shrink-0">
                     <div class="min-w-0">
                       <span class="font-black text-slate-900 block truncate">Training Balls (50 pcs)</span>
                       <label class="inline-block mt-1 px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[10px] font-bold text-slate-800 cursor-pointer shadow-sm">
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearBucketImg', 'se-preview-gear-bucket', 'se-gear-img-bucket', event)" class="hidden">
                       </label>
-                      <input type="hidden" id="se-gear-img-bucket" value="assets/gear-ball-basket.jpg">
+                      <button type="button" onclick="setWebsiteAssetPreset('gearBucketImg', 'se-preview-gear-bucket', 'se-gear-img-bucket', 'assets/gear-balls-x40.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <input type="hidden" id="se-gear-img-bucket" value="assets/gear-balls-x40.jpg">
                     </div>
                   </div>
                   <div class="flex items-center gap-1 w-24 flex-shrink-0">
@@ -767,6 +782,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearMachineImg', 'se-preview-gear-machine', 'se-gear-img-machine', event)" class="hidden">
                       </label>
+                      <button type="button" onclick="setWebsiteAssetPreset('gearMachineImg', 'se-preview-gear-machine', 'se-gear-img-machine', 'assets/gear-ball-machine.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
                       <input type="hidden" id="se-gear-img-machine" value="assets/gear-ball-machine.jpg">
                     </div>
                   </div>
@@ -804,9 +820,14 @@
               <h3 class="text-lg font-black uppercase text-slate-900">Edit Website Headlines, Descriptions, Buttons, Logo &amp; Club Info</h3>
               <p class="text-xs text-slate-600 font-medium">Customize the text shown on the Hero banner, Court cards, Schedule header, and Navigation/Footer.</p>
             </div>
-            <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
-              💾 Save Website Text &amp; Logo →
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="restoreDefaultWebsiteText()" class="py-2.5 px-4 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border border-[#050E1D] font-black uppercase text-xs transition shadow">
+                ⭐ Default (Main Website Text)
+              </button>
+              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+                💾 Save Website Text &amp; Logo →
+              </button>
+            </div>
           </div>
 
           <!-- Club Logo & Branding Row -->
@@ -4042,9 +4063,9 @@ function clearFieldError(fieldId) {
       court4Img: 'assets/court-aerial-angled.jpg',
       gearStdImg: 'assets/gear-composite-paddle.jpg',
       gearCarbonImg: 'assets/gear-carbon-paddle.jpg',
-      gearBrandedImg: 'assets/gear-joola-perseus.jpg',
+      gearBrandedImg: 'assets/gear-carbon-paddle.jpg',
       gearBallImg: 'assets/gear-balls-x40.jpg',
-      gearBucketImg: 'assets/gear-ball-basket.jpg',
+      gearBucketImg: 'assets/gear-balls-x40.jpg',
       gearMachineImg: 'assets/gear-ball-machine.jpg',
       liveBannerEnabled: true,
       liveBannerText: 'LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!',
@@ -4515,20 +4536,98 @@ function clearFieldError(fieldId) {
       }
     }
 
-    async function resetSiteConfigToDefaults() {
-      if (!confirm('Reset all Hero photos, Court photos, website text, and prices back to default club settings?')) return;
+    async function restoreMainWebsiteDefaultDesign() {
       siteEditorDirty = false;
       uploadedAssetStore = {};
       currentSiteConfig = { ...DEFAULT_SITE_CONFIG, updatedAt: Date.now() };
       loadSiteConfigIntoEditor(currentSiteConfig, true);
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
+      const badge = document.getElementById('se-banner-autosave-badge');
+      if (badge) badge.textContent = '⭐ Main Website Default Design Active!';
       const fb = document.getElementById('se-save-feedback');
       if (fb) {
-        fb.textContent = '↺ All Website Assets, Hero Pictures, Text, and Prices have been reset to default!';
+        fb.textContent = '⭐ Restored Main Website Default Design! All original Hero pictures, Court photos, Gear photos, Text, and Prices are now live!';
         fb.classList.remove('hidden');
-        setTimeout(() => fb.classList.add('hidden'), 4000);
+        setTimeout(() => fb.classList.add('hidden'), 4500);
       }
+    }
+
+    async function resetSiteConfigToDefaults() {
+      return restoreMainWebsiteDefaultDesign();
+    }
+
+    async function restoreDefaultHeroAndCourtAssets() {
+      const assetDefaults = {
+        heroSlide1: DEFAULT_SITE_CONFIG.heroSlide1,
+        heroSlide2: DEFAULT_SITE_CONFIG.heroSlide2,
+        heroSlide3: DEFAULT_SITE_CONFIG.heroSlide3,
+        court1Img: DEFAULT_SITE_CONFIG.court1Img,
+        court2Img: DEFAULT_SITE_CONFIG.court2Img,
+        court3Img: DEFAULT_SITE_CONFIG.court3Img,
+        court4Img: DEFAULT_SITE_CONFIG.court4Img,
+        liveBannerEnabled: DEFAULT_SITE_CONFIG.liveBannerEnabled,
+        liveBannerText: DEFAULT_SITE_CONFIG.liveBannerText
+      };
+      Object.assign(uploadedAssetStore, assetDefaults);
+      currentSiteConfig = { ...collectSiteConfigFromEditor(), ...assetDefaults, updatedAt: Date.now() };
+      loadSiteConfigIntoEditor(currentSiteConfig, true);
+      await saveSiteConfigToServer(false);
+    }
+
+    async function restoreDefaultPricesAndGear() {
+      const priceGearDefaults = {
+        dayRate: DEFAULT_SITE_CONFIG.dayRate,
+        nightRate: DEFAULT_SITE_CONFIG.nightRate,
+        includedPlayers: DEFAULT_SITE_CONFIG.includedPlayers,
+        extraPlayerFee: DEFAULT_SITE_CONFIG.extraPlayerFee,
+        openPlayRate: DEFAULT_SITE_CONFIG.openPlayRate,
+        pricePaddleStd: DEFAULT_SITE_CONFIG.pricePaddleStd,
+        pricePaddleCarbon: DEFAULT_SITE_CONFIG.pricePaddleCarbon,
+        pricePaddleBranded: DEFAULT_SITE_CONFIG.pricePaddleBranded,
+        priceBallSingle: DEFAULT_SITE_CONFIG.priceBallSingle,
+        priceBallsBucket: DEFAULT_SITE_CONFIG.priceBallsBucket,
+        priceMachine: DEFAULT_SITE_CONFIG.priceMachine,
+        gearStdImg: DEFAULT_SITE_CONFIG.gearStdImg,
+        gearCarbonImg: DEFAULT_SITE_CONFIG.gearCarbonImg,
+        gearBrandedImg: DEFAULT_SITE_CONFIG.gearBrandedImg,
+        gearBallImg: DEFAULT_SITE_CONFIG.gearBallImg,
+        gearBucketImg: DEFAULT_SITE_CONFIG.gearBucketImg,
+        gearMachineImg: DEFAULT_SITE_CONFIG.gearMachineImg
+      };
+      Object.assign(uploadedAssetStore, priceGearDefaults);
+      currentSiteConfig = { ...collectSiteConfigFromEditor(), ...priceGearDefaults, updatedAt: Date.now() };
+      loadSiteConfigIntoEditor(currentSiteConfig, true);
+      await saveSiteConfigToServer(false);
+    }
+
+    async function restoreDefaultWebsiteText() {
+      const textDefaults = {
+        clubLogo: DEFAULT_SITE_CONFIG.clubLogo,
+        clubName: DEFAULT_SITE_CONFIG.clubName,
+        clubSubtitle: DEFAULT_SITE_CONFIG.clubSubtitle,
+        clubPhone: DEFAULT_SITE_CONFIG.clubPhone,
+        clubHours: DEFAULT_SITE_CONFIG.clubHours,
+        clubAddress: DEFAULT_SITE_CONFIG.clubAddress,
+        heroTagline: DEFAULT_SITE_CONFIG.heroTagline,
+        heroTitleLine1: DEFAULT_SITE_CONFIG.heroTitleLine1,
+        heroTitleLine2: DEFAULT_SITE_CONFIG.heroTitleLine2,
+        heroTitleAccent: DEFAULT_SITE_CONFIG.heroTitleAccent,
+        heroSubtitle: DEFAULT_SITE_CONFIG.heroSubtitle,
+        heroPrimaryBtn: DEFAULT_SITE_CONFIG.heroPrimaryBtn,
+        heroSecondaryBtn: DEFAULT_SITE_CONFIG.heroSecondaryBtn,
+        bentoSectionTitle: DEFAULT_SITE_CONFIG.bentoSectionTitle,
+        bentoSectionDesc: DEFAULT_SITE_CONFIG.bentoSectionDesc,
+        openPlayScheduleText: DEFAULT_SITE_CONFIG.openPlayScheduleText,
+        court1Name: DEFAULT_SITE_CONFIG.court1Name,
+        court2Name: DEFAULT_SITE_CONFIG.court2Name,
+        court3Name: DEFAULT_SITE_CONFIG.court3Name,
+        court4Name: DEFAULT_SITE_CONFIG.court4Name
+      };
+      uploadedAssetStore.clubLogo = DEFAULT_SITE_CONFIG.clubLogo;
+      currentSiteConfig = { ...collectSiteConfigFromEditor(), ...textDefaults, updatedAt: Date.now() };
+      loadSiteConfigIntoEditor(currentSiteConfig, true);
+      await saveSiteConfigToServer(false);
     }
 
     async function postBannerTextToAnnouncementBoard() {
