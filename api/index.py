@@ -154,7 +154,7 @@ def deduct_inventory_for_items(db, items):
         return
     inventory = db.get("inventory", [])
     for cart_item in items:
-        if cart_item.get("isCourt"):
+        if not isinstance(cart_item, dict) or cart_item.get("isCourt"):
             continue
         cid = str(cart_item.get("id", "")).strip()
         cname = str(cart_item.get("name", "")).strip().lower()
@@ -290,36 +290,76 @@ class handler(http.server.BaseHTTPRequestHandler):
             self._send_json({"ok": True, "announcements": db["announcements"], "announcementsUpdatedAt": db["announcementsUpdatedAt"], "state": db})
             return
 
-        elif parsed.path == "/api/bookings":
-            raw_name = sanitize_str(body.get("name", ""), 80)
-            raw_phone = sanitize_str(body.get("phone", ""), 30)
-            raw_ref = sanitize_str(body.get("transactionRef", ""), 40)
+        elif parsed.path in ("/api/bookings", "/api/booking"):
+            raw_name = sanitize_str(body.get("name") or body.get("customerName") or "Valued Guest", 80)
+            raw_phone = sanitize_str(body.get("phone") or body.get("customerPhone") or "0999 883 2346", 30)
+            raw_email = sanitize_str(body.get("email") or body.get("customerEmail") or "", 100)
+            raw_ref = sanitize_str(body.get("transactionRef") or body.get("paymentRef") or "", 60)
+            # Strip emojis if any instead of rejecting the booking
+            raw_name = "".join(ch for ch in raw_name if not has_emoji(ch)).strip() or "Valued Guest"
+            raw_phone = "".join(ch for ch in raw_phone if not has_emoji(ch)).strip() or "0999 883 2346"
+            raw_ref = "".join(ch for ch in raw_ref if not has_emoji(ch)).strip() or "N/A"
+
             items = body.get("items", [])
+            if not isinstance(items, list):
+                items = [str(items)]
+
+            booking_ref = sanitize_str(body.get("ref") or ("PF-" + str(int(datetime.now().timestamp() * 1000))[-6:]), 30)
+            court_val = sanitize_str(body.get("court", "Court 01"), 250)
+            date_val = sanitize_str(body.get("date", ""), 40)
+            time_val = sanitize_str(body.get("time", "Today • 06:00 PM"), 100)
+            if date_val and date_val not in time_val:
+                display_time = f"{date_val} • {time_val}"
+            else:
+                display_time = time_val
+
+            pay_mode = sanitize_str(body.get("paymentMethod") or body.get("paymentMode") or "GCash", 50)
+            total_val = parse_amount(body.get("total", 400), 400.0)
+            status_val = sanitize_str(body.get("status", "PENDING"), 40).upper()
+            if status_val.startswith("PENDING"):
+                status_val = "PENDING"
+
             new_booking = {
-                "ref": sanitize_str(body.get("ref", "PF-" + str(int(datetime.now().timestamp()))[-5:]), 25),
-                "name": raw_name or "Valued Guest",
-                "phone": raw_phone or "0999 883 2346",
-                "email": sanitize_str(body.get("email", ""), 100),
-                "court": sanitize_str(body.get("court", "Court 01"), 250),
-                "date": sanitize_str(body.get("date", ""), 30),
-                "time": sanitize_str(body.get("time", "Today • 06:00 PM"), 80),
-                "paymentMode": sanitize_str(body.get("paymentMode") or body.get("paymentMethod") or "GCash", 50),
-                "paymentMethod": sanitize_str(body.get("paymentMethod") or body.get("paymentMode") or "GCash", 50),
-                "transactionRef": raw_ref or "N/A",
+                "ref": booking_ref,
+                "name": raw_name,
+                "customerName": raw_name,
+                "phone": raw_phone,
+                "customerPhone": raw_phone,
+                "email": raw_email,
+                "customerEmail": raw_email,
+                "court": court_val,
+                "date": date_val,
+                "time": display_time,
+                "players": int(parse_amount(body.get("players", 2), 2)),
+                "paymentMode": pay_mode,
+                "paymentMethod": pay_mode,
+                "transactionRef": raw_ref,
                 "receiptDataUrl": body.get("receiptDataUrl", ""),
-                "total": float(str(body.get("total", 400)).replace("₱", "").replace(",", "") or 400),
-                "status": sanitize_str(body.get("status", "PENDING"), 40),
-                "items": items,
-                "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 30)
+                "total": total_val,
+                "status": status_val,
+                "items": items if items else [f"{court_val} ({display_time})"],
+                "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
             }
             deduct_inventory_for_items(db, items)
+
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != new_booking["ref"]]
             db["bookings"].insert(0, new_booking)
+
+            if new_booking["status"] == "CONFIRMED":
+                db["salesLedger"].insert(0, {
+                    "ref": new_booking["ref"],
+                    "type": "Court Rental",
+                    "desc": f"{new_booking['court']} ({new_booking['name']}) - Ref: {new_booking['transactionRef']}",
+                    "method": new_booking["paymentMethod"],
+                    "amount": new_booking["total"],
+                    "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+
             save_db(db)
+            trigger_booking_gmail_notifications(db, new_booking)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "ref": new_booking["ref"], "booking": new_booking, "state": db})
             return
-
         elif parsed.path == "/api/auth/login":
             mode = str(body.get("mode", "password")).strip().lower()
             token = secrets.token_hex(32)

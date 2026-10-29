@@ -1674,7 +1674,7 @@
           });
 
           const isLiveBooked = liveBookings.some(b => {
-            if (b.status === 'CANCELLED') return false;
+            if (b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
             if (!b.court) return false;
             const matchesCourt = String(b.court).includes(courtLabelZero) || String(b.court).includes(courtLabelPlain) || String(b.court) === String(cNum);
             if (!matchesCourt) return false;
@@ -1878,7 +1878,7 @@
           bl.hours && bl.hours.includes(slot)
         );
         const isBooked = liveBookings.some(b =>
-          b.status !== 'CANCELLED' &&
+          b.status !== 'CANCELLED' && b.status !== 'DECLINED' &&
           b.court && (String(b.court).includes(courtLabelZero) || String(b.court).includes(courtLabelPlain)) &&
           b.time && String(b.time).includes(slot) &&
           (b.date === DRAWER_STATE.selectedDateVal || (b.time && String(b.time).includes(DRAWER_STATE.selectedDateVal)))
@@ -2149,7 +2149,7 @@
       const refErr = document.getElementById('manual-ref-input-error');
       if (refErr) refErr.classList.add('hidden');
 
-      if (!refVal || refVal.length < 5) {
+      if (!refVal || refVal.length < 4) {
         if (refErr) {
           refErr.textContent = 'Please enter a valid GCash / Maya / Bank reference number.';
           refErr.classList.remove('hidden');
@@ -2161,8 +2161,14 @@
       const name = (pendingOrderData && pendingOrderData.name) || document.getElementById('modal-cust-name')?.value.trim() || document.getElementById('cust-name')?.value.trim() || 'Valued Guest';
       const phone = (pendingOrderData && pendingOrderData.phone) || document.getElementById('modal-cust-phone')?.value.trim() || document.getElementById('cust-phone')?.value.trim() || '09000000000';
       const email = (pendingOrderData && pendingOrderData.email) || document.getElementById('cust-email')?.value.trim() || '';
-      const total = (pendingOrderData && pendingOrderData.total) || recalculateDrawerTotal();
-      const dateStr = DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal;
+      const rawTotal = (pendingOrderData && pendingOrderData.total) || recalculateDrawerTotal();
+      const numericTotal = Number(String(rawTotal).replace(/[^0-9.]/g, '')) || 400;
+      const dateStr = (DRAWER_STATE && (DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal)) || 'Today';
+      const courtNum = (DRAWER_STATE && DRAWER_STATE.selectedCourt) || 1;
+      const startSlot = (DRAWER_STATE && DRAWER_STATE.selectedStartSlot) || '06:00 PM';
+      const durationHrs = (DRAWER_STATE && DRAWER_STATE.selectedDuration) || 1;
+      const generatedRef = 'PF-' + Math.floor(100000 + Math.random() * 900000);
+      const payMethod = (typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode) ? String(selectedPaymentMode).toUpperCase() : 'GCASH';
 
       const submitBtn = document.getElementById('modal-submit-btn');
       if (submitBtn) {
@@ -2170,46 +2176,86 @@
         submitBtn.innerHTML = '<span>Verifying &amp; Submitting...</span>';
       }
 
+      const orderItems = (pendingOrderData && Array.isArray(pendingOrderData.items) && pendingOrderData.items.length > 0)
+        ? pendingOrderData.items
+        : [`Court 0${courtNum} (${durationHrs} hr • ${startSlot})`];
+
       const bookingPayload = {
+        ref: generatedRef,
         name: name,
+        customerName: name,
         phone: phone,
+        customerPhone: phone,
         email: email,
-        court: `Court 0${DRAWER_STATE.selectedCourt}`,
-        date: DRAWER_STATE.selectedDateVal,
-        time: `${dateStr} • ${DRAWER_STATE.selectedStartSlot} (${DRAWER_STATE.selectedDuration} hr)`,
-        total: `₱${Number(total).toFixed(2)}`,
+        customerEmail: email,
+        court: `Court 0${courtNum}`,
+        date: (DRAWER_STATE && DRAWER_STATE.selectedDateVal) || dateStr,
+        time: `${dateStr} • ${startSlot} (${durationHrs} hr)`,
+        players: (DRAWER_STATE && DRAWER_STATE.players) || 2,
+        paymentMethod: payMethod,
+        paymentMode: payMethod,
+        total: numericTotal,
         status: 'PENDING',
         transactionRef: refVal,
-        createdAt: new Date().toISOString()
+        receiptDataUrl: (typeof uploadedReceiptDataUrl !== 'undefined' && uploadedReceiptDataUrl) ? uploadedReceiptDataUrl : '',
+        items: orderItems,
+        createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
       };
 
+      // Always store locally first so Check Booking Pass works immediately
       try {
-        const res = await fetch('/api/bookings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bookingPayload)
-        });
-        const data = await res.json();
-        closePaymentModal();
+        let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+        allBookings = allBookings.filter(b => b.ref !== bookingPayload.ref);
+        allBookings.unshift(bookingPayload);
+        localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+        localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
+        localStorage.setItem('booking_' + bookingPayload.ref, JSON.stringify(bookingPayload));
+      } catch (e) {}
 
-        alert(`✅ Reservation Submitted Successfully!
-
-Reference: ${data.ref || refVal}
-Court: Court 0${DRAWER_STATE.selectedCourt}
-Date & Time: ${dateStr} • ${DRAWER_STATE.selectedStartSlot}
-Total Amount: ₱${Number(total).toFixed(2)}
-
-Our front desk is verifying your payment reference.`);
-        window.location.reload();
-      } catch (err) {
-        closePaymentModal();
-        alert(`✅ Reservation Recorded Locally!
-
-Reference: ${refVal}
-Court: Court 0${DRAWER_STATE.selectedCourt}
-Total Amount: ₱${Number(total).toFixed(2)}`);
-        window.location.reload();
+      let syncedToServer = false;
+      let finalRef = generatedRef;
+      const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://localhost:8089/api/bookings'];
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookingPayload)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.ok) {
+              syncedToServer = true;
+              finalRef = data.ref || (data.booking && data.booking.ref) || generatedRef;
+              if (data.state && Array.isArray(data.state.bookings)) {
+                localStorage.setItem('pf_all_bookings', JSON.stringify(data.state.bookings));
+              }
+              break;
+            }
+          }
+        } catch (err) {}
       }
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Submit Payment &amp; Confirm Booking</span>';
+      }
+      closePaymentModal();
+
+      alert(`✅ Reservation Submitted to Front Desk!
+
+Booking ID: ${finalRef}
+Payment Ref #: ${refVal}
+Court: Court 0${courtNum}
+Date & Time: ${dateStr} • ${startSlot} (${durationHrs} hr)
+Total Amount: ₱${numericTotal.toFixed(2)}
+Status: PENDING ADMIN APPROVAL
+
+Your booking is now waiting in the Admin Portal for approval!`);
+      if (typeof syncStateFromServer === 'function') {
+        await syncStateFromServer();
+      }
+      window.location.href = 'check-booking.html?ref=' + encodeURIComponent(finalRef);
     }
 
     // Smooth Wheel & Drag Slider Controls

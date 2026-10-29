@@ -155,6 +155,18 @@ def save_db(data):
         with open(DB_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
+
+def parse_amount(val, default=400.0):
+    if val is None:
+        return float(default)
+    if isinstance(val, (int, float)):
+        return float(val)
+    s = re.sub(r"[^0-9.\-]", "", str(val))
+    try:
+        return float(s) if s else float(default)
+    except Exception:
+        return float(default)
+
 def has_emoji(s):
     if not s:
         return False
@@ -169,7 +181,7 @@ def deduct_inventory_for_items(db, items):
         return
     inventory = db.get("inventory", [])
     for cart_item in items:
-        if cart_item.get("isCourt"):
+        if not isinstance(cart_item, dict) or cart_item.get("isCourt"):
             continue
         cid = str(cart_item.get("id", "")).strip()
         cname = str(cart_item.get("name", "")).strip().lower()
@@ -346,29 +358,55 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
         client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
         db = load_db()
 
-        if parsed.path == "/api/bookings":
-            raw_name = sanitize_str(body.get("name", ""), 80)
-            raw_phone = sanitize_str(body.get("phone", ""), 30)
-            raw_ref = sanitize_str(body.get("transactionRef", ""), 40)
-            if not raw_name or has_emoji(raw_name) or has_emoji(raw_phone) or has_emoji(raw_ref):
-                self._send_json({"ok": False, "error": "Invalid customer information (emojis or empty required fields are not allowed)."}, status=400)
-                return
+        if parsed.path in ("/api/bookings", "/api/booking"):
+            raw_name = sanitize_str(body.get("name") or body.get("customerName") or "Valued Guest", 80)
+            raw_phone = sanitize_str(body.get("phone") or body.get("customerPhone") or "0999 883 2346", 30)
+            raw_email = sanitize_str(body.get("email") or body.get("customerEmail") or "", 100)
+            raw_ref = sanitize_str(body.get("transactionRef") or body.get("paymentRef") or "", 60)
+            # Strip emojis if any instead of rejecting the booking
+            raw_name = "".join(ch for ch in raw_name if not has_emoji(ch)).strip() or "Valued Guest"
+            raw_phone = "".join(ch for ch in raw_phone if not has_emoji(ch)).strip() or "0999 883 2346"
+            raw_ref = "".join(ch for ch in raw_ref if not has_emoji(ch)).strip() or "N/A"
+
             items = body.get("items", [])
+            if not isinstance(items, list):
+                items = [str(items)]
+
+            booking_ref = sanitize_str(body.get("ref") or ("PF-" + str(int(datetime.now().timestamp() * 1000))[-6:]), 30)
+            court_val = sanitize_str(body.get("court", "Court 01"), 250)
+            date_val = sanitize_str(body.get("date", ""), 40)
+            time_val = sanitize_str(body.get("time", "Today • 06:00 PM"), 100)
+            if date_val and date_val not in time_val:
+                display_time = f"{date_val} • {time_val}"
+            else:
+                display_time = time_val
+
+            pay_mode = sanitize_str(body.get("paymentMethod") or body.get("paymentMode") or "GCash", 50)
+            total_val = parse_amount(body.get("total", 400), 400.0)
+            status_val = sanitize_str(body.get("status", "PENDING"), 40).upper()
+            if status_val.startswith("PENDING"):
+                status_val = "PENDING"
+
             new_booking = {
-                "ref": sanitize_str(body.get("ref", "PF-" + str(int(datetime.now().timestamp()))[-5:]), 25),
+                "ref": booking_ref,
                 "name": raw_name,
-                "phone": raw_phone or "0999 883 2346",
-                "email": sanitize_str(body.get("email", ""), 100),
-                "court": sanitize_str(body.get("court", "Court 01"), 250),
-                "time": sanitize_str(body.get("time", "Today • 06:00 PM"), 80),
-                "paymentMode": sanitize_str(body.get("paymentMode") or body.get("paymentMethod") or "GCash", 50),
-                "paymentMethod": sanitize_str(body.get("paymentMethod") or body.get("paymentMode") or "GCash", 50),
-                "transactionRef": raw_ref or "N/A",
+                "customerName": raw_name,
+                "phone": raw_phone,
+                "customerPhone": raw_phone,
+                "email": raw_email,
+                "customerEmail": raw_email,
+                "court": court_val,
+                "date": date_val,
+                "time": display_time,
+                "players": int(parse_amount(body.get("players", 2), 2)),
+                "paymentMode": pay_mode,
+                "paymentMethod": pay_mode,
+                "transactionRef": raw_ref,
                 "receiptDataUrl": body.get("receiptDataUrl", ""),
-                "total": float(body.get("total", 400)),
-                "status": sanitize_str(body.get("status", "PENDING"), 40),
-                "items": items,
-                "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 30)
+                "total": total_val,
+                "status": status_val,
+                "items": items if items else [f"{court_val} ({display_time})"],
+                "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
             }
             deduct_inventory_for_items(db, items)
 
@@ -388,9 +426,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             save_db(db)
             trigger_booking_gmail_notifications(db, new_booking)
             db["sales"] = db.get("salesLedger", [])
-            self._send_json({"ok": True, "booking": new_booking, "state": db})
+            self._send_json({"ok": True, "ref": new_booking["ref"], "booking": new_booking, "state": db})
             return
-
         elif parsed.path == "/api/auth/login":
             mode = str(body.get("mode", "password")).strip().lower()
             LOGIN_ATTEMPTS[client_ip] = {"count": 0, "locked_until": 0}
@@ -479,7 +516,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                             "type": "Court Rental",
                             "desc": f"{target['court']} ({target['name']}) - Ref: {target.get('transactionRef', 'Verified')}",
                             "method": target.get("paymentMethod", "GCash"),
-                            "amount": float(target.get("total", 0)),
+                            "amount": parse_amount(target.get("total", 0), 0.0),
                             "date": datetime.now().strftime("%Y-%m-%d %H:%M")
                         })
                     trigger_booking_gmail_notifications(db, target)
