@@ -3423,6 +3423,77 @@ function clearFieldError(fieldId) {
     }
 
     
+    function admEscapeHtml(str) {
+      return String(str == null ? '' : str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function adminRefreshRescheduleTimeOptions() {
+      const ref = document.getElementById('adm-resched-ref')?.value || '';
+      const targetDate = document.getElementById('adm-resched-date')?.value || '';
+      const courtVal = document.getElementById('adm-resched-court')?.value || 'Court 1';
+      const timeSel = document.getElementById('adm-resched-time');
+      const errEl = document.getElementById('adm-resched-error-msg');
+      if (!timeSel) return;
+      const cNum = parseInt(String(courtVal).replace(/[^0-9]/g, ''), 10) || 1;
+      const now = new Date();
+      const todayYmd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+      const isSlotPast = (dStr, sStr) => {
+        if (!dStr) return false;
+        if (dStr < todayYmd) return true;
+        if (dStr > todayYmd) return false;
+        const m = String(sStr).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+        if (!m) return false;
+        let hr = parseInt(m[1], 10);
+        if (m[3].toUpperCase() === 'PM' && hr !== 12) hr += 12;
+        if (m[3].toUpperCase() === 'AM' && hr === 12) hr = 0;
+        const curHr = now.getHours();
+        const curMin = now.getMinutes();
+        return (hr < curHr) || (hr === curHr && curMin > 0);
+      };
+
+      Array.from(timeSel.options).forEach(opt => {
+        const rawSlot = opt.value;
+        const st = resolveAdminSlotStatus(targetDate, cNum, rawSlot);
+        let suffix = ' (✓ Available)';
+        if (st && st.status === 'BOOKED') {
+          const bRef = (st.booking && st.booking.ref) ? String(st.booking.ref) : '';
+          if (bRef && bRef === ref) {
+            suffix = ' (❌ Already Booked — Current Slot)';
+          } else {
+            suffix = ` (❌ Already Booked — ${(st.booking && st.booking.name) || bRef || 'Guest'})`;
+          }
+        } else if (st && st.status === 'CLOSED') {
+          suffix = ' (🔒 Closed)';
+        } else if (st && st.status === 'OPEN_PLAY') {
+          suffix = ' (🎾 Open Play)';
+        } else if (isSlotPast(targetDate, rawSlot)) {
+          suffix = ' (⏰ Expired / Passed)';
+        }
+        opt.disabled = false;
+        opt.textContent = rawSlot + suffix;
+      });
+
+      if (errEl && targetDate && timeSel.value) {
+        const curSt = resolveAdminSlotStatus(targetDate, cNum, timeSel.value);
+        if (isSlotPast(targetDate, timeSel.value)) {
+          errEl.innerHTML = `⚠️ <b>Expired Date/Time Error:</b> <b>${timeSel.value}</b> on <b>${targetDate}</b> has already passed. Please select a future time slot.`;
+          errEl.className = 'text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-2.5 rounded-xl block';
+        } else if (curSt && curSt.status === 'BOOKED') {
+          const bRef = (curSt.booking && curSt.booking.ref) ? String(curSt.booking.ref) : '';
+          if (bRef === ref) {
+            errEl.innerHTML = `❌ <b>Schedule Already Booked Error:</b> <b>Court ${cNum}</b> at <b>${timeSel.value}</b> on <b>${targetDate}</b> is already booked by this reservation (<b>${ref}</b>). Please choose a different available slot.`;
+          } else {
+            errEl.innerHTML = `❌ <b>Schedule Already Booked Error:</b> <b>Court ${cNum}</b> at <b>${timeSel.value}</b> on <b>${targetDate}</b> is already booked by <b>${admEscapeHtml((curSt.booking && curSt.booking.name) || bRef || 'another guest')}</b>. Please choose an available slot.`;
+          }
+          errEl.className = 'text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-2.5 rounded-xl block';
+        } else {
+          errEl.className = 'hidden';
+          errEl.innerHTML = '';
+        }
+      }
+    }
+
     function adminOpenRescheduleModal(ref) {
       const b = bookings.find(item => item.ref === ref);
       if (!b) return;
@@ -3445,11 +3516,11 @@ function clearFieldError(fieldId) {
             <div class="space-y-3 text-xs">
               <div>
                 <label class="block text-[10px] font-mono uppercase text-slate-300 font-bold mb-1">New Date</label>
-                <input type="date" id="adm-resched-date" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-[#9BE600]">
+                <input type="date" id="adm-resched-date" onchange="adminRefreshRescheduleTimeOptions()" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-[#9BE600]">
               </div>
               <div>
                 <label class="block text-[10px] font-mono uppercase text-slate-300 font-bold mb-1">New Court</label>
-                <select id="adm-resched-court" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-bold text-xs focus:outline-none focus:border-[#9BE600]">
+                <select id="adm-resched-court" onchange="adminRefreshRescheduleTimeOptions()" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-bold text-xs focus:outline-none focus:border-[#9BE600]">
                   <option value="Court 1">Court 1</option>
                   <option value="Court 2">Court 2</option>
                   <option value="Court 3">Court 3</option>
@@ -3458,7 +3529,7 @@ function clearFieldError(fieldId) {
               </div>
               <div>
                 <label class="block text-[10px] font-mono uppercase text-slate-300 font-bold mb-1">New Time</label>
-                <select id="adm-resched-time" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-[#9BE600]">
+                <select id="adm-resched-time" onchange="adminRefreshRescheduleTimeOptions()" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-[#9BE600]">
                   <option value="06:00 AM">06:00 AM</option>
                   <option value="07:00 AM">07:00 AM</option>
                   <option value="08:00 AM">08:00 AM</option>
@@ -3479,6 +3550,7 @@ function clearFieldError(fieldId) {
                   <option value="11:00 PM">11:00 PM</option>
                 </select>
               </div>
+              <p id="adm-resched-error-msg" class="hidden"></p>
             </div>
             <div class="flex items-center gap-2 pt-2">
               <button type="button" onclick="adminSubmitReschedule()" class="flex-1 py-3 rounded-xl bg-[#9BE600] text-[#050E1D] font-black uppercase text-xs tracking-wider hover:opacity-95 transition">✓ Save New Schedule</button>
@@ -3492,7 +3564,12 @@ function clearFieldError(fieldId) {
       document.getElementById('adm-resched-title').textContent = `Reschedule • ${b.name || b.customerName || 'Guest'} (${b.ref})`;
       const now = new Date();
       const todayYmd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-      document.getElementById('adm-resched-date').value = b.date && /^\d{4}-\d{2}-\d{2}$/.test(b.date) ? b.date : todayYmd;
+      const dateInp = document.getElementById('adm-resched-date');
+      dateInp.min = todayYmd;
+      dateInp.value = (b.date && /^\d{4}-\d{2}-\d{2}$/.test(b.date) && b.date >= todayYmd) ? b.date : todayYmd;
+      const cNum = parseInt(String(b.court || '1').replace(/[^0-9]/g, ''), 10) || 1;
+      document.getElementById('adm-resched-court').value = 'Court ' + cNum;
+      adminRefreshRescheduleTimeOptions();
       modal.classList.remove('hidden');
     }
 
@@ -3506,20 +3583,46 @@ function clearFieldError(fieldId) {
       const newDate = document.getElementById('adm-resched-date')?.value;
       const newCourt = document.getElementById('adm-resched-court')?.value || 'Court 1';
       const newTime = document.getElementById('adm-resched-time')?.value || '06:00 AM';
+      const errEl = document.getElementById('adm-resched-error-msg');
       const b = bookings.find(item => item.ref === ref);
       if (!b || !newDate) return;
-      b.date = newDate;
-      b.court = newCourt;
-      b.time = `${newDate} • ${newTime}`;
-      b.rescheduledAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
-      b.isReschedule = true;
+
+      const cNum = parseInt(String(newCourt).replace(/[^0-9]/g, ''), 10) || 1;
+      const slotSt = resolveAdminSlotStatus(newDate, cNum, newTime);
+      if (slotSt && slotSt.status === 'BOOKED') {
+        const bRef = (slotSt.booking && slotSt.booking.ref) ? String(slotSt.booking.ref) : '';
+        if (errEl) {
+          errEl.innerHTML = bRef === ref
+            ? `❌ <b>Schedule Already Booked Error:</b> <b>${newCourt}</b> at <b>${newTime}</b> on <b>${newDate}</b> is already booked by this reservation (<b>${ref}</b>). Please choose a different available slot.`
+            : `❌ <b>Schedule Already Booked Error:</b> <b>${newCourt}</b> at <b>${newTime}</b> on <b>${newDate}</b> is already booked by <b>${admEscapeHtml((slotSt.booking && slotSt.booking.name) || bRef || 'another guest')}</b>. Please select an available slot.`;
+          errEl.className = 'text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-2.5 rounded-xl block';
+        }
+        return;
+      }
+
+      const updated = Object.assign({}, b, {
+        date: newDate,
+        court: newCourt,
+        time: `${newDate} • ${newTime}`,
+        rescheduledAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        isReschedule: true
+      });
       try {
-        await fetch('/api/bookings', {
+        const res = await fetch('/api/bookings', {
           method: 'POST',
           headers: getAdminAuthHeaders(),
-          body: JSON.stringify(b)
+          body: JSON.stringify(updated)
         });
+        const respData = await res.json().catch(() => ({}));
+        if (res.status === 409 || (respData && respData.ok === false)) {
+          if (errEl) {
+            errEl.innerHTML = `❌ <b>${admEscapeHtml(respData.error || 'Schedule Already Booked Error')}</b>`;
+            errEl.className = 'text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-2.5 rounded-xl block';
+          }
+          return;
+        }
       } catch (e) {}
+      Object.assign(b, updated);
       saveAdminState();
       renderBookingsTable();
       adminCloseRescheduleModal();

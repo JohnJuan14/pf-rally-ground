@@ -165,6 +165,30 @@ def save_db(data):
         pass
 
 
+
+def normalize_court_num(court_str):
+    m = re.search(r"court\s*0*([1-4])", str(court_str or ""), re.I) or re.search(r"\b([1-4])\b", str(court_str or ""))
+    return int(m.group(1)) if m else 1
+
+def extract_slot_time(time_str):
+    m = re.search(r"(\d{1,2}:\d{2}\s*(?:AM|PM))", str(time_str or ""), re.I)
+    return m.group(1).upper() if m else ""
+
+def extract_date_ymd(date_str, time_str):
+    today_ymd = datetime.now().strftime("%Y-%m-%d")
+    d = str(date_str or "").strip()
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", d):
+        return d
+    if d.lower().startswith("today"):
+        return today_ymd
+    t = str(time_str or "").strip()
+    m = re.search(r"(\d{4}-\d{2}-\d{2})", t) or re.search(r"(\d{4}-\d{2}-\d{2})", d)
+    if m:
+        return m.group(1)
+    if "today" in t.lower():
+        return today_ymd
+    return d or today_ymd
+
 def parse_amount(val, default=400.0):
     if val is None:
         return float(default)
@@ -427,6 +451,36 @@ class handler(http.server.BaseHTTPRequestHandler):
                 db["sales"] = db.get("salesLedger", [])
                 self._send_json({"ok": True, "ref": dup_existing["ref"], "booking": dup_existing, "deduplicated": True, "state": db})
                 return
+
+            is_reschedule_req = bool(body.get("isReschedule"))
+            target_cnum = normalize_court_num(new_booking["court"])
+            target_ymd = extract_date_ymd(new_booking["date"], new_booking["time"])
+            target_slot = extract_slot_time(new_booking["time"])
+            if target_slot:
+                for b in db.get("bookings", []):
+                    if b.get("status") in ("CANCELLED", "DECLINED"):
+                        continue
+                    b_cnum = normalize_court_num(b.get("court"))
+                    b_ymd = extract_date_ymd(b.get("date"), b.get("time"))
+                    b_slot = extract_slot_time(b.get("time"))
+                    if b_cnum == target_cnum and b_ymd == target_ymd and b_slot == target_slot:
+                        if b.get("ref") == new_booking["ref"]:
+                            if is_reschedule_req:
+                                self._send_json({
+                                    "ok": False,
+                                    "error": f"Schedule Already Booked Error: Court {target_cnum} at {target_slot} on {target_ymd} is already booked by your current reservation ({new_booking['ref']}). Please choose a different available date, court, or time slot."
+                                }, status=409)
+                                return
+                        else:
+                            # Allow rapid double-click deduplication only if not a reschedule and same transactionRef
+                            if not is_reschedule_req and new_booking["transactionRef"] not in ("", "N/A") and b.get("transactionRef") == new_booking["transactionRef"]:
+                                continue
+                            if is_reschedule_req:
+                                self._send_json({
+                                    "ok": False,
+                                    "error": f"Schedule Already Booked Error: Court {target_cnum} at {target_slot} on {target_ymd} is already booked by another player. Please select an available date, court, or time slot."
+                                }, status=409)
+                                return
 
             existing_bk = next((b for b in db["bookings"] if b.get("ref") == new_booking["ref"]), None)
             if not existing_bk:
