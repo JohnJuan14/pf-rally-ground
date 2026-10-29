@@ -752,7 +752,6 @@
       <!-- Desktop Navigation Links -->
       <nav class="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 text-[11px] xl:text-xs uppercase tracking-wider flex-shrink-0">
         <a href="index.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Home</a>
-        <a href="courts.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Courts</a>
         <a href="index.html#schedule" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">Schedule</a>
         <a href="pricing.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Rates &amp; Gear</a>
         <span class="h-3.5 w-px bg-white/15 mx-1"></span>
@@ -799,9 +798,6 @@
         <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">COURTS &amp; SCHEDULE</span>
         <a href="index.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
           <span>Home Overview</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
-        </a>
-        <a href="courts.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
-          <span>Courts &amp; Specs (01–04)</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
         </a>
         <a href="index.html#schedule" onclick="toggleMobileMenu()" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
           <span>Live Court Schedule</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
@@ -984,10 +980,10 @@
           <div class="space-y-2.5">
             <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Courts &amp; Play</h4>
             <ul class="space-y-2 text-xs leading-snug">
-              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 01 • Championship</a></li>
-              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 02 • Tournament</a></li>
-              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 03 • Covered</a></li>
-              <li><a href="courts.html" class="hover:text-brand-lime transition block">Court 04 • Pro Training</a></li>
+              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 01 • Championship</a></li>
+              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 02 • Tournament</a></li>
+              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 03 • Covered</a></li>
+              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 04 • Pro Training</a></li>
               <li><a href="index.html#schedule" class="text-brand-lime font-bold hover:underline block pt-0.5">Live Schedule →</a></li>
             </ul>
           </div>
@@ -996,7 +992,7 @@
           <div class="space-y-2.5">
             <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Rates &amp; Booking</h4>
             <ul class="space-y-2 text-xs leading-snug">
-              <li><a href="courts.html" class="hover:text-brand-lime transition block">4 Pro Cushion Courts</a></li>
+              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">4 Pro Cushion Courts</a></li>
               <li><a href="pricing.html" class="hover:text-brand-lime transition block">Court &amp; Gear Rates</a></li>
               <li><a href="pricing.html#live-admin-inventory-card" class="hover:text-brand-lime transition block">Live Club Inventory</a></li>
               <li><a href="book.html" class="hover:text-brand-lime transition block">Full-Page Booking</a></li>
@@ -1015,6 +1011,9 @@
             <button type="button" onclick="toggleCartDrawer()" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
               Reservation Cart →
             </button>
+            <a href="/admin/" onclick="return openAdminPortal(event)" class="col-span-2 lg:col-span-1 py-2.5 px-3 rounded-xl bg-brand-lime/15 border border-brand-lime/40 hover:bg-brand-lime text-brand-lime hover:text-brand-black font-black transition text-center lg:text-left">
+              🛡️ Admin Portal →
+            </a>
           </div>
         </div>
 
@@ -1028,7 +1027,6 @@
         <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-slate-300 font-semibold">
           <a href="index.html" class="hover:text-brand-lime transition">Home</a>
           <span>•</span>
-          <a href="courts.html" class="hover:text-brand-lime transition">Courts</a>
           <span>•</span>
           <a href="pricing.html" class="hover:text-brand-lime transition">Rates &amp; Gear</a>
           <span>•</span>
@@ -1036,8 +1034,8 @@
           <span>•</span>
           <a href="check-booking.html" class="hover:text-brand-lime transition">My Booking</a>
           <span>•</span>
-          <a href="/admin/" onclick="return openAdminPortal(event)" class="text-slate-500 hover:text-slate-300 text-[10px] font-mono flex items-center gap-1 transition" title="Authorized Staff Only">
-            <span>🔒 Staff</span>
+          <a href="/admin/" onclick="return openAdminPortal(event)" class="px-2.5 py-1 rounded-lg bg-brand-lime/15 border border-brand-lime/40 text-brand-lime hover:bg-brand-lime hover:text-brand-black text-[11px] font-mono font-black flex items-center gap-1 transition" title="Open Admin Portal">
+            <span>🛡️ Admin Portal</span>
           </a>
         </div>
       </div>
@@ -1408,7 +1406,22 @@
         </div>
       </div>
 
-            <!-- 1. GCash QR Code Section (Clean UX + Zoom QR + Save QR + Full Card Toggle) -->
+                  <!-- Exact Amount QR Generator Bar (Pre-Fills Exact Amount in GCash, Maya & BDO Apps) -->
+      <div class="mb-4 p-3.5 rounded-2xl bg-brand-black/90 border-2 border-brand-lime/50 space-y-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span class="text-[10px] font-mono font-black uppercase tracking-wider text-brand-lime block">⚡ EXACT QR AMOUNT GENERATOR (GCASH • MAYA • BDO)</span>
+            <p class="text-[11px] text-slate-300" data-qr-amount-status="1">⚡ Pre-Filled in GCash, Maya &amp; BDO QR: <b class="text-brand-lime font-mono">₱400.00</b></p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs font-mono font-black text-brand-lime">₱</span>
+            <input type="number" id="pf-modal-qr-exact-amount" min="0" step="10" value="400.00" oninput="if(typeof pfSetExactQrAmount==='function')pfSetExactQrAmount(this.value, false)" class="w-28 bg-brand-card border-2 border-brand-lime rounded-xl px-2.5 py-1.5 text-xs text-white font-mono font-black focus:outline-none">
+            <button type="button" onclick="if(typeof pfSetExactQrAmount==='function')pfSetExactQrAmount(document.getElementById('pf-modal-qr-exact-amount').value, true)" class="px-3 py-1.5 rounded-xl bg-brand-lime text-brand-black font-black text-[10px] uppercase tracking-wider hover:opacity-95 transition whitespace-nowrap">Generate QR</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. GCash QR Code Section (Clean UX + Zoom QR + Save QR + Full Card Toggle) -->
       <div id="modal-qr-section" class="mb-4">
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/95 rounded-2xl p-4 border-2 border-brand-lime/40 shadow-lg">
           <div class="sm:col-span-5 flex flex-col items-center">
@@ -1416,12 +1429,9 @@
               <img id="locked-qr-img" data-qr-mode="qr" src="assets/qr-gcash.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" onclick="pfOpenQrStandeeLightbox('gcash')" alt="P&amp;F Rally Ground GCash QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;" title="Tap to zoom GCash QR">
               <div class="mt-1.5 text-[9px] font-mono text-[#0057E7] font-black uppercase tracking-wider">Official GCash QR Ph</div>
             </div>
-            <div class="w-52 sm:w-full max-w-[215px] mt-2 space-y-1.5">
-              <div class="grid grid-cols-2 gap-1.5">
-                <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="py-1.5 px-2 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase tracking-wider hover:opacity-95 transition shadow flex items-center justify-center gap-1">🔍 Zoom QR</button>
-                <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="py-1.5 px-2 rounded-lg bg-white text-[#050E1D] text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow flex items-center justify-center gap-1">📥 Save QR</button>
-              </div>
-              <button type="button" onclick="pfToggleQrCardView('gcash', 'locked-qr-img', this)" class="w-full py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-bold uppercase transition">🪪 Show Full GCash Card</button>
+            <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
+              <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
+              <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
             </div>
           </div>
 
@@ -1459,12 +1469,9 @@
               <img id="locked-maya-qr-img" data-qr-mode="qr" src="assets/qr-maya.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-maya.png';" onclick="pfOpenQrStandeeLightbox('maya')" alt="P&amp;F Rally Ground Maya QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;" title="Tap to zoom Maya QR">
               <div class="mt-1.5 text-[9px] font-mono text-emerald-800 font-black uppercase tracking-wider">Official Maya QR Ph</div>
             </div>
-            <div class="w-52 sm:w-full max-w-[215px] mt-2 space-y-1.5">
-              <div class="grid grid-cols-2 gap-1.5">
-                <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="py-1.5 px-2 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase tracking-wider hover:opacity-95 transition shadow flex items-center justify-center gap-1">🔍 Zoom QR</button>
-                <button type="button" onclick="pfDownloadOfficialQr('maya')" class="py-1.5 px-2 rounded-lg bg-white text-[#050E1D] text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow flex items-center justify-center gap-1">📥 Save QR</button>
-              </div>
-              <button type="button" onclick="pfToggleQrCardView('maya', 'locked-maya-qr-img', this)" class="w-full py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-bold uppercase transition">🪪 Show Full Maya Card</button>
+            <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
+              <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
+              <button type="button" onclick="pfDownloadOfficialQr('maya')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
             </div>
           </div>
 
@@ -1502,12 +1509,9 @@
               <img id="locked-bank-qr-img" data-qr-mode="qr" src="assets/qr-bdo.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-bdo.png';" onclick="pfOpenQrStandeeLightbox('bank')" alt="BDO InstaPay QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;" title="Tap to zoom BDO QR">
               <div class="mt-1.5 text-[9px] font-mono text-[#0072CE] font-black uppercase tracking-wider">Official BDO InstaPay QR</div>
             </div>
-            <div class="w-52 sm:w-full max-w-[215px] mt-2 space-y-1.5">
-              <div class="grid grid-cols-2 gap-1.5">
-                <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="py-1.5 px-2 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase tracking-wider hover:opacity-95 transition shadow flex items-center justify-center gap-1">🔍 Zoom QR</button>
-                <button type="button" onclick="pfDownloadOfficialQr('bank')" class="py-1.5 px-2 rounded-lg bg-white text-[#050E1D] text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow flex items-center justify-center gap-1">📥 Save QR</button>
-              </div>
-              <button type="button" onclick="pfToggleQrCardView('bank', 'locked-bank-qr-img', this)" class="w-full py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-bold uppercase transition">🪪 Show Full BDO Card</button>
+            <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
+              <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
+              <button type="button" onclick="pfDownloadOfficialQr('bank')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
             </div>
           </div>
 
@@ -2324,15 +2328,9 @@
           pendingOrderData.items.map(it => `<li class="flex items-center gap-1.5"><span class="text-brand-lime font-black">•</span><span>${typeof it === 'string' ? it : (it.qty + '× ' + it.name)}</span></li>`).join('') +
           '</ul>';
       }
-      const qrImg = document.getElementById('locked-qr-img');
-      if (qrImg) {
-        const mode = qrImg.getAttribute('data-qr-mode') || 'qr';
-        qrImg.src = typeof pfGetOfficialQrUrl === 'function' ? pfGetOfficialQrUrl('gcash', mode) : 'assets/qr-gcash.png?v=20261029v9';
+      if (typeof pfSetExactQrAmount === 'function') {
+        pfSetExactQrAmount(total, true);
       }
-      const mayaImg = document.getElementById('locked-maya-qr-img');
-      if (mayaImg) mayaImg.src = 'assets/qr-maya.png?v=20261029v9';
-      const bankImg = document.getElementById('locked-bank-qr-img');
-      if (bankImg) bankImg.src = 'assets/qr-bdo.png?v=20261029v9';
       if (typeof selectPayMode === 'function') selectPayMode('gcash');
       if (modal) modal.classList.remove('hidden');
     }
