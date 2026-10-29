@@ -3049,14 +3049,7 @@ function clearFieldError(fieldId) {
     };
 
     function isAdminOpenPlaySlot(slotStr) {
-      const dayInput = document.getElementById('adm-block-date')?.value;
-      const d = dayInput ? new Date(dayInput + 'T12:00:00') : new Date();
-      const rule = ADMIN_OPEN_PLAY_BY_DAY[d.getDay()];
-      if (!rule) return false;
-      let hr = parseInt(slotStr, 10);
-      if (slotStr.includes('PM') && hr !== 12) hr += 12;
-      if (slotStr.includes('AM') && hr === 12) hr = 0;
-      return hr >= rule.start && hr < rule.end;
+      return false;
     }
 
     function openPublicSite(event, pagePath) {
@@ -7101,7 +7094,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       bentoSectionTitle: 'PLAY THE CLUB',
       bentoSectionDesc: 'Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.',
       scheduleHeading: 'COURT TIMELINE',
-      openPlayScheduleText: 'Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM',
+      openPlayScheduleText: 'All 4 courts open daily 6:00 AM – 12:00 Midnight • Click any available time slot below to book',
       court1Name: 'Court 1',
       court2Name: 'Court 2',
       court3Name: 'Court 3',

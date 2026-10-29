@@ -830,8 +830,8 @@
 
       <!-- Desktop Navigation Links -->
       <nav class="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 text-[11px] xl:text-xs uppercase tracking-wider flex-shrink-0">
-        <a href="index.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-brand-black bg-brand-lime font-black shadow-md shadow-brand-lime/20">Home</a>
-        <a href="index.html#schedule" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">Schedule</a>
+        <a href="index.html" id="nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-brand-black bg-brand-lime font-black shadow-md shadow-brand-lime/20">Home</a>
+        <a href="#schedule" id="nav-link-schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">Schedule</a>
         <a href="pricing.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Rates &amp; Gear</a>
         <span class="h-3.5 w-px bg-white/15 mx-1"></span>
         <a href="check-booking.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">
@@ -875,11 +875,11 @@
     <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-3.5 sm:px-6 py-3.5 space-y-2.5 text-xs font-black uppercase tracking-wider max-h-[calc(100dvh-5.5rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
       <div class="space-y-1.5">
         <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">COURTS &amp; SCHEDULE</span>
-        <a href="index.html" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#050E1D] text-[#9BE600] font-black shadow-md transition">
-          <span>Home Overview</span> <span class="text-[#9BE600] font-mono font-black">● ACTIVE</span>
+        <a href="index.html" id="mob-nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#050E1D] text-[#9BE600] font-black shadow-md transition">
+          <span>Home Overview</span> <span id="mob-nav-badge-home" class="text-[#9BE600] font-mono font-black">● ACTIVE</span>
         </a>
-        <a href="index.html#schedule" onclick="toggleMobileMenu()" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
-          <span>Live Court Schedule</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
+        <a href="#schedule" id="mob-nav-link-schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
+          <span>Live Court Schedule</span> <span id="mob-nav-badge-schedule" class="text-[#0E8A2D] font-mono font-black">→</span>
         </a>
       </div>
 
@@ -987,7 +987,7 @@
 
       <!-- Trust Badges Bar (High-Visibility Glowing SVG Icon Containers) -->
       <div class="mt-10 pt-6 border-t border-white/15 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-xs font-bold">
-        <a href="index.html#schedule" class="flex items-center gap-3 p-3 rounded-2xl bg-brand-black/80 hover:bg-brand-card border border-brand-lime/30 hover:border-brand-lime transition group shadow-lg">
+        <a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="flex items-center gap-3 p-3 rounded-2xl bg-brand-black/80 hover:bg-brand-card border border-brand-lime/30 hover:border-brand-lime transition group shadow-lg">
           <div class="w-10 h-10 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center flex-shrink-0 shadow-md shadow-brand-lime/30 group-hover:scale-105 transition-transform">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </div>
@@ -1074,7 +1074,7 @@
   </section>
 
   <!-- ================= LIVE SCHEDULE & COURT MATRIX ================= -->
-  <section id="schedule" class="py-16 sm:py-20 bg-brand-dark border-t border-white/10">
+  <section id="schedule" class="py-16 sm:py-20 bg-brand-dark border-t border-white/10 scroll-mt-28" style="scroll-margin-top: 118px;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
@@ -1090,7 +1090,6 @@
 
         <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 text-[11px] sm:text-xs font-bold text-slate-800 bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-lg">
           <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-emerald-100 border border-emerald-400"></span> <span>Available (<b class="text-emerald-700 font-mono" data-site-price="day-num">₱400</b>/<b class="text-emerald-700 font-mono" data-site-price="night-num">₱500</b>)</span></span>
-          <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#365314]">Open Play</span></span>
           <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-rose-100 border border-rose-400"></span> <span class="text-rose-700">Booked</span></span>
           <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-slate-800 border border-slate-900"></span> <span class="text-slate-800">Closed</span></span>
         </div>
@@ -1123,7 +1122,7 @@
             <div>
               <span class="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block leading-none">Court Matrix</span>
               <label class="text-xs sm:text-base font-black uppercase tracking-tight text-slate-900 font-display block mt-0.5">2. Filter Court View</label>
-              <p id="site-open-play-schedule-text" class="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-0.5">Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM</p>
+              <p id="site-open-play-schedule-text" class="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-0.5">All 4 courts open daily 6:00 AM – 12:00 Midnight • Click any available time slot below to book</p>
             </div>
             <!-- 5-Segment Court Selector (Fits 100% on Mobile with Zero Sideways Scroll) -->
             <div class="grid grid-cols-5 sm:flex items-center gap-1 sm:gap-1.5 w-full sm:w-auto" id="schedule-court-filter">
@@ -1183,7 +1182,7 @@
       </button>
 
       <div class="mt-14 pt-8 border-t border-white/15 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs font-black text-white w-full max-w-4xl">
-        <a href="index.html#schedule" class="flex items-center justify-center gap-2.5 p-3.5 rounded-2xl bg-brand-card/90 border border-brand-lime/30 hover:border-brand-lime hover:text-brand-lime transition shadow-lg">
+        <a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="flex items-center justify-center gap-2.5 p-3.5 rounded-2xl bg-brand-card/90 border border-brand-lime/30 hover:border-brand-lime hover:text-brand-lime transition shadow-lg">
           <span class="w-8 h-8 rounded-lg bg-brand-lime text-brand-black flex items-center justify-center flex-shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
           </span>
@@ -1195,11 +1194,11 @@
           </span>
           <span>TOP QUALITY GEAR</span>
         </a>
-        <a href="index.html#schedule" class="flex items-center justify-center gap-2.5 p-3.5 rounded-2xl bg-brand-card/90 border border-brand-lime/30 hover:border-brand-lime hover:text-brand-lime transition shadow-lg">
+        <a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="flex items-center justify-center gap-2.5 p-3.5 rounded-2xl bg-brand-card/90 border border-brand-lime/30 hover:border-brand-lime hover:text-brand-lime transition shadow-lg">
           <span class="w-8 h-8 rounded-lg bg-brand-lime text-brand-black flex items-center justify-center flex-shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
           </span>
-          <span>OPEN PLAY SESSIONS</span>
+          <span>LIVE COURT SCHEDULE</span>
         </a>
         <button type="button" onclick="openBookingDrawer()" class="flex items-center justify-center gap-2.5 p-3.5 rounded-2xl bg-brand-card/90 border border-brand-lime/30 hover:border-brand-lime hover:text-brand-lime transition shadow-lg">
           <span class="w-8 h-8 rounded-lg bg-brand-lime text-brand-black flex items-center justify-center flex-shrink-0">
@@ -1251,11 +1250,11 @@
           <div class="space-y-2.5">
             <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Courts &amp; Play</h4>
             <ul class="space-y-2 text-xs leading-snug">
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 1</a></li>
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 2</a></li>
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 3</a></li>
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 4</a></li>
-              <li><a href="index.html#schedule" class="text-brand-lime font-bold hover:underline block pt-0.5">Live Schedule →</a></li>
+              <li><a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="hover:text-brand-lime transition block">Court 1</a></li>
+              <li><a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="hover:text-brand-lime transition block">Court 2</a></li>
+              <li><a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="hover:text-brand-lime transition block">Court 3</a></li>
+              <li><a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="hover:text-brand-lime transition block">Court 4</a></li>
+              <li><a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="text-brand-lime font-bold hover:underline block pt-0.5">Live Schedule →</a></li>
             </ul>
           </div>
 
@@ -1263,7 +1262,6 @@
           <div class="space-y-2.5">
             <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Rates &amp; Booking</h4>
             <ul class="space-y-2 text-xs leading-snug">
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Open Play Schedule</a></li>
               <li><a href="pricing.html" class="hover:text-brand-lime transition block">Court &amp; Gear Rates</a></li>
               <li><a href="pricing.html#live-admin-inventory-card" class="hover:text-brand-lime transition block">Live Club Inventory</a></li>
               <li><a href="book.html" class="hover:text-brand-lime transition block">Full-Page Booking</a></li>
@@ -1938,7 +1936,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261029v13"></script>
+  <script src="app.js?v=20261029v14"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -2033,12 +2031,7 @@
     }
 
     function isOpenPlaySlot(dateYMD, slotStr) {
-      if (!dateYMD || !/^\d{4}-\d{2}-\d{2}$/.test(dateYMD)) return false;
-      const dayOfWeek = new Date(`${dateYMD}T12:00:00`).getDay();
-      const rule = OPEN_PLAY_HOURS_BY_DAY[dayOfWeek];
-      if (!rule) return false;
-      const hr = slotTo24Hour(slotStr);
-      return hr >= rule.start && hr < rule.end;
+      return false;
     }
 
     function jumpScheduleToDate(ymd) {
@@ -2088,9 +2081,9 @@
         btn.type = 'button';
         btn.className = `date-tile ${isSelected ? 'date-tile-active' : ''}`;
         btn.innerHTML = `
-          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
-          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
-          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
+          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
+          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
+          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
         `;
         btn.onclick = () => {
           selectedScheduleDateYMD = d.value;
@@ -2141,7 +2134,7 @@
         <th class="py-2.5 sm:py-3.5 px-2 sm:px-4 text-left sticky left-0 bg-[#050E1D] z-20 w-[72px] sm:w-[125px] text-white font-black">Time</th>
         ${courtsToShow.map(c => `
           <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center text-white font-black">
-            <span class="sm:hidden">${isSingleCourt ? 'Court 0' + c : 'C' + c}</span>
+            <span class="sm:hidden">${isSingleCourt ? 'Court ' + c : 'C' + c}</span>
             <span class="hidden sm:inline">Court ${c}</span>
           </th>
         `).join('')}
@@ -2274,9 +2267,9 @@
         btn.onclick = () => selectDrawerDate(d.value, btn);
 
         btn.innerHTML = `
-          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-brand-lime' : 'text-slate-500'}">${d.weekday}</span>
-          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-slate-900'}">${d.day}</span>
-          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-slate-200' : 'text-slate-500'}">${d.month}</span>
+          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
+          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
+          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
         `;
         container.appendChild(btn);
       });
@@ -2295,16 +2288,16 @@
       document.querySelectorAll('#drawer-date-rail .date-tile').forEach(b => {
         b.classList.remove('date-tile-active');
         const spans = b.querySelectorAll('span');
-        if (spans[0]) spans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-500';
-        if (spans[1]) spans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-slate-900';
-        if (spans[2]) spans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-500';
+        if (spans[0]) spans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400';
+        if (spans[1]) spans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-white';
+        if (spans[2]) spans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-400';
       });
       if (clickedBtn) {
         clickedBtn.classList.add('date-tile-active');
         const activeSpans = clickedBtn.querySelectorAll('span');
-        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-brand-lime';
-        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-white';
-        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-200';
+        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#050E1D]';
+        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-[#050E1D]';
+        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-[#050E1D]';
       }
 
       const lbl = document.getElementById('drawer-selected-date-label');
@@ -2902,6 +2895,9 @@ Your booking is now waiting in the Admin Portal for approval!`);
       recalculateDrawerTotal();
       setupSliderInteraction('date-carousel', 'sched-slider-prev', 'sched-slider-next');
       setupSliderInteraction('drawer-date-rail', 'drawer-slider-prev', 'drawer-slider-next');
+      if (window.location.hash === '#schedule' && typeof pfScrollToScheduleSection === 'function') {
+        pfScrollToScheduleSection(false);
+      }
     });
   </script>
 </body>

@@ -88,7 +88,7 @@ DEFAULT_DB = {
         "bentoSectionTitle": "PLAY THE CLUB",
         "bentoSectionDesc": "Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.",
         "scheduleHeading": "COURT TIMELINE",
-        "openPlayScheduleText": "Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM",
+        "openPlayScheduleText": "All 4 courts open daily 6:00 AM – 12:00 Midnight • Click any available time slot below to book",
         "dayRate": 400,
         "nightRate": 500,
         "includedPlayers": 6,

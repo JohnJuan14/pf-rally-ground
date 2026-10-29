@@ -2085,7 +2085,7 @@ const DEFAULT_PF_SITE_CONFIG = {
   liveBannerText: 'LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!',
   bentoSectionTitle: 'PLAY THE CLUB',
   bentoSectionDesc: 'Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.',
-  openPlayScheduleText: 'Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM',
+  openPlayScheduleText: 'All 4 courts open daily 6:00 AM – 12:00 Midnight • Click any available time slot below to book',
   dayRate: 400,
   nightRate: 500,
   includedPlayers: 6,
@@ -2164,6 +2164,9 @@ function applySiteConfig(incomingCfg) {
       cfg[k] = DEFAULT_PF_SITE_CONFIG[k] || cfg[k].replace(/\ufffd/g, '•');
     }
   });
+  if (cfg.openPlayScheduleText && /Open Play:\s*Mon/i.test(cfg.openPlayScheduleText)) {
+    cfg.openPlayScheduleText = DEFAULT_PF_SITE_CONFIG.openPlayScheduleText;
+  }
 
   // 1. Update courtNames map
   if (cfg.court1Name) courtNames[1] = cfg.court1Name;
@@ -2650,27 +2653,7 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return { status: 'CLOSED', override: matchedBlock, reason: matchedBlock.reason || 'Closed' };
   }
 
-  // 3. Default schedule fallback (Open Play hours by day of week)
-  const openPlayByDay = {
-    1: { start: 15, end: 18 },
-    2: { start: 15, end: 20 },
-    3: { start: 15, end: 20 },
-    4: { start: 15, end: 20 },
-    5: { start: 15, end: 23 },
-    6: { start: 18, end: 22 }
-  };
-  if (/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
-    const dayOfWeek = new Date(`${targetDate}T12:00:00`).getDay();
-    const rule = openPlayByDay[dayOfWeek];
-    if (rule) {
-      let hr = parseInt(slotStr, 10);
-      if (slotStr.includes('PM') && hr !== 12) hr += 12;
-      if (slotStr.includes('AM') && hr === 12) hr = 0;
-      if (hr >= rule.start && hr < rule.end) {
-        return { status: 'OPEN_PLAY', override: null, reason: 'Open Play' };
-      }
-    }
-  }
+  // 3. Default schedule fallback: All courts available unless booked or explicitly overridden by Admin
 
   if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, slotStr)) {
     return { status: 'EXPIRED', override: null, reason: 'Time Passed' };
@@ -3387,3 +3370,133 @@ window.pfCheckRescheduleConflict = pfCheckRescheduleConflict;
 window.pfRefreshRescheduleTimeOptions = pfRefreshRescheduleTimeOptions;
 window.pfToggleRescheduleForm = pfToggleRescheduleForm;
 window.pfSubmitBookingReschedule = pfSubmitBookingReschedule;
+
+
+// ================= SCHEDULE & HOME NAVIGATION CONTROLLER =================
+function pfSetScheduleNavActive(isScheduleActive) {
+  const homeLink = document.getElementById('nav-link-home');
+  const schedLink = document.getElementById('nav-link-schedule');
+  const mobHome = document.getElementById('mob-nav-link-home');
+  const mobSched = document.getElementById('mob-nav-link-schedule');
+  const mobBadgeHome = document.getElementById('mob-nav-badge-home');
+  const mobBadgeSched = document.getElementById('mob-nav-badge-schedule');
+
+  const activeDesktopCls = 'whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-brand-black bg-brand-lime font-black shadow-md shadow-brand-lime/20';
+  const inactiveDesktopCls = 'whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200 flex items-center gap-1.5';
+
+  const activeMobCls = 'flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#050E1D] text-[#9BE600] font-black shadow-md transition';
+  const inactiveMobCls = 'flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition';
+
+  if (homeLink && schedLink) {
+    homeLink.className = isScheduleActive ? inactiveDesktopCls : activeDesktopCls;
+    schedLink.className = isScheduleActive ? activeDesktopCls : inactiveDesktopCls;
+  }
+  if (mobHome && mobSched) {
+    mobHome.className = isScheduleActive ? inactiveMobCls : activeMobCls;
+    mobSched.className = isScheduleActive ? activeMobCls : inactiveMobCls;
+    if (mobBadgeHome) {
+      mobBadgeHome.textContent = isScheduleActive ? '→' : '● ACTIVE';
+      mobBadgeHome.className = isScheduleActive ? 'text-[#0E8A2D] font-mono font-black' : 'text-[#9BE600] font-mono font-black';
+    }
+    if (mobBadgeSched) {
+      mobBadgeSched.textContent = isScheduleActive ? '● ACTIVE' : '→';
+      mobBadgeSched.className = isScheduleActive ? 'text-[#9BE600] font-mono font-black' : 'text-[#0E8A2D] font-mono font-black';
+    }
+  }
+}
+
+function pfScrollToScheduleSection(smooth = true) {
+  const schedEl = document.getElementById('schedule');
+  if (!schedEl) return false;
+  const mobMenu = document.getElementById('mobile-menu');
+  if (mobMenu && !mobMenu.classList.contains('hidden') && typeof toggleMobileMenu === 'function') {
+    toggleMobileMenu();
+  }
+  const headerEl = document.querySelector('header');
+  const headerH = headerEl ? headerEl.getBoundingClientRect().height : 96;
+  const targetY = Math.max(0, window.pageYOffset + schedEl.getBoundingClientRect().top - headerH - 8);
+  window.scrollTo({ top: targetY, behavior: smooth ? 'smooth' : 'auto' });
+  pfSetScheduleNavActive(true);
+  return true;
+}
+
+function pfNavigateToSchedule(event) {
+  const schedEl = document.getElementById('schedule');
+  if (!schedEl) {
+    try { sessionStorage.setItem('pf_scroll_to_schedule', '1'); } catch (e) {}
+    return true; // Navigate to index.html#schedule from other pages
+  }
+  if (event) event.preventDefault();
+  try {
+    sessionStorage.removeItem('pf_scroll_to_schedule');
+    if (window.location.hash !== '#schedule') {
+      history.pushState(null, '', '#schedule');
+    }
+  } catch (e) {}
+  pfScrollToScheduleSection(true);
+  return false;
+}
+
+function pfNavigateToHome(event) {
+  const schedEl = document.getElementById('schedule');
+  if (!schedEl) return true; // Let link navigate to index.html from other pages
+  if (event) event.preventDefault();
+  const mobMenu = document.getElementById('mobile-menu');
+  if (mobMenu && !mobMenu.classList.contains('hidden') && typeof toggleMobileMenu === 'function') {
+    toggleMobileMenu();
+  }
+  try {
+    history.pushState(null, '', window.location.pathname + window.location.search);
+  } catch (e) {}
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  pfSetScheduleNavActive(false);
+  return false;
+}
+
+function pfInitScheduleNavigation() {
+  const schedEl = document.getElementById('schedule');
+  if (!schedEl) return;
+
+  let pendingScroll = false;
+  try {
+    if (sessionStorage.getItem('pf_scroll_to_schedule') === '1') {
+      pendingScroll = true;
+      sessionStorage.removeItem('pf_scroll_to_schedule');
+      if (window.location.hash !== '#schedule') {
+        history.replaceState(null, '', '#schedule');
+      }
+    }
+  } catch (e) {}
+
+  if (window.location.hash === '#schedule' || pendingScroll) {
+    pfSetScheduleNavActive(true);
+    setTimeout(() => pfScrollToScheduleSection(false), 40);
+    setTimeout(() => pfScrollToScheduleSection(true), 220);
+  }
+
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash === '#schedule') {
+      pfScrollToScheduleSection(true);
+    } else if (!window.location.hash || window.location.hash === '#') {
+      pfSetScheduleNavActive(false);
+    }
+  });
+
+  let scrollTick = false;
+  window.addEventListener('scroll', () => {
+    if (scrollTick) return;
+    scrollTick = true;
+    window.requestAnimationFrame(() => {
+      const rect = schedEl.getBoundingClientRect();
+      const inSchedule = rect.top <= 220 && rect.bottom >= 260;
+      pfSetScheduleNavActive(inSchedule);
+      scrollTick = false;
+    });
+  }, { passive: true });
+}
+
+window.addEventListener('DOMContentLoaded', pfInitScheduleNavigation);
+window.pfNavigateToSchedule = pfNavigateToSchedule;
+window.pfNavigateToHome = pfNavigateToHome;
+window.pfSetScheduleNavActive = pfSetScheduleNavActive;
+window.pfScrollToScheduleSection = pfScrollToScheduleSection;
