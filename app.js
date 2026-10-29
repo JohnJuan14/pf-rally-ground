@@ -243,9 +243,16 @@ async function syncStateFromServer() {
             renderPublicInventoryCatalog();
           }
           if (data.siteConfig && typeof data.siteConfig === 'object') {
-            sharedServerState.siteConfig = data.siteConfig;
-            localStorage.setItem('pf_site_config', JSON.stringify(data.siteConfig));
-            if (typeof applySiteConfig === 'function') applySiteConfig(data.siteConfig);
+            let localSaved = {};
+            try { localSaved = JSON.parse(localStorage.getItem('pf_site_config') || '{}') || {}; } catch (e) {}
+            const srvTs = Number(data.siteConfig.updatedAt || 0);
+            const locTs = Number(localSaved.updatedAt || 0);
+            const bestSc = (locTs > srvTs)
+              ? Object.assign({}, data.siteConfig, localSaved)
+              : Object.assign({}, localSaved, data.siteConfig);
+            sharedServerState.siteConfig = bestSc;
+            localStorage.setItem('pf_site_config', JSON.stringify(bestSc));
+            if (typeof applySiteConfig === 'function') applySiteConfig(bestSc);
           }
           if (data.paymentConfig && typeof data.paymentConfig === 'object') {
             sharedServerState.paymentConfig = data.paymentConfig;

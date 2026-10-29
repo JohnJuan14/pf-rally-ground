@@ -3018,9 +3018,16 @@ function clearFieldError(fieldId) {
 
     // ================= SERVER SYNC ENGINE (/api/state) =================
     async function fetchAdminStateFromServer(showFeedback) {
-      try {
-        const res = await fetch('/api/state', { cache: 'no-store' });
-        if (res.ok) {
+      const stateEndpoints = ['/api/state'];
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        stateEndpoints.push('http://127.0.0.1:8088/api/state');
+        stateEndpoints.push('http://127.0.0.1:8089/api/state');
+        stateEndpoints.push('http://localhost:8088/api/state');
+      }
+      for (const ep of stateEndpoints) {
+        try {
+          const res = await fetch(ep, { cache: 'no-store' });
+          if (res.ok) {
           const data = await res.json();
           bookings = data.bookings || [];
           salesLedger = data.sales || data.salesLedger || [];
@@ -3065,8 +3072,15 @@ function clearFieldError(fieldId) {
             ind.textContent = `Live Synced • ${bookings.length} Bookings • ${posCatalog.length} Items`;
           }
           return;
-        }
-      } catch (e) {}
+          }
+        } catch (e) {}
+      }
+      if (typeof loadSiteConfigIntoEditor === 'function') {
+        loadSiteConfigIntoEditor(currentSiteConfig, false);
+      }
+      if (typeof loadAdminQrSettings === 'function') {
+        loadAdminQrSettings();
+      }
       updateOverviewMetrics();
       renderBookingsTable();
       renderScheduleBlocks();
@@ -3135,6 +3149,14 @@ function clearFieldError(fieldId) {
         if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"/>';
       }
 
+      if (tabId === 'site-editor') {
+        if (typeof loadSiteConfigIntoEditor === 'function' && !siteEditorDirty) {
+          loadSiteConfigIntoEditor(currentSiteConfig, true);
+        }
+        if (typeof loadAdminQrSettings === 'function') {
+          loadAdminQrSettings();
+        }
+      }
       if (tabId === 'overview') updateOverviewMetrics();
       if (tabId === 'bookings') renderBookingsTable();
       if (tabId === 'schedule') renderScheduleBlocks();
@@ -5536,9 +5558,15 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
     // Auto Init & 3-Second Real-Time Polling
     document.addEventListener('DOMContentLoaded', async () => {
-                        checkAdminAuthGate();
-      await fetchAdminStateFromServer(false);
+      checkAdminAuthGate();
+      if (typeof loadSiteConfigIntoEditor === 'function') {
+        loadSiteConfigIntoEditor(currentSiteConfig, true);
+      }
+      if (typeof loadAdminQrSettings === 'function') {
+        loadAdminQrSettings();
+      }
       switchTab('site-editor');
+      await fetchAdminStateFromServer(false);
       setInterval(() => {
         fetchAdminStateFromServer(false);
       }, 3000);
@@ -6209,6 +6237,21 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     let siteEditorSaving = false;
     let siteConfigLockUntil = 0;
     let hasInitialSiteEditorLoaded = false;
+
+    try {
+      window.addEventListener('storage', (ev) => {
+        if (ev.key === 'pf_site_config' && ev.newValue) {
+          try {
+            const parsed = JSON.parse(ev.newValue);
+            if (parsed && typeof parsed === 'object') {
+              currentSiteConfig = { ...DEFAULT_SITE_CONFIG, ...parsed };
+              loadSiteConfigIntoEditor(currentSiteConfig, true);
+            }
+          } catch (e) {}
+        }
+      });
+    } catch (e) {}
+
     let autoSaveBannerTimer = null;
 
     try {
@@ -6306,17 +6349,41 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (!serverCfg || typeof serverCfg !== 'object') return;
       if (siteEditorDirty || siteEditorSaving || Date.now() < siteConfigLockUntil) return;
 
-      const srvTs = Number(serverCfg.updatedAt || 0);
-      const locTs = Number(currentSiteConfig.updatedAt || 0);
+      let savedLocal = {};
+      try {
+        savedLocal = JSON.parse(localStorage.getItem('pf_site_config') || '{}') || {};
+      } catch (e) {}
 
-      if (!hasInitialSiteEditorLoaded || srvTs >= locTs) {
-        loadSiteConfigIntoEditor(serverCfg, !hasInitialSiteEditorLoaded);
-        hasInitialSiteEditorLoaded = true;
-      }
+      const srvTs = Number(serverCfg.updatedAt || 0);
+      const locTs = Math.max(Number(currentSiteConfig.updatedAt || 0), Number(savedLocal.updatedAt || 0));
+
+      const assetSlots = [
+        'clubLogo', 'heroSlide1', 'heroSlide2', 'heroSlide3',
+        'court1Img', 'court2Img', 'court3Img', 'court4Img',
+        'gearStdImg', 'gearCarbonImg', 'gearBrandedImg', 'gearBallImg', 'gearBucketImg', 'gearMachineImg'
+      ];
+
+      // Merge so serverCfg wins when srvTs >= locTs, AND any custom uploaded asset on serverCfg
+      // never gets overwritten by a default placeholder in savedLocal
+      const merged = (srvTs >= locTs)
+        ? { ...DEFAULT_SITE_CONFIG, ...savedLocal, ...serverCfg }
+        : { ...DEFAULT_SITE_CONFIG, ...serverCfg, ...savedLocal };
+
+      assetSlots.forEach(slot => {
+        const srvVal = serverCfg[slot];
+        const defVal = DEFAULT_SITE_CONFIG[slot];
+        if (srvVal && srvVal !== defVal && (!merged[slot] || merged[slot] === defVal)) {
+          merged[slot] = srvVal;
+        }
+      });
+
+      loadSiteConfigIntoEditor(merged, true);
+      hasInitialSiteEditorLoaded = true;
     }
 
     function setAssetInputAndPreview(slotKey, inputId, previewId, rawVal) {
-      const val = rawVal || DEFAULT_SITE_CONFIG[slotKey] || '';
+      const defVal = DEFAULT_SITE_CONFIG[slotKey] || '';
+      const val = rawVal || defVal || '';
       uploadedAssetStore[slotKey] = val;
       const inp = document.getElementById(inputId);
       if (inp && document.activeElement !== inp) {
@@ -6324,7 +6391,33 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
       const prev = document.getElementById(previewId);
       if (prev && val) {
-        prev.src = resolvePreviewAssetPath(val);
+        const resolved = resolvePreviewAssetPath(val);
+        if (prev.getAttribute('src') !== resolved) {
+          prev.src = resolved;
+        }
+        prev.onerror = function() {
+          if (val.startsWith('assets/') && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '8089') {
+            this.onerror = function() { this.onerror = null; this.src = resolvePreviewAssetPath(defVal); };
+            this.src = 'http://' + window.location.hostname + ':8088/' + val;
+          } else if (defVal && this.src !== resolvePreviewAssetPath(defVal)) {
+            this.onerror = null;
+            this.src = resolvePreviewAssetPath(defVal);
+          }
+        };
+      }
+      const statusBadge = document.getElementById('se-status-' + slotKey);
+      if (statusBadge) {
+        const isCustom = val && val !== defVal;
+        if (isCustom) {
+          statusBadge.textContent = '✅ Custom Photo Live';
+          statusBadge.className = 'px-2 py-0.5 rounded bg-[#9BE600] text-[#050E1D] border border-[#050E1D] text-[10px] font-mono font-black';
+        } else {
+          const slideNum = slotKey.replace('heroSlide', '');
+          statusBadge.textContent = 'Slide ' + slideNum;
+          statusBadge.className = slideNum === '1'
+            ? 'px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-mono font-black'
+            : 'px-2 py-0.5 rounded bg-slate-200 text-slate-800 text-[10px] font-mono font-black';
+        }
       }
     }
 
