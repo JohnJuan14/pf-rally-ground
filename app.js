@@ -1678,28 +1678,29 @@ function applySiteConfig(incomingCfg) {
         existingTxt.textContent = bannerText;
         bannerEl.querySelectorAll('.pf-live-ticker-clone').forEach(el => { el.textContent = bannerText; });
       } else {
+        bannerEl.setAttribute('style', 'background:linear-gradient(90deg,#9BE600 0%,#C6FF00 50%,#9BE600 100%);color:#050E1D;border-bottom:2px solid #050E1D;padding:6px 12px;height:36px;overflow:hidden;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;');
         bannerEl.innerHTML = `
-          <span class="pf-live-ticker-badge">
+          <span class="pf-live-ticker-badge" style="display:inline-flex;align-items:center;gap:6px;background:#050E1D;color:#9BE600;font-size:10px;font-weight:900;padding:3px 8px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
             <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
             <span>LIVE UPDATE</span>
           </span>
-          <div class="pf-live-ticker-viewport">
-            <div class="pf-live-ticker-track" id="live-site-update-banner-track">
-              <div class="pf-live-ticker-item">
+          <div class="pf-live-ticker-viewport" style="flex:1 1 0%;min-width:0;overflow:hidden;white-space:nowrap;position:relative;display:flex;align-items:center;">
+            <div class="pf-live-ticker-track" id="live-site-update-banner-track" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;">
+              <div class="pf-live-ticker-item" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
                 <span id="live-site-update-banner-text">${safeBanner}</span>
-                <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">4 PRO CUSHION COURTS</span>
               </div>
-              <div class="pf-live-ticker-item" aria-hidden="true">
+              <div class="pf-live-ticker-item" aria-hidden="true" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">4 PRO CUSHION COURTS</span>
               </div>
             </div>
           </div>
-          <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta">
+          <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta" style="display:inline-flex;align-items:center;gap:4px;background:#050E1D;color:#FFFFFF;font-size:10px;font-weight:800;padding:3px 9px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
             <span class="hidden sm:inline">Updates</span>
             <span>Feed →</span>
           </button>

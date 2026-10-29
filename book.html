@@ -30,6 +30,16 @@
               clay: '#FF5C35'
             }
           },
+          borderRadius: {
+            none: '0px',
+            sm: '4px',
+            DEFAULT: '5px',
+            md: '5px',
+            lg: '5px',
+            xl: '5px',
+            '2xl': '5px',
+            '3xl': '5px',
+          },
           fontFamily: {
             sans: ['Inter', 'system-ui', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
@@ -244,7 +254,235 @@
       border-color: rgba(255, 255, 255, 0.06);
       text-decoration: line-through;
     }
-</style>
+
+    /* === 2026 CLEAN ARCHITECTURAL 5PX UI & MULTI-DEVICE RESPONSIVE SYSTEM === */
+    :root {
+      --pf-radius: 5px;
+    }
+
+    /* Enforce 5px rounding on all boxes, cards, buttons, inputs, modals, tiles & badges */
+    .rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-lg, .rounded-md, .rounded,
+    .rounded-t-3xl, .rounded-b-3xl, .rounded-t-2xl, .rounded-b-2xl,
+    .date-tile, .white-calendar-rail .date-tile, .time-chip,
+    .slider-arrow-btn-light, input, select, textarea, button,
+    header nav a, #mobile-menu a, #mobile-menu div,
+    #announcement-board-window, #public-announcement-feed > div > div {
+      border-radius: 5px !important;
+    }
+
+    /* Keep action buttons & pills at crisp 5px rounding (preserve spinning stamp & tiny status dots as circles) */
+    .rounded-full:not(.w-1\.5):not(.w-2):not(.w-2\.5):not(.w-3):not(.w-12):not(.w-32):not(.carousel-dot) {
+      border-radius: 5px !important;
+    }
+
+    /* High-Visibility Moving Live Update Ticker Banner */
+    #live-site-update-banner {
+      background: linear-gradient(90deg, #9BE600 0%, #C6FF00 50%, #9BE600 100%) !important;
+      color: #050E1D !important;
+      border-bottom: 2px solid #050E1D !important;
+      padding: 6px 12px !important;
+      height: 36px !important;
+      min-height: 36px !important;
+      max-height: 36px !important;
+      position: relative;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 10px !important;
+      box-shadow: 0 4px 14px rgba(155, 230, 0, 0.25);
+      z-index: 60;
+    }
+
+    .pf-live-ticker-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      background: #050E1D !important;
+      color: #9BE600 !important;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px !important;
+      border-radius: 5px !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      z-index: 2;
+    }
+
+    .pf-live-ticker-viewport {
+      flex: 1 1 0% !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+      position: relative !important;
+      height: 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
+    }
+
+    .pf-live-ticker-track {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      white-space: nowrap !important;
+      will-change: transform;
+      animation: pfMarqueeScroll 24s linear infinite !important;
+    }
+
+    #live-site-update-banner:hover .pf-live-ticker-track,
+    #live-site-update-banner:active .pf-live-ticker-track {
+      animation-play-state: paused !important;
+    }
+
+    .pf-live-ticker-item {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      white-space: nowrap !important;
+      gap: 20px !important;
+      padding-right: 40px !important;
+      font-size: 12px !important;
+      font-weight: 800 !important;
+      color: #050E1D !important;
+      letter-spacing: 0.01em;
+    }
+
+    .pf-live-ticker-sep {
+      display: inline-block !important;
+      padding: 1px 7px !important;
+      background: rgba(5, 14, 29, 0.14) !important;
+      color: #050E1D !important;
+      border-radius: 5px !important;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px !important;
+      font-weight: 900 !important;
+      white-space: nowrap !important;
+    }
+
+    .pf-live-ticker-cta {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      background: #050E1D !important;
+      color: #FFFFFF !important;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      text-transform: uppercase;
+      padding: 3px 9px !important;
+      border-radius: 5px !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      z-index: 2;
+      transition: all 0.2s ease;
+    }
+    .pf-live-ticker-cta:hover {
+      background: #0E2240 !important;
+      color: #9BE600 !important;
+    }
+
+    @keyframes pfMarqueeScroll {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+
+    /* Clean Aesthetic Card & Box Refinements */
+    .bg-brand-card {
+      background-color: #0B1B33 !important;
+      border-color: rgba(148, 163, 184, 0.18) !important;
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.42);
+    }
+
+    /* Ensure first section / main clears the fixed header + moving live ticker */
+    header + section,
+    header + main {
+      padding-top: 7.25rem !important;
+    }
+
+    /* Responsive Optimization: Mobile (< 640px), Tablet (640px - 1023px), Desktop (>= 1024px) */
+    @media (max-width: 639px) {
+      header .h-16 {
+        height: 3.75rem !important;
+      }
+      #live-site-update-banner {
+        padding: 4px 8px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        max-height: 32px !important;
+        gap: 6px !important;
+      }
+      .pf-live-ticker-item {
+        font-size: 11px !important;
+      }
+      .pf-live-ticker-badge {
+        font-size: 9px !important;
+        padding: 2px 6px !important;
+      }
+      .pf-live-ticker-cta {
+        font-size: 9px !important;
+        padding: 2px 7px !important;
+      }
+      section.min-h-\[92vh\] {
+        min-height: 84vh !important;
+        padding-top: 7rem !important;
+        padding-bottom: 2.5rem !important;
+      }
+      #site-hero-title {
+        font-size: clamp(2.35rem, 10.5vw, 3.35rem) !important;
+        line-height: 0.96 !important;
+      }
+      #booking-drawer > div:last-child,
+      #cart-drawer > div:last-child {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        border-radius: 5px 5px 0 0 !important;
+      }
+      #payment-modal > div:last-child {
+        width: calc(100vw - 16px) !important;
+        max-height: 92dvh !important;
+        margin: 8px auto !important;
+      }
+    }
+
+    @media (min-width: 640px) and (max-width: 1023px) {
+      header + section,
+      header + main {
+        padding-top: 8rem !important;
+      }
+      section.min-h-\[92vh\] {
+        min-height: 86vh !important;
+        padding-top: 8rem !important;
+      }
+      #site-hero-title {
+        font-size: clamp(3.25rem, 7vw, 4.5rem) !important;
+      }
+      #booking-drawer > div:last-child,
+      #cart-drawer > div:last-child {
+        max-width: 480px !important;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      header + section,
+      header + main {
+        padding-top: 8.5rem !important;
+      }
+      section.min-h-\[92vh\] {
+        padding-top: 8.5rem !important;
+      }
+    }
+    /* === END 2026 CLEAN ARCHITECTURAL 5PX UI === */
+
+  </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#050E1D] text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
 
@@ -256,28 +494,28 @@
     <!-- Official Logo Court Color Stripe -->
     <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
     <!-- Live Site Update Top Banner (Moving Marquee Ticker Synced from Admin Website Editor) -->
-    <div id="live-site-update-banner">
-      <span class="pf-live-ticker-badge">
+    <div id="live-site-update-banner" style="background:linear-gradient(90deg,#9BE600 0%,#C6FF00 50%,#9BE600 100%);color:#050E1D;border-bottom:2px solid #050E1D;padding:6px 12px;height:36px;overflow:hidden;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;">
+      <span class="pf-live-ticker-badge" style="display:inline-flex;align-items:center;gap:6px;background:#050E1D;color:#9BE600;font-size:10px;font-weight:900;padding:3px 8px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
         <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
         <span>LIVE UPDATE</span>
       </span>
-      <div class="pf-live-ticker-viewport">
-        <div class="pf-live-ticker-track" id="live-site-update-banner-track">
-          <div class="pf-live-ticker-item">
+      <div class="pf-live-ticker-viewport" style="flex:1 1 0%;min-width:0;overflow:hidden;white-space:nowrap;position:relative;display:flex;align-items:center;">
+        <div class="pf-live-ticker-track" id="live-site-update-banner-track" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;">
+          <div class="pf-live-ticker-item" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
             <span id="live-site-update-banner-text">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
-            <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
             <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
-            <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">4 PRO CUSHION COURTS</span>
           </div>
-          <div class="pf-live-ticker-item" aria-hidden="true">
+          <div class="pf-live-ticker-item" aria-hidden="true" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
             <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
-            <span class="pf-live-ticker-sep">P&amp;F RALLY GROUND • DARAGA</span>
+            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
             <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
-            <span class="pf-live-ticker-sep">4 PRO CUSHION COURTS</span>
+            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">4 PRO CUSHION COURTS</span>
           </div>
         </div>
       </div>
-      <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta">
+      <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta" style="display:inline-flex;align-items:center;gap:4px;background:#050E1D;color:#FFFFFF;font-size:10px;font-weight:800;padding:3px 9px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
         <span class="hidden sm:inline">Updates</span>
         <span>Feed →</span>
       </button>
@@ -1546,7 +1784,7 @@
   </div>
 
   
-  <script src="app.js"></script>
+  <script src="app.js?v=20261029v6"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>

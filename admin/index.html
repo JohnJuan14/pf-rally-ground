@@ -13,6 +13,16 @@
       darkMode: 'class',
       theme: {
         extend: {
+          borderRadius: {
+            none: '0px',
+            sm: '4px',
+            DEFAULT: '5px',
+            md: '5px',
+            lg: '5px',
+            xl: '5px',
+            '2xl': '5px',
+            '3xl': '5px',
+          },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
             mono: ['"Space Grotesk"', 'monospace'],
@@ -51,7 +61,28 @@
     ::-webkit-scrollbar-track { background: #050E1D; }
     ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #9BE600; }
-</style>
+
+    /* === 2026 CLEAN 5PX ARCHITECTURAL UI & RESPONSIVE SYSTEM (ADMIN PORTAL) === */
+    .rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-lg, .rounded-md, .rounded,
+    .white-studio-card, .white-studio-subcard, .white-studio-input, .white-studio-btn-sec,
+    input, select, textarea, button, a {
+      border-radius: 5px !important;
+    }
+    .rounded-full:not(.w-1\.5):not(.w-2):not(.w-2\.5):not(.w-3) {
+      border-radius: 5px !important;
+    }
+    @media (max-width: 639px) {
+      main {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+      }
+      .white-studio-card {
+        padding: 1rem !important;
+      }
+    }
+    /* === END 2026 CLEAN 5PX ARCHITECTURAL UI === */
+
+  </style>
   <!-- Comprehensive Favicon Suite -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
