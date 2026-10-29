@@ -935,19 +935,6 @@
               <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Bank Transfer</button>
             </div>
 
-                                    <!-- Exact Amount QR Generator Bar on book.html -->
-            <div class="p-3.5 rounded-2xl bg-brand-black border-2 border-brand-lime/50 flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <span class="text-[10px] font-mono font-black uppercase tracking-wider text-brand-lime block">⚡ EXACT QR AMOUNT GENERATOR (GCASH • MAYA • BDO)</span>
-                <p class="text-[11px] text-slate-300" data-qr-amount-status="1">⚡ Pre-Filled in GCash, Maya &amp; BDO QR: <b class="text-brand-lime font-mono">₱400.00</b></p>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs font-mono font-black text-brand-lime">₱</span>
-                <input type="number" id="pf-book-qr-exact-amount" min="0" step="10" value="400.00" oninput="if(typeof pfSetExactQrAmount==='function')pfSetExactQrAmount(this.value, false)" class="w-28 bg-brand-card border-2 border-brand-lime rounded-xl px-2.5 py-1.5 text-xs text-white font-mono font-black focus:outline-none">
-                <button type="button" onclick="if(typeof pfSetExactQrAmount==='function')pfSetExactQrAmount(document.getElementById('pf-book-qr-exact-amount').value, true)" class="px-3 py-1.5 rounded-xl bg-brand-lime text-brand-black font-black text-[10px] uppercase tracking-wider hover:opacity-95 transition whitespace-nowrap">Generate QR</button>
-              </div>
-            </div>
-
             <!-- GCash Channel Card -->
             <div id="book-pay-gcash" class="p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-brand-lime/40 space-y-3 shadow-lg">
               <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">

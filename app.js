@@ -1229,120 +1229,135 @@ function pfToggleQrCardView(channel = 'gcash', imgId = 'locked-qr-img', btnEl = 
   }
 }
 
+function pfGetLiveBookingExactAmount() {
+  // 1. Check book.html sticky summary grand total (#summary-grand-total)
+  const bookGrandEl = document.getElementById('summary-grand-total');
+  if (bookGrandEl && bookGrandEl.textContent) {
+    const parsedBook = Number(bookGrandEl.textContent.replace(/[^0-9.]/g, ''));
+    if (!isNaN(parsedBook) && parsedBook > 0) return parsedBook;
+  }
+  // 2. Check index.html payment modal amount (#manual-modal-amount or #modal-summary-amount)
+  const payModal = document.getElementById('payment-modal');
+  if (payModal && !payModal.classList.contains('hidden')) {
+    const modalAmtEl = document.getElementById('manual-modal-amount') || document.getElementById('modal-summary-amount');
+    if (modalAmtEl && modalAmtEl.textContent) {
+      const parsedModal = Number(modalAmtEl.textContent.replace(/[^0-9.]/g, ''));
+      if (!isNaN(parsedModal) && parsedModal > 0) return parsedModal;
+    }
+  }
+  // 3. Check index.html booking drawer live total (#drawer-total-price)
+  const drawerEl = document.getElementById('booking-drawer');
+  if (drawerEl && !drawerEl.classList.contains('hidden')) {
+    const drawerTotalEl = document.getElementById('drawer-total-price');
+    if (drawerTotalEl && drawerTotalEl.textContent) {
+      const parsedDrawer = Number(drawerTotalEl.textContent.replace(/[^0-9.]/g, ''));
+      if (!isNaN(parsedDrawer) && parsedDrawer > 0) return parsedDrawer;
+    }
+  }
+  // 4. Check cart total if items exist
+  if (typeof calculateCartTotal === 'function') {
+    const cartTot = Number(calculateCartTotal());
+    if (!isNaN(cartTot) && cartTot > 0) return cartTot;
+  }
+  return 400;
+}
+
 function pfOpenQrStandeeLightbox(channel = 'gcash') {
   const ch = String(channel || 'gcash').toLowerCase();
   const cfg = pfGetPaymentConfig();
   const cleanDigits = (s) => String(s || '').replace(/[^0-9]/g, '');
+  const exactAmtNum = pfGetLiveBookingExactAmount();
+  const exactAmtFormatted = '₱' + exactAmtNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const exactAmtCopyStr = exactAmtNum.toFixed(2);
+
   const meta = {
     gcash: {
       badge: 'OFFICIAL GCASH INSTAPAY QR PH',
-      title: 'Official GCash QR Code',
+      title: 'OFFICIAL GCASH QR CODE',
       merchant: cfg.gcashName || 'KA******E L.',
       numberLabel: 'GCash Mobile No:',
       numberDisplay: cfg.gcashNumber || '0999 883 2346',
       numberCopy: cleanDigits(cfg.gcashNumber) || '09998832346',
-      appHint: `Open your <b>GCash App &rarr; Tap QR &rarr; Scan or Upload QR</b> from your gallery, or send directly to <b>${cfg.gcashNumber || '0999 883 2346'} (${cfg.gcashName || 'KA******E L.'})</b>.`
+      appHint: `Open your <b>GCash App &rarr; Tap QR &rarr; Scan or Upload QR</b> from your gallery, then enter <b class="text-[#0E8A2D]">${exactAmtFormatted}</b>.`
     },
     maya: {
       badge: 'OFFICIAL MAYA QR PH',
-      title: 'Official Maya QR Code',
+      title: 'OFFICIAL MAYA QR CODE',
       merchant: cfg.mayaName || 'KATHERINE LIM',
       numberLabel: 'Maya Mobile No:',
       numberDisplay: cfg.mayaNumber || '0999 883 2346',
       numberCopy: cleanDigits(cfg.mayaNumber) || '09998832346',
-      appHint: `Open your <b>Maya App &rarr; Scan QR or Upload QR from Gallery</b>, or send directly to Maya number <b>${cfg.mayaNumber || '0999 883 2346'} (${cfg.mayaName || 'KATHERINE LIM'})</b>.`
+      appHint: `Open your <b>Maya App &rarr; Scan or Upload QR</b> from your gallery, then enter <b class="text-[#0E8A2D]">${exactAmtFormatted}</b>.`
     },
     bank: {
       badge: 'OFFICIAL BDO / BANK INSTAPAY QR',
-      title: 'Official BDO Unibank QR Code',
+      title: 'OFFICIAL BDO QR CODE',
       merchant: cfg.bdoName || 'BDO Unibank • Dex',
       numberLabel: 'Bank Account:',
       numberDisplay: cfg.bdoNumber || '••••••••8678',
       numberCopy: cleanDigits(cfg.bdoNumber).length >= 8 ? cleanDigits(cfg.bdoNumber) : '',
-      appHint: 'Open <b>BDO Online / BDO Pay / BPI / UnionBank / GCash / Maya</b> &rarr; <b>Scan or Upload QR</b> via InstaPay QR Ph.'
+      appHint: `Open your <b>BDO / Banking App &rarr; Scan or Upload QR</b>, then enter <b class="text-[#0E8A2D]">${exactAmtFormatted}</b>.`
     }
   };
   const info = meta[ch] || meta.gcash;
   const qrSrc = pfGetOfficialQrUrl(ch, 'qr');
 
   let modal = document.getElementById('pf-qr-zoom-lightbox');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'pf-qr-zoom-lightbox';
-    modal.className = 'fixed inset-0 z-[80] hidden flex items-center justify-center p-3 sm:p-5';
-    modal.innerHTML = `
-      <div onclick="pfCloseQrStandeeLightbox()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-      <div class="relative z-10 w-full max-w-md rounded-2xl bg-white text-[#050E1D] border-2 border-[#9BE600] p-4 sm:p-5 shadow-2xl text-center space-y-3 max-h-[94dvh] overflow-y-auto" style="border-radius:5px;">
-        <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
-          <div class="text-left">
-            <span id="pf-qr-lightbox-badge" class="text-[10px] font-mono font-black uppercase tracking-widest text-[#0E8A2D] block">OFFICIAL QR PH</span>
-            <h4 id="pf-qr-lightbox-title" class="text-sm sm:text-base font-black uppercase text-[#050E1D]">Official Payment QR</h4>
-          </div>
-          <button type="button" onclick="pfCloseQrStandeeLightbox()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white font-black text-xs flex items-center justify-center transition">✕</button>
+  if (modal) {
+    modal.remove();
+  }
+  modal = document.createElement('div');
+  modal.id = 'pf-qr-zoom-lightbox';
+  modal.className = 'fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-5';
+  modal.innerHTML = `
+    <div onclick="pfCloseQrStandeeLightbox()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-md rounded-2xl bg-white text-[#050E1D] border-2 border-[#9BE600] p-4 sm:p-5 shadow-2xl text-center space-y-3 max-h-[94dvh] overflow-y-auto" style="border-radius:5px;">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+        <div class="text-left">
+          <span id="pf-qr-lightbox-badge" class="text-[10px] font-mono font-black uppercase tracking-widest text-[#0E8A2D] block">${info.badge}</span>
+          <h4 id="pf-qr-lightbox-title" class="text-sm sm:text-base font-black uppercase text-[#050E1D]">${info.title}</h4>
         </div>
+        <button type="button" onclick="pfCloseQrStandeeLightbox()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white font-black text-xs flex items-center justify-center transition">✕</button>
+      </div>
 
-        <!-- Recipient & Account Summary Bar inside Zoom Modal -->
-        <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div class="text-left">
-            <span class="text-[10px] text-slate-500 uppercase font-bold block">Account Name</span>
-            <b id="pf-qr-lightbox-merchant" class="text-slate-900 font-black">KA******E L.</b>
-          </div>
-          <div class="text-right flex items-center gap-2">
-            <div>
-              <span id="pf-qr-lightbox-num-label" class="text-[10px] text-slate-500 uppercase font-bold block">Account No:</span>
-              <b id="pf-qr-lightbox-num" class="font-mono text-slate-900 font-black">0999 883 2346</b>
-            </div>
-            <button type="button" id="pf-qr-lightbox-copy-btn" onclick="copyPaymentAccount('09998832346', this)" class="px-2.5 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] font-black text-[10px] uppercase">Copy</button>
-          </div>
+      <!-- Exact Amount to Pay Banner at the Top -->
+      <div class="p-3 rounded-xl bg-[#050E1D] text-white border-2 border-[#9BE600] flex items-center justify-between gap-2 shadow-md">
+        <div class="text-left">
+          <span class="text-[10px] font-mono font-black uppercase tracking-widest text-[#9BE600] block">EXACT AMOUNT TO PAY</span>
+          <b id="pf-qr-lightbox-exact-amount" class="text-xl sm:text-2xl font-mono font-black text-[#9BE600]">${exactAmtFormatted}</b>
         </div>
+        <button type="button" id="pf-qr-lightbox-copy-amt-btn" onclick="copyPaymentAccount('${exactAmtCopyStr}', this)" class="px-3 py-2 rounded-lg bg-[#9BE600] text-[#050E1D] font-mono font-black text-xs uppercase shadow hover:opacity-95 transition whitespace-nowrap">📋 Copy Amount</button>
+      </div>
 
-        <!-- High-Brightness White QR Frame -->
-        <div class="p-3 rounded-2xl bg-white border-2 border-slate-300 shadow-inner flex items-center justify-center min-h-[260px]">
-          <img id="pf-qr-lightbox-img" src="" alt="Official Payment QR" class="max-h-[52dvh] w-auto mx-auto object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+      <!-- Recipient & Account Summary Bar inside Zoom Modal -->
+      <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="text-left">
+          <span class="text-[10px] text-slate-500 uppercase font-bold block">Account Name</span>
+          <b id="pf-qr-lightbox-merchant" class="text-slate-900 font-black">${info.merchant}</b>
         </div>
-
-        <p id="pf-qr-lightbox-hint" class="text-[11px] text-slate-700 leading-relaxed bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl text-left"></p>
-
-        <div class="flex flex-col gap-2 pt-1">
-          <button type="button" id="pf-qr-lightbox-dl-btn" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-[#9BE600] hover:bg-[#8cd000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs tracking-wider shadow">📥 Save QR Image</button>
-          <button type="button" onclick="pfCloseQrStandeeLightbox()" class="w-full py-2.5 px-3 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-white font-bold uppercase text-xs tracking-wider">Close Window</button>
+        <div class="text-right flex items-center gap-2">
+          <div>
+            <span id="pf-qr-lightbox-num-label" class="text-[10px] text-slate-500 uppercase font-bold block">${info.numberLabel}</span>
+            <b id="pf-qr-lightbox-num" class="font-mono text-slate-900 font-black">${info.numberDisplay}</b>
+          </div>
+          ${info.numberCopy ? `<button type="button" id="pf-qr-lightbox-copy-btn" onclick="copyPaymentAccount('${info.numberCopy}', this)" class="px-2.5 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] font-black text-[10px] uppercase">Copy</button>` : ''}
         </div>
       </div>
-    `;
-    document.body.appendChild(modal);
-  }
-  modal.setAttribute('data-channel', ch);
-  modal.setAttribute('data-qr-src', qrSrc);
 
-  const badgeEl = document.getElementById('pf-qr-lightbox-badge');
-  if (badgeEl) badgeEl.textContent = info.badge;
-  const titleEl = document.getElementById('pf-qr-lightbox-title');
-  if (titleEl) titleEl.textContent = info.title;
-  const merchEl = document.getElementById('pf-qr-lightbox-merchant');
-  if (merchEl) merchEl.textContent = info.merchant;
-  const numLblEl = document.getElementById('pf-qr-lightbox-num-label');
-  if (numLblEl) numLblEl.textContent = info.numberLabel;
-  const numEl = document.getElementById('pf-qr-lightbox-num');
-  if (numEl) numEl.textContent = info.numberDisplay;
-  const copyBtn = document.getElementById('pf-qr-lightbox-copy-btn');
-  if (copyBtn) {
-    if (info.numberCopy) {
-      copyBtn.classList.remove('hidden');
-      copyBtn.setAttribute('onclick', `copyPaymentAccount('${info.numberCopy}', this)`);
-    } else {
-      copyBtn.classList.add('hidden');
-    }
-  }
-  const hintEl = document.getElementById('pf-qr-lightbox-hint');
-  if (hintEl) hintEl.innerHTML = '💡 ' + info.appHint;
+      <!-- High-Brightness White QR Frame -->
+      <div class="p-3 rounded-2xl bg-white border-2 border-slate-300 shadow-inner flex items-center justify-center min-h-[260px]">
+        <img id="pf-qr-lightbox-img" src="${qrSrc}" alt="Official Payment QR" class="max-h-[48dvh] w-auto mx-auto object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+      </div>
 
-  const img = document.getElementById('pf-qr-lightbox-img');
-  if (img) img.src = qrSrc;
+      <p id="pf-qr-lightbox-hint" class="text-[11px] text-slate-700 leading-relaxed bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl text-left">💡 ${info.appHint}</p>
 
-  const dlBtn = document.getElementById('pf-qr-lightbox-dl-btn');
-  if (dlBtn) dlBtn.setAttribute('onclick', `pfDownloadOfficialQr('${ch}')`);
-
-  modal.classList.remove('hidden');
+      <div class="flex flex-col gap-2 pt-1">
+        <button type="button" id="pf-qr-lightbox-dl-btn" onclick="pfDownloadOfficialQr('${ch}')" class="w-full py-2.5 px-3 rounded-xl bg-[#9BE600] hover:bg-[#8cd000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs tracking-wider shadow">📥 Save QR Image</button>
+        <button type="button" onclick="pfCloseQrStandeeLightbox()" class="w-full py-2.5 px-3 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-white font-bold uppercase text-xs tracking-wider">Close Window</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
 }
 
 function pfSwitchLightboxQrTab() {}
@@ -1354,13 +1369,152 @@ function pfCloseQrStandeeLightbox() {
 
 function pfDownloadOfficialQr(channel = 'gcash') {
   const ch = String(channel || 'gcash').toLowerCase();
+  const cfg = pfGetPaymentConfig();
   const url = pfGetOfficialQrUrl(ch, 'qr');
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `PF-Rally-Ground-${ch.toUpperCase()}-Official-QR.png`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  const exactAmtNum = typeof pfGetLiveBookingExactAmount === 'function' ? pfGetLiveBookingExactAmount() : 400;
+  const exactAmtFormatted = '₱' + exactAmtNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const meta = {
+    gcash: {
+      badge: 'OFFICIAL GCASH INSTAPAY QR PH',
+      title: 'OFFICIAL GCASH QR CODE',
+      merchant: cfg.gcashName || 'KA******E L.',
+      numberLabel: 'GCASH MOBILE NO:',
+      numberDisplay: cfg.gcashNumber || '0999 883 2346'
+    },
+    maya: {
+      badge: 'OFFICIAL MAYA QR PH',
+      title: 'OFFICIAL MAYA QR CODE',
+      merchant: cfg.mayaName || 'KATHERINE LIM',
+      numberLabel: 'MAYA MOBILE NO:',
+      numberDisplay: cfg.mayaNumber || '0999 883 2346'
+    },
+    bank: {
+      badge: 'OFFICIAL BDO / BANK INSTAPAY QR',
+      title: 'OFFICIAL BDO QR CODE',
+      merchant: cfg.bdoName || 'BDO Unibank • Dex',
+      numberLabel: 'BDO ACCOUNT NO:',
+      numberDisplay: cfg.bdoNumber || '••••••••8678'
+    }
+  };
+  const info = meta[ch] || meta.gcash;
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function () {
+    try {
+      const qrSize = 680;
+      const pad = 44;
+      const headerHeight = 250;
+      const canvasW = qrSize + pad * 2;
+      const canvasH = headerHeight + qrSize + pad * 2 + 24;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = canvasW;
+      canvas.height = canvasH;
+      const ctx = canvas.getContext('2d');
+
+      // White card background with lime border
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvasW, canvasH);
+      ctx.strokeStyle = '#9BE600';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(5, 5, canvasW - 10, canvasH - 10);
+
+      // Top Badge & Title (Left-aligned like the Zoom modal)
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#0E8A2D';
+      ctx.font = '900 17px monospace';
+      ctx.fillText(info.badge, pad, 50);
+
+      ctx.fillStyle = '#050E1D';
+      ctx.font = '900 28px sans-serif';
+      ctx.fillText(info.title, pad, 84);
+
+      // Top-Right Exact Amount Box
+      const amtBoxW = 290;
+      const amtBoxH = 72;
+      const amtBoxX = canvasW - pad - amtBoxW;
+      const amtBoxY = 24;
+      ctx.fillStyle = '#050E1D';
+      ctx.fillRect(amtBoxX, amtBoxY, amtBoxW, amtBoxH);
+      ctx.strokeStyle = '#9BE600';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(amtBoxX, amtBoxY, amtBoxW, amtBoxH);
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#9BE600';
+      ctx.font = '900 14px monospace';
+      ctx.fillText('EXACT AMOUNT TO PAY', amtBoxX + amtBoxW / 2, amtBoxY + 24);
+      ctx.fillStyle = '#9BE600';
+      ctx.font = '900 30px monospace';
+      ctx.fillText(exactAmtFormatted, amtBoxX + amtBoxW / 2, amtBoxY + 58);
+
+      // Account Name & Number Bar (matching Zoom modal screenshot)
+      const barY = 112;
+      const barH = 88;
+      ctx.fillStyle = '#F1F5F9';
+      ctx.fillRect(pad, barY, canvasW - pad * 2, barH);
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(pad, barY, canvasW - pad * 2, barH);
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#64748B';
+      ctx.font = '800 15px sans-serif';
+      ctx.fillText('ACCOUNT NAME', pad + 20, barY + 32);
+      ctx.fillStyle = '#050E1D';
+      ctx.font = '900 24px sans-serif';
+      ctx.fillText(info.merchant, pad + 20, barY + 66);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#64748B';
+      ctx.font = '800 15px sans-serif';
+      ctx.fillText(info.numberLabel, canvasW - pad - 20, barY + 32);
+      ctx.fillStyle = '#050E1D';
+      ctx.font = '900 24px monospace';
+      ctx.fillText(info.numberDisplay, canvasW - pad - 20, barY + 66);
+
+      // Inner QR Frame Box
+      const qrFrameX = pad;
+      const qrFrameY = barY + barH + 22;
+      const qrFrameW = canvasW - pad * 2;
+      const qrFrameH = qrSize;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(qrFrameX, qrFrameY, qrFrameW, qrFrameH);
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(qrFrameX, qrFrameY, qrFrameW, qrFrameH);
+
+      // Draw 100% ORIGINAL UNMODIFIED QR Image inside the frame
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, qrFrameX + 24, qrFrameY + 24, qrSize - 48, qrSize - 48);
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `PF-Rally-Ground-${ch.toUpperCase()}-QR-${exactAmtNum.toFixed(0)}PHP.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (e) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `PF-Rally-Ground-${ch.toUpperCase()}-Official-QR.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+  img.onerror = function () {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `PF-Rally-Ground-${ch.toUpperCase()}-Official-QR.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+  img.src = url;
 }
 window.pfGetPaymentConfig = pfGetPaymentConfig;
 window.pfGetOfficialQrUrl = pfGetOfficialQrUrl;
