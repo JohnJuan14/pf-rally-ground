@@ -197,10 +197,10 @@ let sharedServerState = {
 window.sharedServerState = sharedServerState;
 
 const courtNames = {
-  1: "Court 01 (Indoor Championship)",
-  2: "Court 02 (Indoor Tournament)",
-  3: "Court 03 (Covered Outdoor)",
-  4: "Court 04 (Pro Training Court)"
+  1: "Court 1",
+  2: "Court 2",
+  3: "Court 3",
+  4: "Court 4"
 };
 
 // ================= REAL-TIME SERVER SYNC =================
@@ -1367,6 +1367,25 @@ function pfCloseQrStandeeLightbox() {
   if (modal) modal.classList.add('hidden');
 }
 
+function pfDrawRoundRect(ctx, x, y, w, h, r, fill, stroke, lineWidth = 2) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+  if (fill) {
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+  }
+}
+
 function pfDownloadOfficialQr(channel = 'gcash') {
   const ch = String(channel || 'gcash').toLowerCase();
   const cfg = pfGetPaymentConfig();
@@ -1380,21 +1399,24 @@ function pfDownloadOfficialQr(channel = 'gcash') {
       title: 'OFFICIAL GCASH QR CODE',
       merchant: cfg.gcashName || 'KA******E L.',
       numberLabel: 'GCASH MOBILE NO:',
-      numberDisplay: cfg.gcashNumber || '0999 883 2346'
+      numberDisplay: cfg.gcashNumber || '0999 883 2346',
+      footerText: `Upload this QR in GCash (Tap QR → Upload QR) and enter ${exactAmtFormatted}`
     },
     maya: {
       badge: 'OFFICIAL MAYA QR PH',
       title: 'OFFICIAL MAYA QR CODE',
       merchant: cfg.mayaName || 'KATHERINE LIM',
       numberLabel: 'MAYA MOBILE NO:',
-      numberDisplay: cfg.mayaNumber || '0999 883 2346'
+      numberDisplay: cfg.mayaNumber || '0999 883 2346',
+      footerText: `Upload this QR in Maya (Scan → Upload QR) and enter ${exactAmtFormatted}`
     },
     bank: {
       badge: 'OFFICIAL BDO / BANK INSTAPAY QR',
       title: 'OFFICIAL BDO QR CODE',
       merchant: cfg.bdoName || 'BDO Unibank • Dex',
       numberLabel: 'BDO ACCOUNT NO:',
-      numberDisplay: cfg.bdoNumber || '••••••••8678'
+      numberDisplay: cfg.bdoNumber || '••••••••8678',
+      footerText: `Upload this QR in your Banking App and enter ${exactAmtFormatted}`
     }
   };
   const info = meta[ch] || meta.gcash;
@@ -1403,92 +1425,106 @@ function pfDownloadOfficialQr(channel = 'gcash') {
   img.crossOrigin = 'anonymous';
   img.onload = function () {
     try {
-      const qrSize = 680;
+      const canvasW = 800;
+      const canvasH = 1110;
       const pad = 44;
-      const headerHeight = 250;
-      const canvasW = qrSize + pad * 2;
-      const canvasH = headerHeight + qrSize + pad * 2 + 24;
+      const innerW = canvasW - pad * 2;
 
       const canvas = document.createElement('canvas');
       canvas.width = canvasW;
       canvas.height = canvasH;
       const ctx = canvas.getContext('2d');
 
-      // White card background with lime border
+      // Outer Card Background & Clean Border
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvasW, canvasH);
       ctx.strokeStyle = '#9BE600';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(5, 5, canvasW - 10, canvasH - 10);
+      ctx.lineWidth = 12;
+      ctx.strokeRect(6, 6, canvasW - 12, canvasH - 12);
 
-      // Top Badge & Title (Left-aligned like the Zoom modal)
+      // 1. TOP HEADER ROW (Full-width, zero overlap)
       ctx.textAlign = 'left';
       ctx.fillStyle = '#0E8A2D';
-      ctx.font = '900 17px monospace';
-      ctx.fillText(info.badge, pad, 50);
+      ctx.font = '800 15px monospace';
+      ctx.fillText(info.badge, pad, 56);
 
       ctx.fillStyle = '#050E1D';
-      ctx.font = '900 28px sans-serif';
-      ctx.fillText(info.title, pad, 84);
+      ctx.font = '900 30px sans-serif';
+      ctx.fillText(info.title, pad, 92);
 
-      // Top-Right Exact Amount Box
-      const amtBoxW = 290;
-      const amtBoxH = 72;
-      const amtBoxX = canvasW - pad - amtBoxW;
-      const amtBoxY = 24;
-      ctx.fillStyle = '#050E1D';
-      ctx.fillRect(amtBoxX, amtBoxY, amtBoxW, amtBoxH);
-      ctx.strokeStyle = '#9BE600';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(amtBoxX, amtBoxY, amtBoxW, amtBoxH);
-
+      // Club Pill on Top Right
+      const pillW = 210;
+      const pillH = 36;
+      const pillX = canvasW - pad - pillW;
+      const pillY = 54;
+      pfDrawRoundRect(ctx, pillX, pillY, pillW, pillH, 8, '#F1F5F9', '#CBD5E1', 1.5);
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#9BE600';
-      ctx.font = '900 14px monospace';
-      ctx.fillText('EXACT AMOUNT TO PAY', amtBoxX + amtBoxW / 2, amtBoxY + 24);
-      ctx.fillStyle = '#9BE600';
-      ctx.font = '900 30px monospace';
-      ctx.fillText(exactAmtFormatted, amtBoxX + amtBoxW / 2, amtBoxY + 58);
+      ctx.fillStyle = '#050E1D';
+      ctx.font = '900 13px monospace';
+      ctx.fillText('P&F RALLY GROUND', pillX + pillW / 2, pillY + 23);
 
-      // Account Name & Number Bar (matching Zoom modal screenshot)
-      const barY = 112;
-      const barH = 88;
-      ctx.fillStyle = '#F1F5F9';
-      ctx.fillRect(pad, barY, canvasW - pad * 2, barH);
-      ctx.strokeStyle = '#CBD5E1';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(pad, barY, canvasW - pad * 2, barH);
+      // Subtle Divider Line
+      ctx.fillStyle = '#E2E8F0';
+      ctx.fillRect(pad, 114, innerW, 2);
+
+      // 2. FULL-WIDTH EXACT AMOUNT BANNER (Row 2)
+      const amtY = 132;
+      const amtH = 88;
+      pfDrawRoundRect(ctx, pad, amtY, innerW, amtH, 12, '#050E1D', '#9BE600', 3);
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#9BE600';
+      ctx.font = '900 15px monospace';
+      ctx.fillText('EXACT AMOUNT TO PAY', pad + 26, amtY + 36);
+      ctx.fillStyle = '#CBD5E1';
+      ctx.font = '600 14px sans-serif';
+      ctx.fillText('Enter this exact amount after scanning the QR code below', pad + 26, amtY + 64);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#9BE600';
+      ctx.font = '900 38px monospace';
+      ctx.fillText(exactAmtFormatted, canvasW - pad - 26, amtY + 58);
+
+      // 3. FULL-WIDTH ACCOUNT NAME & NUMBER BAR (Row 3)
+      const acctY = 236;
+      const acctH = 88;
+      pfDrawRoundRect(ctx, pad, acctY, innerW, acctH, 12, '#F8FAFC', '#CBD5E1', 2);
 
       ctx.textAlign = 'left';
       ctx.fillStyle = '#64748B';
-      ctx.font = '800 15px sans-serif';
-      ctx.fillText('ACCOUNT NAME', pad + 20, barY + 32);
+      ctx.font = '800 14px sans-serif';
+      ctx.fillText('ACCOUNT NAME', pad + 26, acctY + 32);
       ctx.fillStyle = '#050E1D';
       ctx.font = '900 24px sans-serif';
-      ctx.fillText(info.merchant, pad + 20, barY + 66);
+      ctx.fillText(info.merchant, pad + 26, acctY + 66);
 
       ctx.textAlign = 'right';
       ctx.fillStyle = '#64748B';
-      ctx.font = '800 15px sans-serif';
-      ctx.fillText(info.numberLabel, canvasW - pad - 20, barY + 32);
+      ctx.font = '800 14px sans-serif';
+      ctx.fillText(info.numberLabel, canvasW - pad - 26, acctY + 32);
       ctx.fillStyle = '#050E1D';
       ctx.font = '900 24px monospace';
-      ctx.fillText(info.numberDisplay, canvasW - pad - 20, barY + 66);
+      ctx.fillText(info.numberDisplay, canvasW - pad - 26, acctY + 66);
 
-      // Inner QR Frame Box
-      const qrFrameX = pad;
-      const qrFrameY = barY + barH + 22;
-      const qrFrameW = canvasW - pad * 2;
-      const qrFrameH = qrSize;
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(qrFrameX, qrFrameY, qrFrameW, qrFrameH);
-      ctx.strokeStyle = '#CBD5E1';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(qrFrameX, qrFrameY, qrFrameW, qrFrameH);
+      // 4. CENTERED QR CODE FRAME (Row 4)
+      const qrFrameY = 342;
+      const qrFrameH = 668;
+      pfDrawRoundRect(ctx, pad, qrFrameY, innerW, qrFrameH, 16, '#FFFFFF', '#CBD5E1', 2);
 
-      // Draw 100% ORIGINAL UNMODIFIED QR Image inside the frame
+      const qrDrawSize = 590;
+      const qrDrawX = Math.floor((canvasW - qrDrawSize) / 2);
+      const qrDrawY = qrFrameY + Math.floor((qrFrameH - qrDrawSize) / 2);
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(img, qrFrameX + 24, qrFrameY + 24, qrSize - 48, qrSize - 48);
+      ctx.drawImage(img, qrDrawX, qrDrawY, qrDrawSize, qrDrawSize);
+
+      // 5. BOTTOM INSTRUCTION BAR (Row 5)
+      const footY = 1026;
+      const footH = 48;
+      pfDrawRoundRect(ctx, pad, footY, innerW, footH, 10, '#ECFDF5', '#A7F3D0', 1.5);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#065F46';
+      ctx.font = '800 15px sans-serif';
+      ctx.fillText(info.footerText, canvasW / 2, footY + 30);
 
       const dataUrl = canvas.toDataURL('image/png');
       const a = document.createElement('a');
@@ -2061,10 +2097,10 @@ const DEFAULT_PF_SITE_CONFIG = {
   priceBallSingle: 50,
   priceBallsBucket: 100,
   priceMachine: 100,
-  court1Name: 'Court 01 — Indoor Championship',
-  court2Name: 'Court 02 — Indoor Tournament',
-  court3Name: 'Court 03 — Covered Outdoor',
-  court4Name: 'Court 04 — Pro Training Court',
+  court1Name: 'Court 1',
+  court2Name: 'Court 2',
+  court3Name: 'Court 3',
+  court4Name: 'Court 4',
   clubAddress: 'Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay',
   clubPhone: '0999 883 2346',
   clubHours: '6:00 AM – 12:00 AM',
@@ -2272,18 +2308,24 @@ function applySiteConfig(incomingCfg) {
   });
 
   // Short labels for Court 1..4
-  const shortCourtName = (full, fallback) => {
-    if (!full) return fallback;
-    const m = String(full).match(/\(([^)]+)\)/);
-    if (m && m[1]) return m[1];
-    const dash = String(full).split('—');
-    if (dash.length > 1) return dash[1].trim();
-    return full;
+  const sanitizeCourtLabel = (val, num) => {
+    const s = String(val || '').trim();
+    if (!s || /Indoor Championship|Indoor Tournament|Covered Outdoor|Pro Training/i.test(s)) {
+      return 'Court ' + num;
+    }
+    return s;
   };
-  document.querySelectorAll('[data-site-court-short="1"]').forEach(el => { el.textContent = shortCourtName(cfg.court1Name, 'Championship'); });
-  document.querySelectorAll('[data-site-court-short="2"]').forEach(el => { el.textContent = shortCourtName(cfg.court2Name, 'Tournament'); });
-  document.querySelectorAll('[data-site-court-short="3"]').forEach(el => { el.textContent = shortCourtName(cfg.court3Name, 'Covered Outdoor'); });
-  document.querySelectorAll('[data-site-court-short="4"]').forEach(el => { el.textContent = shortCourtName(cfg.court4Name, 'Pro Training'); });
+  cfg.court1Name = sanitizeCourtLabel(cfg.court1Name, 1);
+  cfg.court2Name = sanitizeCourtLabel(cfg.court2Name, 2);
+  cfg.court3Name = sanitizeCourtLabel(cfg.court3Name, 3);
+  cfg.court4Name = sanitizeCourtLabel(cfg.court4Name, 4);
+  const shortCourtName = (full, fallback) => {
+    return full || fallback;
+  };
+  document.querySelectorAll('[data-site-court-short="1"]').forEach(el => { el.textContent = shortCourtName(cfg.court1Name, 'Court 1'); });
+  document.querySelectorAll('[data-site-court-short="2"]').forEach(el => { el.textContent = shortCourtName(cfg.court2Name, 'Court 2'); });
+  document.querySelectorAll('[data-site-court-short="3"]').forEach(el => { el.textContent = shortCourtName(cfg.court3Name, 'Court 3'); });
+  document.querySelectorAll('[data-site-court-short="4"]').forEach(el => { el.textContent = shortCourtName(cfg.court4Name, 'Court 4'); });
 
   document.querySelectorAll('[data-site-court-full="1"]').forEach(el => { if (cfg.court1Name) el.textContent = cfg.court1Name; });
   document.querySelectorAll('[data-site-court-full="2"]').forEach(el => { if (cfg.court2Name) el.textContent = cfg.court2Name; });
