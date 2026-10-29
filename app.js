@@ -240,6 +240,10 @@ async function syncStateFromServer() {
           if (typeof renderPublicInventoryCatalog === 'function') {
             renderPublicInventoryCatalog();
           }
+          if (data.siteConfig && typeof data.siteConfig === 'object') {
+            localStorage.setItem('pf_site_config', JSON.stringify(data.siteConfig));
+            if (typeof applySiteConfig === 'function') applySiteConfig(data.siteConfig);
+          }
           if (typeof renderPublicAnnouncementBoard === 'function') {
             renderPublicAnnouncementBoard();
           }
@@ -1289,6 +1293,7 @@ function startCarouselTimer() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (typeof applySiteConfig === 'function') applySiteConfig();
   initDrawerSlots();
   renderCartUI();
   syncStateFromServer();
@@ -1429,6 +1434,18 @@ try {
         if (sharedServerState) sharedServerState.announcements = parsed;
       } catch (e) {}
       renderPublicAnnouncementBoard();
+    } else if (ev.key === 'pf_site_config') {
+      try {
+        const parsedCfg = JSON.parse(ev.newValue || '{}');
+        if (sharedServerState) sharedServerState.siteConfig = parsedCfg;
+        if (typeof applySiteConfig === 'function') applySiteConfig(parsedCfg);
+      } catch (e) {}
+    } else if (ev.key === 'pf_inventory') {
+      try {
+        const parsedInv = JSON.parse(ev.newValue || '[]');
+        if (sharedServerState) sharedServerState.inventory = parsedInv;
+        if (typeof renderPublicInventoryCatalog === 'function') renderPublicInventoryCatalog();
+      } catch (e) {}
     }
   });
   if (typeof BroadcastChannel !== 'undefined') {
@@ -1437,6 +1454,11 @@ try {
       if (ev.data && Array.isArray(ev.data.announcements)) {
         if (sharedServerState) sharedServerState.announcements = ev.data.announcements;
         renderPublicAnnouncementBoard();
+      }
+      if (ev.data && ev.data.siteConfig) {
+        if (sharedServerState) sharedServerState.siteConfig = ev.data.siteConfig;
+        localStorage.setItem('pf_site_config', JSON.stringify(ev.data.siteConfig));
+        if (typeof applySiteConfig === 'function') applySiteConfig(ev.data.siteConfig);
       }
     };
   }
@@ -1539,4 +1561,251 @@ function renderPublicAnnouncementBoard() {
       </div>
     `;
   }).join('');
+}
+
+
+// ================= LIVE WEBSITE, HERO PHOTO, LIVE BANNER & MASTER PRICE EDITOR ENGINE =================
+const DEFAULT_PF_SITE_CONFIG = {
+  clubName: 'P&F Rally Ground',
+  clubSubtitle: 'Pickleball Club • Daraga, Albay',
+  heroTagline: 'PHILIPPINES • 4 PRO PICKLEBALL COURTS',
+  heroTitleLine1: 'PLAY.',
+  heroTitleLine2: 'COMPETE.',
+  heroTitleAccent: 'CONNECT.',
+  heroSubtitle: 'Your home court in Daraga, Albay for premier rallies, tournament-grade cushion surfaces, pro equipment rentals, and verified online booking.',
+  heroPrimaryBtn: 'Book Your Court',
+  heroSecondaryBtn: 'View Live Schedule',
+  heroSlide1: 'assets/hero-slide-1.jpg',
+  heroSlide2: 'assets/hero-slide-2.jpg',
+  heroSlide3: 'assets/hero-slide-3.jpg',
+  liveBannerEnabled: true,
+  liveBannerText: '🏓 All 4 Championship Courts Open Today (6AM – 12AM) • Book Online with Instant QR Verification!',
+  bentoSectionTitle: 'PLAY THE CLUB',
+  bentoSectionDesc: 'Everything you need to play, improve, and compete under one roof. World-class surface, vibrant community, and zero booking friction.',
+  openPlayScheduleText: 'Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM',
+  dayRate: 400,
+  nightRate: 500,
+  includedPlayers: 6,
+  extraPlayerFee: 100,
+  openPlayRate: 150,
+  pricePaddleStd: 50,
+  pricePaddleCarbon: 100,
+  pricePaddleBranded: 200,
+  priceBallSingle: 50,
+  priceBallsBucket: 100,
+  priceMachine: 100,
+  court1Name: 'Court 01 (Indoor Championship)',
+  court2Name: 'Court 02 (Indoor Tournament)',
+  court3Name: 'Court 03 (Covered Outdoor)',
+  court4Name: 'Court 04 (Pro Training Court)',
+  clubAddress: 'Phase IV, Doña Maria Subd., Velasco St., Tagas, Daraga, Albay',
+  clubPhone: '0999 883 2346',
+  clubHours: '6:00 AM – 12:00 Midnight'
+};
+
+function getSiteConfig() {
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem('pf_site_config') || '{}') || {};
+  } catch (e) {}
+  const serverCfg = (sharedServerState && sharedServerState.siteConfig && typeof sharedServerState.siteConfig === 'object')
+    ? sharedServerState.siteConfig
+    : {};
+  const merged = Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg);
+  window.PF_SITE_CONFIG = merged;
+  return merged;
+}
+
+window.PF_SITE_CONFIG = getSiteConfig();
+
+function applySiteConfig(incomingCfg) {
+  if (incomingCfg && typeof incomingCfg === 'object') {
+    try {
+      const current = getSiteConfig();
+      const updated = Object.assign({}, current, incomingCfg);
+      localStorage.setItem('pf_site_config', JSON.stringify(updated));
+      if (sharedServerState) sharedServerState.siteConfig = updated;
+    } catch (e) {}
+  }
+  const cfg = getSiteConfig();
+
+  const dayRate = Number(cfg.dayRate || 400);
+  const nightRate = Number(cfg.nightRate || 500);
+  const incPlayers = Number(cfg.includedPlayers || 6);
+  const extraFee = Number(cfg.extraPlayerFee || 100);
+  const pStd = Number(cfg.pricePaddleStd || 50);
+  const pCarb = Number(cfg.pricePaddleCarbon || 100);
+  const pBrand = Number(cfg.pricePaddleBranded || 200);
+  const pBall = Number(cfg.priceBallSingle || 50);
+  const pBucket = Number(cfg.priceBallsBucket || 100);
+  const pMach = Number(cfg.priceMachine || 100);
+
+  // 1. Update courtNames map
+  if (cfg.court1Name) courtNames[1] = cfg.court1Name;
+  if (cfg.court2Name) courtNames[2] = cfg.court2Name;
+  if (cfg.court3Name) courtNames[3] = cfg.court3Name;
+  if (cfg.court4Name) courtNames[4] = cfg.court4Name;
+
+  // 2. Render or update Live Top Update Banner (#live-site-update-banner)
+  let bannerEl = document.getElementById('live-site-update-banner');
+  const headerEl = document.querySelector('header');
+  if (cfg.liveBannerEnabled && String(cfg.liveBannerText || '').trim()) {
+    if (!bannerEl && headerEl) {
+      bannerEl = document.createElement('div');
+      bannerEl.id = 'live-site-update-banner';
+      bannerEl.className = 'bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] border-b border-[#9BE600]/40 text-white px-3 py-1.5 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow-md';
+      headerEl.insertBefore(bannerEl, headerEl.firstChild);
+    }
+    if (bannerEl) {
+      bannerEl.classList.remove('hidden');
+      bannerEl.innerHTML = `
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9BE600] text-[#050E1D] font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
+        <span class="text-slate-100 font-semibold truncate max-w-[78vw] sm:max-w-none">${pfEscapeHtml(cfg.liveBannerText)}</span>
+        <button type="button" onclick="toggleAnnouncementBoard(true)" class="hidden sm:inline-flex items-center gap-1 text-[#9BE600] hover:underline font-mono text-[10px] font-black ml-1 flex-shrink-0">View Feed →</button>
+      `;
+    }
+  } else if (bannerEl) {
+    bannerEl.classList.add('hidden');
+  }
+
+  // 3. Update Hero Background Slides (#slide-0, #slide-1, #slide-2)
+  const s0 = document.getElementById('slide-0');
+  const s1 = document.getElementById('slide-1');
+  const s2 = document.getElementById('slide-2');
+  if (s0 && cfg.heroSlide1) s0.style.backgroundImage = `url('${cfg.heroSlide1}')`;
+  if (s1 && cfg.heroSlide2) s1.style.backgroundImage = `url('${cfg.heroSlide2}')`;
+  if (s2 && cfg.heroSlide3) s2.style.backgroundImage = `url('${cfg.heroSlide3}')`;
+
+  // 4. Update Hero Text & Headlines on index.html
+  const setTxt = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val !== undefined && val !== null) el.textContent = String(val);
+  };
+
+  setTxt('site-hero-tagline', cfg.heroTagline);
+  const heroH1 = document.getElementById('site-hero-title');
+  if (heroH1 && (cfg.heroTitleLine1 || cfg.heroTitleLine2 || cfg.heroTitleAccent)) {
+    heroH1.innerHTML = `${pfEscapeHtml(cfg.heroTitleLine1 || 'PLAY.')}<br>${pfEscapeHtml(cfg.heroTitleLine2 || 'COMPETE.')}<br><span class="text-brand-lime">${pfEscapeHtml(cfg.heroTitleAccent || 'CONNECT.')}</span><span class="sr-only"> — Premier Pickleball Courts &amp; Club in Daraga, Albay</span>`;
+  }
+  setTxt('site-hero-subtitle', cfg.heroSubtitle);
+  setTxt('site-hero-primary-btn-text', cfg.heroPrimaryBtn);
+  setTxt('site-hero-secondary-btn-text', cfg.heroSecondaryBtn);
+
+  // Bento section title & desc
+  const bentoTitleEl = document.getElementById('site-bento-title');
+  if (bentoTitleEl && cfg.bentoSectionTitle) {
+    const words = String(cfg.bentoSectionTitle).trim().split(/\s+/);
+    if (words.length > 1) {
+      const first = words[0];
+      const rest = words.slice(1).join(' ');
+      bentoTitleEl.innerHTML = `${pfEscapeHtml(first)} <span class="text-brand-lime">${pfEscapeHtml(rest)}</span>`;
+    } else {
+      bentoTitleEl.textContent = cfg.bentoSectionTitle;
+    }
+  }
+  setTxt('site-bento-desc', cfg.bentoSectionDesc);
+  setTxt('site-open-play-schedule-text', cfg.openPlayScheduleText);
+
+  // Header & Footer Club Name / Subtitle / Phone / Hours / Address
+  document.querySelectorAll('[data-site-club-name]').forEach(el => {
+    if (cfg.clubName) el.textContent = cfg.clubName;
+  });
+  document.querySelectorAll('[data-site-club-subtitle]').forEach(el => {
+    if (cfg.clubSubtitle) el.textContent = cfg.clubSubtitle;
+  });
+  document.querySelectorAll('[data-site-club-phone]').forEach(el => {
+    if (cfg.clubPhone) el.textContent = cfg.clubPhone;
+  });
+  document.querySelectorAll('[data-site-club-hours]').forEach(el => {
+    if (cfg.clubHours) el.textContent = cfg.clubHours;
+  });
+  document.querySelectorAll('[data-site-club-address]').forEach(el => {
+    if (cfg.clubAddress) el.textContent = cfg.clubAddress;
+  });
+
+  // Short labels for Court 1..4
+  const shortCourtName = (full, fallback) => {
+    if (!full) return fallback;
+    const m = String(full).match(/\(([^)]+)\)/);
+    if (m && m[1]) return m[1];
+    const dash = String(full).split('—');
+    if (dash.length > 1) return dash[1].trim();
+    return full;
+  };
+  document.querySelectorAll('[data-site-court-short="1"]').forEach(el => { el.textContent = shortCourtName(cfg.court1Name, 'Championship'); });
+  document.querySelectorAll('[data-site-court-short="2"]').forEach(el => { el.textContent = shortCourtName(cfg.court2Name, 'Tournament'); });
+  document.querySelectorAll('[data-site-court-short="3"]').forEach(el => { el.textContent = shortCourtName(cfg.court3Name, 'Covered Outdoor'); });
+  document.querySelectorAll('[data-site-court-short="4"]').forEach(el => { el.textContent = shortCourtName(cfg.court4Name, 'Pro Training'); });
+
+  document.querySelectorAll('[data-site-court-full="1"]').forEach(el => { if (cfg.court1Name) el.textContent = cfg.court1Name; });
+  document.querySelectorAll('[data-site-court-full="2"]').forEach(el => { if (cfg.court2Name) el.textContent = cfg.court2Name; });
+  document.querySelectorAll('[data-site-court-full="3"]').forEach(el => { if (cfg.court3Name) el.textContent = cfg.court3Name; });
+  document.querySelectorAll('[data-site-court-full="4"]').forEach(el => { if (cfg.court4Name) el.textContent = cfg.court4Name; });
+
+  // 5. Update All Visible Prices via data-site-price attributes across all pages
+  document.querySelectorAll('[data-site-price="day-hr"]').forEach(el => { el.textContent = `₱${dayRate} / hr`; });
+  document.querySelectorAll('[data-site-price="night-hr"]').forEach(el => { el.textContent = `₱${nightRate} / hr`; });
+  document.querySelectorAll('[data-site-price="day-num"]').forEach(el => { el.textContent = `₱${dayRate}`; });
+  document.querySelectorAll('[data-site-price="night-num"]').forEach(el => { el.textContent = `₱${nightRate}`; });
+  document.querySelectorAll('[data-site-price="day-night-badge"]').forEach(el => { el.textContent = `Day: ₱${dayRate}/hr • Night: ₱${nightRate}/hr`; });
+  document.querySelectorAll('[data-site-price="included-players"]').forEach(el => { el.textContent = `Up to ${incPlayers} Players`; });
+  document.querySelectorAll('[data-site-price="extra-player-fee"]').forEach(el => { el.textContent = `+₱${extraFee} / player`; });
+  document.querySelectorAll('[data-site-price="players-note"]').forEach(el => {
+    el.textContent = `Up to ${incPlayers} players included free (+₱${extraFee}/extra player beyond ${incPlayers}).`;
+  });
+
+  // Equipment rental price displays
+  document.querySelectorAll('[data-site-price="paddle-std"]').forEach(el => { el.textContent = `₱${pStd}`; });
+  document.querySelectorAll('[data-site-price="paddle-std-dec"]').forEach(el => { el.textContent = `₱${pStd.toFixed(2)}`; });
+  document.querySelectorAll('[data-site-price="paddle-carbon"]').forEach(el => { el.textContent = `₱${pCarb}`; });
+  document.querySelectorAll('[data-site-price="paddle-carbon-dec"]').forEach(el => { el.textContent = `₱${pCarb.toFixed(2)}`; });
+  document.querySelectorAll('[data-site-price="paddle-branded"]').forEach(el => { el.textContent = `₱${pBrand}`; });
+  document.querySelectorAll('[data-site-price="paddle-branded-dec"]').forEach(el => { el.textContent = `₱${pBrand.toFixed(2)}`; });
+  document.querySelectorAll('[data-site-price="ball-single"]').forEach(el => { el.textContent = `₱${pBall}`; });
+  document.querySelectorAll('[data-site-price="ball-single-dec"]').forEach(el => { el.textContent = `₱${pBall.toFixed(2)}`; });
+  document.querySelectorAll('[data-site-price="balls-bucket"]').forEach(el => { el.textContent = `₱${pBucket}`; });
+  document.querySelectorAll('[data-site-price="balls-bucket-dec"]').forEach(el => { el.textContent = `₱${pBucket.toFixed(2)}`; });
+  document.querySelectorAll('[data-site-price="machine-hr"]').forEach(el => { el.textContent = `₱${pMach} / hr`; });
+  document.querySelectorAll('[data-site-price="machine-num"]').forEach(el => { el.textContent = `₱${pMach}`; });
+  document.querySelectorAll('[data-site-price="machine-dec"]').forEach(el => { el.textContent = `₱${pMach.toFixed(2)} / hr`; });
+
+  // Update pricing.html "+ Add to Cart" buttons with dynamic prices
+  const bindCartBtn = (id, itemKey, itemName, priceVal, catLabel) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.setAttribute('onclick', `addItemToCart('${itemKey}', '${itemName}', ${priceVal}, '${catLabel}'); toggleCartDrawer();`);
+    }
+  };
+  bindCartBtn('pricing-btn-paddle-std', 'gear-standard', 'Standard paddle', pStd, 'Rental');
+  bindCartBtn('pricing-btn-paddle-carbon', 'gear-carbon', 'Carbon paddle', pCarb, 'Rental');
+  bindCartBtn('pricing-btn-paddle-branded', 'gear-branded', 'Branded carbon paddle', pBrand, 'Rental');
+  bindCartBtn('pricing-btn-ball-single', 'gear-ball', 'Pickleball ball', pBall, 'Purchase');
+  bindCartBtn('pricing-btn-balls-bucket', 'gear-training-balls', 'Training balls (50 pcs)', pBucket, 'Rental');
+  bindCartBtn('pricing-btn-machine', 'gear-training-machine', 'Training machine (per hour)', pMach, 'Rental');
+
+  // Update book.html GEAR_CATALOG if present
+  if (typeof GEAR_CATALOG !== 'undefined' && Array.isArray(GEAR_CATALOG)) {
+    const mapPrices = {
+      'standard': pStd,
+      'carbon': pCarb,
+      'branded': pBrand,
+      'ball': pBall,
+      'training': pBucket,
+      'training-machine': pMach
+    };
+    GEAR_CATALOG.forEach(item => {
+      if (mapPrices[item.id] !== undefined) item.price = mapPrices[item.id];
+    });
+  }
+
+  // Re-run calculators & schedule matrix if present on page
+  if (typeof renderLiveScheduleMatrix === 'function') {
+    try { renderLiveScheduleMatrix(); } catch (e) {}
+  }
+  if (typeof recalculateDrawerTotal === 'function') {
+    try { recalculateDrawerTotal(); } catch (e) {}
+  }
+  if (typeof updateSummary === 'function') {
+    try { updateSummary(); } catch (e) {}
+  }
 }
