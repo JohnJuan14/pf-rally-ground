@@ -1045,11 +1045,11 @@
 
             <div>
               <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Hero Primary Button Text</label>
-              <input type="text" id="se-hero-btn-primary" oninput="markSiteEditorDirty()" value="Book Your Court" class="w-full bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-600 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none">
+              <input type="text" id="se-hero-btn-primary" oninput="markSiteEditorDirty()" value="Reserve a court" class="w-full bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-600 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none">
             </div>
             <div>
               <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Hero Secondary Button Text</label>
-              <input type="text" id="se-hero-btn-secondary" oninput="markSiteEditorDirty()" value="View Live Schedule" class="w-full bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-600 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none">
+              <input type="text" id="se-hero-btn-secondary" oninput="markSiteEditorDirty()" value="Check my booking" class="w-full bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-600 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none">
             </div>
             <div>
               <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Operating Hours Label</label>
@@ -3400,7 +3400,7 @@ function clearFieldError(fieldId) {
           <td class="py-3.5 px-4 text-slate-200 min-w-[200px]">
             ${formatAdminItemsBullets(b)}
           </td>
-          <td class="py-3.5 px-4 text-slate-300 font-mono text-[11px] whitespace-nowrap">${pfEscapeHtml(b.time)}</td>
+          <td class="py-3.5 px-4 text-slate-300 font-mono text-[11px] whitespace-nowrap">${pfEscapeHtml(b.time)}${(b.rescheduledAt || b.isReschedule) ? `<span class="block text-[9px] text-brand-lime font-bold mt-0.5">↻ Rescheduled</span>` : ``}</td>
           <td class="py-3.5 px-4">
             <span class="text-white font-bold block">${pfEscapeHtml(b.paymentMethod || b.paymentMode || 'GCash')}</span>
             <span class="text-[11px] font-mono text-brand-lime font-bold block">Ref: ${pfEscapeHtml(b.transactionRef || 'N/A')}</span>
@@ -3415,11 +3415,114 @@ function clearFieldError(fieldId) {
           <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-1.5">
             ${!isConfirmed ? `<button onclick="approveBooking('${b.ref}')" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase hover:bg-brand-limeHover transition shadow-sm">✓ Approve</button>` : ''}
             ${!isDeclined ? `<button onclick="declineBooking('${b.ref}')" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-brand-clay text-amber-300 hover:text-white border border-amber-400/40 text-[10px] font-black uppercase transition">✕ Decline</button>` : ''}
-            <button onclick="sendBookingViaGmail('${b.ref}')" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-brand-lime/20 border border-white/15 hover:border-brand-lime/40 text-white hover:text-brand-lime text-[10px] font-bold uppercase transition" title="Send Booking Confirmation via Gmail">Gmail ↗</button>
+            <button onclick="adminOpenRescheduleModal('${b.ref}')" class="px-2.5 py-1.5 rounded-lg bg-brand-lime/15 hover:bg-brand-lime border border-brand-lime/40 text-brand-lime hover:text-brand-black text-[10px] font-black uppercase transition" title="Reschedule Booking Date, Court, or Time">↻ Reschedule</button>
             <button onclick="deleteAdminBooking('${b.ref}')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Delete</button>
           </td>
         </tr>
       `}).join('');
+    }
+
+    
+    function adminOpenRescheduleModal(ref) {
+      const b = bookings.find(item => item.ref === ref);
+      if (!b) return;
+      let modal = document.getElementById('admin-reschedule-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'admin-reschedule-modal';
+        modal.className = 'fixed inset-0 z-[90] hidden flex items-center justify-center p-4';
+        modal.innerHTML = `
+          <div onclick="adminCloseRescheduleModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+          <div class="relative z-10 w-full max-w-md rounded-2xl bg-[#0B1B33] border-2 border-[#9BE600] p-5 text-white shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <span class="text-[10px] font-mono font-black uppercase text-[#9BE600] block">ADMIN RESCHEDULE</span>
+                <h4 id="adm-resched-title" class="text-base font-black uppercase text-white">Reschedule Booking</h4>
+              </div>
+              <button type="button" onclick="adminCloseRescheduleModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-xs">✕</button>
+            </div>
+            <input type="hidden" id="adm-resched-ref" value="">
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-300 font-bold mb-1">New Date</label>
+                <input type="date" id="adm-resched-date" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-[#9BE600]">
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-300 font-bold mb-1">New Court</label>
+                <select id="adm-resched-court" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-bold text-xs focus:outline-none focus:border-[#9BE600]">
+                  <option value="Court 1">Court 1</option>
+                  <option value="Court 2">Court 2</option>
+                  <option value="Court 3">Court 3</option>
+                  <option value="Court 4">Court 4</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-300 font-bold mb-1">New Time</label>
+                <select id="adm-resched-time" class="w-full bg-[#050E1D] border border-white/20 rounded-xl px-3 py-2.5 text-white font-mono text-xs focus:outline-none focus:border-[#9BE600]">
+                  <option value="06:00 AM">06:00 AM</option>
+                  <option value="07:00 AM">07:00 AM</option>
+                  <option value="08:00 AM">08:00 AM</option>
+                  <option value="09:00 AM">09:00 AM</option>
+                  <option value="10:00 AM">10:00 AM</option>
+                  <option value="11:00 AM">11:00 AM</option>
+                  <option value="12:00 PM">12:00 PM</option>
+                  <option value="01:00 PM">01:00 PM</option>
+                  <option value="02:00 PM">02:00 PM</option>
+                  <option value="03:00 PM">03:00 PM</option>
+                  <option value="04:00 PM">04:00 PM</option>
+                  <option value="05:00 PM">05:00 PM</option>
+                  <option value="06:00 PM">06:00 PM</option>
+                  <option value="07:00 PM">07:00 PM</option>
+                  <option value="08:00 PM">08:00 PM</option>
+                  <option value="09:00 PM">09:00 PM</option>
+                  <option value="10:00 PM">10:00 PM</option>
+                  <option value="11:00 PM">11:00 PM</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+              <button type="button" onclick="adminSubmitReschedule()" class="flex-1 py-3 rounded-xl bg-[#9BE600] text-[#050E1D] font-black uppercase text-xs tracking-wider hover:opacity-95 transition">✓ Save New Schedule</button>
+              <button type="button" onclick="adminCloseRescheduleModal()" class="py-3 px-4 rounded-xl bg-white/10 text-white font-bold uppercase text-xs">Cancel</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+      document.getElementById('adm-resched-ref').value = b.ref;
+      document.getElementById('adm-resched-title').textContent = `Reschedule • ${b.name || b.customerName || 'Guest'} (${b.ref})`;
+      const now = new Date();
+      const todayYmd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      document.getElementById('adm-resched-date').value = b.date && /^\d{4}-\d{2}-\d{2}$/.test(b.date) ? b.date : todayYmd;
+      modal.classList.remove('hidden');
+    }
+
+    function adminCloseRescheduleModal() {
+      const modal = document.getElementById('admin-reschedule-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function adminSubmitReschedule() {
+      const ref = document.getElementById('adm-resched-ref')?.value;
+      const newDate = document.getElementById('adm-resched-date')?.value;
+      const newCourt = document.getElementById('adm-resched-court')?.value || 'Court 1';
+      const newTime = document.getElementById('adm-resched-time')?.value || '06:00 AM';
+      const b = bookings.find(item => item.ref === ref);
+      if (!b || !newDate) return;
+      b.date = newDate;
+      b.court = newCourt;
+      b.time = `${newDate} • ${newTime}`;
+      b.rescheduledAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      b.isReschedule = true;
+      try {
+        await fetch('/api/bookings', {
+          method: 'POST',
+          headers: getAdminAuthHeaders(),
+          body: JSON.stringify(b)
+        });
+      } catch (e) {}
+      saveAdminState();
+      renderBookingsTable();
+      adminCloseRescheduleModal();
     }
 
     function previewReceipt(ref) {
@@ -6797,8 +6900,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       heroTitleLine2: 'COMPETE.',
       heroTitleAccent: 'CONNECT.',
       heroSubtitle: 'Your home court in Daraga, Albay for premier rallies, tournament-grade cushion surfaces, pro equipment rentals, and verified online booking.',
-      heroPrimaryBtn: 'Book Your Court',
-      heroSecondaryBtn: 'View Live Schedule',
+      heroPrimaryBtn: 'Reserve a court',
+      heroSecondaryBtn: 'Check my booking',
       clubAddress: 'Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay',
       clubHours: '6:00 AM – 12:00 AM',
       clubPhone: '0999 883 2346',

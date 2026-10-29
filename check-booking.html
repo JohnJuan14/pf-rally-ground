@@ -836,6 +836,15 @@
         Enter your Booking Reference ID (e.g. <code class="text-brand-lime font-mono">PF-12345</code>), GCash Reference Number, or registered Full Name to view your live Match Pass.
       </p>
 
+      <!-- Reschedule Mode Active Callout Banner -->
+      <div id="reschedule-mode-top-banner" class="hidden mt-5 max-w-lg mx-auto p-3.5 rounded-2xl bg-brand-lime/15 border-2 border-brand-lime text-left flex items-center gap-3 shadow-lg">
+        <div class="w-9 h-9 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center font-black text-base flex-shrink-0">↻</div>
+        <div class="text-xs">
+          <span class="font-mono font-black uppercase text-brand-lime block">Reschedule Booking Mode</span>
+          <span class="text-slate-200">Enter your Booking ID, GCash Ref #, or Name below to load your reservation and pick a new date, court, or time.</span>
+        </div>
+      </div>
+
       <!-- Validated Search Form -->
       <form onsubmit="event.preventDefault(); lookupBooking();" class="mt-6 sm:mt-8 max-w-lg mx-auto">
         <div class="flex flex-col sm:flex-row gap-2.5">
@@ -930,9 +939,65 @@
 
         <!-- Action Buttons -->
         <div class="space-y-2.5">
-          <button onclick="downloadCalendarInvite()" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
-            <span>Add to Google / Apple Calendar (.ics)</span>
-          </button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button type="button" onclick="downloadCalendarInvite()" class="w-full py-3.5 px-4 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
+              <span>📅 Add to Calendar (.ics)</span>
+            </button>
+            <button type="button" onclick="pfToggleRescheduleForm()" class="w-full py-3.5 px-4 rounded-xl bg-brand-lime/15 hover:bg-brand-lime/25 border-2 border-brand-lime text-brand-lime font-black text-xs uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-2">
+              <span>↻ Reschedule Booking</span>
+            </button>
+          </div>
+
+          <!-- Self-Service Reschedule Form Panel -->
+          <div id="reschedule-booking-panel" class="hidden mt-3 p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-brand-lime/50 space-y-3 text-left">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-black uppercase tracking-wider text-brand-lime">↻ Reschedule Your Court Slot</span>
+              <button type="button" onclick="pfToggleRescheduleForm()" class="text-xs text-slate-400 hover:text-white font-bold">✕ Close</button>
+            </div>
+            <p class="text-[11px] text-slate-300">Select your new preferred date, court, and time below to update your reservation.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-400 font-bold mb-1">New Date</label>
+                <input type="date" id="resched-new-date" onchange="pfRefreshRescheduleTimeOptions()" class="w-full bg-brand-card border border-white/20 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-brand-lime">
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-400 font-bold mb-1">New Court</label>
+                <select id="resched-new-court" onchange="pfRefreshRescheduleTimeOptions()" class="w-full bg-brand-card border border-white/20 rounded-xl px-3 py-2 text-white font-bold text-xs focus:outline-none focus:border-brand-lime">
+                  <option value="Court 1">Court 1</option>
+                  <option value="Court 2">Court 2</option>
+                  <option value="Court 3">Court 3</option>
+                  <option value="Court 4">Court 4</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-400 font-bold mb-1">New Time</label>
+                <select id="resched-new-time" class="w-full bg-brand-card border border-white/20 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-brand-lime">
+                  <option value="06:00 AM">06:00 AM</option>
+                  <option value="07:00 AM">07:00 AM</option>
+                  <option value="08:00 AM">08:00 AM</option>
+                  <option value="09:00 AM">09:00 AM</option>
+                  <option value="10:00 AM">10:00 AM</option>
+                  <option value="11:00 AM">11:00 AM</option>
+                  <option value="12:00 PM">12:00 PM</option>
+                  <option value="01:00 PM">01:00 PM</option>
+                  <option value="02:00 PM">02:00 PM</option>
+                  <option value="03:00 PM">03:00 PM</option>
+                  <option value="04:00 PM">04:00 PM</option>
+                  <option value="05:00 PM">05:00 PM</option>
+                  <option value="06:00 PM">06:00 PM</option>
+                  <option value="07:00 PM">07:00 PM</option>
+                  <option value="08:00 PM">08:00 PM</option>
+                  <option value="09:00 PM">09:00 PM</option>
+                  <option value="10:00 PM">10:00 PM</option>
+                  <option value="11:00 PM">11:00 PM</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" onclick="pfSubmitBookingReschedule()" class="w-full py-3 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition shadow-md">
+              ✓ Confirm &amp; Save New Schedule
+            </button>
+            <p id="resched-feedback-msg" class="hidden"></p>
+          </div>
         </div>
 
       </div>

@@ -501,7 +501,16 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 "items": items if items else [f"{court_val} ({display_time})"],
                 "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
             }
-            deduct_inventory_for_items(db, items)
+            existing_bk = next((b for b in db["bookings"] if b.get("ref") == new_booking["ref"]), None)
+            if not existing_bk:
+                deduct_inventory_for_items(db, items)
+            else:
+                # Preserve existing status & receipt on customer reschedule
+                if existing_bk.get("status") == "CONFIRMED":
+                    new_booking["status"] = "CONFIRMED"
+                if existing_bk.get("receiptDataUrl") and not new_booking.get("receiptDataUrl"):
+                    new_booking["receiptDataUrl"] = existing_bk["receiptDataUrl"]
+                new_booking["rescheduledAt"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != new_booking["ref"]]
             # Prevent rapid double-click duplicate booking for same court + time + transactionRef
@@ -520,7 +529,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
 
             db["bookings"].insert(0, new_booking)
 
-            if new_booking["status"] == "CONFIRMED":
+            if new_booking["status"] == "CONFIRMED" and not any(s.get("ref") == new_booking["ref"] for s in db.get("salesLedger", [])):
                 bk_cost = compute_and_deduct_inventory_for_items(db, items, deduct_stock=False)
                 if bk_cost <= 0:
                     bk_cost = float((db.get("siteConfig") or {}).get("costCourtPerHour", 0) or 0)

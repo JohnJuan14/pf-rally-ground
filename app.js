@@ -2066,8 +2066,8 @@ const DEFAULT_PF_SITE_CONFIG = {
   heroTitleLine2: 'COMPETE.',
   heroTitleAccent: 'CONNECT.',
   heroSubtitle: 'Your home court in Daraga, Albay for premier rallies, tournament-grade cushion surfaces, pro equipment rentals, and verified online booking.',
-  heroPrimaryBtn: 'Book Your Court',
-  heroSecondaryBtn: 'View Live Schedule',
+  heroPrimaryBtn: 'Reserve a court',
+  heroSecondaryBtn: 'Check my booking',
   heroSlide1: 'assets/hero-slide-1.jpg',
   heroSlide2: 'assets/hero-slide-2.jpg',
   heroSlide3: 'assets/hero-slide-3.jpg',
@@ -2272,8 +2272,10 @@ function applySiteConfig(incomingCfg) {
     heroH1.innerHTML = `${pfEscapeHtml(cfg.heroTitleLine1 || 'PLAY.')}<br>${pfEscapeHtml(cfg.heroTitleLine2 || 'COMPETE.')}<br><span class="text-brand-lime">${pfEscapeHtml(cfg.heroTitleAccent || 'CONNECT.')}</span><span class="sr-only"> — Premier Pickleball Courts &amp; Club in Daraga, Albay</span>`;
   }
   setTxt('site-hero-subtitle', cfg.heroSubtitle);
-  setTxt('site-hero-primary-btn-text', cfg.heroPrimaryBtn);
-  setTxt('site-hero-secondary-btn-text', cfg.heroSecondaryBtn);
+  const primBtnTxt = (!cfg.heroPrimaryBtn || cfg.heroPrimaryBtn === 'Book Your Court') ? 'Reserve a court' : cfg.heroPrimaryBtn;
+  const secBtnTxt = (!cfg.heroSecondaryBtn || cfg.heroSecondaryBtn === 'View Live Schedule') ? 'Check my booking' : cfg.heroSecondaryBtn;
+  setTxt('site-hero-primary-btn-text', primBtnTxt);
+  setTxt('site-hero-secondary-btn-text', secBtnTxt);
 
   // Bento section title & desc
   const bentoTitleEl = document.getElementById('site-bento-title');
@@ -2833,3 +2835,168 @@ function initDraggableAnnouncementWidget() {
 document.addEventListener('DOMContentLoaded', () => {
   initDraggableAnnouncementWidget();
 });
+
+
+// ================= CUSTOMER SELF-SERVICE RESCHEDULE ENGINE =================
+function pfRefreshRescheduleTimeOptions() {
+  const dateInp = document.getElementById('resched-new-date');
+  const courtSel = document.getElementById('resched-new-court');
+  const timeSel = document.getElementById('resched-new-time');
+  const refEl = document.getElementById('res-ref');
+  if (!dateInp || !courtSel || !timeSel) return;
+
+  const targetDate = dateInp.value;
+  const cNum = parseInt(String(courtSel.value || '1').replace(/[^0-9]/g, ''), 10) || 1;
+  const currentRef = refEl ? refEl.textContent.trim().toUpperCase() : '';
+
+  Array.from(timeSel.options).forEach(opt => {
+    const rawSlot = opt.value;
+    let disabled = false;
+    let suffix = '';
+    if (targetDate && typeof pfResolveCourtSlot === 'function') {
+      const st = pfResolveCourtSlot(targetDate, cNum, rawSlot);
+      if (st && st.status === 'BOOKED') {
+        const bookedRef = (st.booking && st.booking.ref) ? String(st.booking.ref).toUpperCase() : '';
+        if (bookedRef && bookedRef === currentRef) {
+          suffix = ' (Your Current Slot)';
+        } else {
+          disabled = true;
+          suffix = ' (Booked)';
+        }
+      } else if (st && st.status === 'CLOSED') {
+        disabled = true;
+        suffix = ' (Closed)';
+      } else if (st && st.status === 'OPEN_PLAY') {
+        disabled = true;
+        suffix = ' (Open Play)';
+      }
+    }
+    opt.disabled = disabled;
+    opt.textContent = rawSlot + suffix;
+  });
+}
+
+function pfToggleRescheduleForm(forceOpen = null) {
+  const panel = document.getElementById('reschedule-booking-panel');
+  if (!panel) return;
+  const shouldOpen = forceOpen !== null ? Boolean(forceOpen) : panel.classList.contains('hidden');
+  if (shouldOpen) {
+    panel.classList.remove('hidden');
+    const dateInput = document.getElementById('resched-new-date');
+    if (dateInput) {
+      const now = new Date();
+      const ymd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      if (!dateInput.value) dateInput.value = ymd;
+      dateInput.min = ymd;
+    }
+    pfRefreshRescheduleTimeOptions();
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    panel.classList.add('hidden');
+  }
+}
+
+async function pfSubmitBookingReschedule() {
+  const refEl = document.getElementById('res-ref');
+  const refId = refEl ? refEl.textContent.trim() : '';
+  if (!refId || refId === '—') {
+    alert('Please look up your booking first.');
+    return;
+  }
+  const newDate = (document.getElementById('resched-new-date') || {}).value || '';
+  const newCourt = (document.getElementById('resched-new-court') || {}).value || 'Court 1';
+  const newTime = (document.getElementById('resched-new-time') || {}).value || '06:00 AM';
+  const msgEl = document.getElementById('resched-feedback-msg');
+
+  if (!newDate) {
+    if (msgEl) {
+      msgEl.textContent = 'Please choose a new date for your booking.';
+      msgEl.className = 'text-xs font-bold text-brand-clay mt-2 block';
+    }
+    return;
+  }
+
+  // Check if target slot is already booked (by someone else) or closed
+  const cNum = parseInt(newCourt.replace(/[^0-9]/g, ''), 10) || 1;
+  if (typeof pfResolveCourtSlot === 'function') {
+    const slotCheck = pfResolveCourtSlot(newDate, cNum, newTime);
+    if (slotCheck && (slotCheck.status === 'BOOKED' || slotCheck.status === 'CLOSED' || slotCheck.status === 'OPEN_PLAY')) {
+      const bookedBySelf = slotCheck.booking && String(slotCheck.booking.ref || '').toUpperCase() === refId.toUpperCase();
+      if (!bookedBySelf) {
+        if (msgEl) {
+          msgEl.textContent = `Sorry, ${newCourt} at ${newTime} on ${newDate} is unavailable (${slotCheck.status}). Please choose another time or court.`;
+          msgEl.className = 'text-xs font-bold text-brand-clay mt-2 block';
+        }
+        return;
+      }
+    }
+  }
+
+  const newTimeSchedule = `${newDate} • ${newTime}`;
+
+  // Update in localStorage and sharedServerState
+  let updatedBooking = null;
+  try {
+    const localArr = JSON.parse(localStorage.getItem('pf_public_bookings') || '[]');
+    localArr.forEach(b => {
+      if (b && String(b.ref).toUpperCase() === refId.toUpperCase()) {
+        b.date = newDate;
+        b.court = newCourt;
+        b.time = newTimeSchedule;
+        b.isReschedule = true;
+        updatedBooking = Object.assign({}, b);
+      }
+    });
+    localStorage.setItem('pf_public_bookings', JSON.stringify(localArr));
+  } catch (e) {}
+
+  if (window.sharedServerState && Array.isArray(window.sharedServerState.bookings)) {
+    window.sharedServerState.bookings.forEach(b => {
+      if (b && String(b.ref).toUpperCase() === refId.toUpperCase()) {
+        b.date = newDate;
+        b.court = newCourt;
+        b.time = newTimeSchedule;
+        b.isReschedule = true;
+        if (!updatedBooking) updatedBooking = Object.assign({}, b);
+      }
+    });
+  }
+
+  if (updatedBooking && typeof pushBookingToServer === 'function') {
+    await pushBookingToServer(updatedBooking);
+  }
+
+  const resCourtEl = document.getElementById('res-court');
+  if (resCourtEl) resCourtEl.textContent = newCourt;
+  const resTimeEl = document.getElementById('res-time');
+  if (resTimeEl) resTimeEl.textContent = newTimeSchedule;
+
+  pfRefreshRescheduleTimeOptions();
+
+  if (msgEl) {
+    msgEl.innerHTML = `✅ Booking <b>${refId}</b> has been rescheduled to <b>${newCourt}</b> on <b>${newTimeSchedule}</b>!`;
+    msgEl.className = 'text-xs font-bold text-brand-lime bg-brand-lime/15 border border-brand-lime/40 p-2.5 rounded-xl mt-2 block';
+  }
+}
+
+function pfInitRescheduleHashMode() {
+  const banner = document.getElementById('reschedule-mode-top-banner');
+  if (window.location.hash === '#reschedule') {
+    if (banner) banner.classList.remove('hidden');
+    const lookupInp = document.getElementById('lookup-ref');
+    const resultCard = document.getElementById('booking-result-card');
+    if (resultCard && !resultCard.classList.contains('hidden')) {
+      pfToggleRescheduleForm(true);
+    } else if (lookupInp) {
+      lookupInp.focus();
+    }
+  } else if (banner) {
+    banner.classList.add('hidden');
+  }
+}
+
+window.addEventListener('hashchange', pfInitRescheduleHashMode);
+window.addEventListener('DOMContentLoaded', pfInitRescheduleHashMode);
+window.pfRefreshRescheduleTimeOptions = pfRefreshRescheduleTimeOptions;
+window.pfToggleRescheduleForm = pfToggleRescheduleForm;
+window.pfSubmitBookingReschedule = pfSubmitBookingReschedule;
