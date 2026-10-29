@@ -1516,17 +1516,18 @@ function renderPublicAnnouncementBoard() {
 
   const catColors = {
     'Open Play Alert': 'bg-[#d9f99d] text-[#365314] border-[#84cc16]',
-    'Tournament / Event': 'bg-amber-400/20 text-amber-300 border-amber-400/40',
-    'Promo & Rates': 'bg-[#0072CE]/25 text-sky-300 border-sky-400/40',
-    'Court Advisory': 'bg-rose-500/20 text-rose-300 border-rose-400/40',
-    'Club Update': 'bg-[#9BE600]/20 text-[#9BE600] border-[#9BE600]/40'
+    'Tournament / Event': 'bg-amber-100 text-amber-900 border-amber-300',
+    'Promo & Rates': 'bg-sky-100 text-sky-900 border-sky-300',
+    'Court Advisory': 'bg-rose-100 text-rose-800 border-rose-300',
+    'Club Update': 'bg-emerald-100 text-emerald-900 border-emerald-300'
   };
 
   feed.innerHTML = sorted.map(ann => {
     const cat = ann.category || 'Club Update';
     const pillCls = catColors[cat] || catColors['Club Update'];
     const safeTitle = pfEscapeHtml(ann.title || '');
-    const safeMsg = pfEscapeHtml(ann.message || '').replace(/\n/g, '<br>');
+    const safeMsg = pfEscapeHtml(ann.message || '').replace(/
+/g, '<br>');
     const safeAuthor = pfEscapeHtml(ann.author || 'P&F Rally Ground Admin');
     const safeTime = pfEscapeHtml(ann.createdAt || 'Just now');
     const hasImg = Boolean(ann.img && String(ann.img).trim());
@@ -1534,23 +1535,23 @@ function renderPublicAnnouncementBoard() {
 
     return `
       <div class="flex items-start gap-2.5">
-        <img src="assets/logo.png" alt="Admin" class="w-8 h-8 rounded-xl object-contain bg-white p-0.5 border border-[#9BE600]/50 flex-shrink-0 mt-0.5 shadow">
-        <div class="flex-1 min-w-0 rounded-2xl rounded-tl-sm bg-[#0E2240]/95 border ${ann.pinned ? 'border-[#9BE600]/60 shadow-[0_0_20px_rgba(155,230,0,0.12)]' : 'border-white/10'} p-3.5 space-y-2">
+        <img src="assets/logo.png" alt="Admin" class="w-8 h-8 rounded-xl object-contain bg-white p-0.5 border-2 border-[#050E1D] flex-shrink-0 mt-0.5 shadow-sm" style="border-radius:5px;">
+        <div class="flex-1 min-w-0 rounded-2xl bg-white border-2 ${ann.pinned ? 'border-[#0E8A2D] shadow-md' : 'border-slate-200 shadow-sm'} p-3.5 space-y-2 text-[#050E1D]" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
           <div class="flex flex-wrap items-center justify-between gap-1.5">
             <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-[11px] font-black text-white">${safeAuthor}</span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-black uppercase border ${pillCls}">${pfEscapeHtml(cat)}</span>
-              ${ann.pinned ? '<span class="px-1.5 py-0.5 rounded bg-[#9BE600] text-[#050E1D] text-[8px] font-mono font-black uppercase">📌 PINNED</span>' : ''}
+              <span class="text-[11px] font-black text-[#050E1D]">${safeAuthor}</span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-black uppercase border ${pillCls}" style="border-radius:5px;">${pfEscapeHtml(cat)}</span>
+              ${ann.pinned ? '<span class="px-1.5 py-0.5 rounded bg-[#9BE600] text-[#050E1D] border border-[#050E1D]/20 text-[8px] font-mono font-black uppercase" style="border-radius:5px;">📌 PINNED</span>' : ''}
             </div>
-            <span class="text-[9px] font-mono text-slate-400">${safeTime}</span>
+            <span class="text-[9px] font-mono font-bold text-slate-500">${safeTime}</span>
           </div>
-          ${safeTitle ? `<h4 class="text-xs sm:text-sm font-black text-[#9BE600] leading-snug">${safeTitle}</h4>` : ''}
-          ${safeMsg ? `<p class="text-xs text-slate-200 leading-relaxed break-words">${safeMsg}</p>` : ''}
+          ${safeTitle ? `<h4 class="text-xs sm:text-sm font-black text-[#050E1D] leading-snug">${safeTitle}</h4>` : ''}
+          ${safeMsg ? `<p class="text-xs text-slate-700 font-medium leading-relaxed break-words">${safeMsg}</p>` : ''}
           ${hasImg ? `
             <div class="pt-1">
-              <div onclick="openAnnouncementLightbox('${ann.img}', '${safeCaption}')" class="group relative rounded-2xl overflow-hidden border border-white/15 bg-black/40 cursor-pointer">
+              <div onclick="openAnnouncementLightbox('${ann.img}', '${safeCaption}')" class="group relative rounded-2xl overflow-hidden border border-slate-300 bg-slate-100 cursor-pointer" style="border-radius:5px;">
                 <img src="${ann.img}" alt="${safeTitle || 'Announcement Photo'}" class="w-full max-h-60 object-cover group-hover:scale-[1.02] transition-transform duration-200">
-                <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-black/75 text-white text-[9px] font-mono font-bold">🔍 View Full Photo</span>
+                <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-[#050E1D]/85 text-white text-[9px] font-mono font-bold" style="border-radius:5px;">🔍 View Full Photo</span>
               </div>
             </div>
           ` : ''}

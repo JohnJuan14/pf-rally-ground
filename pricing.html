@@ -1733,72 +1733,72 @@
     </div>
   </div>
 
-  <!-- 3B. FLOATING LIVE CHAT-STYLE ANNOUNCEMENT BOARD (ADMIN CONTROLLED) -->
+  <!-- 3B. FLOATING LIVE CHAT-STYLE ANNOUNCEMENT BOARD (WHITE OUTER BOX STUDIO DESIGN) -->
   <div id="announcement-floating-root" class="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end">
     
-    <!-- Expandable Live-Chat Style Announcement Window -->
-    <div id="announcement-board-window" class="hidden mb-3 w-[calc(100vw-1.5rem)] sm:w-[400px] max-h-[75dvh] rounded-3xl bg-[#050E1D] border-2 border-[#9BE600]/50 shadow-[0_25px_70px_rgba(0,0,0,0.88)] flex flex-col overflow-hidden">
+    <!-- Expandable Live-Chat Style Announcement Window (Crisp White Outer Box) -->
+    <div id="announcement-board-window" class="hidden mb-3 w-[calc(100vw-1.5rem)] sm:w-[410px] max-h-[76dvh] rounded-3xl bg-white text-[#050E1D] border-2 border-white ring-2 ring-[#050E1D]/20 shadow-[0_24px_65px_rgba(0,0,0,0.65)] flex flex-col overflow-hidden" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
       <!-- Top Court Accent Line -->
       <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D] flex-shrink-0"></div>
 
-      <!-- Chat Header -->
-      <div class="px-4 py-3.5 bg-[#0A1628] border-b border-white/10 flex items-center justify-between gap-2 flex-shrink-0">
+      <!-- Chat Header (White Studio Header) -->
+      <div class="px-4 py-3.5 bg-white border-b-2 border-slate-200 flex items-center justify-between gap-2 flex-shrink-0" style="background:#FFFFFF;">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="relative flex-shrink-0">
-            <img src="assets/logo.png" alt="P&amp;F Admin" class="w-10 h-10 rounded-xl object-contain bg-white p-0.5 border border-[#9BE600]/50 shadow-md">
-            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#9BE600] ring-2 ring-[#0A1628] animate-pulse"></span>
+            <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Admin" class="w-10 h-10 rounded-xl object-contain bg-white p-0.5 border-2 border-[#050E1D] shadow-sm">
+            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#16A34A] ring-2 ring-white animate-pulse"></span>
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <h3 class="text-xs sm:text-sm font-black uppercase tracking-tight text-white truncate font-display">Club Announcement Board</h3>
-              <span class="px-1.5 py-0.5 rounded bg-[#9BE600]/20 text-[#9BE600] text-[9px] font-mono font-black uppercase">LIVE</span>
+              <h3 class="text-xs sm:text-sm font-black uppercase tracking-tight text-[#050E1D] truncate font-display">Club Announcement Board</h3>
+              <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[9px] font-mono font-black uppercase">LIVE</span>
             </div>
-            <p class="text-[10px] text-slate-300 truncate">Official Updates &amp; Photos from P&amp;F Admin</p>
+            <p class="text-[10px] text-slate-600 font-semibold truncate">Official Updates &amp; Photos from P&amp;F Admin</p>
           </div>
         </div>
-        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
+        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-700 hover:text-white border border-slate-300 flex items-center justify-center text-xs font-black transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
       </div>
 
-      <!-- Chat Feed Stream -->
-      <div id="public-announcement-feed" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3.5 bg-gradient-to-b from-[#071324] to-[#050E1D] overscroll-contain touch-scroll">
+      <!-- Chat Feed Stream (Clean Light/White Studio Feed) -->
+      <div id="public-announcement-feed" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 bg-slate-50 overscroll-contain touch-scroll" style="background:#F8FAFC;">
         <!-- Dynamically populated by renderPublicAnnouncementBoard() -->
       </div>
 
-      <!-- Chat Footer (Read-Only Broadcast Indicator + Quick Action) -->
-      <div class="px-4 py-2.5 bg-[#0A1628] border-t border-white/10 flex items-center justify-between gap-2 text-[10px] flex-shrink-0">
-        <span class="text-slate-400 font-mono flex items-center gap-1.5 truncate">
-          <span class="w-2 h-2 rounded-full bg-[#9BE600]"></span>
-          <span>Broadcast controlled by P&amp;F Admin</span>
+      <!-- Chat Footer (Crisp White Footer Bar) -->
+      <div class="px-4 py-3 bg-white border-t-2 border-slate-200 flex items-center justify-between gap-2 text-[10px] flex-shrink-0" style="background:#FFFFFF;">
+        <span class="text-slate-600 font-mono font-bold flex items-center gap-1.5 truncate">
+          <span class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+          <span>Broadcast by P&amp;F Admin</span>
         </span>
-        <button type="button" onclick="toggleAnnouncementBoard(); openBookingDrawer();" class="px-3 py-1.5 rounded-xl bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-black uppercase tracking-wider text-[10px] transition flex-shrink-0 shadow-sm">
+        <button type="button" onclick="toggleAnnouncementBoard(); openBookingDrawer();" class="px-3.5 py-1.5 rounded-xl bg-[#050E1D] hover:bg-[#0E2240] text-[#9BE600] font-black uppercase tracking-wider text-[10px] transition flex-shrink-0 shadow-sm">
           Book Court →
         </button>
       </div>
     </div>
 
-    <!-- Floating Live Chat-Style Launcher Button -->
-    <button type="button" id="announcement-launcher-btn" onclick="toggleAnnouncementBoard()" class="group relative flex items-center gap-2.5 pl-3 pr-4 py-2.5 sm:py-3 rounded-full bg-[#050E1D] hover:bg-[#0A192F] text-white border-2 border-[#9BE600] shadow-[0_12px_35px_rgba(0,0,0,0.65)] transition-all active:scale-95">
-      <div class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9BE600] text-[#050E1D] shadow-md flex-shrink-0">
+    <!-- Floating Live Chat-Style Launcher Button (Crisp White Outer Box) -->
+    <button type="button" id="announcement-launcher-btn" onclick="toggleAnnouncementBoard()" class="group relative flex items-center gap-2.5 pl-3 pr-4 py-2.5 sm:py-3 rounded-full bg-white hover:bg-slate-50 text-[#050E1D] border-2 border-[#050E1D] ring-2 ring-[#9BE600] shadow-[0_12px_35px_rgba(0,0,0,0.55)] transition-all active:scale-95" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
+      <div class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#050E1D] text-[#9BE600] shadow-sm flex-shrink-0" style="border-radius:5px;">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-        <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#050E1D] animate-ping"></span>
+        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#16A34A] ring-2 ring-white animate-ping"></span>
       </div>
       <div class="text-left pr-0.5">
-        <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#9BE600] block leading-none">Live Feed</span>
-        <span class="text-xs font-black uppercase tracking-wider text-white block leading-tight mt-0.5">Announcements</span>
+        <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#0E8A2D] block leading-none">Live Feed</span>
+        <span class="text-xs font-black uppercase tracking-wider text-[#050E1D] block leading-tight mt-0.5">Announcements</span>
       </div>
-      <span id="ann-floating-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-mono font-black flex items-center justify-center leading-none shadow">1</span>
+      <span id="ann-floating-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] border border-[#050E1D] text-[10px] font-mono font-black flex items-center justify-center leading-none shadow-sm">1</span>
     </button>
   </div>
 
-  <!-- Full-Screen Announcement Photo Lightbox Modal -->
+  <!-- Full-Screen Announcement Photo Lightbox Modal (White Outer Frame) -->
   <div id="ann-photo-lightbox" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-    <div onclick="closeAnnouncementLightbox()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-    <div class="relative z-10 max-w-2xl w-full rounded-3xl bg-[#050E1D] border border-[#9BE600]/40 p-3 sm:p-5 shadow-2xl text-center">
-      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/10">
-        <span id="ann-lightbox-caption" class="text-xs font-black uppercase text-[#9BE600] truncate pr-2">Official Club Announcement Photo</span>
-        <button type="button" onclick="closeAnnouncementLightbox()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">✕</button>
+    <div onclick="closeAnnouncementLightbox()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    <div class="relative z-10 max-w-2xl w-full rounded-3xl bg-white border-2 border-slate-200 p-3 sm:p-5 shadow-2xl text-center" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
+      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-200">
+        <span id="ann-lightbox-caption" class="text-xs font-black uppercase text-[#050E1D] truncate pr-2">Official Club Announcement Photo</span>
+        <button type="button" onclick="closeAnnouncementLightbox()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white text-xs font-black flex items-center justify-center flex-shrink-0">✕</button>
       </div>
-      <img id="ann-lightbox-img" src="" alt="Announcement Photo" class="max-h-[75dvh] w-auto mx-auto rounded-2xl object-contain border border-white/10">
+      <img id="ann-lightbox-img" src="" alt="Announcement Photo" class="max-h-[75dvh] w-auto mx-auto rounded-2xl object-contain border border-slate-200">
     </div>
   </div>
 
@@ -1838,7 +1838,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261029v6"></script>
+  <script src="app.js?v=20261029v7"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
