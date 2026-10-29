@@ -81,6 +81,37 @@
       }
     }
     /* === END 2026 CLEAN 5PX ARCHITECTURAL UI === */
+    /* === ANTI-CUTOFF & FIXED SIDEBAR DESKTOP SHELL === */
+    main, main > section, #tab-site-editor, #tab-site-editor > div, .white-studio-card {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    main .grid > * {
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+    @media (min-width: 1024px) {
+      #admin-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 16rem !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        z-index: 40 !important;
+      }
+      #admin-main-col {
+        margin-left: 16rem !important;
+        width: calc(100% - 16rem) !important;
+        max-width: calc(100% - 16rem) !important;
+        min-width: 0 !important;
+        overflow-x: clip !important;
+      }
+    }
+    /* === END ANTI-CUTOFF & FIXED SIDEBAR DESKTOP SHELL === */
+
 
   </style>
   <!-- Comprehensive Favicon Suite -->
@@ -175,7 +206,7 @@
   <div id="admin-sidebar-backdrop" onclick="toggleAdminMobileSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden lg:hidden"></div>
 
   <!-- ================= LEFT SIDEBAR NAVIGATION (ZERO EMOJIS) ================= -->
-  <aside id="admin-sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-64 max-h-[100dvh] overflow-y-auto touch-scroll bg-brand-dark border-r border-white/10 flex flex-col justify-between flex-shrink-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
+  <aside id="admin-sidebar" class="fixed inset-y-0 left-0 w-72 lg:w-64 h-[100dvh] lg:h-screen max-h-[100dvh] overflow-y-auto touch-scroll bg-brand-dark border-r border-white/10 flex flex-col justify-between flex-shrink-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
     <div>
       <!-- Brand Logo -->
       <div class="p-5 border-b border-white/10 flex items-center justify-between gap-3">
@@ -263,10 +294,10 @@
   </aside>
 
   <!-- ================= MAIN CONTENT AREA ================= -->
-  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+  <div id="admin-main-col" class="flex-1 flex flex-col min-w-0 w-full max-w-full lg:ml-64 min-h-screen">
     
     <!-- Top Header Bar (Responsive Mobile & Desktop with Cybersecurity Shield) -->
-    <header class="h-14 sm:h-16 border-b-2 border-slate-200 lg:border-b lg:border-white/10 bg-white lg:bg-brand-dark/95 backdrop-blur-xl px-2.5 sm:px-6 lg:px-8 flex items-center justify-between gap-1.5 sm:gap-3 flex-shrink-0 sticky top-0 z-30 shadow-md lg:shadow-none">
+    <header class="min-h-[3.5rem] sm:min-h-[4rem] py-2 border-b-2 border-slate-200 lg:border-b lg:border-white/10 bg-white lg:bg-brand-dark/95 backdrop-blur-xl px-2.5 sm:px-5 lg:px-6 flex flex-wrap items-center justify-between gap-2 flex-shrink-0 sticky top-0 z-30 shadow-md lg:shadow-none w-full max-w-full">
       <div class="flex items-center gap-2 sm:gap-3 min-w-0">
         <button type="button" onclick="toggleAdminMobileSidebar()" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#050E1D] border border-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] flex items-center justify-center flex-shrink-0 shadow-md active:scale-95 transition" aria-label="Toggle Menu">
           <svg id="admin-hamburger-svg" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -316,7 +347,7 @@
     </div>
 
     <!-- Main Workspace Body -->
-    <main class="flex-1 p-3 sm:p-6 lg:p-8 pb-24 lg:pb-8 overflow-y-auto">
+    <main class="flex-1 min-w-0 w-full max-w-full p-3 sm:p-5 lg:p-6 pb-28 lg:pb-16">
 
                   <!-- ================= 0. WEBSITE, HERO PHOTO, LIVE UPDATE & MASTER PRICE EDITOR TAB (WHITE STUDIO THEME) ================= -->
       <section id="tab-site-editor" class="space-y-6 bg-slate-100 text-slate-900 p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-inner">
@@ -333,8 +364,11 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
-            <button type="button" onclick="restoreMainWebsiteDefaultDesign()" class="py-3 px-5 rounded-2xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border-2 border-[#9BE600] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-md flex items-center gap-2" title="Instantly restore the original main design, photos, text, and prices of the website">
-              <span>⭐ Default (Main Website Design)</span>
+            <button type="button" onclick="resetAllWebsitePicturesOnly()" class="py-3 px-5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white border-2 border-rose-800 font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-md flex items-center gap-2" title="Reset ONLY the website pictures (Hero Slides, Court Photos & Gear Photos) without changing your text, banner, or prices">
+              <span>🖼️ Reset Website Pictures Only</span>
+            </button>
+            <button type="button" onclick="restoreMainWebsiteDefaultDesign()" class="py-3 px-4 rounded-2xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border-2 border-[#9BE600] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-md flex items-center gap-2" title="Restore the entire original website design, photos, text, and prices">
+              <span>⭐ Reset Entire Website</span>
             </button>
             <button type="button" onclick="saveSiteConfigToServer(false)" id="se-save-all-btn" class="py-3 px-5 rounded-2xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-md flex items-center gap-2">
               <span>💾 Save &amp; Publish All Changes Live</span>
@@ -350,7 +384,7 @@
         <p id="se-save-feedback" class="hidden p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950 text-xs font-black text-center shadow-md"></p>
 
         <!-- Quick Jump & Booking Manager Strip (White Cards) -->
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2.5 text-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2.5 text-xs w-full max-w-full">
           <a href="#se-panel-hero" class="p-3 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-[#050E1D] text-slate-900 font-black uppercase flex items-center justify-between transition shadow-sm">
             <span>🖼️ Hero Photos</span> <span class="text-emerald-600 font-black">↓</span>
           </a>
@@ -380,8 +414,14 @@
               <p class="text-xs text-slate-600 font-medium">Upload any photo from your device (automatically optimized &amp; saved to the website server) or pick a preset below.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="restoreDefaultHeroAndCourtAssets()" class="py-2.5 px-4 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border border-[#050E1D] font-black uppercase text-xs transition shadow">
-                ⭐ Default (Main Website Photos)
+              <button type="button" onclick="resetHeroPicturesOnly()" class="py-2.5 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
+                🔄 Reset 3 Hero Pictures Only
+              </button>
+              <button type="button" onclick="resetCourtPicturesOnly()" class="py-2.5 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
+                🔄 Reset Court 1–4 Pictures Only
+              </button>
+              <button type="button" onclick="resetAllWebsitePicturesOnly()" class="py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 font-black uppercase text-xs transition shadow">
+                🖼️ Reset All Website Pictures Only
               </button>
               <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
                 💾 Save Photos &amp; Banner →
@@ -415,27 +455,37 @@
             <!-- Instant Live Preview of Top Website Banner -->
             <div class="pt-1">
               <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1">Live Website Top Banner Preview:</span>
-              <div class="bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] rounded-xl px-3 py-2 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow">
+              <div class="bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] rounded-xl px-3 py-2 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow w-full max-w-full overflow-hidden min-w-0">
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9BE600] text-[#050E1D] font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
-                <span id="se-live-banner-preview-text" class="text-white font-semibold truncate">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
+                <span id="se-live-banner-preview-text" class="text-white font-semibold truncate min-w-0 flex-1">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
               </div>
             </div>
           </div>
 
           <!-- 1B. 3 Hero Carousel Picture Upload Cards -->
           <div>
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-xs font-black uppercase tracking-wider text-emerald-800">A. Home Page Hero Background Carousel Pictures (Slides 1 – 3)</h4>
-              <span class="text-[11px] text-slate-500 font-medium">Uploads save &amp; publish immediately</span>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div>
+                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-800">A. Home Page Hero Background Carousel Pictures (Slides 1 – 3)</h4>
+                <span class="text-[11px] text-slate-500 font-medium">Uploads save &amp; publish immediately • Resetting a picture only resets that photo</span>
+              </div>
+              <button type="button" onclick="resetHeroPicturesOnly()" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[11px] font-black uppercase transition shadow-sm">
+                🔄 Reset All 3 Hero Pictures Only
+              </button>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full max-w-full">
               
               <!-- Slide 1 -->
               <div class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-3 flex flex-col justify-between shadow-sm">
                 <div class="space-y-3">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between gap-1.5">
                     <span class="text-xs font-black uppercase text-slate-900">Hero Picture 1 (Main Cover)</span>
-                    <span id="se-status-heroSlide1" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-mono font-black">Slide 1</span>
+                    <div class="flex items-center gap-1.5">
+                      <span id="se-status-heroSlide1" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-mono font-black">Default Photo</span>
+                      <button type="button" onclick="resetSingleWebsitePicture('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/hero-slide-1.jpg', 'Hero Picture 1 (Main Cover)')" class="px-2 py-0.5 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black uppercase transition shadow-sm" title="Reset only Hero Picture 1 (Main Cover) to default">
+                        🔄 Reset Picture
+                      </button>
+                    </div>
                   </div>
                   <div class="relative h-40 w-full rounded-xl overflow-hidden border border-slate-300 bg-slate-200">
                     <img id="se-preview-slide-1" src="assets/hero-slide-1.jpg" onerror="this.src='assets/hero-slide-1.jpg'" alt="Hero Slide 1 Preview" class="w-full h-full object-cover">
@@ -452,7 +502,7 @@
                 <div class="pt-2 border-t border-slate-200">
                   <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1.5">Quick Presets:</span>
                   <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/hero-slide-1.jpg')" class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[10px] font-black shadow-sm">⭐ Default (Main Design)</button>
+                    <button type="button" onclick="resetSingleWebsitePicture('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/hero-slide-1.jpg', 'Hero Picture 1 (Main Cover)')" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 text-[10px] font-black shadow-sm">🔄 Reset This Picture</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/court-aerial-angled.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Aerial Court</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/court-aerial-vertical.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Top View</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide1', 'se-preview-slide-1', 'se-hero-slide-1', 'assets/hero.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Club Hero</button>
@@ -463,9 +513,14 @@
               <!-- Slide 2 -->
               <div class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-3 flex flex-col justify-between shadow-sm">
                 <div class="space-y-3">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between gap-1.5">
                     <span class="text-xs font-black uppercase text-slate-900">Hero Picture 2 (Night Stadium)</span>
-                    <span id="se-status-heroSlide2" class="px-2 py-0.5 rounded bg-slate-200 text-slate-800 text-[10px] font-mono font-black">Slide 2</span>
+                    <div class="flex items-center gap-1.5">
+                      <span id="se-status-heroSlide2" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-mono font-black">Default Photo</span>
+                      <button type="button" onclick="resetSingleWebsitePicture('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/hero-slide-2.jpg', 'Hero Picture 2 (Night Stadium)')" class="px-2 py-0.5 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black uppercase transition shadow-sm" title="Reset only Hero Picture 2 (Night Stadium) to default">
+                        🔄 Reset Picture
+                      </button>
+                    </div>
                   </div>
                   <div class="relative h-40 w-full rounded-xl overflow-hidden border border-slate-300 bg-slate-200">
                     <img id="se-preview-slide-2" src="assets/hero-slide-2.jpg" onerror="this.src='assets/hero-slide-2.jpg'" alt="Hero Slide 2 Preview" class="w-full h-full object-cover">
@@ -482,7 +537,7 @@
                 <div class="pt-2 border-t border-slate-200">
                   <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1.5">Quick Presets:</span>
                   <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/hero-slide-2.jpg')" class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[10px] font-black shadow-sm">⭐ Default (Main Design)</button>
+                    <button type="button" onclick="resetSingleWebsitePicture('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/hero-slide-2.jpg', 'Hero Picture 2 (Night Stadium)')" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 text-[10px] font-black shadow-sm">🔄 Reset This Picture</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/court-aerial-angled.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Aerial Court</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/court-aerial-vertical.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Top View</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide2', 'se-preview-slide-2', 'se-hero-slide-2', 'assets/hero.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Club Hero</button>
@@ -493,9 +548,14 @@
               <!-- Slide 3 -->
               <div class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-3 flex flex-col justify-between shadow-sm">
                 <div class="space-y-3">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between gap-1.5">
                     <span class="text-xs font-black uppercase text-slate-900">Hero Picture 3 (Action Shot)</span>
-                    <span id="se-status-heroSlide3" class="px-2 py-0.5 rounded bg-slate-200 text-slate-800 text-[10px] font-mono font-black">Slide 3</span>
+                    <div class="flex items-center gap-1.5">
+                      <span id="se-status-heroSlide3" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-mono font-black">Default Photo</span>
+                      <button type="button" onclick="resetSingleWebsitePicture('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/hero-slide-3.jpg', 'Hero Picture 3 (Action Shot)')" class="px-2 py-0.5 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black uppercase transition shadow-sm" title="Reset only Hero Picture 3 (Action Shot) to default">
+                        🔄 Reset Picture
+                      </button>
+                    </div>
                   </div>
                   <div class="relative h-40 w-full rounded-xl overflow-hidden border border-slate-300 bg-slate-200">
                     <img id="se-preview-slide-3" src="assets/hero-slide-3.jpg" onerror="this.src='assets/hero-slide-3.jpg'" alt="Hero Slide 3 Preview" class="w-full h-full object-cover">
@@ -512,7 +572,7 @@
                 <div class="pt-2 border-t border-slate-200">
                   <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1.5">Quick Presets:</span>
                   <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/hero-slide-3.jpg')" class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[10px] font-black shadow-sm">⭐ Default (Main Design)</button>
+                    <button type="button" onclick="resetSingleWebsitePicture('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/hero-slide-3.jpg', 'Hero Picture 3 (Action Shot)')" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 text-[10px] font-black shadow-sm">🔄 Reset This Picture</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/hero.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Club Hero</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/court-aerial-angled.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Aerial Court</button>
                     <button type="button" onclick="setWebsiteAssetPreset('heroSlide3', 'se-preview-slide-3', 'se-hero-slide-3', 'assets/court-aerial-vertical.jpg')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-[#9BE600] text-slate-800 text-[10px] font-bold shadow-sm">Top View</button>
@@ -530,16 +590,26 @@
                 <h4 class="text-xs font-black uppercase tracking-wider text-emerald-800">B. Court 01 – 04 Showcase Pictures (Shown on Courts Page)</h4>
                 <p class="text-[11px] text-slate-600">Update the photos displayed for Court 01, Court 02, Court 03, and Court 04 on the public Courts page.</p>
               </div>
-              <a href="/courts.html" onclick="return openPublicSite(event, 'courts.html')" class="text-[11px] font-black text-emerald-700 hover:underline">View Courts Page ↗</a>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="resetCourtPicturesOnly()" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[11px] font-black uppercase transition shadow-sm">
+                  🔄 Reset All 4 Court Pictures Only
+                </button>
+                <a href="/courts.html" onclick="return openPublicSite(event, 'courts.html')" class="text-[11px] font-black text-emerald-700 hover:underline">View Courts Page ↗</a>
+              </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               
               <!-- Court 01 Photo -->
               <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 flex flex-col justify-between">
                 <div class="space-y-2">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between gap-1">
                     <span class="text-xs font-black uppercase text-slate-900">Court 01 Photo</span>
-                    <span id="se-status-court1Img" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 01</span>
+                    <div class="flex items-center gap-1">
+                      <span id="se-status-court1Img" class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 01</span>
+                      <button type="button" onclick="resetSingleWebsitePicture('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/court-aerial-vertical.jpg', 'Court 01 Photo')" class="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[9px] font-black uppercase transition" title="Reset only Court 01 Photo">
+                        🔄 Reset
+                      </button>
+                    </div>
                   </div>
                   <div class="h-32 w-full rounded-xl overflow-hidden border border-slate-300 bg-slate-200">
                     <img id="se-preview-court-1" src="assets/court-aerial-vertical.jpg" onerror="this.src='assets/court-aerial-vertical.jpg'" alt="Court 01 Preview" class="w-full h-full object-cover">
@@ -548,7 +618,7 @@
                   <input type="text" id="se-court-img-1" oninput="updateAssetPreviewFromInput('court1Img', 'se-preview-court-1', this.value)" value="assets/court-aerial-vertical.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/court-aerial-vertical.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
+                  <button type="button" onclick="resetSingleWebsitePicture('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/court-aerial-vertical.jpg', 'Court 01 Photo')" class="px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 text-[9px] font-black">🔄 Reset Picture</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Angled</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court1Img', 'se-preview-court-1', 'se-court-img-1', 'assets/hero-slide-1.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Slide 1</button>
                 </div>
@@ -557,9 +627,14 @@
               <!-- Court 02 Photo -->
               <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 flex flex-col justify-between">
                 <div class="space-y-2">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between gap-1">
                     <span class="text-xs font-black uppercase text-slate-900">Court 02 Photo</span>
-                    <span id="se-status-court2Img" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 02</span>
+                    <div class="flex items-center gap-1">
+                      <span id="se-status-court2Img" class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 02</span>
+                      <button type="button" onclick="resetSingleWebsitePicture('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/court-aerial-angled.jpg', 'Court 02 Photo')" class="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[9px] font-black uppercase transition" title="Reset only Court 02 Photo">
+                        🔄 Reset
+                      </button>
+                    </div>
                   </div>
                   <div class="h-32 w-full rounded-xl overflow-hidden border border-slate-300 bg-slate-200">
                     <img id="se-preview-court-2" src="assets/court-aerial-angled.jpg" onerror="this.src='assets/court-aerial-angled.jpg'" alt="Court 02 Preview" class="w-full h-full object-cover">
@@ -568,7 +643,7 @@
                   <input type="text" id="se-court-img-2" oninput="updateAssetPreviewFromInput('court2Img', 'se-preview-court-2', this.value)" value="assets/court-aerial-angled.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
+                  <button type="button" onclick="resetSingleWebsitePicture('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/court-aerial-angled.jpg', 'Court 02 Photo')" class="px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 text-[9px] font-black">🔄 Reset Picture</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/court-aerial-vertical.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Top View</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court2Img', 'se-preview-court-2', 'se-court-img-2', 'assets/hero-slide-2.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Slide 2</button>
                 </div>
@@ -577,9 +652,14 @@
               <!-- Court 03 Photo -->
               <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 flex flex-col justify-between">
                 <div class="space-y-2">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between gap-1">
                     <span class="text-xs font-black uppercase text-slate-900">Court 03 Photo</span>
-                    <span id="se-status-court3Img" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 03</span>
+                    <div class="flex items-center gap-1">
+                      <span id="se-status-court3Img" class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 03</span>
+                      <button type="button" onclick="resetSingleWebsitePicture('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/hero.jpg', 'Court 03 Photo')" class="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[9px] font-black uppercase transition" title="Reset only Court 03 Photo">
+                        🔄 Reset
+                      </button>
+                    </div>
                   </div>
                   <div class="h-32 w-full rounded-xl overflow-hidden border border-slate-300 bg-slate-200">
                     <img id="se-preview-court-3" src="assets/hero.jpg" onerror="this.src='assets/hero.jpg'" alt="Court 03 Preview" class="w-full h-full object-cover">
@@ -588,7 +668,7 @@
                   <input type="text" id="se-court-img-3" oninput="updateAssetPreviewFromInput('court3Img', 'se-preview-court-3', this.value)" value="assets/hero.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/hero.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
+                  <button type="button" onclick="resetSingleWebsitePicture('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/hero.jpg', 'Court 03 Photo')" class="px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 text-[9px] font-black">🔄 Reset Picture</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Angled</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court3Img', 'se-preview-court-3', 'se-court-img-3', 'assets/hero-slide-3.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Slide 3</button>
                 </div>
@@ -597,9 +677,14 @@
               <!-- Court 04 Photo -->
               <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 flex flex-col justify-between">
                 <div class="space-y-2">
-                  <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between gap-1">
                     <span class="text-xs font-black uppercase text-slate-900">Court 04 Photo</span>
-                    <span id="se-status-court4Img" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 04</span>
+                    <div class="flex items-center gap-1">
+                      <span id="se-status-court4Img" class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-bold">Court 04</span>
+                      <button type="button" onclick="resetSingleWebsitePicture('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/court-aerial-angled.jpg', 'Court 04 Photo')" class="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[9px] font-black uppercase transition" title="Reset only Court 04 Photo">
+                        🔄 Reset
+                      </button>
+                    </div>
                   </div>
                   <div class="h-32 w-full rounded-xl overflow-hidden border border-slate-300 bg-slate-200">
                     <img id="se-preview-court-4" src="assets/court-aerial-angled.jpg" onerror="this.src='assets/court-aerial-angled.jpg'" alt="Court 04 Preview" class="w-full h-full object-cover">
@@ -608,7 +693,7 @@
                   <input type="text" id="se-court-img-4" oninput="updateAssetPreviewFromInput('court4Img', 'se-preview-court-4', this.value)" value="assets/court-aerial-angled.jpg" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-[10px] text-slate-900 font-mono font-bold">
                 </div>
                 <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-200">
-                  <button type="button" onclick="setWebsiteAssetPreset('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/court-aerial-angled.jpg')" class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] border border-[#050E1D] hover:bg-slate-800 text-[9px] font-black">⭐ Default (Main Design)</button>
+                  <button type="button" onclick="resetSingleWebsitePicture('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/court-aerial-angled.jpg', 'Court 04 Photo')" class="px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 text-[9px] font-black">🔄 Reset Picture</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/court-aerial-vertical.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Top View</button>
                   <button type="button" onclick="setWebsiteAssetPreset('court4Img', 'se-preview-court-4', 'se-court-img-4', 'assets/hero.jpg')" class="px-2 py-0.5 rounded bg-white border border-slate-300 hover:bg-[#9BE600] text-[9px] font-bold">Club Hero</button>
                 </div>
@@ -628,8 +713,11 @@
               <p class="text-xs text-slate-600 font-medium">Changing any rate or equipment photo below automatically updates all price cards, schedule matrix slots, and checkout calculators across Home, Courts, Rates &amp; Gear, and Book pages.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="resetGearPicturesOnly()" class="py-2.5 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
+                🖼️ Reset Gear Photos Only
+              </button>
               <button type="button" onclick="restoreDefaultPricesAndGear()" class="py-2.5 px-4 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border border-[#050E1D] font-black uppercase text-xs transition shadow">
-                ⭐ Default (Main Prices &amp; Gear)
+                ⭐ Reset Prices to Default
               </button>
               <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
                 💾 Save All Prices &amp; Gear Live →
@@ -640,7 +728,7 @@
           <!-- A. Court Hire & Player Rates -->
           <div>
             <h4 class="text-xs font-black uppercase tracking-wider text-emerald-800 mb-3">A. Court Reservation &amp; Player Rates</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5 text-xs w-full max-w-full">
               <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
                 <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Daytime Rate (6AM–6PM)</label>
                 <div class="flex items-center gap-1.5">
@@ -714,7 +802,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearStdImg', 'se-preview-gear-std', 'se-gear-img-std', event)" class="hidden">
                       </label>
-                      <button type="button" onclick="setWebsiteAssetPreset('gearStdImg', 'se-preview-gear-std', 'se-gear-img-std', 'assets/gear-composite-paddle.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <button type="button" onclick="resetSingleWebsitePicture('gearStdImg', 'se-preview-gear-std', 'se-gear-img-std', 'assets/gear-composite-paddle.jpg', 'Standard Paddle Photo')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black transition shadow-sm">🔄 Reset Photo</button>
                       <input type="hidden" id="se-gear-img-std" value="assets/gear-composite-paddle.jpg">
                     </div>
                   </div>
@@ -742,7 +830,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearCarbonImg', 'se-preview-gear-carbon', 'se-gear-img-carbon', event)" class="hidden">
                       </label>
-                      <button type="button" onclick="setWebsiteAssetPreset('gearCarbonImg', 'se-preview-gear-carbon', 'se-gear-img-carbon', 'assets/gear-carbon-paddle.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <button type="button" onclick="resetSingleWebsitePicture('gearCarbonImg', 'se-preview-gear-carbon', 'se-gear-img-carbon', 'assets/gear-carbon-paddle.jpg', 'Carbon Fiber Pro Paddle Photo')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black transition shadow-sm">🔄 Reset Photo</button>
                       <input type="hidden" id="se-gear-img-carbon" value="assets/gear-carbon-paddle.jpg">
                     </div>
                   </div>
@@ -770,7 +858,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearBrandedImg', 'se-preview-gear-branded', 'se-gear-img-branded', event)" class="hidden">
                       </label>
-                      <button type="button" onclick="setWebsiteAssetPreset('gearBrandedImg', 'se-preview-gear-branded', 'se-gear-img-branded', 'assets/gear-carbon-paddle.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <button type="button" onclick="resetSingleWebsitePicture('gearBrandedImg', 'se-preview-gear-branded', 'se-gear-img-branded', 'assets/gear-carbon-paddle.jpg', 'Branded Carbon Paddle Photo')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black transition shadow-sm">🔄 Reset Photo</button>
                       <input type="hidden" id="se-gear-img-branded" value="assets/gear-carbon-paddle.jpg">
                     </div>
                   </div>
@@ -798,7 +886,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearBallImg', 'se-preview-gear-ball', 'se-gear-img-ball', event)" class="hidden">
                       </label>
-                      <button type="button" onclick="setWebsiteAssetPreset('gearBallImg', 'se-preview-gear-ball', 'se-gear-img-ball', 'assets/gear-balls-x40.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <button type="button" onclick="resetSingleWebsitePicture('gearBallImg', 'se-preview-gear-ball', 'se-gear-img-ball', 'assets/gear-balls-x40.jpg', 'Pickleball Ball Photo')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black transition shadow-sm">🔄 Reset Photo</button>
                       <input type="hidden" id="se-gear-img-ball" value="assets/gear-balls-x40.jpg">
                     </div>
                   </div>
@@ -826,7 +914,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearBucketImg', 'se-preview-gear-bucket', 'se-gear-img-bucket', event)" class="hidden">
                       </label>
-                      <button type="button" onclick="setWebsiteAssetPreset('gearBucketImg', 'se-preview-gear-bucket', 'se-gear-img-bucket', 'assets/gear-balls-x40.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <button type="button" onclick="resetSingleWebsitePicture('gearBucketImg', 'se-preview-gear-bucket', 'se-gear-img-bucket', 'assets/gear-balls-x40.jpg', 'Training Balls (50 pcs) Photo')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black transition shadow-sm">🔄 Reset Photo</button>
                       <input type="hidden" id="se-gear-img-bucket" value="assets/gear-balls-x40.jpg">
                     </div>
                   </div>
@@ -854,7 +942,7 @@
                         📷 Change Photo
                         <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('gearMachineImg', 'se-preview-gear-machine', 'se-gear-img-machine', event)" class="hidden">
                       </label>
-                      <button type="button" onclick="setWebsiteAssetPreset('gearMachineImg', 'se-preview-gear-machine', 'se-gear-img-machine', 'assets/gear-ball-machine.jpg')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-black hover:bg-slate-800 shadow-sm">⭐ Default</button>
+                      <button type="button" onclick="resetSingleWebsitePicture('gearMachineImg', 'se-preview-gear-machine', 'se-gear-img-machine', 'assets/gear-ball-machine.jpg', 'Training Ball Machine Photo')" class="inline-block mt-1 ml-1 px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[10px] font-black transition shadow-sm">🔄 Reset Photo</button>
                       <input type="hidden" id="se-gear-img-machine" value="assets/gear-ball-machine.jpg">
                     </div>
                   </div>
@@ -923,8 +1011,8 @@
                 📷 Upload New Logo
                 <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('clubLogo', 'se-preview-club-logo', 'se-club-logo', event)" class="hidden">
               </label>
-              <button type="button" onclick="setWebsiteAssetPreset('clubLogo', 'se-preview-club-logo', 'se-club-logo', 'assets/logo.png')" class="px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-[11px] font-bold">
-                Reset Logo
+              <button type="button" onclick="resetSingleWebsitePicture('clubLogo', 'se-preview-club-logo', 'se-club-logo', 'assets/logo.png', 'Official Club Logo')" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-[11px] font-black uppercase transition shadow-sm">
+                🔄 Reset Logo Only
               </button>
             </div>
           </div>
@@ -1053,7 +1141,7 @@
 
           <p id="se-qr-save-feedback" class="hidden p-3 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-900 text-xs font-black text-center"></p>
 
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 text-xs">
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-xs w-full max-w-full">
             <!-- 1. GCASH QR & ACCOUNT EDITOR CARD -->
             <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 border-blue-200 flex flex-col justify-between space-y-4 shadow-sm">
               <div class="space-y-3">
@@ -6774,17 +6862,126 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       return restoreMainWebsiteDefaultDesign();
     }
 
-    function restoreDefaultHeroAndCourtAssets() {
+    function resetSingleWebsitePicture(slotKey, previewId, inputId, defaultUrl, pictureLabel) {
+      const label = pictureLabel || slotKey;
       openTypeResetConfirmModal(
-        'Reset Hero Slideshow & Court Photos to Default',
-        'This will reset all Hero Slideshow images and Court 1–4 photos back to the original default photos.',
+        'Reset ' + label + ' Only',
+        'This will reset ONLY ' + label + ' back to its original default club picture. All your website text, banner messages, prices, QR codes, and other pictures will stay untouched.',
+        async () => {
+          siteEditorDirty = true;
+          uploadedAssetStore[slotKey] = defaultUrl;
+          currentSiteConfig[slotKey] = defaultUrl;
+          const inp = document.getElementById(inputId);
+          const prev = document.getElementById(previewId);
+          if (inp) inp.value = defaultUrl;
+          if (prev) prev.src = resolvePreviewAssetPath(defaultUrl);
+          const statusBadge = document.getElementById('se-status-' + slotKey);
+          if (statusBadge) {
+            statusBadge.textContent = 'Default Photo';
+            statusBadge.className = 'px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[9px] font-mono font-bold';
+          }
+          await saveSiteConfigToServer(false);
+          const fb = document.getElementById('se-save-feedback');
+          if (fb) {
+            fb.textContent = '🖼️ Reset ' + label + ' back to its original default picture! All text, prices, and other photos were kept intact.';
+            fb.classList.remove('hidden');
+            setTimeout(() => fb.classList.add('hidden'), 4500);
+          }
+        }
+      );
+    }
+
+    function resetHeroPicturesOnly() {
+      openTypeResetConfirmModal(
+        'Reset All 3 Hero Carousel Pictures Only',
+        'This will reset ONLY Hero Picture 1, Hero Picture 2, and Hero Picture 3 back to their original default photos. Your Live Banner text, Court photos, Gear photos, Website text, and Prices will NOT be changed.',
+        async () => {
+          const heroDefaults = {
+            heroSlide1: DEFAULT_SITE_CONFIG.heroSlide1,
+            heroSlide2: DEFAULT_SITE_CONFIG.heroSlide2,
+            heroSlide3: DEFAULT_SITE_CONFIG.heroSlide3
+          };
+          Object.assign(uploadedAssetStore, heroDefaults);
+          currentSiteConfig = { ...collectSiteConfigFromEditor(), ...heroDefaults, updatedAt: Date.now() };
+          loadSiteConfigIntoEditor(currentSiteConfig, true);
+          await saveSiteConfigToServer(false);
+          const fb = document.getElementById('se-save-feedback');
+          if (fb) {
+            fb.textContent = '🖼️ Reset all 3 Hero Carousel Pictures to default! Your banner, text, court photos, and prices remain untouched.';
+            fb.classList.remove('hidden');
+            setTimeout(() => fb.classList.add('hidden'), 4500);
+          }
+        }
+      );
+    }
+
+    function resetCourtPicturesOnly() {
+      openTypeResetConfirmModal(
+        'Reset Court 01–04 Pictures Only',
+        'This will reset ONLY the 4 Court Showcase Pictures (Court 01 to Court 04) back to their original default photos. Your Hero photos, Live Banner, Website text, and Prices will NOT be changed.',
+        async () => {
+          const courtDefaults = {
+            court1Img: DEFAULT_SITE_CONFIG.court1Img,
+            court2Img: DEFAULT_SITE_CONFIG.court2Img,
+            court3Img: DEFAULT_SITE_CONFIG.court3Img,
+            court4Img: DEFAULT_SITE_CONFIG.court4Img
+          };
+          Object.assign(uploadedAssetStore, courtDefaults);
+          currentSiteConfig = { ...collectSiteConfigFromEditor(), ...courtDefaults, updatedAt: Date.now() };
+          loadSiteConfigIntoEditor(currentSiteConfig, true);
+          await saveSiteConfigToServer(false);
+          const fb = document.getElementById('se-save-feedback');
+          if (fb) {
+            fb.textContent = '🖼️ Reset Court 01–04 Pictures to default! Your hero photos, text, and prices remain untouched.';
+            fb.classList.remove('hidden');
+            setTimeout(() => fb.classList.add('hidden'), 4500);
+          }
+        }
+      );
+    }
+
+    function resetGearPicturesOnly() {
+      openTypeResetConfirmModal(
+        'Reset Equipment & Gear Pictures Only',
+        'This will reset ONLY the 6 Equipment & Training Rental photos back to their original default photos. Your rental selling prices, capital costs, and court rates will NOT be changed.',
+        async () => {
+          const gearPicDefaults = {
+            gearStdImg: DEFAULT_SITE_CONFIG.gearStdImg,
+            gearCarbonImg: DEFAULT_SITE_CONFIG.gearCarbonImg,
+            gearBrandedImg: DEFAULT_SITE_CONFIG.gearBrandedImg,
+            gearBallImg: DEFAULT_SITE_CONFIG.gearBallImg,
+            gearBucketImg: DEFAULT_SITE_CONFIG.gearBucketImg,
+            gearMachineImg: DEFAULT_SITE_CONFIG.gearMachineImg
+          };
+          Object.assign(uploadedAssetStore, gearPicDefaults);
+          currentSiteConfig = { ...collectSiteConfigFromEditor(), ...gearPicDefaults, updatedAt: Date.now() };
+          loadSiteConfigIntoEditor(currentSiteConfig, true);
+          await saveSiteConfigToServer(false);
+          const fb = document.getElementById('se-save-feedback');
+          if (fb) {
+            fb.textContent = '🖼️ Reset all 6 Equipment & Gear Photos to default! All your rental prices and costs remain untouched.';
+            fb.classList.remove('hidden');
+            setTimeout(() => fb.classList.add('hidden'), 4500);
+          }
+        }
+      );
+    }
+
+    function resetAllWebsitePicturesOnly() {
+      openTypeResetConfirmModal(
+        'Reset All Website Pictures Only (Keep Text, Banner & Prices)',
+        'This will reset ONLY the website pictures (Hero Slides 1–3, Court 01–04 photos, Equipment photos, and Club Logo) back to the original default club photos. All your website text, live top banner, court/gear prices, and payment QR codes will stay 100% untouched!',
         async () => {
           await _execRestoreDefaultHeroAndCourtAssets();
         }
       );
     }
+
+    function restoreDefaultHeroAndCourtAssets() {
+      return resetAllWebsitePicturesOnly();
+    }
     async function _execRestoreDefaultHeroAndCourtAssets() {
-      const assetDefaults = {
+      const pictureOnlyDefaults = {
         heroSlide1: DEFAULT_SITE_CONFIG.heroSlide1,
         heroSlide2: DEFAULT_SITE_CONFIG.heroSlide2,
         heroSlide3: DEFAULT_SITE_CONFIG.heroSlide3,
@@ -6792,13 +6989,24 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         court2Img: DEFAULT_SITE_CONFIG.court2Img,
         court3Img: DEFAULT_SITE_CONFIG.court3Img,
         court4Img: DEFAULT_SITE_CONFIG.court4Img,
-        liveBannerEnabled: DEFAULT_SITE_CONFIG.liveBannerEnabled,
-        liveBannerText: DEFAULT_SITE_CONFIG.liveBannerText
+        gearStdImg: DEFAULT_SITE_CONFIG.gearStdImg,
+        gearCarbonImg: DEFAULT_SITE_CONFIG.gearCarbonImg,
+        gearBrandedImg: DEFAULT_SITE_CONFIG.gearBrandedImg,
+        gearBallImg: DEFAULT_SITE_CONFIG.gearBallImg,
+        gearBucketImg: DEFAULT_SITE_CONFIG.gearBucketImg,
+        gearMachineImg: DEFAULT_SITE_CONFIG.gearMachineImg,
+        clubLogo: DEFAULT_SITE_CONFIG.clubLogo
       };
-      Object.assign(uploadedAssetStore, assetDefaults);
-      currentSiteConfig = { ...collectSiteConfigFromEditor(), ...assetDefaults, updatedAt: Date.now() };
+      Object.assign(uploadedAssetStore, pictureOnlyDefaults);
+      currentSiteConfig = { ...collectSiteConfigFromEditor(), ...pictureOnlyDefaults, updatedAt: Date.now() };
       loadSiteConfigIntoEditor(currentSiteConfig, true);
       await saveSiteConfigToServer(false);
+      const fb = document.getElementById('se-save-feedback');
+      if (fb) {
+        fb.textContent = '🖼️ All Website Pictures (Hero Slides, Court 01–04 Photos, Gear Photos & Logo) have been reset to default! Your text, banner, prices, and QR codes were kept intact.';
+        fb.classList.remove('hidden');
+        setTimeout(() => fb.classList.add('hidden'), 5000);
+      }
     }
 
     function restoreDefaultPricesAndGear() {
@@ -6822,13 +7030,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         pricePaddleBranded: DEFAULT_SITE_CONFIG.pricePaddleBranded,
         priceBallSingle: DEFAULT_SITE_CONFIG.priceBallSingle,
         priceBallsBucket: DEFAULT_SITE_CONFIG.priceBallsBucket,
-        priceMachine: DEFAULT_SITE_CONFIG.priceMachine,
-        gearStdImg: DEFAULT_SITE_CONFIG.gearStdImg,
-        gearCarbonImg: DEFAULT_SITE_CONFIG.gearCarbonImg,
-        gearBrandedImg: DEFAULT_SITE_CONFIG.gearBrandedImg,
-        gearBallImg: DEFAULT_SITE_CONFIG.gearBallImg,
-        gearBucketImg: DEFAULT_SITE_CONFIG.gearBucketImg,
-        gearMachineImg: DEFAULT_SITE_CONFIG.gearMachineImg
+        priceMachine: DEFAULT_SITE_CONFIG.priceMachine
       };
       Object.assign(uploadedAssetStore, priceGearDefaults);
       currentSiteConfig = { ...collectSiteConfigFromEditor(), ...priceGearDefaults, updatedAt: Date.now() };
