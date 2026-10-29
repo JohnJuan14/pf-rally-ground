@@ -2084,7 +2084,7 @@ const DEFAULT_PF_SITE_CONFIG = {
   liveBannerEnabled: true,
   liveBannerText: 'LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!',
   bentoSectionTitle: 'PLAY THE CLUB',
-  bentoSectionDesc: 'Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.',
+  bentoSectionDesc: 'Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and live court availability below.',
   openPlayScheduleText: 'All 4 courts open daily 6:00 AM – 12:00 Midnight • Click any available time slot below to book',
   dayRate: 400,
   nightRate: 500,
@@ -2296,7 +2296,7 @@ function applySiteConfig(incomingCfg) {
   if (cfg.heroSubtitle && cfg.heroSubtitle.includes('tournament-grade cushion surfaces')) {
     cfg.heroSubtitle = DEFAULT_PF_SITE_CONFIG.heroSubtitle;
   }
-  if (cfg.bentoSectionDesc && cfg.bentoSectionDesc.includes('World-class surface')) {
+  if (cfg.bentoSectionDesc && (cfg.bentoSectionDesc.includes('World-class surface') || cfg.bentoSectionDesc.includes('weekly Open Play hours'))) {
     cfg.bentoSectionDesc = DEFAULT_PF_SITE_CONFIG.bentoSectionDesc;
   }
   const primBtnTxt = (!cfg.heroPrimaryBtn || cfg.heroPrimaryBtn === 'Book Your Court') ? 'Reserve a court' : cfg.heroPrimaryBtn;

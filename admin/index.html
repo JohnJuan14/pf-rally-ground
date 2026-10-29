@@ -764,15 +764,6 @@
                   <span class="text-[10px] text-slate-500 font-mono">/pax</span>
                 </div>
               </div>
-
-              <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Open Play Drop-In Rate</label>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-emerald-700 font-mono font-black text-base">₱</span>
-                  <input type="number" id="se-price-open-play" oninput="markSiteEditorDirty()" min="0" step="10" value="150" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-3 py-2 text-base text-slate-900 font-mono font-black focus:outline-none">
-                  <span class="text-[10px] text-slate-500 font-mono">/pax</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -1083,12 +1074,7 @@
             </div>
             <div class="md:col-span-2">
               <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Experience Section Description</label>
-              <input type="text" id="se-bento-desc" oninput="markSiteEditorDirty()" value="Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below." class="w-full bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-600 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium focus:outline-none">
-            </div>
-
-            <div class="md:col-span-3">
-              <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Open Play Schedule Summary Line</label>
-              <input type="text" id="se-open-play-text" oninput="markSiteEditorDirty()" value="Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM" class="w-full bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-600 rounded-xl px-3.5 py-2.5 text-emerald-800 font-mono font-bold focus:outline-none">
+              <input type="text" id="se-bento-desc" oninput="markSiteEditorDirty()" value="Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and live court availability below." class="w-full bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-600 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium focus:outline-none">
             </div>
           </div>
 
@@ -2261,7 +2247,7 @@
                   <span class="text-[10px] text-slate-400">Up to 6 players included free</span>
                 </div>
               </div>
-              <p class="text-[11px] text-brand-lime font-mono">Day: ₱400/hr • Night: ₱500/hr • Open Play Mon–Sat</p>
+              <p class="text-[11px] text-brand-lime font-mono">Day: ₱400/hr • Night: ₱500/hr • 4 Covered Courts</p>
             </div>
           </div>
 
@@ -7092,7 +7078,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       clubPhone: '0999 883 2346',
       bentoSectionTag: 'EXPERIENCE',
       bentoSectionTitle: 'PLAY THE CLUB',
-      bentoSectionDesc: 'Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.',
+      bentoSectionDesc: 'Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and live court availability below.',
       scheduleHeading: 'COURT TIMELINE',
       openPlayScheduleText: 'All 4 courts open daily 6:00 AM – 12:00 Midnight • Click any available time slot below to book',
       court1Name: 'Court 1',
