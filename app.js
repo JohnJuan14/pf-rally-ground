@@ -2065,7 +2065,7 @@ const DEFAULT_PF_SITE_CONFIG = {
   heroTitleLine1: 'PLAY.',
   heroTitleLine2: 'COMPETE.',
   heroTitleAccent: 'CONNECT.',
-  heroSubtitle: 'Your home court in Daraga, Albay for premier rallies, tournament-grade cushion surfaces, pro equipment rentals, and verified online booking.',
+  heroSubtitle: 'Welcome to P&F Rally Ground — your home court for great rallies, friendly competition, and community play. Check the live schedule below or book a court in seconds.',
   heroPrimaryBtn: 'Reserve a court',
   heroSecondaryBtn: 'Check my booking',
   heroSlide1: 'assets/hero-slide-1.jpg',
@@ -2082,9 +2082,9 @@ const DEFAULT_PF_SITE_CONFIG = {
   gearBucketImg: 'assets/gear-balls-x40.jpg',
   gearMachineImg: 'assets/gear-ball-machine.jpg',
   liveBannerEnabled: true,
-  liveBannerText: 'LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!',
+  liveBannerText: 'LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!',
   bentoSectionTitle: 'PLAY THE CLUB',
-  bentoSectionDesc: 'Everything you need to play, improve, and compete under one roof. World-class surface, vibrant community, and zero booking friction.',
+  bentoSectionDesc: 'Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.',
   openPlayScheduleText: 'Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM',
   dayRate: 400,
   nightRate: 500,
@@ -2203,13 +2203,13 @@ function applySiteConfig(incomingCfg) {
                 <span id="live-site-update-banner-text">${safeBanner}</span>
                 <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">4 PRO CUSHION COURTS</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">COURTS 1 – 4</span>
               </div>
               <div class="pf-live-ticker-item" aria-hidden="true" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
                 <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">4 PRO CUSHION COURTS</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">COURTS 1 – 4</span>
               </div>
             </div>
           </div>
@@ -2290,6 +2290,12 @@ function applySiteConfig(incomingCfg) {
     heroH1.innerHTML = `${pfEscapeHtml(cfg.heroTitleLine1 || 'PLAY.')}<br>${pfEscapeHtml(cfg.heroTitleLine2 || 'COMPETE.')}<br><span class="text-brand-lime">${pfEscapeHtml(cfg.heroTitleAccent || 'CONNECT.')}</span><span class="sr-only"> — Premier Pickleball Courts &amp; Club in Daraga, Albay</span>`;
   }
   setTxt('site-hero-subtitle', cfg.heroSubtitle);
+  if (cfg.heroSubtitle && cfg.heroSubtitle.includes('tournament-grade cushion surfaces')) {
+    cfg.heroSubtitle = DEFAULT_PF_SITE_CONFIG.heroSubtitle;
+  }
+  if (cfg.bentoSectionDesc && cfg.bentoSectionDesc.includes('World-class surface')) {
+    cfg.bentoSectionDesc = DEFAULT_PF_SITE_CONFIG.bentoSectionDesc;
+  }
   const primBtnTxt = (!cfg.heroPrimaryBtn || cfg.heroPrimaryBtn === 'Book Your Court') ? 'Reserve a court' : cfg.heroPrimaryBtn;
   const secBtnTxt = (!cfg.heroSecondaryBtn || cfg.heroSecondaryBtn === 'View Live Schedule') ? 'Check my booking' : cfg.heroSecondaryBtn;
   setTxt('site-hero-primary-btn-text', primBtnTxt);
