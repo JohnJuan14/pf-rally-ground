@@ -1152,9 +1152,6 @@ function pfGetPaymentConfig() {
 
 function pfGetOfficialQrUrl(channel = 'gcash', viewMode = 'qr') {
   const ch = String(channel || 'gcash').toLowerCase();
-  if (typeof pfRenderExactAmountQrDataUrl === 'function' && Number(window.pfActiveQrExactAmount) > 0) {
-    return pfRenderExactAmountQrDataUrl(ch, window.pfActiveQrExactAmount);
-  }
   const cfg = pfGetPaymentConfig();
   if (ch === 'bank' || ch === 'bdo') {
     return String(cfg.bankQrUrl || 'assets/qr-bdo.png?v=20261029v10').trim();
@@ -1239,37 +1236,34 @@ function pfOpenQrStandeeLightbox(channel = 'gcash') {
   const meta = {
     gcash: {
       badge: 'OFFICIAL GCASH INSTAPAY QR PH',
-      title: 'GCash QR Payment (Exact Amount Pre-Filled)',
+      title: 'Official GCash QR Code',
       merchant: cfg.gcashName || 'KA******E L.',
       numberLabel: 'GCash Mobile No:',
       numberDisplay: cfg.gcashNumber || '0999 883 2346',
       numberCopy: cleanDigits(cfg.gcashNumber) || '09998832346',
-      appHint: `Open your <b>GCash App &rarr; Tap QR &rarr; Scan or Upload QR</b>. The exact Peso amount is automatically pre-filled!`
+      appHint: `Open your <b>GCash App &rarr; Tap QR &rarr; Scan or Upload QR</b> from your gallery, or send directly to <b>${cfg.gcashNumber || '0999 883 2346'} (${cfg.gcashName || 'KA******E L.'})</b>.`
     },
     maya: {
       badge: 'OFFICIAL MAYA QR PH',
-      title: 'Maya QR Payment (Exact Amount Pre-Filled)',
+      title: 'Official Maya QR Code',
       merchant: cfg.mayaName || 'KATHERINE LIM',
       numberLabel: 'Maya Mobile No:',
       numberDisplay: cfg.mayaNumber || '0999 883 2346',
       numberCopy: cleanDigits(cfg.mayaNumber) || '09998832346',
-      appHint: `Open your <b>Maya App &rarr; Scan QR or Upload QR from Gallery</b>. The exact Peso amount is automatically pre-filled!`
+      appHint: `Open your <b>Maya App &rarr; Scan QR or Upload QR from Gallery</b>, or send directly to Maya number <b>${cfg.mayaNumber || '0999 883 2346'} (${cfg.mayaName || 'KATHERINE LIM'})</b>.`
     },
     bank: {
       badge: 'OFFICIAL BDO / BANK INSTAPAY QR',
-      title: 'BDO / Bank InstaPay QR (Exact Amount Pre-Filled)',
+      title: 'Official BDO Unibank QR Code',
       merchant: cfg.bdoName || 'BDO Unibank • Dex',
       numberLabel: 'Bank Account:',
       numberDisplay: cfg.bdoNumber || '••••••••8678',
       numberCopy: cleanDigits(cfg.bdoNumber).length >= 8 ? cleanDigits(cfg.bdoNumber) : '',
-      appHint: 'Open <b>BDO Online / BDO Pay / BPI / UnionBank / GCash / Maya</b> &rarr; <b>Scan or Upload QR</b>. The exact Peso amount is pre-filled!'
+      appHint: 'Open <b>BDO Online / BDO Pay / BPI / UnionBank / GCash / Maya</b> &rarr; <b>Scan or Upload QR</b> via InstaPay QR Ph.'
     }
   };
   const info = meta[ch] || meta.gcash;
-  const activeAmt = Number(window.pfActiveQrExactAmount) || 400;
-  const qrSrc = typeof pfRenderExactAmountQrDataUrl === 'function'
-    ? pfRenderExactAmountQrDataUrl(ch, activeAmt)
-    : pfGetOfficialQrUrl(ch, 'qr');
+  const qrSrc = pfGetOfficialQrUrl(ch, 'qr');
 
   let modal = document.getElementById('pf-qr-zoom-lightbox');
   if (!modal) {
@@ -1285,18 +1279,6 @@ function pfOpenQrStandeeLightbox(channel = 'gcash') {
             <h4 id="pf-qr-lightbox-title" class="text-sm sm:text-base font-black uppercase text-[#050E1D]">Official Payment QR</h4>
           </div>
           <button type="button" onclick="pfCloseQrStandeeLightbox()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white font-black text-xs flex items-center justify-center transition">✕</button>
-        </div>
-
-        <!-- Exact Amount Input Bar inside Zoom Lightbox -->
-        <div class="p-2.5 rounded-xl bg-[#050E1D] text-white border border-[#9BE600] space-y-1.5 text-left">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono font-black uppercase text-[#9BE600]">⚡ Exact Amount Pre-Filled in QR (₱)</span>
-            <span id="pf-qr-lightbox-amount-badge" class="text-xs font-mono font-black text-white">₱400.00</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <input type="number" id="pf-lightbox-qr-exact-amount" min="0" step="10" value="400.00" oninput="pfSetExactQrAmount(this.value, true)" placeholder="Enter exact amount (e.g. 400)" class="flex-1 bg-white text-[#050E1D] rounded-lg px-2.5 py-1.5 text-xs font-mono font-black focus:outline-none">
-            <button type="button" onclick="pfSetExactQrAmount(document.getElementById('pf-lightbox-qr-exact-amount').value, true)" class="px-3 py-1.5 rounded-lg bg-[#9BE600] text-[#050E1D] font-black text-[10px] uppercase whitespace-nowrap">Update QR</button>
-          </div>
         </div>
 
         <!-- Recipient & Account Summary Bar inside Zoom Modal -->
@@ -1354,11 +1336,6 @@ function pfOpenQrStandeeLightbox(channel = 'gcash') {
   const hintEl = document.getElementById('pf-qr-lightbox-hint');
   if (hintEl) hintEl.innerHTML = '💡 ' + info.appHint;
 
-  const lbInp = document.getElementById('pf-lightbox-qr-exact-amount');
-  if (lbInp) lbInp.value = activeAmt > 0 ? activeAmt.toFixed(2) : '';
-  const lbAmtBadge = document.getElementById('pf-qr-lightbox-amount-badge');
-  if (lbAmtBadge) lbAmtBadge.textContent = activeAmt > 0 ? ('₱' + activeAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })) : 'Static QR';
-
   const img = document.getElementById('pf-qr-lightbox-img');
   if (img) img.src = qrSrc;
 
@@ -1377,14 +1354,10 @@ function pfCloseQrStandeeLightbox() {
 
 function pfDownloadOfficialQr(channel = 'gcash') {
   const ch = String(channel || 'gcash').toLowerCase();
-  const amt = Number(window.pfActiveQrExactAmount) || 0;
-  const url = (typeof pfRenderExactAmountQrDataUrl === 'function' && amt > 0)
-    ? pfRenderExactAmountQrDataUrl(ch, amt)
-    : pfGetOfficialQrUrl(ch, 'qr');
+  const url = pfGetOfficialQrUrl(ch, 'qr');
   const a = document.createElement('a');
   a.href = url;
-  const amtSlug = amt > 0 ? `-${amt.toFixed(0)}PHP` : '';
-  a.download = `PF-Rally-Ground-${ch.toUpperCase()}-QR${amtSlug}.png`;
+  a.download = `PF-Rally-Ground-${ch.toUpperCase()}-Official-QR.png`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -2533,53 +2506,15 @@ function pfRenderExactAmountQrDataUrl(channel = 'gcash', rawAmount = null) {
 function pfSetExactQrAmount(newAmount, syncInputs = true) {
   const cleanAmt = Math.max(0, Number(String(newAmount || 0).replace(/[^0-9.]/g, '')) || 0);
   window.pfActiveQrExactAmount = cleanAmt;
-
-  if (syncInputs) {
-    ['pf-modal-qr-exact-amount', 'pf-book-qr-exact-amount', 'pf-lightbox-qr-exact-amount'].forEach(id => {
-      const inp = document.getElementById(id);
-      if (inp && document.activeElement !== inp) {
-        inp.value = cleanAmt > 0 ? cleanAmt.toFixed(2) : '';
-      }
-    });
-  }
-
   const fmtAmt = cleanAmt > 0
     ? ('₱' + cleanAmt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    : 'Static QR (Enter Amount in App)';
-
-  ['manual-modal-amount', 'manual-modal-maya-amount', 'manual-modal-bank-amount', 'pf-qr-lightbox-amount-badge'].forEach(id => {
+    : '₱400.00';
+  ['manual-modal-amount', 'manual-modal-maya-amount', 'manual-modal-bank-amount'].forEach(id => {
     const el = document.getElementById(id);
     if (el && cleanAmt > 0) el.textContent = fmtAmt;
   });
-
-  document.querySelectorAll('[data-qr-amount-status]').forEach(el => {
-    el.innerHTML = cleanAmt > 0
-      ? `⚡ Pre-Filled in GCash, Maya &amp; BDO QR: <b class="text-brand-lime font-mono">${fmtAmt}</b>`
-      : `ℹ️ Static QR Active (Customer types amount inside app)`;
-  });
-
-  // Update all QR images across Payment Modal, book.html, and Lightbox
-  const pairs = [
-    ['locked-qr-img', 'gcash'],
-    ['locked-maya-qr-img', 'maya'],
-    ['locked-bank-qr-img', 'bank'],
-    ['book-gcash-qr-img', 'gcash'],
-    ['book-maya-qr-img', 'maya'],
-    ['book-bank-qr-img', 'bank']
-  ];
-  pairs.forEach(([id, ch]) => {
-    const img = document.getElementById(id);
-    if (img) {
-      img.src = pfRenderExactAmountQrDataUrl(ch, cleanAmt);
-    }
-  });
-
-  const lbModal = document.getElementById('pf-qr-zoom-lightbox');
-  if (lbModal && !lbModal.classList.contains('hidden')) {
-    const lbCh = lbModal.getAttribute('data-channel') || 'gcash';
-    const lbImg = document.getElementById('pf-qr-lightbox-img');
-    if (lbImg) lbImg.src = pfRenderExactAmountQrDataUrl(lbCh, cleanAmt);
-  }
+  // Always keep original working QR images intact
+  applyPaymentConfigToPublicDom();
 }
 
 function pfPromptAndGenerateExactQr(channel = null) {

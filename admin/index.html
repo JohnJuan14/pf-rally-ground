@@ -1142,27 +1142,6 @@
 
           <p id="se-qr-save-feedback" class="hidden p-3 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-900 text-xs font-black text-center"></p>
 
-          <!-- Live Exact-Amount QR Generator (GCash, Maya & BDO) -->
-          <div class="p-4 sm:p-5 rounded-2xl bg-[#050E1D] text-white border-2 border-[#9BE600] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg">
-            <div>
-              <span class="px-2 py-0.5 rounded bg-[#9BE600] text-[#050E1D] font-mono font-black text-[10px] uppercase">⚡ EXACT-AMOUNT QR GENERATOR (GCASH • MAYA • BDO)</span>
-              <h4 class="text-sm sm:text-base font-black uppercase text-white mt-1">Generate QR Code with Pre-Filled Exact Amount</h4>
-              <p class="text-xs text-slate-300 mt-0.5" id="admin-qr-exact-status">Enter any Peso amount below and click <b>Generate Exact Amount in All 3 QRs</b>. When a player scans GCash, Maya, or BDO, the exact amount is already filled in!</p>
-            </div>
-            <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
-              <div class="flex items-center bg-white rounded-xl px-3 py-2 border-2 border-[#9BE600]">
-                <span class="text-sm font-mono font-black text-[#050E1D] mr-1">₱</span>
-                <input type="number" id="admin-exact-qr-amount-input" min="0" step="10" value="400.00" placeholder="400.00" class="w-28 bg-transparent text-[#050E1D] font-mono font-black text-sm focus:outline-none">
-              </div>
-              <button type="button" onclick="adminGenerateExactAmountQrs()" class="py-2.5 px-4 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] font-black uppercase text-xs tracking-wider transition shadow">
-                ⚡ Generate Exact Amount in All 3 QRs
-              </button>
-              <button type="button" onclick="adminResetStaticPreviewQrs()" class="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold uppercase text-xs transition">
-                Show Static QRs
-              </button>
-            </div>
-          </div>
-
 
           <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-xs w-full max-w-full">
             <!-- 1. GCASH QR & ACCOUNT EDITOR CARD -->
