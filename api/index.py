@@ -414,6 +414,21 @@ class handler(http.server.BaseHTTPRequestHandler):
             return
         elif parsed.path == "/api/auth/login":
             mode = str(body.get("mode", "password")).strip().lower()
+            entered_pw = str(body.get("password", "")).strip()
+            official_keys = {
+                "PFRallyOwner#2026": "Club Owner (Key #1)",
+                "PFManager@8089": "General Manager (Key #2)",
+                "PFCourtDesk!01": "Front Desk Staff (Key #3)",
+                "PFCashierPOS#02": "POS Cashier (Key #4)",
+                "DaragaPickle#99": "Emergency Backup (Key #5)",
+            }
+            custom_pw = str(db.get("adminPassword", "")).strip()
+            matched_role = official_keys.get(entered_pw)
+            if not matched_role and custom_pw and custom_pw != "admin_123!" and entered_pw == custom_pw:
+                matched_role = "Custom Owner Key"
+            if not matched_role:
+                self._send_json({"ok": False, "authenticated": False, "error": "Invalid Staff/Owner Access Key"}, status=401)
+                return
             token = secrets.token_hex(32)
             if mode == "gmail":
                 entered_email = sanitize_str(body.get("email", ""), 120).lower() or "owner@gmail.com"
@@ -421,10 +436,10 @@ class handler(http.server.BaseHTTPRequestHandler):
                 gcfg["adminEmail"] = entered_email
                 db["gmailConfig"] = gcfg
                 save_db(db)
-                self._send_json({"ok": True, "authenticated": True, "method": "gmail", "token": token, "ownerEmail": entered_email})
+                self._send_json({"ok": True, "authenticated": True, "method": "gmail", "role": matched_role, "token": token, "ownerEmail": entered_email})
                 return
             else:
-                self._send_json({"ok": True, "authenticated": True, "method": "password", "token": token})
+                self._send_json({"ok": True, "authenticated": True, "method": "password", "role": matched_role, "token": token})
                 return
 
         elif parsed.path == "/api/bookings/status":

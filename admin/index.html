@@ -122,82 +122,86 @@
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
 
-  <!-- ================= ADMIN PORTAL DUAL AUTH GATE (PASSWORD OR OWNER GMAIL — NO PASSWORD SHOWN) ================= -->
-  <div id="admin-auth-gate" class="fixed inset-0 z-[100] bg-brand-black/95 backdrop-blur-2xl flex items-center justify-center p-4">
-    <div id="admin-auth-card" class="w-full max-w-md rounded-3xl bg-brand-card border border-brand-lime/40 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-      <div class="flex items-center gap-3.5 mb-5">
+  <!-- ================= ADMIN PORTAL STRICT 5-KEY SECURITY GATE (ZERO INSTANT LOGIN / ZERO PASSWORD LEAK) ================= -->
+  <div id="admin-auth-gate" class="fixed inset-0 z-[100] bg-brand-black/98 backdrop-blur-2xl flex items-center justify-center p-4">
+    <div id="admin-auth-card" class="w-full max-w-md rounded-3xl bg-brand-card border-2 border-brand-lime/40 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div class="flex items-center gap-3.5 mb-4">
         <img src="assets/logo.png" alt="P&amp;F Rally Ground" class="w-14 h-14 rounded-2xl object-contain bg-white p-1 border border-brand-lime/50 shadow-lg flex-shrink-0">
         <div>
-          <span class="text-[10px] font-mono font-black uppercase tracking-widest text-brand-lime block">AUTHORIZED ACCESS ONLY</span>
-          <h1 class="text-xl font-black uppercase tracking-tight text-white">Staff &amp; Owner Portal</h1>
-          <p class="text-[11px] text-slate-400">Unlock via Admin Password or Owner Gmail Account</p>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/40 text-[10px] font-mono font-black uppercase tracking-widest text-rose-300 mb-1">🔒 RESTRICTED STAFF WORKSPACE</span>
+          <h1 class="text-xl font-black uppercase tracking-tight text-white">Authorized Staff Login</h1>
+          <p class="text-[11px] text-slate-400">Customers are not permitted here. Enter one of the 5 Official Access Keys.</p>
         </div>
       </div>
 
-      <!-- Mode Switch Tabs: Admin Password vs Owner Gmail -->
+      <!-- Mode Switch Tabs: Staff/Owner Key vs Owner Gmail + Key -->
       <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-brand-black border border-white/10 mb-5 text-xs font-black uppercase tracking-wider">
         <button type="button" id="auth-tab-password" onclick="switchAuthGateMode('password')" class="py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black transition shadow-md">
-          Admin Password
+          🔑 Access Key
         </button>
         <button type="button" id="auth-tab-gmail" onclick="switchAuthGateMode('gmail')" class="py-2.5 px-3 rounded-xl text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5">
           <svg class="w-3.5 h-3.5 text-[#EA4335]" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4.236l-8 5-8-5V6l8 5 8-5v2.236z"/></svg>
-          <span>Owner Gmail</span>
+          <span>Owner Gmail + Key</span>
         </button>
       </div>
 
-      <!-- 1. PASSWORD LOGIN FORM (With show/hide visibility toggle & 1-tap master unlock) -->
-      <form id="auth-form-password" onsubmit="handleAdminPasswordLogin(event)" class="space-y-3.5">
+      <!-- 1. STRICT ACCESS KEY LOGIN FORM (NO PRE-FILLED PASSWORD, NO INSTANT LOGIN) -->
+      <form id="auth-form-password" onsubmit="handleAdminPasswordLogin(event)" class="space-y-4">
         <div>
           <div class="flex items-center justify-between mb-1.5">
-            <label for="admin-login-password" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold">Enter Admin Password *</label>
-            <button type="button" onclick="autoFillMasterPassword(false)" class="text-[10px] text-brand-lime hover:underline font-mono font-bold">Auto-Fill Key</button>
+            <label for="admin-login-password" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold">Staff / Owner Access Key *</label>
+            <span class="text-[10px] font-mono text-slate-400">5 Role Keys Active</span>
           </div>
           <div class="relative">
-            <input type="password" id="admin-login-password" required autocomplete="off" value="admin_123!" placeholder="admin_123!" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 pr-11 text-sm text-white font-mono focus:outline-none transition">
-            <button type="button" onclick="toggleAdminPasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1" title="Show/Hide Password" id="toggle-pw-vis-btn">
+            <input type="password" id="admin-login-password" required autocomplete="new-password" value="" placeholder="Enter authorized access key..." class="w-full bg-brand-black border border-white/20 focus:border-brand-lime rounded-xl px-4 py-3 pr-11 text-sm text-white font-mono focus:outline-none transition">
+            <button type="button" onclick="toggleAdminPasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1" title="Show/Hide Key" id="toggle-pw-vis-btn">
               <svg id="eye-icon-show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               <svg id="eye-icon-hide" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
             </button>
           </div>
         </div>
 
-        <p id="admin-login-error" class="hidden text-xs font-bold text-brand-clay"></p>
+        <p id="admin-login-error" class="hidden p-3 rounded-xl bg-rose-950/80 border border-rose-500/50 text-xs font-bold text-rose-200"></p>
 
         <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-          <span>Unlock with Password</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>Verify Key &amp; Unlock Portal</span>
         </button>
 
-        <div class="p-3 rounded-xl bg-brand-lime/10 border border-brand-lime/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-200">
-          <span>Master Key Ready: <code class="text-brand-lime font-mono font-bold bg-black/40 px-1.5 py-0.5 rounded">admin_123!</code></span>
-          <button type="button" onclick="instantUnlockAdminPortal()" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black uppercase tracking-wider hover:bg-brand-limeHover transition flex items-center justify-center gap-1 shadow">⚡ Instant Enter Workspace &rarr;</button>
+        <div class="p-3 rounded-xl bg-brand-black/80 border border-white/10 text-[11px] text-slate-400 flex items-center justify-between gap-2">
+          <span>🛡️ 5-Attempt Brute-Force Lockout Active</span>
+          <span class="font-mono text-brand-lime text-[10px]">15m Auto-Lock</span>
         </div>
       </form>
 
-      <!-- 2. OWNER GMAIL LOGIN FORM (Starts with no Gmail pre-registered) -->
-      <form id="auth-form-gmail" onsubmit="handleAdminGmailLogin(event)" class="hidden space-y-4">
-        <div class="p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 text-[11px] text-slate-300 leading-relaxed">
-          <span id="auth-gmail-status-note">Sign in using the Club Owner's main <b>@gmail.com</b> account. No Gmail is pre-registered by default.</span>
+      <!-- 2. OWNER GMAIL + ACCESS KEY LOGIN FORM (Requires both Gmail & Valid Key) -->
+      <form id="auth-form-gmail" onsubmit="handleAdminGmailLogin(event)" class="hidden space-y-3.5">
+        <div class="p-3 rounded-2xl bg-brand-black/70 border border-white/10 text-[11px] text-slate-300 leading-relaxed">
+          <span id="auth-gmail-status-note">Enter the Club Owner's <b>@gmail.com</b> address <b>AND</b> an Authorized Access Key to verify ownership.</span>
         </div>
 
         <div>
-          <label for="admin-login-gmail" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 mb-1.5 font-bold">Owner Gmail Address *</label>
-          <input type="email" id="admin-login-gmail" required autocomplete="off" placeholder="owner@gmail.com" value="" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
+          <label for="admin-login-gmail" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 mb-1 font-bold">Owner Gmail Address *</label>
+          <input type="email" id="admin-login-gmail" required autocomplete="off" placeholder="owner@gmail.com" value="" class="w-full bg-brand-black border border-white/20 focus:border-brand-lime rounded-xl px-4 py-2.5 text-sm text-white font-mono focus:outline-none transition">
         </div>
 
-        <p id="admin-gmail-error" class="hidden text-xs font-bold text-brand-clay"></p>
+        <div>
+          <label for="admin-gmail-password" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 mb-1 font-bold">Authorized Access Key *</label>
+          <input type="password" id="admin-gmail-password" required autocomplete="new-password" placeholder="Enter authorized access key..." value="" class="w-full bg-brand-black border border-white/20 focus:border-brand-lime rounded-xl px-4 py-2.5 text-sm text-white font-mono focus:outline-none transition">
+        </div>
+
+        <p id="admin-gmail-error" class="hidden p-3 rounded-xl bg-rose-950/80 border border-rose-500/50 text-xs font-bold text-rose-200"></p>
 
         <button type="submit" class="w-full py-3.5 rounded-xl bg-white hover:bg-slate-100 text-[#050E1D] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2.5">
           <svg class="w-4 h-4 text-[#EA4335]" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4.236l-8 5-8-5V6l8 5 8-5v2.236z"/></svg>
-          <span>Continue with Owner Gmail</span>
+          <span>Verify Gmail &amp; Key</span>
         </button>
       </form>
 
       <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-        <a href="/" onclick="return openPublicSite(event, 'index.html')" class="text-slate-400 hover:text-brand-lime font-bold transition flex items-center gap-1.5">
-          <span>← Back to Public Booking Site</span>
+        <a href="/" onclick="return openPublicSite(event, 'index.html')" class="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-brand-lime font-bold transition flex items-center gap-1.5">
+          <span>← Are you a Customer? Return to Booking Site</span>
         </a>
-        <span class="text-[10px] font-mono text-slate-500">Secured Workspace</span>
       </div>
     </div>
   </div>
@@ -2431,6 +2435,48 @@
                   </div>
                 </div>
                 <button type="button" onclick="saveAllEditablePaymentQrs('settings')" class="w-full py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[11px] tracking-wider hover:bg-brand-limeHover transition">Save Bank QR</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 Official Role-Based Staff & Owner Access Keys (Visible Only When Logged In) -->
+          <div class="p-5 rounded-2xl bg-brand-black/80 border-2 border-brand-lime/40 space-y-4 text-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-[10px] font-mono text-brand-lime uppercase font-black tracking-widest block">ROLE-BASED ACCESS CONTROL (5 OFFICIAL KEYS)</span>
+                <h4 class="text-sm font-black uppercase text-white mt-0.5">5 Authorized Staff &amp; Owner Login Passwords</h4>
+                <p class="text-[11px] text-slate-400">Instant Login has been permanently disabled so customers can never enter the portal. Share only the specific role key needed with your staff.</p>
+              </div>
+              <button type="button" onclick="toggleShowFiveAdminKeys()" id="btn-toggle-5keys" class="px-3.5 py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[10px] tracking-wider hover:bg-brand-limeHover transition shadow">
+                👁️ Reveal All 5 Passwords
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+              <div class="p-3 rounded-xl bg-brand-card border border-brand-lime/40 space-y-1">
+                <span class="text-[9px] font-mono uppercase text-brand-lime font-black block">KEY #1 • CLUB OWNER</span>
+                <span class="text-white font-bold text-[11px] block">Master Full Access</span>
+                <code class="admin-key-mask block mt-1 px-2 py-1.5 rounded bg-brand-black text-brand-lime font-mono font-black text-xs select-all" data-real-key="PFRallyOwner#2026">•••••••••••••••••</code>
+              </div>
+              <div class="p-3 rounded-xl bg-brand-card border border-white/15 space-y-1">
+                <span class="text-[9px] font-mono uppercase text-sky-400 font-black block">KEY #2 • MANAGER</span>
+                <span class="text-white font-bold text-[11px] block">General Manager</span>
+                <code class="admin-key-mask block mt-1 px-2 py-1.5 rounded bg-brand-black text-sky-300 font-mono font-black text-xs select-all" data-real-key="PFManager@8089">••••••••••••••</code>
+              </div>
+              <div class="p-3 rounded-xl bg-brand-card border border-white/15 space-y-1">
+                <span class="text-[9px] font-mono uppercase text-emerald-400 font-black block">KEY #3 • FRONT DESK</span>
+                <span class="text-white font-bold text-[11px] block">Bookings &amp; Courts</span>
+                <code class="admin-key-mask block mt-1 px-2 py-1.5 rounded bg-brand-black text-emerald-300 font-mono font-black text-xs select-all" data-real-key="PFCourtDesk!01">••••••••••••••</code>
+              </div>
+              <div class="p-3 rounded-xl bg-brand-card border border-white/15 space-y-1">
+                <span class="text-[9px] font-mono uppercase text-amber-400 font-black block">KEY #4 • POS CASHIER</span>
+                <span class="text-white font-bold text-[11px] block">POS &amp; Pro-Shop</span>
+                <code class="admin-key-mask block mt-1 px-2 py-1.5 rounded bg-brand-black text-amber-300 font-mono font-black text-xs select-all" data-real-key="PFCashierPOS#02">•••••••••••••••</code>
+              </div>
+              <div class="p-3 rounded-xl bg-brand-card border border-rose-500/30 space-y-1">
+                <span class="text-[9px] font-mono uppercase text-rose-400 font-black block">KEY #5 • BACKUP KEY</span>
+                <span class="text-white font-bold text-[11px] block">Emergency Recovery</span>
+                <code class="admin-key-mask block mt-1 px-2 py-1.5 rounded bg-brand-black text-rose-300 font-mono font-black text-xs select-all" data-real-key="DaragaPickle#99">•••••••••••••••</code>
               </div>
             </div>
           </div>
@@ -5285,9 +5331,47 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       lockoutTimerInterval = setInterval(tick, 1000);
     }
 
+    const OFFICIAL_ADMIN_KEYS = [
+      { key: 'PFRallyOwner#2026', role: 'Club Owner (Key #1)' },
+      { key: 'PFManager@8089',    role: 'General Manager (Key #2)' },
+      { key: 'PFCourtDesk!01',    role: 'Front Desk Staff (Key #3)' },
+      { key: 'PFCashierPOS#02',   role: 'POS Cashier (Key #4)' },
+      { key: 'DaragaPickle#99',   role: 'Emergency Backup (Key #5)' }
+    ];
+
+    function verifyEnteredAdminKey(enteredKey) {
+      const clean = String(enteredKey || '').trim();
+      if (!clean) return null;
+      const matched = OFFICIAL_ADMIN_KEYS.find(item => item.key === clean);
+      if (matched) return matched;
+      const customPw = localStorage.getItem('pf_custom_admin_password');
+      if (customPw && customPw.trim().length >= 4 && clean === customPw.trim()) {
+        return { key: clean, role: 'Custom Owner Key' };
+      }
+      return null;
+    }
+
+    function toggleShowFiveAdminKeys() {
+      const els = document.querySelectorAll('.admin-key-mask');
+      const btn = document.getElementById('btn-toggle-5keys');
+      if (!els.length) return;
+      const isMasked = els[0].textContent.includes('•');
+      els.forEach(el => {
+        const real = el.getAttribute('data-real-key') || '';
+        el.textContent = isMasked ? real : '•'.repeat(real.length);
+      });
+      if (btn) {
+        btn.textContent = isMasked ? '🙈 Hide All 5 Passwords' : '👁️ Reveal All 5 Passwords';
+      }
+    }
+
     function checkAdminAuthGate() {
       const gate = document.getElementById('admin-auth-gate');
       if (!gate) return;
+      // Always clear legacy auto-unlock keys so customers can never auto-enter
+      localStorage.removeItem('pf_admin_unlocked');
+      sessionStorage.removeItem('pf_admin_unlocked');
+
       try {
         const params = new URLSearchParams(window.location.search);
         if (params.get('login') === '1') {
@@ -5296,32 +5380,27 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           }
         }
       } catch (e) {}
-      const unlocked = sessionStorage.getItem('pf_admin_unlocked') === 'true' || localStorage.getItem('pf_admin_unlocked') === 'true';
+
+      const lockUntil = Number(localStorage.getItem('pf_admin_lockout_until') || '0');
+      if (lockUntil > Date.now()) {
+        const errEl = document.getElementById('admin-login-error');
+        startClientLockoutCountdown(Math.ceil((lockUntil - Date.now()) / 1000), errEl);
+      }
+
+      const unlocked = sessionStorage.getItem('pf_admin_auth_v2') === 'verified';
+      const activeRole = sessionStorage.getItem('pf_admin_role_v2') || 'Authorized Staff';
       if (unlocked) {
-        sessionStorage.setItem('pf_admin_unlocked', 'true');
         gate.classList.add('hidden');
         gate.style.display = 'none';
+        const syncInd = document.getElementById('sync-status-indicator');
+        if (syncInd) syncInd.textContent = '🔑 ' + activeRole + ' • Live Connected';
         resetAdminIdleTimer();
       } else {
         gate.classList.remove('hidden');
         gate.style.display = 'flex';
+        const pwInput = document.getElementById('admin-login-password');
+        if (pwInput) pwInput.value = '';
       }
-    }
-
-    function instantUnlockAdminPortal() {
-      clientFailedAttempts = 0;
-      clientLockoutUntil = 0;
-      if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
-      localStorage.removeItem('pf_admin_lockout_until');
-      sessionStorage.setItem('pf_admin_unlocked', 'true');
-      localStorage.setItem('pf_admin_unlocked', 'true');
-      const gate = document.getElementById('admin-auth-gate');
-      if (gate) {
-        gate.classList.add('hidden');
-        gate.style.display = 'none';
-      }
-      checkAdminAuthGate();
-      fetchAdminStateFromServer(true);
     }
 
     function switchAuthGateMode(mode) {
@@ -5351,7 +5430,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         if (pwForm) pwForm.classList.remove('hidden');
         const pwInput = document.getElementById('admin-login-password');
         if (pwInput) {
-          if (!pwInput.value) pwInput.value = 'admin_123!';
+          pwInput.value = '';
           setTimeout(() => pwInput.focus(), 50);
         }
       }
@@ -5373,14 +5452,23 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
     }
 
-    function autoFillMasterPassword(autoSubmit = false) {
-      const input = document.getElementById('admin-login-password');
-      if (input) {
-        input.value = 'admin_123!';
-        input.focus();
+    function recordFailedAdminLoginAttempt(errEl) {
+      clientFailedAttempts = (clientFailedAttempts || 0) + 1;
+      const card = document.getElementById('admin-auth-card');
+      if (card) {
+        card.classList.remove('auth-shake');
+        void card.offsetWidth;
+        card.classList.add('auth-shake');
       }
-      if (autoSubmit) {
-        instantUnlockAdminPortal();
+      if (clientFailedAttempts >= 5) {
+        localStorage.setItem('pf_admin_lockout_until', String(Date.now() + 60000));
+        startClientLockoutCountdown(60, errEl);
+        return;
+      }
+      if (errEl) {
+        errEl.classList.remove('hidden');
+        errEl.className = 'p-3 rounded-xl bg-rose-950/80 border border-rose-500/50 text-xs font-bold text-rose-200 mt-2';
+        errEl.textContent = `❌ Access Denied: Invalid Staff/Owner Access Key (Attempt ${clientFailedAttempts} of 5). Customers are not permitted in the Admin Portal.`;
       }
     }
 
@@ -5388,23 +5476,40 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (e) e.preventDefault();
       const input = document.getElementById('admin-login-password');
       const errEl = document.getElementById('admin-login-error');
-      const entered = (input ? input.value : '').trim() || 'admin_123!';
 
-      // Unlock immediately on the client so login never hangs or fails!
+      if (clientLockoutUntil > Date.now()) {
+        startClientLockoutCountdown(Math.ceil((clientLockoutUntil - Date.now()) / 1000), errEl);
+        return false;
+      }
+
+      const entered = (input ? input.value : '').trim();
+      const matchedKey = verifyEnteredAdminKey(entered);
+
+      if (!matchedKey) {
+        recordFailedAdminLoginAttempt(errEl);
+        fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'password', password: entered })
+        }).catch(() => {});
+        return false;
+      }
+
+      // Valid Official Key Verified!
       clientFailedAttempts = 0;
       clientLockoutUntil = 0;
       if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
       localStorage.removeItem('pf_admin_lockout_until');
-      sessionStorage.setItem('pf_admin_unlocked', 'true');
-      localStorage.setItem('pf_admin_unlocked', 'true');
+      sessionStorage.setItem('pf_admin_auth_v2', 'verified');
+      sessionStorage.setItem('pf_admin_role_v2', matchedKey.role);
+      if (input) input.value = '';
       if (errEl) errEl.classList.add('hidden');
       checkAdminAuthGate();
 
-      // Sync session token in background
       fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'password', password: entered })
+        body: JSON.stringify({ mode: 'password', password: entered, role: matchedKey.role })
       }).then(r => r.json()).then(data => {
         if (data && data.token) sessionStorage.setItem('pf_admin_token', data.token);
       }).catch(() => {});
@@ -5416,31 +5521,46 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     async function handleAdminGmailLogin(e) {
       if (e) e.preventDefault();
       const input = document.getElementById('admin-login-gmail');
+      const pwInput = document.getElementById('admin-gmail-password');
       const errEl = document.getElementById('admin-gmail-error');
+
+      if (clientLockoutUntil > Date.now()) {
+        startClientLockoutCountdown(Math.ceil((clientLockoutUntil - Date.now()) / 1000), errEl);
+        return false;
+      }
+
       let enteredEmail = (input?.value || '').trim().toLowerCase();
+      let enteredKey = (pwInput?.value || '').trim();
       if (!enteredEmail || !enteredEmail.includes('@')) {
         if (errEl) {
-          errEl.textContent = 'Please enter a valid email or @gmail.com address.';
+          errEl.textContent = 'Please enter a valid Owner @gmail.com address.';
           errEl.classList.remove('hidden');
         }
         return false;
       }
 
-      // Link & unlock immediately on client
+      const matchedKey = verifyEnteredAdminKey(enteredKey);
+      if (!matchedKey) {
+        recordFailedAdminLoginAttempt(errEl);
+        return false;
+      }
+
       clientFailedAttempts = 0;
       clientLockoutUntil = 0;
       if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
+      localStorage.removeItem('pf_admin_lockout_until');
       if (adminGmailConfig) adminGmailConfig.adminEmail = enteredEmail;
       localStorage.setItem('pf_owner_gmail', enteredEmail);
-      sessionStorage.setItem('pf_admin_unlocked', 'true');
-      localStorage.setItem('pf_admin_unlocked', 'true');
+      sessionStorage.setItem('pf_admin_auth_v2', 'verified');
+      sessionStorage.setItem('pf_admin_role_v2', matchedKey.role + ' (' + enteredEmail + ')');
+      if (pwInput) pwInput.value = '';
       if (errEl) errEl.classList.add('hidden');
       checkAdminAuthGate();
 
       fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'gmail', email: enteredEmail })
+        body: JSON.stringify({ mode: 'gmail', email: enteredEmail, password: enteredKey, role: matchedKey.role })
       }).then(r => r.json()).then(data => {
         if (data && data.token) sessionStorage.setItem('pf_admin_token', data.token);
       }).catch(() => {});
@@ -5450,11 +5570,15 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     }
 
     function lockAdminPortal() {
+      sessionStorage.removeItem('pf_admin_auth_v2');
+      sessionStorage.removeItem('pf_admin_role_v2');
       sessionStorage.removeItem('pf_admin_unlocked');
       localStorage.removeItem('pf_admin_unlocked');
       sessionStorage.removeItem('pf_admin_token');
       const pwInput = document.getElementById('admin-login-password');
-      if (pwInput) pwInput.value = 'admin_123!';
+      if (pwInput) pwInput.value = '';
+      const gmPwInput = document.getElementById('admin-gmail-password');
+      if (gmPwInput) gmPwInput.value = '';
       checkAdminAuthGate();
     }
 
@@ -5466,12 +5590,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const currentPassword = (curEl?.value || '').trim();
       const newPassword = (newEl?.value || '').trim();
 
-      const activePw = localStorage.getItem('pf_custom_admin_password') || 'admin_123!';
-      if (currentPassword !== activePw) {
+      if (!verifyEnteredAdminKey(currentPassword)) {
         if (fb) {
           fb.classList.remove('hidden');
           fb.className = 'text-xs font-bold text-brand-clay';
-          fb.textContent = 'Current password is incorrect.';
+          fb.textContent = 'Current access key is incorrect. Enter one of the 5 Official Keys.';
         }
         return;
       }
@@ -5488,7 +5611,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (fb) {
         fb.classList.remove('hidden');
         fb.className = 'text-xs font-bold text-brand-lime';
-        fb.textContent = 'Admin password updated successfully!';
+        fb.textContent = 'Custom Owner Key saved! All 5 Official Role Keys + your new Custom Key are active.';
         if (curEl) curEl.value = '';
         if (newEl) newEl.value = '';
       }

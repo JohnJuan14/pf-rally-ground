@@ -743,7 +743,7 @@
         <a href="index.html" class="group flex-shrink-0" aria-label="P&amp;F Rally Ground Home">
           <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Official Logo" class="h-9 w-9 sm:h-13 sm:w-13 rounded-xl object-contain bg-white p-0.5 shadow-md border border-slate-200 lg:border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
         </a>
-        <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left focus:outline-none min-w-0 truncate">
+        <a href="index.html" title="P&amp;F Rally Ground Home" class="group text-left focus:outline-none min-w-0 truncate">
           <span class="text-xs sm:text-base font-black uppercase tracking-tight text-[#050E1D] lg:text-white group-hover:text-[#0E8A2D] lg:group-hover:text-brand-lime transition-colors block leading-none font-display truncate" data-site-club-name="1">P&amp;F Rally Ground</span>
           <span class="text-[8px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-[#0E8A2D] lg:text-brand-lime block mt-0.5 truncate" data-site-club-subtitle="1">Pickleball Club &bull; Daraga</span>
         </a>
@@ -816,14 +816,10 @@
       </div>
 
       <div class="space-y-1.5 pt-3 border-t border-slate-200">
-        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">GUEST &amp; STAFF PORTALS</span>
+        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">MY BOOKING &amp; PASS LOOKUP</span>
         <a href="check-booking.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
           <span>My Booking Pass &amp; Lookup</span>
           <span class="text-[#0E8A2D] font-mono font-black">→</span>
-        </a>
-        <a href="/admin/" onclick="return openAdminPortal(event)" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#050E1D] bg-[#050E1D] hover:bg-[#0E2240] text-white font-black transition mt-1 shadow-md">
-          <span>Admin &amp; POS Portal</span>
-          <span class="text-[#9BE600] font-mono font-black">↗</span>
         </a>
       </div>
       
@@ -1003,7 +999,7 @@
             <a href="index.html" class="group flex-shrink-0">
               <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Official Logo" class="h-14 w-14 rounded-2xl object-contain bg-white p-1 shadow-lg border border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
             </a>
-            <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left">
+            <a href="index.html" title="P&amp;F Rally Ground Home" class="group text-left">
               <span class="text-base sm:text-lg font-black text-white group-hover:text-brand-lime transition-colors tracking-tight uppercase block leading-none font-display" data-site-club-name="1">P&amp;F Rally Ground</span>
               <span class="text-[10px] font-mono font-bold text-brand-lime uppercase tracking-widest mt-1 block" data-site-club-subtitle="1">Pickleball Club &bull; Daraga</span>
             </a>
@@ -1051,7 +1047,7 @@
 
         <!-- Col 4 (Span 3 on Desktop): Guest & Staff Portals -->
         <div class="sm:col-span-2 lg:col-span-3 space-y-3">
-          <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Guest &amp; Staff Portals</h4>
+          <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Player Quick Tools</h4>
           <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 text-xs">
             <a href="check-booking.html" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
               My Booking Pass →
@@ -1059,20 +1055,6 @@
             <button type="button" onclick="toggleCartDrawer()" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
               Reservation Cart →
             </button>
-          </div>
-
-          <!-- Dedicated Staff Admin & POS Portal Card Link -->
-          <div class="pt-1">
-            <a href="/admin/" onclick="return openAdminPortal(event)" class="group flex items-center justify-between p-3.5 rounded-2xl bg-brand-card border border-brand-lime/40 hover:border-brand-lime hover:bg-brand-lime/10 transition-all shadow-lg">
-              <div class="flex items-center gap-2.5 min-w-0">
-                <img src="assets/logo.png" alt="Admin Portal" class="w-9 h-9 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
-                <div class="min-w-0">
-                  <span class="text-xs font-black uppercase tracking-wider text-white group-hover:text-brand-lime block leading-none">Admin &amp; POS Portal</span>
-                  <span class="text-[10px] font-mono text-brand-lime/90 block mt-1">Gmail Linked • Staff &amp; POS</span>
-                </div>
-              </div>
-              <span class="text-brand-lime font-mono font-black text-base group-hover:translate-x-0.5 transition-transform flex-shrink-0 ml-2">↗</span>
-            </a>
           </div>
         </div>
 
@@ -1094,9 +1076,8 @@
           <span>•</span>
           <a href="check-booking.html" class="hover:text-brand-lime transition">My Booking</a>
           <span>•</span>
-          <a href="/admin/" onclick="return openAdminPortal(event)" class="text-brand-lime font-bold hover:underline flex items-center gap-1">
-            <span>Admin Portal</span>
-            <span>↗</span>
+          <a href="/admin/" onclick="return openAdminPortal(event)" class="text-slate-500 hover:text-slate-300 text-[10px] font-mono flex items-center gap-1 transition" title="Authorized Staff Only">
+            <span>🔒 Staff</span>
           </a>
         </div>
       </div>

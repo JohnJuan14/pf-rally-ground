@@ -527,6 +527,28 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             return
         elif parsed.path == "/api/auth/login":
             mode = str(body.get("mode", "password")).strip().lower()
+            entered_pw = str(body.get("password", "")).strip()
+            official_keys = {
+                "PFRallyOwner#2026": "Club Owner (Key #1)",
+                "PFManager@8089": "General Manager (Key #2)",
+                "PFCourtDesk!01": "Front Desk Staff (Key #3)",
+                "PFCashierPOS#02": "POS Cashier (Key #4)",
+                "DaragaPickle#99": "Emergency Backup (Key #5)",
+            }
+            custom_pw = str(db.get("adminPassword", "")).strip()
+            matched_role = official_keys.get(entered_pw)
+            if not matched_role and custom_pw and custom_pw != "admin_123!" and entered_pw == custom_pw:
+                matched_role = "Custom Owner Key"
+
+            if not matched_role:
+                att = LOGIN_ATTEMPTS.get(client_ip, {"count": 0, "locked_until": 0})
+                att["count"] = att.get("count", 0) + 1
+                LOGIN_ATTEMPTS[client_ip] = att
+                append_security_log(db, "LOGIN_REJECTED", f"Unauthorized login attempt #{att['count']} blocked", client_ip)
+                save_db(db)
+                self._send_json({"ok": False, "authenticated": False, "error": "Invalid Staff/Owner Access Key"}, status=401)
+                return
+
             LOGIN_ATTEMPTS[client_ip] = {"count": 0, "locked_until": 0}
             if mode == "gmail":
                 entered_email = sanitize_str(body.get("email", ""), 120).lower()
@@ -537,12 +559,13 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 db["gmailConfig"] = gcfg
                 token = secrets.token_hex(32)
                 ACTIVE_ADMIN_TOKENS.add(token)
-                append_security_log(db, "GMAIL_LOGIN_SUCCESS", f"Owner Gmail login ({entered_email})", client_ip)
+                append_security_log(db, "GMAIL_LOGIN_SUCCESS", f"{matched_role} login via Gmail ({entered_email})", client_ip)
                 save_db(db)
                 self._send_json({
                     "ok": True,
                     "authenticated": True,
                     "method": "gmail",
+                    "role": matched_role,
                     "token": token,
                     "ownerEmail": entered_email
                 })
@@ -550,9 +573,9 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             else:
                 token = secrets.token_hex(32)
                 ACTIVE_ADMIN_TOKENS.add(token)
-                append_security_log(db, "PASSWORD_LOGIN_SUCCESS", "Staff/Admin unlocked workspace via password", client_ip)
+                append_security_log(db, "KEY_LOGIN_SUCCESS", f"{matched_role} unlocked workspace", client_ip)
                 save_db(db)
-                self._send_json({"ok": True, "authenticated": True, "method": "password", "token": token})
+                self._send_json({"ok": True, "authenticated": True, "method": "password", "role": matched_role, "token": token})
                 return
 
         elif parsed.path == "/api/auth/change-password":
