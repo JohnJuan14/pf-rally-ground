@@ -963,12 +963,12 @@
                   <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
                     <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
                       <span class="text-[10px] text-slate-400 uppercase font-bold">Account Name</span>
-                      <b class="text-white font-mono text-sm">KA******E L.</b>
+                      <b data-pay-field="gcash-name" class="text-white font-mono text-sm">KA******E L.</b>
                     </div>
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] text-slate-400 uppercase font-bold">GCash Number</span>
                       <div class="flex items-center gap-1.5">
-                        <b id="book-gcash-number" class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
+                        <b id="book-gcash-number" data-pay-field="gcash-num" class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
                         <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black font-mono font-black text-[10px] uppercase transition">Copy</button>
                       </div>
                     </div>
@@ -1002,12 +1002,12 @@
                   <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
                     <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
                       <span class="text-[10px] text-slate-400 uppercase font-bold">Account Name</span>
-                      <b class="text-white font-mono text-sm">KATHERINE LIM</b>
+                      <b data-pay-field="maya-name" class="text-white font-mono text-sm">KATHERINE LIM</b>
                     </div>
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] text-slate-400 uppercase font-bold">Maya Number</span>
                       <div class="flex items-center gap-1.5">
-                        <b class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
+                        <b data-pay-field="maya-num" class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
                         <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black font-mono font-black text-[10px] uppercase transition">Copy</button>
                       </div>
                     </div>
@@ -1041,11 +1041,11 @@
                   <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
                     <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
                       <span class="text-[10px] text-slate-400 uppercase font-bold">Bank &amp; Recipient</span>
-                      <b class="text-white font-mono text-sm">BDO Unibank &bull; Dex</b>
+                      <b data-pay-field="bank-name" class="text-white font-mono text-sm">BDO Unibank &bull; Dex</b>
                     </div>
                     <div class="flex items-center justify-between">
                       <span class="text-[10px] text-slate-400 uppercase font-bold">BDO Account No.</span>
-                      <b class="text-sm font-mono text-brand-lime font-black">••••••••8678</b>
+                      <b data-pay-field="bank-num" class="text-sm font-mono text-brand-lime font-black">••••••••8678</b>
                     </div>
                   </div>
                   <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
@@ -1660,13 +1660,13 @@
           <div class="sm:col-span-7 text-xs space-y-2.5">
             <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-2 font-mono">
               <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
-                <span>Account Name:</span> <b class="text-white text-sm">KA******E L.</b>
+                <span>Account Name:</span> <b data-pay-field="gcash-name" class="text-white text-sm">KA******E L.</b>
               </div>
               <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
                 <span>GCash Number:</span>
                 <span class="flex items-center gap-1.5">
-                  <b class="text-brand-lime font-black text-sm">0999 883 2346</b>
-                  <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black text-[10px] font-sans font-black uppercase transition">Copy</button>
+                  <b data-pay-field="gcash-num" class="text-brand-lime font-black text-sm">0999 883 2346</b>
+                  <button type="button" data-pay-copy="gcash" onclick="copyPaymentAccount('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black text-[10px] font-sans font-black uppercase transition">Copy</button>
                 </span>
               </div>
               <div class="flex justify-between items-center text-slate-400">
@@ -1703,13 +1703,13 @@
           <div class="sm:col-span-7 text-xs space-y-2.5">
             <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-2 font-mono">
               <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
-                <span>Account Name:</span> <b class="text-white text-sm">KATHERINE LIM</b>
+                <span>Account Name:</span> <b data-pay-field="maya-name" class="text-white text-sm">KATHERINE LIM</b>
               </div>
               <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
                 <span>Maya Number:</span>
                 <span class="flex items-center gap-1.5">
-                  <b class="text-brand-lime font-black text-sm">0999 883 2346</b>
-                  <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black text-[10px] font-sans font-black uppercase transition">Copy</button>
+                  <b data-pay-field="gcash-num" class="text-brand-lime font-black text-sm">0999 883 2346</b>
+                  <button type="button" data-pay-copy="gcash" onclick="copyPaymentAccount('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black text-[10px] font-sans font-black uppercase transition">Copy</button>
                 </span>
               </div>
               <div class="flex justify-between items-center text-slate-400">
@@ -1746,11 +1746,11 @@
           <div class="sm:col-span-7 text-xs space-y-2.5">
             <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-2 font-mono">
               <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
-                <span>Bank &amp; Recipient:</span> <b class="text-white text-sm">BDO Unibank &bull; Dex</b>
+                <span>Bank &amp; Recipient:</span> <b data-pay-field="bank-name" class="text-white text-sm">BDO Unibank &bull; Dex</b>
               </div>
               <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
                 <span>BDO Account No:</span>
-                <b class="text-brand-lime font-black text-sm">••••••••8678</b>
+                <b data-pay-field="bank-num" class="text-brand-lime font-black text-sm">••••••••8678</b>
               </div>
               <div class="flex justify-between items-center text-slate-400">
                 <span>Amount to Pay:</span>

@@ -1033,6 +1033,158 @@
           </div>
         </div>
 
+        <!-- ================= STEP 5: EDITABLE 3-CHANNEL PAYMENT QR CODES & ACCOUNTS (GCASH, MAYA, BDO/BANK) ================= -->
+        <div id="se-panel-qr" class="p-5 sm:p-7 rounded-3xl bg-white border-2 border-slate-200 shadow-xl space-y-6 text-slate-900">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+            <div>
+              <span class="text-[10px] font-mono text-emerald-700 uppercase font-black tracking-widest block">STEP 5 • EDITABLE PAYMENT QR CODES &amp; ACCOUNTS</span>
+              <h3 class="text-base sm:text-xl font-black uppercase text-slate-900 tracking-tight">GCash, Maya &amp; BDO / Bank QR Code Editor</h3>
+              <p class="text-xs text-slate-600 mt-0.5">Change any QR code image or edit the account name and number whenever the club changes payment accounts.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="resetChannelQrToDefault('all')" class="py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
+                🔄 Reset All 3 QRs
+              </button>
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+                💾 Save &amp; Sync All 3 QRs →
+              </button>
+            </div>
+          </div>
+
+          <p id="se-qr-save-feedback" class="hidden p-3 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-900 text-xs font-black text-center"></p>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 text-xs">
+            <!-- 1. GCASH QR & ACCOUNT EDITOR CARD -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 border-blue-200 flex flex-col justify-between space-y-4 shadow-sm">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                  <div>
+                    <span class="px-2 py-0.5 rounded bg-blue-600 text-white font-mono font-black text-[10px] uppercase">CHANNEL 1 • GCASH</span>
+                    <h4 class="text-sm font-black uppercase text-slate-900 mt-1">GCash QR &amp; Account</h4>
+                  </div>
+                  <button type="button" onclick="resetChannelQrToDefault('gcash')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-rose-600 text-slate-700 hover:text-white border border-slate-300 text-[10px] font-bold uppercase transition" title="Restore Default GCash QR">Reset</button>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-white border-2 border-blue-400 w-44 h-44 mx-auto flex items-center justify-center shadow-md overflow-hidden">
+                  <img id="se-qr-preview-gcash" src="assets/qr-gcash.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" alt="GCash QR Preview" class="w-full h-full object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                </div>
+
+                <div class="text-center">
+                  <label class="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black uppercase text-[11px] cursor-pointer transition shadow">
+                    <span>📷 Upload New GCash QR Image</span>
+                    <input type="file" accept="image/*" onchange="handleChannelQrUpload('gcash', event)" class="hidden">
+                  </label>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">GCash Account Name</label>
+                  <input type="text" id="se-qr-name-gcash" value="KA******E L." placeholder="e.g. KA******E L." class="w-full bg-white border border-slate-300 focus:border-blue-600 rounded-xl px-3 py-2 text-slate-900 font-black text-xs focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">GCash Mobile Number</label>
+                  <input type="text" id="se-qr-num-gcash" value="0999 883 2346" placeholder="e.g. 0999 883 2346" class="w-full bg-white border border-slate-300 focus:border-blue-600 rounded-xl px-3 py-2 text-slate-900 font-mono font-black text-xs focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-500 font-bold mb-1">QR Image Path / URL</label>
+                  <input type="text" id="se-qr-url-gcash" value="assets/qr-gcash.png?v=20261029v10" oninput="syncQrPreviewFromUrlInput('gcash', this.value)" class="w-full bg-white border border-slate-300 focus:border-blue-600 rounded-xl px-3 py-1.5 text-slate-700 font-mono text-[11px] focus:outline-none">
+                </div>
+              </div>
+
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[11px] tracking-wider transition">
+                ✓ Save GCash QR &amp; Details
+              </button>
+            </div>
+
+            <!-- 2. MAYA QR & ACCOUNT EDITOR CARD -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 border-emerald-200 flex flex-col justify-between space-y-4 shadow-sm">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                  <div>
+                    <span class="px-2 py-0.5 rounded bg-emerald-700 text-white font-mono font-black text-[10px] uppercase">CHANNEL 2 • MAYA</span>
+                    <h4 class="text-sm font-black uppercase text-slate-900 mt-1">Maya QR &amp; Account</h4>
+                  </div>
+                  <button type="button" onclick="resetChannelQrToDefault('maya')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-rose-600 text-slate-700 hover:text-white border border-slate-300 text-[10px] font-bold uppercase transition" title="Restore Default Maya QR">Reset</button>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-white border-2 border-emerald-500 w-44 h-44 mx-auto flex items-center justify-center shadow-md overflow-hidden">
+                  <img id="se-qr-preview-maya" src="assets/qr-maya.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-maya.png';" alt="Maya QR Preview" class="w-full h-full object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                </div>
+
+                <div class="text-center">
+                  <label class="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase text-[11px] cursor-pointer transition shadow">
+                    <span>📷 Upload New Maya QR Image</span>
+                    <input type="file" accept="image/*" onchange="handleChannelQrUpload('maya', event)" class="hidden">
+                  </label>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Maya Account Name</label>
+                  <input type="text" id="se-qr-name-maya" value="KATHERINE LIM" placeholder="e.g. KATHERINE LIM" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-3 py-2 text-slate-900 font-black text-xs focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Maya Mobile Number</label>
+                  <input type="text" id="se-qr-num-maya" value="0999 883 2346" placeholder="e.g. 0999 883 2346" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-3 py-2 text-slate-900 font-mono font-black text-xs focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-500 font-bold mb-1">QR Image Path / URL</label>
+                  <input type="text" id="se-qr-url-maya" value="assets/qr-maya.png?v=20261029v10" oninput="syncQrPreviewFromUrlInput('maya', this.value)" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-3 py-1.5 text-slate-700 font-mono text-[11px] focus:outline-none">
+                </div>
+              </div>
+
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[11px] tracking-wider transition">
+                ✓ Save Maya QR &amp; Details
+              </button>
+            </div>
+
+            <!-- 3. BDO / BANK QR & ACCOUNT EDITOR CARD -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 border-sky-200 flex flex-col justify-between space-y-4 shadow-sm">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                  <div>
+                    <span class="px-2 py-0.5 rounded bg-[#0072CE] text-white font-mono font-black text-[10px] uppercase">CHANNEL 3 • BDO / BANK</span>
+                    <h4 class="text-sm font-black uppercase text-slate-900 mt-1">BDO / Bank QR &amp; Account</h4>
+                  </div>
+                  <button type="button" onclick="resetChannelQrToDefault('bank')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-rose-600 text-slate-700 hover:text-white border border-slate-300 text-[10px] font-bold uppercase transition" title="Restore Default BDO QR">Reset</button>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-white border-2 border-[#0072CE] w-44 h-44 mx-auto flex items-center justify-center shadow-md overflow-hidden">
+                  <img id="se-qr-preview-bank" src="assets/qr-bdo.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-bdo.png';" alt="BDO QR Preview" class="w-full h-full object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                </div>
+
+                <div class="text-center">
+                  <label class="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl bg-[#0072CE] hover:bg-sky-700 text-white font-black uppercase text-[11px] cursor-pointer transition shadow">
+                    <span>📷 Upload New Bank QR Image</span>
+                    <input type="file" accept="image/*" onchange="handleChannelQrUpload('bank', event)" class="hidden">
+                  </label>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Bank &amp; Recipient Name</label>
+                  <input type="text" id="se-qr-name-bank" value="BDO Unibank • Dex" placeholder="e.g. BDO Unibank • Dex" class="w-full bg-white border border-slate-300 focus:border-sky-600 rounded-xl px-3 py-2 text-slate-900 font-black text-xs focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Bank Account Number</label>
+                  <input type="text" id="se-qr-num-bank" value="••••••••8678" placeholder="e.g. ••••••••8678" class="w-full bg-white border border-slate-300 focus:border-sky-600 rounded-xl px-3 py-2 text-slate-900 font-mono font-black text-xs focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-mono uppercase text-slate-500 font-bold mb-1">QR Image Path / URL</label>
+                  <input type="text" id="se-qr-url-bank" value="assets/qr-bdo.png?v=20261029v10" oninput="syncQrPreviewFromUrlInput('bank', this.value)" class="w-full bg-white border border-slate-300 focus:border-sky-600 rounded-xl px-3 py-1.5 text-slate-700 font-mono text-[11px] focus:outline-none">
+                </div>
+              </div>
+
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[11px] tracking-wider transition">
+                ✓ Save Bank QR &amp; Details
+              </button>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       <!-- ================= 1. OVERVIEW TAB ================= -->
@@ -2083,65 +2235,114 @@
             <p id="settings-gmail-feedback" class="hidden text-xs font-bold"></p>
           </div>
 
-                    <!-- Official GCash & Bank QR Configuration Card (Synced with Public Booking) -->
-          <div class="p-5 sm:p-6 rounded-3xl bg-brand-black/70 border border-brand-lime/30 space-y-5 text-xs shadow-xl">
-            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+                                        <!-- Official 3-Channel Payment QR Configuration Studio (GCash, Maya & BDO/Bank — Synced with Public Booking) -->
+          <div class="p-5 sm:p-6 rounded-3xl bg-brand-black/80 border-2 border-brand-lime/40 space-y-5 text-xs shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3.5">
               <div>
-                <span class="font-black text-white uppercase block text-sm tracking-wide">Official Club Payment Accounts &amp; QR Standee</span>
-                <p class="text-[11px] text-slate-300 mt-0.5">This QR code and account details are displayed directly on the public booking calendar.</p>
+                <span class="font-black text-white uppercase block text-sm sm:text-base tracking-wide">Official Club Payment QRs &amp; Accounts (GCash • Maya • BDO / Bank)</span>
+                <p class="text-[11px] text-slate-300 mt-0.5">Upload a new QR image or edit the account name and number for any payment channel. Changes update live on the public website.</p>
               </div>
-              <span class="px-3 py-1 rounded-full bg-brand-lime/20 text-brand-lime font-mono font-bold text-[10px] uppercase tracking-wider border border-brand-lime/40">LIVE SYNC ACTIVE</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="resetChannelQrToDefault('all')" class="py-2 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-400/40 font-black uppercase text-[10px] tracking-wider transition">
+                  🔄 Reset All 3 QRs
+                </button>
+                <button type="button" onclick="saveAllEditablePaymentQrs('settings')" class="py-2.5 px-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition shadow-lg">
+                  💾 Save &amp; Sync All 3 QRs
+                </button>
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-              <!-- Left: Live QR Code Preview & Direct File Upload -->
-              <div class="md:col-span-4 p-4 rounded-2xl bg-brand-card border border-white/10 text-center space-y-3">
-                <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">Active GCash QR Code</span>
-                <div class="p-2.5 rounded-2xl bg-white max-w-[170px] mx-auto shadow-lg">
-                  <img id="admin-qr-preview-img" src="assets/qr-gcash.png?v=20261029v9" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" alt="Active Official GCash QR" class="w-full h-auto rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
-                </div>
-                
-                <div class="space-y-1.5 pt-1">
-                  <label class="block text-[10px] font-bold text-brand-lime uppercase cursor-pointer hover:underline">
-                    <span>Upload New QR Image / Standee</span>
-                    <input type="file" id="admin-qr-file-input" onchange="handleAdminQrFileUpload(event)" accept="image/*" class="hidden">
-                  </label>
-                  <p class="text-[10px] text-slate-400 leading-tight">Upload official GCash standee photo or screenshot from your mobile app.</p>
-                </div>
-              </div>
+            <p id="settings-pay-feedback" class="hidden p-3 rounded-xl bg-brand-lime/20 border border-brand-lime text-brand-lime font-bold text-xs text-center"></p>
 
-              <!-- Right: Account Numbers & Custom URL Override -->
-              <div class="md:col-span-8 space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div>
-                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">GCash Mobile Number *</label>
-                    <input type="tel" id="settings-gcash-num" value="09998832346" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono font-bold text-xs focus:outline-none">
-                    <span class="text-[10px] text-slate-400 block mt-1">Recipient: P&amp;F Rally Ground</span>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+              <!-- 1. GCash QR Card -->
+              <div class="p-4 rounded-2xl bg-brand-card border border-white/15 flex flex-col justify-between space-y-3">
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded bg-blue-600 text-white font-mono font-black text-[10px] uppercase">1. GCash QR</span>
+                    <button type="button" onclick="resetChannelQrToDefault('gcash')" class="px-2 py-1 rounded bg-white/10 hover:bg-rose-600 text-slate-300 hover:text-white text-[10px] font-bold uppercase transition">Reset GCash</button>
                   </div>
+                  <div class="p-2.5 rounded-2xl bg-white w-40 h-40 mx-auto shadow-lg flex items-center justify-center overflow-hidden">
+                    <img id="admin-qr-preview-img" src="assets/qr-gcash.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" alt="Active Official GCash QR" class="w-full h-full object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                  </div>
+                  <label class="block text-center py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-[10px] cursor-pointer transition shadow">
+                    <span>📷 Upload New GCash QR</span>
+                    <input type="file" id="admin-qr-file-input" onchange="handleChannelQrUpload('gcash', event)" accept="image/*" class="hidden">
+                  </label>
                   <div>
                     <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">GCash Account Name</label>
-                    <input type="text" id="settings-gcash-name" value="KA******E L." class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-bold text-xs focus:outline-none">
-                    <span class="text-[10px] text-slate-400 block mt-1">Daraga, Albay</span>
+                    <input type="text" id="settings-gcash-name" value="KA******E L." class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-2 text-white font-bold text-xs focus:outline-none">
                   </div>
                   <div>
-                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">BDO Unibank Account Number</label>
-                    <input type="text" id="settings-bdo-num" value="••••••••8678 (Dex)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">GCash Mobile Number</label>
+                    <input type="tel" id="settings-gcash-num" value="0999 883 2346" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:outline-none">
                   </div>
                   <div>
-                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Maya Official Account</label>
-                    <input type="text" id="settings-bpi-num" value="09998832346 (KATHERINE LIM)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">GCash QR Image URL</label>
+                    <input type="text" id="settings-custom-standee-url" value="assets/qr-gcash.png?v=20261029v10" oninput="syncQrPreviewFromUrlInput('gcash', this.value)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-1.5 text-slate-300 font-mono text-[11px] focus:outline-none">
                   </div>
                 </div>
+                <button type="button" onclick="saveAllEditablePaymentQrs('settings')" class="w-full py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[11px] tracking-wider hover:bg-brand-limeHover transition">Save GCash QR</button>
+              </div>
 
-                <div>
-                  <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Custom QR Image URL / Standee Path</label>
-                  <div class="flex gap-2">
-                    <input type="text" id="settings-custom-standee-url" placeholder="assets/qr-gcash.png or data:image/..." class="flex-1 bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
-                    <button type="button" onclick="saveOfficialPaymentSettings()" class="py-2.5 px-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow whitespace-nowrap">Save &amp; Sync QR</button>
-                    <button type="button" onclick="resetOfficialGcashQr()" class="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold uppercase text-[10px] tracking-wider transition whitespace-nowrap">Restore Official QR</button>
+              <!-- 2. Maya QR Card -->
+              <div class="p-4 rounded-2xl bg-brand-card border border-white/15 flex flex-col justify-between space-y-3">
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded bg-emerald-600 text-white font-mono font-black text-[10px] uppercase">2. Maya QR</span>
+                    <button type="button" onclick="resetChannelQrToDefault('maya')" class="px-2 py-1 rounded bg-white/10 hover:bg-rose-600 text-slate-300 hover:text-white text-[10px] font-bold uppercase transition">Reset Maya</button>
                   </div>
-                  <p id="settings-pay-feedback" class="hidden text-xs font-bold text-brand-lime mt-1.5"></p>
+                  <div class="p-2.5 rounded-2xl bg-white w-40 h-40 mx-auto shadow-lg flex items-center justify-center overflow-hidden">
+                    <img id="admin-qr-preview-maya" src="assets/qr-maya.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-maya.png';" alt="Active Official Maya QR" class="w-full h-full object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                  </div>
+                  <label class="block text-center py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase text-[10px] cursor-pointer transition shadow">
+                    <span>📷 Upload New Maya QR</span>
+                    <input type="file" onchange="handleChannelQrUpload('maya', event)" accept="image/*" class="hidden">
+                  </label>
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Maya Account Name</label>
+                    <input type="text" id="settings-maya-name" value="KATHERINE LIM" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-2 text-white font-bold text-xs focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Maya Mobile Number</label>
+                    <input type="tel" id="settings-bpi-num" value="0999 883 2346" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Maya QR Image URL</label>
+                    <input type="text" id="settings-custom-maya-url" value="assets/qr-maya.png?v=20261029v10" oninput="syncQrPreviewFromUrlInput('maya', this.value)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-1.5 text-slate-300 font-mono text-[11px] focus:outline-none">
+                  </div>
                 </div>
+                <button type="button" onclick="saveAllEditablePaymentQrs('settings')" class="w-full py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[11px] tracking-wider hover:bg-brand-limeHover transition">Save Maya QR</button>
+              </div>
+
+              <!-- 3. BDO / Bank QR Card -->
+              <div class="p-4 rounded-2xl bg-brand-card border border-white/15 flex flex-col justify-between space-y-3">
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded bg-[#0072CE] text-white font-mono font-black text-[10px] uppercase">3. BDO / Bank QR</span>
+                    <button type="button" onclick="resetChannelQrToDefault('bank')" class="px-2 py-1 rounded bg-white/10 hover:bg-rose-600 text-slate-300 hover:text-white text-[10px] font-bold uppercase transition">Reset Bank</button>
+                  </div>
+                  <div class="p-2.5 rounded-2xl bg-white w-40 h-40 mx-auto shadow-lg flex items-center justify-center overflow-hidden">
+                    <img id="admin-qr-preview-bank" src="assets/qr-bdo.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-bdo.png';" alt="Active Official BDO QR" class="w-full h-full object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                  </div>
+                  <label class="block text-center py-2 px-3 rounded-xl bg-[#0072CE] hover:bg-sky-500 text-white font-black uppercase text-[10px] cursor-pointer transition shadow">
+                    <span>📷 Upload New Bank QR</span>
+                    <input type="file" onchange="handleChannelQrUpload('bank', event)" accept="image/*" class="hidden">
+                  </label>
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Bank &amp; Recipient Name</label>
+                    <input type="text" id="settings-bdo-name" value="BDO Unibank • Dex" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-2 text-white font-bold text-xs focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Bank Account Number</label>
+                    <input type="text" id="settings-bdo-num" value="••••••••8678" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Bank QR Image URL</label>
+                    <input type="text" id="settings-custom-bank-url" value="assets/qr-bdo.png?v=20261029v10" oninput="syncQrPreviewFromUrlInput('bank', this.value)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3 py-1.5 text-slate-300 font-mono text-[11px] focus:outline-none">
+                  </div>
+                </div>
+                <button type="button" onclick="saveAllEditablePaymentQrs('settings')" class="w-full py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[11px] tracking-wider hover:bg-brand-limeHover transition">Save Bank QR</button>
               </div>
             </div>
           </div>
@@ -2851,6 +3052,9 @@ function clearFieldError(fieldId) {
           if (typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
           if (data.siteConfig && typeof handleIncomingServerSiteConfig === 'function') {
             handleIncomingServerSiteConfig(data.siteConfig);
+          }
+          if (data.paymentConfig && typeof syncPaymentConfigToAdminInputs === 'function') {
+            syncPaymentConfigToAdminInputs(data.paymentConfig);
           }
           if (typeof renderSiteEditorCustomInventoryPrices === 'function') {
             renderSiteEditorCustomInventoryPrices();
@@ -5340,64 +5544,195 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }, 3000);
     });
       
-    async function handleAdminQrFileUpload(event) {
-      const file = event.target.files && event.target.files[0];
+    
+    
+    // ================= 3-CHANNEL EDITABLE PAYMENT QR STUDIO ENGINE (GCASH, MAYA, BDO/BANK) =================
+    const DEFAULT_PAYMENT_QR_CONFIG = {
+      gcashName: 'KA******E L.',
+      gcashNumber: '0999 883 2346',
+      gcashQrUrl: 'assets/qr-gcash.png?v=20261029v10',
+      standeeUrl: 'assets/qr-gcash.png?v=20261029v10',
+      mayaName: 'KATHERINE LIM',
+      mayaNumber: '0999 883 2346',
+      mayaQrUrl: 'assets/qr-maya.png?v=20261029v10',
+      bdoName: 'BDO Unibank • Dex',
+      bdoNumber: '••••••••8678',
+      bankQrUrl: 'assets/qr-bdo.png?v=20261029v10'
+    };
+
+    function normalizePaymentConfigObj(raw) {
+      const p = Object.assign({}, DEFAULT_PAYMENT_QR_CONFIG, raw || {});
+      if (!p.gcashQrUrl || p.gcashQrUrl === 'assets/qr-gcash.png' || p.gcashQrUrl.includes('qrserver.com')) {
+        p.gcashQrUrl = DEFAULT_PAYMENT_QR_CONFIG.gcashQrUrl;
+      }
+      if (p.standeeUrl && (p.standeeUrl.startsWith('assets/custom-') || p.standeeUrl.startsWith('data:image/'))) {
+        p.gcashQrUrl = p.standeeUrl;
+      } else {
+        p.standeeUrl = p.gcashQrUrl;
+      }
+      if (!p.mayaQrUrl || p.mayaQrUrl === 'assets/qr-maya.png') {
+        p.mayaQrUrl = DEFAULT_PAYMENT_QR_CONFIG.mayaQrUrl;
+      }
+      if (!p.bankQrUrl || p.bankQrUrl === 'assets/qr-bdo.png') {
+        p.bankQrUrl = DEFAULT_PAYMENT_QR_CONFIG.bankQrUrl;
+      }
+      if (p.gcashName === 'P&F Rally Ground') p.gcashName = DEFAULT_PAYMENT_QR_CONFIG.gcashName;
+      if (p.bdoNumber === '004588029143') p.bdoNumber = DEFAULT_PAYMENT_QR_CONFIG.bdoNumber;
+      return p;
+    }
+
+    function syncPaymentConfigToAdminInputs(rawCfg) {
+      const cfg = normalizePaymentConfigObj(rawCfg);
+      const setVal = (id, v) => {
+        const el = document.getElementById(id);
+        if (el && document.activeElement !== el) el.value = v || '';
+      };
+      const setImg = (id, src) => {
+        const el = document.getElementById(id);
+        if (el && src && el.getAttribute('src') !== src) el.src = src;
+      };
+
+      // Site Editor Step 5 (#se-panel-qr)
+      setVal('se-qr-name-gcash', cfg.gcashName);
+      setVal('se-qr-num-gcash', cfg.gcashNumber);
+      setVal('se-qr-url-gcash', cfg.gcashQrUrl);
+      setImg('se-qr-preview-gcash', cfg.gcashQrUrl);
+
+      setVal('se-qr-name-maya', cfg.mayaName);
+      setVal('se-qr-num-maya', cfg.mayaNumber);
+      setVal('se-qr-url-maya', cfg.mayaQrUrl);
+      setImg('se-qr-preview-maya', cfg.mayaQrUrl);
+
+      setVal('se-qr-name-bank', cfg.bdoName);
+      setVal('se-qr-num-bank', cfg.bdoNumber);
+      setVal('se-qr-url-bank', cfg.bankQrUrl);
+      setImg('se-qr-preview-bank', cfg.bankQrUrl);
+
+      // Settings Tab (#tab-settings)
+      setVal('settings-gcash-name', cfg.gcashName);
+      setVal('settings-gcash-num', cfg.gcashNumber);
+      setVal('settings-custom-standee-url', cfg.gcashQrUrl);
+      setImg('admin-qr-preview-img', cfg.gcashQrUrl);
+
+      setVal('settings-maya-name', cfg.mayaName);
+      setVal('settings-bpi-num', cfg.mayaNumber);
+      setVal('settings-custom-maya-url', cfg.mayaQrUrl);
+      setImg('admin-qr-preview-maya', cfg.mayaQrUrl);
+
+      setVal('settings-bdo-name', cfg.bdoName);
+      setVal('settings-bdo-num', cfg.bdoNumber);
+      setVal('settings-custom-bank-url', cfg.bankQrUrl);
+      setImg('admin-qr-preview-bank', cfg.bankQrUrl);
+    }
+
+    function syncQrPreviewFromUrlInput(channel, urlVal) {
+      const v = (urlVal || '').trim();
+      if (!v) return;
+      if (channel === 'gcash') {
+        const p1 = document.getElementById('se-qr-preview-gcash');
+        const p2 = document.getElementById('admin-qr-preview-img');
+        const u1 = document.getElementById('se-qr-url-gcash');
+        const u2 = document.getElementById('settings-custom-standee-url');
+        if (p1) p1.src = v;
+        if (p2) p2.src = v;
+        if (u1 && document.activeElement !== u1) u1.value = v;
+        if (u2 && document.activeElement !== u2) u2.value = v;
+      } else if (channel === 'maya') {
+        const p1 = document.getElementById('se-qr-preview-maya');
+        const p2 = document.getElementById('admin-qr-preview-maya');
+        const u1 = document.getElementById('se-qr-url-maya');
+        const u2 = document.getElementById('settings-custom-maya-url');
+        if (p1) p1.src = v;
+        if (p2) p2.src = v;
+        if (u1 && document.activeElement !== u1) u1.value = v;
+        if (u2 && document.activeElement !== u2) u2.value = v;
+      } else if (channel === 'bank') {
+        const p1 = document.getElementById('se-qr-preview-bank');
+        const p2 = document.getElementById('admin-qr-preview-bank');
+        const u1 = document.getElementById('se-qr-url-bank');
+        const u2 = document.getElementById('settings-custom-bank-url');
+        if (p1) p1.src = v;
+        if (p2) p2.src = v;
+        if (u1 && document.activeElement !== u1) u1.value = v;
+        if (u2 && document.activeElement !== u2) u2.value = v;
+      }
+    }
+
+    async function handleChannelQrUpload(channel, event) {
+      const file = event && event.target && event.target.files && event.target.files[0];
       if (!file) return;
+      const ch = String(channel || 'gcash').toLowerCase();
+      const slotMap = { gcash: 'qrGcash', maya: 'qrMaya', bank: 'qrBank' };
+      const slotName = slotMap[ch] || 'qrGcash';
 
       const reader = new FileReader();
       reader.onload = async function(e) {
         let finalUrl = e.target.result;
         if (typeof uploadAssetToServer === 'function') {
           try {
-            finalUrl = await uploadAssetToServer('qrGcash', finalUrl);
+            finalUrl = await uploadAssetToServer(slotName, finalUrl);
           } catch (err) {}
         }
-        const preview = document.getElementById('admin-qr-preview-img');
-        if (preview) preview.src = finalUrl;
-
-        const urlInput = document.getElementById('settings-custom-standee-url');
-        if (urlInput) urlInput.value = finalUrl;
-
-        await saveOfficialPaymentSettings();
+        syncQrPreviewFromUrlInput(ch, finalUrl);
+        if (ch === 'gcash') {
+          const u1 = document.getElementById('se-qr-url-gcash');
+          const u2 = document.getElementById('settings-custom-standee-url');
+          if (u1) u1.value = finalUrl;
+          if (u2) u2.value = finalUrl;
+        } else if (ch === 'maya') {
+          const u1 = document.getElementById('se-qr-url-maya');
+          const u2 = document.getElementById('settings-custom-maya-url');
+          if (u1) u1.value = finalUrl;
+          if (u2) u2.value = finalUrl;
+        } else if (ch === 'bank') {
+          const u1 = document.getElementById('se-qr-url-bank');
+          const u2 = document.getElementById('settings-custom-bank-url');
+          if (u1) u1.value = finalUrl;
+          if (u2) u2.value = finalUrl;
+        }
+        await saveAllEditablePaymentQrs('se');
       };
       reader.readAsDataURL(file);
     }
 
-    function resetOfficialGcashQr() {
-      openTypeResetConfirmModal(
-        'Restore Default Official GCash QR',
-        'This will reset your custom QR image back to the official club GCash QR code (KA******E L. • 0999 883 2346).',
-        async () => {
-          const defaultUrl = 'assets/qr-gcash.png?v=20261029v9';
-          localStorage.removeItem('pf_custom_gcash_standee_url');
-          const urlInput = document.getElementById('settings-custom-standee-url');
-          if (urlInput) urlInput.value = defaultUrl;
-          const preview = document.getElementById('admin-qr-preview-img');
-          if (preview) preview.src = defaultUrl;
-          await saveOfficialPaymentSettings();
-        }
-      );
+    async function handleAdminQrFileUpload(event) {
+      return handleChannelQrUpload('gcash', event);
     }
 
-    async function saveOfficialPaymentSettings() {
-      const gcash = (document.getElementById('settings-gcash-num')?.value || '09998832346').trim();
-      const gcashName = (document.getElementById('settings-gcash-name')?.value || 'KA******E L.').trim();
-      const bdo = (document.getElementById('settings-bdo-num')?.value || '••••••••8678 (Dex)').trim();
-      const bpi = (document.getElementById('settings-bpi-num')?.value || '09998832346 (KATHERINE LIM)').trim();
-      let standee = (document.getElementById('settings-custom-standee-url')?.value || '').trim() || 'assets/qr-gcash.png?v=20261029v9';
-      if (standee.includes('qrserver.com') || standee === 'assets/qr-gcash.png') {
-        standee = 'assets/qr-gcash.png?v=20261029v9';
-      }
-      const fb = document.getElementById('settings-pay-feedback');
+    async function saveAllEditablePaymentQrs(source = 'se') {
+      const pick = (seId, setId, defVal) => {
+        const seEl = document.getElementById(seId);
+        const setEl = document.getElementById(setId);
+        if (source === 'settings' && setEl && setEl.value.trim()) return setEl.value.trim();
+        if (seEl && seEl.value.trim()) return seEl.value.trim();
+        if (setEl && setEl.value.trim()) return setEl.value.trim();
+        return defVal;
+      };
 
-      localStorage.setItem('pf_gcash_number', gcash);
-      localStorage.setItem('pf_bdo_number', bdo);
-      localStorage.setItem('pf_bpi_number', bpi);
-      if (standee.startsWith('assets/custom-') || standee.startsWith('data:image/')) {
-        localStorage.setItem('pf_custom_gcash_standee_url', standee);
-      } else {
-        localStorage.removeItem('pf_custom_gcash_standee_url');
-      }
+      const payload = {
+        gcashName: pick('se-qr-name-gcash', 'settings-gcash-name', DEFAULT_PAYMENT_QR_CONFIG.gcashName),
+        gcashNumber: pick('se-qr-num-gcash', 'settings-gcash-num', DEFAULT_PAYMENT_QR_CONFIG.gcashNumber),
+        gcashQrUrl: pick('se-qr-url-gcash', 'settings-custom-standee-url', DEFAULT_PAYMENT_QR_CONFIG.gcashQrUrl),
+        mayaName: pick('se-qr-name-maya', 'settings-maya-name', DEFAULT_PAYMENT_QR_CONFIG.mayaName),
+        mayaNumber: pick('se-qr-num-maya', 'settings-bpi-num', DEFAULT_PAYMENT_QR_CONFIG.mayaNumber),
+        mayaQrUrl: pick('se-qr-url-maya', 'settings-custom-maya-url', DEFAULT_PAYMENT_QR_CONFIG.mayaQrUrl),
+        bdoName: pick('se-qr-name-bank', 'settings-bdo-name', DEFAULT_PAYMENT_QR_CONFIG.bdoName),
+        bdoNumber: pick('se-qr-num-bank', 'settings-bdo-num', DEFAULT_PAYMENT_QR_CONFIG.bdoNumber),
+        bankQrUrl: pick('se-qr-url-bank', 'settings-custom-bank-url', DEFAULT_PAYMENT_QR_CONFIG.bankQrUrl)
+      };
+      payload.standeeUrl = payload.gcashQrUrl;
+      payload.bpiNumber = payload.mayaNumber;
+
+      syncPaymentConfigToAdminInputs(payload);
+
+      try {
+        localStorage.setItem('pf_payment_config', JSON.stringify(payload));
+        if (payload.gcashQrUrl.startsWith('assets/custom-') || payload.gcashQrUrl.startsWith('data:image/')) {
+          localStorage.setItem('pf_custom_gcash_standee_url', payload.gcashQrUrl);
+        } else {
+          localStorage.removeItem('pf_custom_gcash_standee_url');
+        }
+      } catch (e) {}
 
       const endpoints = ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'];
       for (const ep of endpoints) {
@@ -5405,38 +5740,100 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           const res = await fetch(ep, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              gcashNumber: gcash,
-              gcashName: gcashName,
-              bdoNumber: bdo,
-              bpiNumber: bpi,
-              standeeUrl: standee
-            })
+            body: JSON.stringify(payload)
           });
           if (res.ok) break;
         } catch (e) {}
       }
 
-      const preview = document.getElementById('admin-qr-preview-img');
-      if (preview && standee) preview.src = standee;
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('pf_live_sync');
+          bc.postMessage({ paymentConfig: payload });
+        }
+      } catch (e) {}
 
-      if (fb) {
-        fb.classList.remove('hidden');
-        fb.textContent = '✅ Official GCash QR & payment details updated and synced across all booking pages!';
-        setTimeout(() => fb.classList.add('hidden'), 4000);
-      }
+      const fb1 = document.getElementById('se-qr-save-feedback');
+      const fb2 = document.getElementById('settings-pay-feedback');
+      [fb1, fb2].forEach(fb => {
+        if (fb) {
+          fb.classList.remove('hidden');
+          fb.textContent = '✅ Saved! GCash, Maya & BDO/Bank QR codes and account details are now live across all booking pages.';
+          setTimeout(() => fb.classList.add('hidden'), 4500);
+        }
+      });
+    }
+
+    async function saveOfficialPaymentSettings() {
+      return saveAllEditablePaymentQrs('settings');
+    }
+
+    function resetChannelQrToDefault(channel = 'all') {
+      const ch = String(channel || 'all').toLowerCase();
+      const labelMap = {
+        gcash: 'Restore Default GCash QR & Account',
+        maya: 'Restore Default Maya QR & Account',
+        bank: 'Restore Default BDO / Bank QR & Account',
+        all: 'Restore All 3 Default Payment QRs (GCash, Maya & Bank)'
+      };
+      const descMap = {
+        gcash: 'This will reset your GCash QR image and account details back to the official default (KA******E L. • 0999 883 2346). Type RESET below to confirm.',
+        maya: 'This will reset your Maya QR image and account details back to the official default (KATHERINE LIM • 0999 883 2346). Type RESET below to confirm.',
+        bank: 'This will reset your BDO / Bank QR image and account details back to the official default (BDO Unibank • Dex • ••••••••8678). Type RESET below to confirm.',
+        all: 'This will reset all 3 payment channels (GCash, Maya, and BDO / Bank) back to their official default QR codes and account numbers. Type RESET below to confirm.'
+      };
+      openTypeResetConfirmModal(
+        labelMap[ch] || labelMap.all,
+        descMap[ch] || descMap.all,
+        async () => {
+          const endpoints = ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'];
+          let updatedCfg = null;
+          for (const ep of endpoints) {
+            try {
+              const res = await fetch(ep, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'reset', channel: ch })
+              });
+              if (res.ok) {
+                const d = await res.json();
+                if (d && d.paymentConfig) updatedCfg = d.paymentConfig;
+                break;
+              }
+            } catch (e) {}
+          }
+          if (!updatedCfg) {
+            updatedCfg = Object.assign({}, DEFAULT_PAYMENT_QR_CONFIG);
+          }
+          localStorage.removeItem('pf_custom_gcash_standee_url');
+          localStorage.setItem('pf_payment_config', JSON.stringify(updatedCfg));
+          syncPaymentConfigToAdminInputs(updatedCfg);
+          const fb1 = document.getElementById('se-qr-save-feedback');
+          const fb2 = document.getElementById('settings-pay-feedback');
+          [fb1, fb2].forEach(fb => {
+            if (fb) {
+              fb.classList.remove('hidden');
+              fb.textContent = '✅ Restored official default QR code settings!';
+              setTimeout(() => fb.classList.add('hidden'), 4000);
+            }
+          });
+        }
+      );
+    }
+
+    function resetOfficialGcashQr() {
+      return resetChannelQrToDefault('gcash');
     }
 
     function loadAdminQrSettings() {
-      let standee = localStorage.getItem('pf_custom_gcash_standee_url') || 'assets/qr-gcash.png?v=20261029v9';
-      if (standee.includes('qrserver.com') || standee === 'assets/qr-gcash.png') {
-        standee = 'assets/qr-gcash.png?v=20261029v9';
-        localStorage.removeItem('pf_custom_gcash_standee_url');
-      }
-      const preview = document.getElementById('admin-qr-preview-img');
-      if (preview) preview.src = standee;
-      const urlInput = document.getElementById('settings-custom-standee-url');
-      if (urlInput) urlInput.value = standee;
+      try {
+        const saved = JSON.parse(localStorage.getItem('pf_payment_config') || 'null');
+        if (saved && typeof saved === 'object') {
+          syncPaymentConfigToAdminInputs(saved);
+          return;
+        }
+      } catch (e) {}
+      syncPaymentConfigToAdminInputs(DEFAULT_PAYMENT_QR_CONFIG);
     }
 
     function saveOfficialPaymentSettings_old() {

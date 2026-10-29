@@ -249,19 +249,15 @@ async function syncStateFromServer() {
           }
           if (data.paymentConfig && typeof data.paymentConfig === 'object') {
             sharedServerState.paymentConfig = data.paymentConfig;
-            const st = String(data.paymentConfig.standeeUrl || '').trim();
+            try { localStorage.setItem('pf_payment_config', JSON.stringify(data.paymentConfig)); } catch (e) {}
+            const st = String(data.paymentConfig.gcashQrUrl || data.paymentConfig.standeeUrl || '').trim();
             if (st && (st.startsWith('assets/custom-') || st.startsWith('data:image/'))) {
               localStorage.setItem('pf_custom_gcash_standee_url', st);
             } else {
               localStorage.removeItem('pf_custom_gcash_standee_url');
             }
-            const q1 = document.getElementById('locked-qr-img');
-            if (q1 && (!q1.getAttribute('data-qr-mode') || q1.getAttribute('data-qr-mode') === 'qr')) {
-              q1.src = pfGetOfficialQrUrl('gcash', 'qr');
-            }
-            const q2 = document.getElementById('book-gcash-qr-img');
-            if (q2 && (!q2.getAttribute('data-qr-mode') || q2.getAttribute('data-qr-mode') === 'qr')) {
-              q2.src = pfGetOfficialQrUrl('gcash', 'qr');
+            if (typeof applyPaymentConfigToPublicDom === 'function') {
+              applyPaymentConfigToPublicDom(data.paymentConfig);
             }
           }
           if (typeof renderPublicAnnouncementBoard === 'function') {
@@ -1112,28 +1108,113 @@ function buildEmvcoPayload(channel, amount) {
   } catch (e) {}
 })();
 
+function pfGetPaymentConfig() {
+  const defaults = {
+    gcashName: 'KA******E L.',
+    gcashNumber: '0999 883 2346',
+    gcashQrUrl: 'assets/qr-gcash.png?v=20261029v10',
+    standeeUrl: 'assets/qr-gcash.png?v=20261029v10',
+    mayaName: 'KATHERINE LIM',
+    mayaNumber: '0999 883 2346',
+    mayaQrUrl: 'assets/qr-maya.png?v=20261029v10',
+    bdoName: 'BDO Unibank • Dex',
+    bdoNumber: '••••••••8678',
+    bankQrUrl: 'assets/qr-bdo.png?v=20261029v10'
+  };
+  let localCfg = {};
+  try {
+    localCfg = JSON.parse(localStorage.getItem('pf_payment_config') || '{}') || {};
+  } catch (e) {}
+  const srvCfg = (window.sharedServerState && window.sharedServerState.paymentConfig && typeof window.sharedServerState.paymentConfig === 'object')
+    ? window.sharedServerState.paymentConfig
+    : {};
+  const merged = Object.assign({}, defaults, localCfg, srvCfg);
+  if (merged.gcashName === 'P&F Rally Ground') merged.gcashName = defaults.gcashName;
+  if (merged.bdoNumber === '004588029143') merged.bdoNumber = defaults.bdoNumber;
+  if (!merged.gcashQrUrl || merged.gcashQrUrl === 'assets/qr-gcash.png' || merged.gcashQrUrl.includes('qrserver.com')) {
+    merged.gcashQrUrl = defaults.gcashQrUrl;
+  }
+  if (!merged.mayaQrUrl || merged.mayaQrUrl === 'assets/qr-maya.png') {
+    merged.mayaQrUrl = defaults.mayaQrUrl;
+  }
+  if (!merged.bankQrUrl || merged.bankQrUrl === 'assets/qr-bdo.png') {
+    merged.bankQrUrl = defaults.bankQrUrl;
+  }
+  return merged;
+}
+
 function pfGetOfficialQrUrl(channel = 'gcash', viewMode = 'qr') {
   const ch = String(channel || 'gcash').toLowerCase();
+  const cfg = pfGetPaymentConfig();
+
   if (ch === 'bank' || ch === 'bdo') {
-    return viewMode === 'standee' ? 'assets/qr-bdo.jpg?v=20261029v9' : 'assets/qr-bdo.png?v=20261029v9';
+    const customBank = String(cfg.bankQrUrl || '').trim();
+    if (customBank && !customBank.includes('assets/qr-bdo.png')) {
+      return customBank;
+    }
+    return viewMode === 'standee' ? 'assets/qr-bdo.jpg?v=20261029v10' : (customBank || 'assets/qr-bdo.png?v=20261029v10');
   }
   if (ch === 'maya') {
-    return viewMode === 'standee' ? 'assets/qr-maya.jpg?v=20261029v9' : 'assets/qr-maya.png?v=20261029v9';
+    const customMaya = String(cfg.mayaQrUrl || '').trim();
+    if (customMaya && !customMaya.includes('assets/qr-maya.png')) {
+      return customMaya;
+    }
+    return viewMode === 'standee' ? 'assets/qr-maya.jpg?v=20261029v10' : (customMaya || 'assets/qr-maya.png?v=20261029v10');
+  }
+  const customGcash = String(cfg.gcashQrUrl || cfg.standeeUrl || localStorage.getItem('pf_custom_gcash_standee_url') || '').trim();
+  if (customGcash && !customGcash.includes('assets/qr-gcash.png') && !customGcash.includes('qrserver.com')) {
+    return customGcash;
   }
   if (viewMode === 'standee') {
-    return 'assets/qr-gcash.jpg?v=20261029v9';
+    return 'assets/qr-gcash.jpg?v=20261029v10';
   }
-  try {
-    const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
-    if (customStandee && (customStandee.startsWith('assets/custom-') || customStandee.startsWith('data:image/'))) {
-      return customStandee;
+  return customGcash || 'assets/qr-gcash.png?v=20261029v10';
+}
+
+function applyPaymentConfigToPublicDom(incomingCfg) {
+  if (incomingCfg && typeof incomingCfg === 'object') {
+    try {
+      if (window.sharedServerState) window.sharedServerState.paymentConfig = incomingCfg;
+      localStorage.setItem('pf_payment_config', JSON.stringify(incomingCfg));
+    } catch (e) {}
+  }
+  const cfg = pfGetPaymentConfig();
+
+  // 1. Update inline QR images if currently in 'qr' mode
+  const imgPairs = [
+    ['locked-qr-img', 'gcash'],
+    ['book-gcash-qr-img', 'gcash'],
+    ['locked-maya-qr-img', 'maya'],
+    ['book-maya-qr-img', 'maya'],
+    ['locked-bank-qr-img', 'bank'],
+    ['book-bank-qr-img', 'bank']
+  ];
+  imgPairs.forEach(([id, ch]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const mode = el.getAttribute('data-qr-mode') || 'qr';
+      const targetSrc = pfGetOfficialQrUrl(ch, mode);
+      if (targetSrc && el.getAttribute('src') !== targetSrc) {
+        el.src = targetSrc;
+      }
     }
-    const srvStandee = window.sharedServerState && window.sharedServerState.paymentConfig && window.sharedServerState.paymentConfig.standeeUrl;
-    if (srvStandee && (srvStandee.startsWith('assets/custom-') || srvStandee.startsWith('data:image/'))) {
-      return srvStandee;
-    }
-  } catch (e) {}
-  return 'assets/qr-gcash.png?v=20261029v9';
+  });
+
+  // 2. Update Account Names & Numbers across all payment panels
+  document.querySelectorAll('[data-pay-field="gcash-name"]').forEach(el => { el.textContent = cfg.gcashName; });
+  document.querySelectorAll('[data-pay-field="gcash-num"]').forEach(el => { el.textContent = cfg.gcashNumber; });
+  document.querySelectorAll('[data-pay-field="maya-name"]').forEach(el => { el.textContent = cfg.mayaName; });
+  document.querySelectorAll('[data-pay-field="maya-num"]').forEach(el => { el.textContent = cfg.mayaNumber; });
+  document.querySelectorAll('[data-pay-field="bank-name"]').forEach(el => { el.textContent = cfg.bdoName; });
+  document.querySelectorAll('[data-pay-field="bank-num"]').forEach(el => { el.textContent = cfg.bdoNumber; });
+
+  const cleanDigits = (str) => String(str || '').replace(/\s+/g, '');
+  document.querySelectorAll('[data-pay-copy="gcash"]').forEach(btn => {
+    btn.setAttribute('onclick', `copyPaymentAccount('${cleanDigits(cfg.gcashNumber)}', this)`);
+  });
+  document.querySelectorAll('[data-pay-copy="maya"]').forEach(btn => {
+    btn.setAttribute('onclick', `copyPaymentAccount('${cleanDigits(cfg.mayaNumber)}', this)`);
+  });
 }
 
 function pfToggleQrCardView(channel = 'gcash', imgId = 'locked-qr-img', btnEl = null) {
@@ -1159,32 +1240,34 @@ function pfToggleQrCardView(channel = 'gcash', imgId = 'locked-qr-img', btnEl = 
 
 function pfOpenQrStandeeLightbox(channel = 'gcash') {
   const ch = String(channel || 'gcash').toLowerCase();
+  const cfg = pfGetPaymentConfig();
+  const cleanDigits = (s) => String(s || '').replace(/[^0-9]/g, '');
   const meta = {
     gcash: {
       badge: 'OFFICIAL GCASH INSTAPAY QR PH',
       title: 'GCash QR Payment',
-      merchant: 'KA******E L.',
+      merchant: cfg.gcashName || 'KA******E L.',
       numberLabel: 'GCash Mobile No:',
-      numberDisplay: '0999 883 2346',
-      numberCopy: '09998832346',
-      appHint: 'Open your <b>GCash App &rarr; Tap QR &rarr; Upload QR</b> and select the saved image, or scan directly from another phone.'
+      numberDisplay: cfg.gcashNumber || '0999 883 2346',
+      numberCopy: cleanDigits(cfg.gcashNumber) || '09998832346',
+      appHint: `Open your <b>GCash App &rarr; Tap QR &rarr; Upload QR</b> and select the saved image, or send directly to <b>${pfEscapeHtml(cfg.gcashNumber || '0999 883 2346')}</b>.`
     },
     maya: {
       badge: 'OFFICIAL MAYA QR PH',
       title: 'Maya QR Payment',
-      merchant: 'KATHERINE LIM',
+      merchant: cfg.mayaName || 'KATHERINE LIM',
       numberLabel: 'Maya Mobile No:',
-      numberDisplay: '0999 883 2346',
-      numberCopy: '09998832346',
-      appHint: 'Open your <b>Maya App &rarr; Scan QR &rarr; Upload QR from Gallery</b>, or send money directly to <b>0999 883 2346</b>.'
+      numberDisplay: cfg.mayaNumber || '0999 883 2346',
+      numberCopy: cleanDigits(cfg.mayaNumber) || '09998832346',
+      appHint: `Open your <b>Maya App &rarr; Scan QR &rarr; Upload QR from Gallery</b>, or send money directly to <b>${pfEscapeHtml(cfg.mayaNumber || '0999 883 2346')}</b>.`
     },
     bank: {
-      badge: 'OFFICIAL BDO UNIBANK INSTAPAY QR',
+      badge: 'OFFICIAL BDO / BANK INSTAPAY QR',
       title: 'BDO / Bank InstaPay QR',
-      merchant: 'Dex',
-      numberLabel: 'BDO Account:',
-      numberDisplay: '••••••••8678',
-      numberCopy: '',
+      merchant: cfg.bdoName || 'BDO Unibank • Dex',
+      numberLabel: 'Bank Account:',
+      numberDisplay: cfg.bdoNumber || '••••••••8678',
+      numberCopy: cleanDigits(cfg.bdoNumber).length >= 8 ? cleanDigits(cfg.bdoNumber) : '',
       appHint: 'Open <b>BDO Online / BDO Pay</b> or any Philippine banking app (BPI, UnionBank, Metrobank, GCash, Maya) &rarr; <b>Scan / Upload QR</b>.'
     }
   };
@@ -1316,7 +1399,9 @@ function pfDownloadOfficialQr(channel = 'gcash', format = 'standee') {
   a.click();
   document.body.removeChild(a);
 }
+window.pfGetPaymentConfig = pfGetPaymentConfig;
 window.pfGetOfficialQrUrl = pfGetOfficialQrUrl;
+window.applyPaymentConfigToPublicDom = applyPaymentConfigToPublicDom;
 window.pfToggleQrCardView = pfToggleQrCardView;
 window.pfOpenQrStandeeLightbox = pfOpenQrStandeeLightbox;
 window.pfSwitchLightboxQrTab = pfSwitchLightboxQrTab;
@@ -1544,6 +1629,7 @@ function startCarouselTimer() {
 
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof applySiteConfig === 'function') applySiteConfig();
+  if (typeof applyPaymentConfigToPublicDom === 'function') applyPaymentConfigToPublicDom();
   initDrawerSlots();
   renderCartUI();
   syncStateFromServer();
@@ -1704,6 +1790,9 @@ try {
       if (ev.data && Array.isArray(ev.data.announcements)) {
         if (sharedServerState) sharedServerState.announcements = ev.data.announcements;
         renderPublicAnnouncementBoard();
+      }
+      if (ev.data && ev.data.paymentConfig && typeof applyPaymentConfigToPublicDom === 'function') {
+        applyPaymentConfigToPublicDom(ev.data.paymentConfig);
       }
       if (ev.data && ev.data.siteConfig) {
         if (sharedServerState) sharedServerState.siteConfig = ev.data.siteConfig;

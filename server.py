@@ -44,11 +44,18 @@ DEFAULT_DB = {
         "sendCustomerReceipt": True
     },
     "paymentConfig": {
-        "gcashNumber": "09998832346",
-        "gcashName": "P&F Rally Ground",
-        "bdoNumber": "004588029143",
-        "bpiNumber": "4891003274",
-        "standeeUrl": "assets/qr-gcash.png"
+        "gcashName": "KA******E L.",
+        "gcashNumber": "0999 883 2346",
+        "gcashQrUrl": "assets/qr-gcash.png?v=20261029v10",
+        "standeeUrl": "assets/qr-gcash.png?v=20261029v10",
+        "mayaName": "KATHERINE LIM",
+        "mayaNumber": "0999 883 2346",
+        "mayaQrUrl": "assets/qr-maya.png?v=20261029v10",
+        "bdoName": "BDO Unibank • Dex",
+        "bdoNumber": "••••••••8678",
+        "bankQrUrl": "assets/qr-bdo.png?v=20261029v10",
+        "bpiNumber": "0999 883 2346",
+        "updatedAt": 0
     },
     "siteConfig": {
         "clubName": "P&F Rally Ground",
@@ -148,6 +155,12 @@ def load_db():
                         data[k] = []
                 if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
                     data["gmailConfig"] = dict(DEFAULT_DB["gmailConfig"])
+                if "paymentConfig" not in data or not isinstance(data["paymentConfig"], dict):
+                    data["paymentConfig"] = dict(DEFAULT_DB["paymentConfig"])
+                else:
+                    merged_pc = dict(DEFAULT_DB["paymentConfig"])
+                    merged_pc.update(data["paymentConfig"])
+                    data["paymentConfig"] = merged_pc
                 if "siteConfig" not in data or not isinstance(data["siteConfig"], dict):
                     data["siteConfig"] = dict(DEFAULT_DB["siteConfig"])
                 else:
@@ -360,15 +373,40 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         elif parsed.path == "/api/payment-config":
-            db = load_db()
-            cfg = db.get("paymentConfig") or {
-                "gcashNumber": "09998832346",
-                "gcashName": "P&F Rally Ground",
-                "bdoNumber": "004588029143",
-                "bpiNumber": "4891003274",
-                "standeeUrl": "assets/qr-gcash.png"
-            }
-            self._send_json(cfg)
+            def_pc = dict(DEFAULT_DB.get("paymentConfig") or {})
+            cfg = dict(def_pc)
+            if isinstance(db.get("paymentConfig"), dict):
+                cfg.update(db["paymentConfig"])
+            if body.get("action") == "reset":
+                ch = str(body.get("channel") or "all").lower()
+                if ch == "gcash":
+                    for k in ["gcashName", "gcashNumber", "gcashQrUrl", "standeeUrl"]:
+                        cfg[k] = def_pc.get(k, "")
+                elif ch == "maya":
+                    for k in ["mayaName", "mayaNumber", "mayaQrUrl"]:
+                        cfg[k] = def_pc.get(k, "")
+                elif ch in ("bank", "bdo"):
+                    for k in ["bdoName", "bdoNumber", "bankQrUrl"]:
+                        cfg[k] = def_pc.get(k, "")
+                else:
+                    cfg = dict(def_pc)
+            else:
+                for k in [
+                    "gcashNumber", "gcashName", "gcashQrUrl", "standeeUrl",
+                    "mayaNumber", "mayaName", "mayaQrUrl",
+                    "bdoNumber", "bdoName", "bankQrUrl",
+                    "bpiNumber"
+                ]:
+                    if k in body and body[k] is not None:
+                        cfg[k] = str(body[k]).strip()
+                if "gcashQrUrl" in body and body["gcashQrUrl"]:
+                    cfg["standeeUrl"] = str(body["gcashQrUrl"]).strip()
+                elif "standeeUrl" in body and body["standeeUrl"]:
+                    cfg["gcashQrUrl"] = str(body["standeeUrl"]).strip()
+            cfg["updatedAt"] = int(time.time() * 1000)
+            db["paymentConfig"] = cfg
+            save_db(db)
+            self._send_json({"ok": True, "paymentConfig": cfg, "state": db})
             return
         elif parsed.path.startswith("/api/booking/"):
             ref = parsed.path.split("/api/booking/")[1].strip().upper()
@@ -1046,13 +1084,40 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         elif parsed.path == "/api/payment-config":
-            cfg = db.get("paymentConfig") or {}
-            for k in ["gcashNumber", "gcashName", "bdoNumber", "bpiNumber", "standeeUrl"]:
-                if k in body:
-                    cfg[k] = body[k]
+            def_pc = dict(DEFAULT_DB.get("paymentConfig") or {})
+            cfg = dict(def_pc)
+            if isinstance(db.get("paymentConfig"), dict):
+                cfg.update(db["paymentConfig"])
+            if body.get("action") == "reset":
+                ch = str(body.get("channel") or "all").lower()
+                if ch == "gcash":
+                    for k in ["gcashName", "gcashNumber", "gcashQrUrl", "standeeUrl"]:
+                        cfg[k] = def_pc.get(k, "")
+                elif ch == "maya":
+                    for k in ["mayaName", "mayaNumber", "mayaQrUrl"]:
+                        cfg[k] = def_pc.get(k, "")
+                elif ch in ("bank", "bdo"):
+                    for k in ["bdoName", "bdoNumber", "bankQrUrl"]:
+                        cfg[k] = def_pc.get(k, "")
+                else:
+                    cfg = dict(def_pc)
+            else:
+                for k in [
+                    "gcashNumber", "gcashName", "gcashQrUrl", "standeeUrl",
+                    "mayaNumber", "mayaName", "mayaQrUrl",
+                    "bdoNumber", "bdoName", "bankQrUrl",
+                    "bpiNumber"
+                ]:
+                    if k in body and body[k] is not None:
+                        cfg[k] = str(body[k]).strip()
+                if "gcashQrUrl" in body and body["gcashQrUrl"]:
+                    cfg["standeeUrl"] = str(body["gcashQrUrl"]).strip()
+                elif "standeeUrl" in body and body["standeeUrl"]:
+                    cfg["gcashQrUrl"] = str(body["standeeUrl"]).strip()
+            cfg["updatedAt"] = int(time.time() * 1000)
             db["paymentConfig"] = cfg
             save_db(db)
-            self._send_json({"ok": True, "paymentConfig": cfg})
+            self._send_json({"ok": True, "paymentConfig": cfg, "state": db})
             return
         elif parsed.path == "/api/reset":
             keep_pw = db.get("adminPassword", "admin_123!")
