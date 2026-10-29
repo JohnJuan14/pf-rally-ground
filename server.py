@@ -48,6 +48,43 @@ DEFAULT_DB = {
         "bdoNumber": "004588029143",
         "bpiNumber": "4891003274",
         "standeeUrl": "assets/qr-gcash.png"
+    },
+    "siteConfig": {
+        "clubName": "P&F Rally Ground",
+        "clubSubtitle": "Pickleball Club • Daraga, Albay",
+        "heroTagline": "PHILIPPINES • 4 PRO PICKLEBALL COURTS",
+        "heroTitleLine1": "PLAY.",
+        "heroTitleLine2": "COMPETE.",
+        "heroTitleAccent": "CONNECT.",
+        "heroSubtitle": "Your home court in Daraga, Albay for premier rallies, tournament-grade cushion surfaces, pro equipment rentals, and verified online booking.",
+        "heroPrimaryBtn": "Book Your Court",
+        "heroSecondaryBtn": "View Live Schedule",
+        "heroSlide1": "assets/hero-slide-1.jpg",
+        "heroSlide2": "assets/hero-slide-2.jpg",
+        "heroSlide3": "assets/hero-slide-3.jpg",
+        "liveBannerEnabled": True,
+        "liveBannerText": "🏓 All 4 Championship Courts Open Today (6AM – 12AM) • Book Online with Instant QR Verification!",
+        "bentoSectionTitle": "PLAY THE CLUB",
+        "bentoSectionDesc": "Everything you need to play, improve, and compete under one roof. World-class surface, vibrant community, and zero booking friction.",
+        "openPlayScheduleText": "Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM",
+        "dayRate": 400,
+        "nightRate": 500,
+        "includedPlayers": 6,
+        "extraPlayerFee": 100,
+        "openPlayRate": 150,
+        "pricePaddleStd": 50,
+        "pricePaddleCarbon": 100,
+        "pricePaddleBranded": 200,
+        "priceBallSingle": 50,
+        "priceBallsBucket": 100,
+        "priceMachine": 100,
+        "court1Name": "Court 01 (Indoor Championship)",
+        "court2Name": "Court 02 (Indoor Tournament)",
+        "court3Name": "Court 03 (Covered Outdoor)",
+        "court4Name": "Court 04 (Pro Training Court)",
+        "clubAddress": "Phase IV, Doña Maria Subd., Velasco St., Tagas, Daraga, Albay",
+        "clubPhone": "0999 883 2346",
+        "clubHours": "6:00 AM – 12:00 Midnight"
     }
 }
 
@@ -204,7 +241,6 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
         # Cybersecurity Hardening Headers
         self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("X-Frame-Options", "SAMEORIGIN")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         self.send_header("X-XSS-Protection", "1; mode=block")
         self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
