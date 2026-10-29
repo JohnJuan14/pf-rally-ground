@@ -31,6 +31,7 @@ DEFAULT_DB = {
     "bookings": [],
     "blocks": [],
     "salesLedger": [],
+    "expenses": [],
     "inventory": [],
     "categories": [],
     "announcements": [],
@@ -91,6 +92,13 @@ DEFAULT_DB = {
         "priceBallSingle": 50,
         "priceBallsBucket": 100,
         "priceMachine": 100,
+        "costCourtPerHour": 0,
+        "costPaddleStd": 0,
+        "costPaddleCarbon": 0,
+        "costPaddleBranded": 0,
+        "costBallSingle": 30,
+        "costBallsBucket": 0,
+        "costMachine": 0,
         "court1Name": "Court 01 — Indoor Championship",
         "court2Name": "Court 02 — Indoor Tournament",
         "court3Name": "Court 03 — Covered Outdoor",
@@ -176,24 +184,70 @@ def has_emoji(s):
             return True
     return False
 
-def deduct_inventory_for_items(db, items):
+def compute_and_deduct_inventory_for_items(db, items, deduct_stock=True):
+    total_cogs = 0.0
     if not items or not isinstance(items, list):
-        return
+        return 0.0
     inventory = db.get("inventory", [])
+    sc = db.get("siteConfig") or {}
     for cart_item in items:
-        if not isinstance(cart_item, dict) or cart_item.get("isCourt"):
+        if isinstance(cart_item, str):
+            s_low = cart_item.lower()
+            # Check if string matches inventory item name
+            for inv in inventory:
+                inv_name = str(inv.get("name", "")).strip().lower()
+                if inv_name and inv_name in s_low:
+                    unit_cost = float(inv.get("costPrice", 0) or 0)
+                    if unit_cost <= 0 and float(inv.get("pcsPerBox", 0) or 0) > 0:
+                        unit_cost = round(float(inv.get("costPerBox", 0) or 0) / float(inv.get("pcsPerBox", 1)), 2)
+                    total_cogs += unit_cost
+                    break
+            continue
+        if not isinstance(cart_item, dict):
+            continue
+        if cart_item.get("isCourt"):
+            hrs = max(1, int(cart_item.get("qty", 1) or 1))
+            total_cogs += float(sc.get("costCourtPerHour", 0) or 0) * hrs
             continue
         cid = str(cart_item.get("id", "")).strip()
         cname = str(cart_item.get("name", "")).strip().lower()
         qty = max(1, int(cart_item.get("qty", 1) or 1))
+        matched_inv = False
 
         for inv in inventory:
             inv_id = str(inv.get("id", "")).strip()
             inv_name = str(inv.get("name", "")).strip().lower()
             if (cid and cid == inv_id) or (cname and cname == inv_name) or (cname and inv_name and (inv_name in cname or cname in inv_name)):
-                current_stock = int(inv.get("stock", 0) or 0)
-                inv["stock"] = max(0, current_stock - qty)
+                if deduct_stock:
+                    current_stock = int(inv.get("stock", 0) or 0)
+                    inv["stock"] = max(0, current_stock - qty)
+                    inv["soldCount"] = int(inv.get("soldCount", 0) or 0) + qty
+                unit_cost = float(inv.get("costPrice", 0) or 0)
+                if unit_cost <= 0 and float(inv.get("pcsPerBox", 0) or 0) > 0:
+                    unit_cost = round(float(inv.get("costPerBox", 0) or 0) / float(inv.get("pcsPerBox", 1)), 2)
+                total_cogs += unit_cost * qty
+                matched_inv = True
                 break
+
+        if not matched_inv:
+            if "costPrice" in cart_item:
+                total_cogs += float(cart_item.get("costPrice", 0) or 0) * qty
+            elif "standard paddle" in cname:
+                total_cogs += float(sc.get("costPaddleStd", 0) or 0) * qty
+            elif "branded" in cname:
+                total_cogs += float(sc.get("costPaddleBranded", 0) or 0) * qty
+            elif "carbon" in cname:
+                total_cogs += float(sc.get("costPaddleCarbon", 0) or 0) * qty
+            elif "single" in cname or "x-40" in cname:
+                total_cogs += float(sc.get("costBallSingle", 0) or 0) * qty
+            elif "50 pcs" in cname or "bucket" in cname or "training balls" in cname:
+                total_cogs += float(sc.get("costBallsBucket", 0) or 0) * qty
+            elif "machine" in cname:
+                total_cogs += float(sc.get("costMachine", 0) or 0) * qty
+    return round(total_cogs, 2)
+
+def deduct_inventory_for_items(db, items):
+    return compute_and_deduct_inventory_for_items(db, items, deduct_stock=True)
 
 def send_gmail_smtp(gmail_cfg, to_email, subject, html_body, plain_body):
     admin_email = (gmail_cfg.get("adminEmail") or "").strip()
@@ -414,12 +468,17 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             db["bookings"].insert(0, new_booking)
 
             if new_booking["status"] == "CONFIRMED":
+                bk_cost = compute_and_deduct_inventory_for_items(db, items, deduct_stock=False)
+                if bk_cost <= 0:
+                    bk_cost = float((db.get("siteConfig") or {}).get("costCourtPerHour", 0) or 0)
                 db["salesLedger"].insert(0, {
                     "ref": new_booking["ref"],
                     "type": "Court Rental",
                     "desc": f"{new_booking['court']} ({new_booking['name']}) - Ref: {new_booking['transactionRef']}",
                     "method": new_booking["paymentMethod"],
                     "amount": new_booking["total"],
+                    "cost": round(bk_cost, 2),
+                    "profit": round(float(new_booking["total"]) - bk_cost, 2),
                     "date": datetime.now().strftime("%Y-%m-%d %H:%M")
                 })
 
@@ -511,12 +570,18 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 target["status"] = new_status
                 if new_status == "CONFIRMED" and old_status != "CONFIRMED":
                     if not any(s.get("ref") == ref for s in db["salesLedger"]):
+                        amt_val = parse_amount(target.get("total", 0), 0.0)
+                        bk_cost = compute_and_deduct_inventory_for_items(db, target.get("items", []), deduct_stock=False)
+                        if bk_cost <= 0:
+                            bk_cost = float((db.get("siteConfig") or {}).get("costCourtPerHour", 0) or 0)
                         db["salesLedger"].insert(0, {
                             "ref": target["ref"],
                             "type": "Court Rental",
                             "desc": f"{target['court']} ({target['name']}) - Ref: {target.get('transactionRef', 'Verified')}",
                             "method": target.get("paymentMethod", "GCash"),
-                            "amount": parse_amount(target.get("total", 0), 0.0),
+                            "amount": amt_val,
+                            "cost": round(bk_cost, 2),
+                            "profit": round(amt_val - bk_cost, 2),
                             "date": datetime.now().strftime("%Y-%m-%d %H:%M")
                         })
                     trigger_booking_gmail_notifications(db, target)
@@ -701,19 +766,75 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 cat_val = sanitize_str(item.get("cat") or item.get("category") or "Pro Shop", 60) or "Pro Shop"
                 if not any(c.lower() == cat_val.lower() for c in db["categories"]):
                     db["categories"].append(cat_val)
+                buy_mode = sanitize_str(item.get("buyMode", "unit"), 20).lower()
+                if buy_mode not in ("wholesale", "unit"):
+                    buy_mode = "unit"
+                wh_unit = sanitize_str(item.get("wholesaleUnit", "Box / Case"), 40) or "Box / Case"
+                wh_boxes = max(0.0, float(item.get("wholesaleBoxes", 1) or 1))
+                pcs_per_box = max(1, int(float(item.get("pcsPerBox", 1) or 1)))
+                cost_per_box = max(0.0, float(item.get("costPerBox", 0) or 0))
+                raw_cost_price = max(0.0, float(item.get("costPrice", 0) or 0))
+                if buy_mode == "wholesale" and cost_per_box > 0 and pcs_per_box > 0:
+                    cost_price = round(cost_per_box / pcs_per_box, 2)
+                else:
+                    cost_price = round(raw_cost_price, 2)
+                stock_val = max(0, int(float(item.get("stock", 0) or 0)))
+                price_val = max(0.0, float(item.get("price", 0) or 0))
+                total_cap = round(wh_boxes * cost_per_box, 2) if (buy_mode == "wholesale" and cost_per_box > 0) else round(stock_val * cost_price, 2)
+
+                existing_idx = next((i for i, x in enumerate(db["inventory"]) if x.get("id") == item.get("id")), None)
+                prev_sold = int(db["inventory"][existing_idx].get("soldCount", 0) or 0) if existing_idx is not None else int(item.get("soldCount", 0) or 0)
+
                 new_item = {
                     "id": sanitize_str(item.get("id") or ("inv-" + str(int(datetime.now().timestamp() * 1000))), 50),
                     "name": sanitize_str(item.get("name", "Custom Product"), 100),
                     "cat": cat_val,
-                    "price": max(0.0, float(item.get("price", 0) or 0)),
-                    "stock": max(0, int(item.get("stock", 0) or 0)),
+                    "buyMode": buy_mode,
+                    "wholesaleUnit": wh_unit,
+                    "wholesaleBoxes": wh_boxes,
+                    "pcsPerBox": pcs_per_box,
+                    "costPerBox": cost_per_box,
+                    "costPrice": cost_price,
+                    "totalCapitalInvested": total_cap,
+                    "price": price_val,
+                    "stock": stock_val,
+                    "soldCount": prev_sold,
                     "img": item.get("img", "assets/gear-balls-x40.jpg")
                 }
-                existing_idx = next((i for i, x in enumerate(db["inventory"]) if x.get("id") == new_item["id"]), None)
                 if existing_idx is not None:
                     db["inventory"][existing_idx] = new_item
                 else:
                     db["inventory"].append(new_item)
+            elif action == "restock_wholesale":
+                iid = body.get("id")
+                boxes_added = max(0.0, float(body.get("boxesAdded", 1) or 1))
+                pcs_per_box = max(1, int(float(body.get("pcsPerBox", 24) or 24)))
+                cost_per_box = max(0.0, float(body.get("costPerBox", 0) or 0))
+                log_expense = bool(body.get("logExpense", False))
+                for x in db["inventory"]:
+                    if x.get("id") == iid:
+                        added_pcs = int(round(boxes_added * pcs_per_box))
+                        x["buyMode"] = "wholesale"
+                        x["pcsPerBox"] = pcs_per_box
+                        if cost_per_box > 0:
+                            x["costPerBox"] = cost_per_box
+                            x["costPrice"] = round(cost_per_box / pcs_per_box, 2)
+                        x["wholesaleBoxes"] = float(x.get("wholesaleBoxes", 0) or 0) + boxes_added
+                        x["stock"] = max(0, int(x.get("stock", 0) or 0) + added_pcs)
+                        x["totalCapitalInvested"] = round(float(x.get("totalCapitalInvested", 0) or 0) + (boxes_added * cost_per_box), 2)
+                        if "price" in body and float(body.get("price", 0) or 0) > 0:
+                            x["price"] = float(body.get("price"))
+                        if log_expense and (boxes_added * cost_per_box) > 0:
+                            if "expenses" not in db or not isinstance(db["expenses"], list):
+                                db["expenses"] = []
+                            db["expenses"].insert(0, {
+                                "id": "exp-" + str(int(datetime.now().timestamp() * 1000)),
+                                "category": "Wholesale Restock / Capital",
+                                "title": f"Restocked {boxes_added:g}x {x.get('wholesaleUnit', 'Box')} of {x.get('name')} (+{added_pcs} pcs)",
+                                "amount": round(boxes_added * cost_per_box, 2),
+                                "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                            })
+                        break
             elif action == "update_stock":
                 iid = body.get("id")
                 new_stock = int(body.get("stock", 0))
@@ -721,14 +842,25 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     if x.get("id") == iid:
                         x["stock"] = max(0, new_stock)
                         break
-            elif action == "update_price":
+            elif action in ("update_price", "update_cost"):
                 iid = body.get("id")
-                new_price = max(0.0, float(body.get("price", 0) or 0))
                 for x in db["inventory"]:
                     if x.get("id") == iid:
-                        x["price"] = new_price
-                        if "stock" in body:
-                            x["stock"] = max(0, int(body.get("stock", 0) or 0))
+                        if "price" in body and body.get("price") is not None:
+                            x["price"] = max(0.0, float(body.get("price", 0) or 0))
+                        if "costPrice" in body and body.get("costPrice") is not None:
+                            x["costPrice"] = max(0.0, round(float(body.get("costPrice", 0) or 0), 2))
+                        if "pcsPerBox" in body and body.get("pcsPerBox") is not None:
+                            x["pcsPerBox"] = max(1, int(float(body.get("pcsPerBox", 1) or 1)))
+                        if "costPerBox" in body and body.get("costPerBox") is not None:
+                            x["costPerBox"] = max(0.0, float(body.get("costPerBox", 0) or 0))
+                            if x.get("pcsPerBox", 1) > 0 and x["costPerBox"] > 0:
+                                x["costPrice"] = round(x["costPerBox"] / x["pcsPerBox"], 2)
+                                x["buyMode"] = "wholesale"
+                        if "buyMode" in body:
+                            x["buyMode"] = sanitize_str(body.get("buyMode", "unit"), 20)
+                        if "stock" in body and body.get("stock") is not None:
+                            x["stock"] = max(0, int(float(body.get("stock", 0) or 0)))
                         break
             elif action == "delete":
                 iid = body.get("id")
@@ -739,16 +871,44 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
             return
-
         elif parsed.path == "/api/sales":
+            action = body.get("action", "add")
+            if action == "update_cost":
+                ref = body.get("ref")
+                new_cost = max(0.0, round(float(body.get("cost", 0) or 0), 2))
+                for s in db["salesLedger"]:
+                    if s.get("ref") == ref:
+                        s["cost"] = new_cost
+                        if "amount" in body and body.get("amount") is not None:
+                            s["amount"] = max(0.0, round(float(body.get("amount", 0) or 0), 2))
+                        s["profit"] = round(float(s.get("amount", 0) or 0) - new_cost, 2)
+                        break
+                save_db(db)
+                db["sales"] = db.get("salesLedger", [])
+                self._send_json({"ok": True, "state": db})
+                return
+            elif action == "delete":
+                ref = body.get("ref")
+                db["salesLedger"] = [s for s in db["salesLedger"] if s.get("ref") != ref]
+                save_db(db)
+                db["sales"] = db.get("salesLedger", [])
+                self._send_json({"ok": True, "state": db})
+                return
+
             items = body.get("items", [])
-            deduct_inventory_for_items(db, items)
+            computed_cogs = compute_and_deduct_inventory_for_items(db, items, deduct_stock=True)
+            explicit_cost = body.get("cost")
+            final_cost = round(float(explicit_cost), 2) if (explicit_cost is not None and float(explicit_cost or 0) > 0) else computed_cogs
+            amt = round(float(body.get("amount", 0) or 0), 2)
             sale = {
                 "ref": sanitize_str(body.get("ref", "POS-" + str(int(datetime.now().timestamp()))[-4:]), 30),
                 "type": sanitize_str(body.get("type", "POS Retail"), 40),
                 "desc": sanitize_str(body.get("desc", "POS Order"), 240),
                 "method": sanitize_str(body.get("method", "Cash"), 40),
-                "amount": float(body.get("amount", 0) or 0),
+                "amount": amt,
+                "cost": final_cost,
+                "profit": round(amt - final_cost, 2),
+                "items": items if isinstance(items, list) else [],
                 "date": datetime.now().strftime("%Y-%m-%d %H:%M")
             }
             db["salesLedger"].insert(0, sale)
@@ -757,6 +917,29 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self._send_json({"ok": True, "state": db})
             return
 
+        elif parsed.path == "/api/expenses":
+            action = body.get("action", "add")
+            if "expenses" not in db or not isinstance(db["expenses"], list):
+                db["expenses"] = []
+            if action == "add":
+                exp = body.get("expense") or body
+                new_exp = {
+                    "id": sanitize_str(exp.get("id") or ("exp-" + str(int(datetime.now().timestamp() * 1000))), 40),
+                    "category": sanitize_str(exp.get("category", "Wholesale Restock / Capital"), 60) or "Wholesale Restock / Capital",
+                    "title": sanitize_str(exp.get("title", "Club Expense"), 160) or "Club Expense",
+                    "amount": max(0.0, round(float(exp.get("amount", 0) or 0), 2)),
+                    "date": sanitize_str(exp.get("date") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
+                }
+                db["expenses"].insert(0, new_exp)
+            elif action == "delete":
+                eid = body.get("id")
+                db["expenses"] = [e for e in db["expenses"] if e.get("id") != eid]
+            elif action == "clear":
+                db["expenses"] = []
+            save_db(db)
+            db["sales"] = db.get("salesLedger", [])
+            self._send_json({"ok": True, "expenses": db["expenses"], "state": db})
+            return
         elif parsed.path == "/api/upload-asset":
             slot = re.sub(r"[^a-zA-Z0-9_-]", "", str(body.get("slot", "asset")))[:40] or "asset"
             data_url = str(body.get("dataUrl", "")).strip()
@@ -836,7 +1019,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     elif isinstance(def_val, (int, float)) or k in (
                         "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate",
                         "pricePaddleStd", "pricePaddleCarbon", "pricePaddleBranded",
-                        "priceBallSingle", "priceBallsBucket", "priceMachine"
+                        "priceBallSingle", "priceBallsBucket", "priceMachine", "costCourtPerHour", "costPaddleStd", "costPaddleCarbon", "costPaddleBranded", "costBallSingle", "costBallsBucket", "costMachine"
                     ):
                         try:
                             current_sc[k] = float(v) if "." in str(v) else int(float(v))
@@ -877,6 +1060,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 "bookings": [],
                 "blocks": [],
                 "salesLedger": [],
+                "expenses": [],
                 "inventory": [],
                 "categories": [],
                 "announcements": [],

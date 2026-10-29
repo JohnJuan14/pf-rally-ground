@@ -247,6 +247,23 @@ async function syncStateFromServer() {
             localStorage.setItem('pf_site_config', JSON.stringify(data.siteConfig));
             if (typeof applySiteConfig === 'function') applySiteConfig(data.siteConfig);
           }
+          if (data.paymentConfig && typeof data.paymentConfig === 'object') {
+            sharedServerState.paymentConfig = data.paymentConfig;
+            const st = String(data.paymentConfig.standeeUrl || '').trim();
+            if (st && (st.startsWith('assets/custom-') || st.startsWith('data:image/'))) {
+              localStorage.setItem('pf_custom_gcash_standee_url', st);
+            } else {
+              localStorage.removeItem('pf_custom_gcash_standee_url');
+            }
+            const q1 = document.getElementById('locked-qr-img');
+            if (q1 && (!q1.getAttribute('data-qr-mode') || q1.getAttribute('data-qr-mode') === 'qr')) {
+              q1.src = pfGetOfficialQrUrl('gcash', 'qr');
+            }
+            const q2 = document.getElementById('book-gcash-qr-img');
+            if (q2 && (!q2.getAttribute('data-qr-mode') || q2.getAttribute('data-qr-mode') === 'qr')) {
+              q2.src = pfGetOfficialQrUrl('gcash', 'qr');
+            }
+          }
           if (typeof renderPublicAnnouncementBoard === 'function') {
             renderPublicAnnouncementBoard();
           }
@@ -1049,6 +1066,7 @@ function buildEmvcoPayload(channel, amount) {
   const amtLen = String(amtStr.length).padStart(2, '0');
 
   let merchantTag = '26';
+  return '00020101021127830012com.p2pqrpay0111GXCHPHM2XXX02089996440303152170200000006560417DWQM4TK3JDNXE5XEA5204601653036085802PH5912KA******E L.6005Tagas610412346304FAE8';
   let merchantInfo = '0010com.gcash011209998832346';
   if (channel === 'bank') {
     merchantTag = '28';
@@ -1072,12 +1090,168 @@ function buildEmvcoPayload(channel, amount) {
   return raw + crc;
 }
 
+
+// ================= OFFICIAL GCASH / MAYA / BDO QR ENGINE & HELPERS =================
+(function pfSanitizeQrLocalStorage() {
+  try {
+    const raw = localStorage.getItem('pf_custom_gcash_standee_url');
+    if (raw) {
+      const s = String(raw).trim();
+      // Purge any legacy qrserver, external, broken, or plain default URLs so fresh official QR loads cleanly
+      if (
+        s.includes('qrserver.com') ||
+        s.includes('chart.googleapis.com') ||
+        s.includes('undefined') ||
+        s.includes('null') ||
+        s === 'assets/qr-gcash.png' ||
+        (!s.startsWith('assets/') && !s.startsWith('/assets/') && !s.startsWith('data:image/'))
+      ) {
+        localStorage.removeItem('pf_custom_gcash_standee_url');
+      }
+    }
+  } catch (e) {}
+})();
+
+function pfGetOfficialQrUrl(channel = 'gcash', viewMode = 'qr') {
+  const ch = String(channel || 'gcash').toLowerCase();
+  if (ch === 'bank' || ch === 'bdo') {
+    return viewMode === 'standee' ? 'assets/qr-bdo.jpg?v=20261029v9' : 'assets/qr-bdo.png?v=20261029v9';
+  }
+  if (ch === 'maya') {
+    return viewMode === 'standee' ? 'assets/qr-maya.jpg?v=20261029v9' : 'assets/qr-maya.png?v=20261029v9';
+  }
+  if (viewMode === 'standee') {
+    return 'assets/qr-gcash.jpg?v=20261029v9';
+  }
+  try {
+    const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
+    if (customStandee && (customStandee.startsWith('assets/custom-') || customStandee.startsWith('data:image/'))) {
+      return customStandee;
+    }
+    const srvStandee = window.sharedServerState && window.sharedServerState.paymentConfig && window.sharedServerState.paymentConfig.standeeUrl;
+    if (srvStandee && (srvStandee.startsWith('assets/custom-') || srvStandee.startsWith('data:image/'))) {
+      return srvStandee;
+    }
+  } catch (e) {}
+  return 'assets/qr-gcash.png?v=20261029v9';
+}
+
+function pfToggleQrCardView(channel = 'gcash', imgId = 'locked-qr-img', btnEl = null) {
+  const img = document.getElementById(imgId);
+  if (!img) return;
+  const curMode = img.getAttribute('data-qr-mode') || 'qr';
+  const nextMode = curMode === 'qr' ? 'standee' : 'qr';
+  img.setAttribute('data-qr-mode', nextMode);
+  img.src = pfGetOfficialQrUrl(channel, nextMode);
+  if (nextMode === 'standee') {
+    img.classList.remove('aspect-square');
+    img.style.maxHeight = '280px';
+  } else {
+    img.style.maxHeight = '';
+  }
+  if (btnEl) {
+    btnEl.textContent = nextMode === 'standee' ? '🔄 Show Large QR Only' : '🪪 Show Full GCash Card';
+  }
+}
+
+function pfOpenQrStandeeLightbox(channel = 'gcash') {
+  const ch = String(channel || 'gcash').toLowerCase();
+  const labels = {
+    gcash: 'Official GCash InstaPay QR • KA******E L. (0999 883 2346)',
+    maya: 'Official Maya QR Ph • KATHERINE LIM (0999 883 2346)',
+    bank: 'Official BDO InstaPay QR • Dex (••••••••8678)'
+  };
+  const standeeSrc = pfGetOfficialQrUrl(ch, 'standee');
+  const qrSrc = pfGetOfficialQrUrl(ch, 'qr');
+
+  let modal = document.getElementById('pf-qr-zoom-lightbox');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pf-qr-zoom-lightbox';
+    modal.className = 'fixed inset-0 z-[70] hidden flex items-center justify-center p-3 sm:p-5';
+    modal.innerHTML = `
+      <div onclick="pfCloseQrStandeeLightbox()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+      <div class="relative z-10 w-full max-w-md rounded-2xl bg-white text-[#050E1D] border-2 border-[#9BE600] p-4 sm:p-5 shadow-2xl text-center space-y-3 max-h-[92dvh] overflow-y-auto" style="border-radius:5px;">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+          <div class="text-left">
+            <span class="text-[10px] font-mono font-black uppercase tracking-widest text-[#0E8A2D] block">SCAN OR UPLOAD IN APP</span>
+            <h4 id="pf-qr-lightbox-title" class="text-xs sm:text-sm font-black uppercase text-[#050E1D]">Official GCash QR</h4>
+          </div>
+          <button type="button" onclick="pfCloseQrStandeeLightbox()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white font-black text-xs flex items-center justify-center transition">✕</button>
+        </div>
+        <div class="flex justify-center gap-2">
+          <button type="button" id="pf-lb-tab-qr" onclick="pfSwitchLightboxQrTab('qr')" class="px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] text-[10px] font-black uppercase tracking-wider">Large Crisp QR (Fast Scan)</button>
+          <button type="button" id="pf-lb-tab-standee" onclick="pfSwitchLightboxQrTab('standee')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-[10px] font-bold uppercase tracking-wider">Full Official Standee Card</button>
+        </div>
+        <div class="p-3 rounded-xl bg-white border-2 border-slate-200 shadow-inner flex items-center justify-center">
+          <img id="pf-qr-lightbox-img" src="" alt="Official Payment QR" class="max-h-[58dvh] w-auto mx-auto object-contain rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+        </div>
+        <p class="text-[11px] text-slate-600 leading-snug">
+          <b>On Mobile?</b> Tap <b>Save QR Image</b> below, then open your <b>GCash App &rarr; QR &rarr; Upload QR</b> and select the saved image from your gallery.
+        </p>
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" id="pf-qr-lightbox-dl-btn" onclick="pfDownloadOfficialQr('gcash')" class="py-2.5 px-3 rounded-xl bg-[#9BE600] hover:bg-[#8cd000] text-[#050E1D] font-black uppercase text-[11px] tracking-wider shadow">📥 Save QR Image</button>
+          <button type="button" onclick="pfCloseQrStandeeLightbox()" class="py-2.5 px-3 rounded-xl bg-[#050E1D] text-white font-bold uppercase text-[11px] tracking-wider">Done</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  modal.setAttribute('data-channel', ch);
+  modal.setAttribute('data-qr-src', qrSrc);
+  modal.setAttribute('data-standee-src', standeeSrc);
+
+  const titleEl = document.getElementById('pf-qr-lightbox-title');
+  if (titleEl) titleEl.textContent = labels[ch] || labels.gcash;
+  const dlBtn = document.getElementById('pf-qr-lightbox-dl-btn');
+  if (dlBtn) dlBtn.setAttribute('onclick', `pfDownloadOfficialQr('${ch}')`);
+
+  pfSwitchLightboxQrTab('qr');
+  modal.classList.remove('hidden');
+}
+
+function pfSwitchLightboxQrTab(tab = 'qr') {
+  const modal = document.getElementById('pf-qr-zoom-lightbox');
+  if (!modal) return;
+  const img = document.getElementById('pf-qr-lightbox-img');
+  const btnQr = document.getElementById('pf-lb-tab-qr');
+  const btnSt = document.getElementById('pf-lb-tab-standee');
+  if (tab === 'standee') {
+    if (img) img.src = modal.getAttribute('data-standee-src') || 'assets/qr-gcash.jpg?v=20261029v9';
+    if (btnSt) btnSt.className = 'px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] text-[10px] font-black uppercase tracking-wider';
+    if (btnQr) btnQr.className = 'px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-[10px] font-bold uppercase tracking-wider';
+  } else {
+    if (img) img.src = modal.getAttribute('data-qr-src') || 'assets/qr-gcash.png?v=20261029v9';
+    if (btnQr) btnQr.className = 'px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] text-[10px] font-black uppercase tracking-wider';
+    if (btnSt) btnSt.className = 'px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-[10px] font-bold uppercase tracking-wider';
+  }
+}
+
+function pfCloseQrStandeeLightbox() {
+  const modal = document.getElementById('pf-qr-zoom-lightbox');
+  if (modal) modal.classList.add('hidden');
+}
+
+function pfDownloadOfficialQr(channel = 'gcash', format = 'standee') {
+  const ch = String(channel || 'gcash').toLowerCase();
+  const url = format === 'qr' ? pfGetOfficialQrUrl(ch, 'qr') : pfGetOfficialQrUrl(ch, 'standee');
+  const ext = url.includes('.jpg') ? 'jpg' : 'png';
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PF-Rally-Ground-${ch.toUpperCase()}-Official-QR.${ext}`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+window.pfGetOfficialQrUrl = pfGetOfficialQrUrl;
+window.pfToggleQrCardView = pfToggleQrCardView;
+window.pfOpenQrStandeeLightbox = pfOpenQrStandeeLightbox;
+window.pfSwitchLightboxQrTab = pfSwitchLightboxQrTab;
+window.pfCloseQrStandeeLightbox = pfCloseQrStandeeLightbox;
+window.pfDownloadOfficialQr = pfDownloadOfficialQr;
+
 function generateLockedQrUrl(amount, channel = 'gcash') {
-  if (channel === 'bank') return 'assets/qr-bdo.png';
-  if (channel === 'maya') return 'assets/qr-maya.png';
-  const customStandee = localStorage.getItem('pf_custom_gcash_standee_url');
-  if (customStandee) return customStandee;
-  return 'assets/qr-gcash.png';
+  return pfGetOfficialQrUrl(channel, 'qr');
 }
 
 function extractRefNumberFromText(text) {

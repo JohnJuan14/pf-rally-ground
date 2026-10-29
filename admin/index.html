@@ -687,9 +687,20 @@
             </div>
           </div>
 
-          <!-- B. Official Equipment & Training Rental Prices & Photos -->
+                    <!-- B. Official Equipment & Training Rental Prices, Capital Cost & Photos -->
           <div class="pt-3 border-t border-slate-200">
-            <h4 class="text-xs font-black uppercase tracking-wider text-emerald-800 mb-3">B. Equipment &amp; Training Rental Prices &amp; Photos (Main Website &amp; Booking Add-Ons)</h4>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div>
+                <h4 class="text-xs font-black uppercase tracking-wider text-emerald-800">B. Equipment &amp; Training Rental Selling Price vs. Capital Cost (Main Website &amp; Booking Add-Ons)</h4>
+                <p class="text-[11px] text-slate-600">Set both the <b>Selling Price (₱)</b> and optional <b>Capital / Real Cost per Unit or Rental (₱)</b> so the Sales Report automatically computes your exact Net Profit on all website products.</p>
+              </div>
+              <div class="flex items-center gap-2 bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-xs">
+                <span class="font-bold text-slate-700">Court Electricity/Overhead Cost per Hour:</span>
+                <span class="text-rose-700 font-mono font-black">₱</span>
+                <input type="number" id="se-cost-court-hr" oninput="markSiteEditorDirty()" min="0" step="5" value="0" class="w-16 bg-white border border-slate-300 rounded px-2 py-1 text-xs font-mono font-black text-slate-900">
+                <span class="text-[10px] text-slate-500 font-mono">/hr</span>
+              </div>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
               
               <!-- 1. Standard Paddle -->
@@ -707,9 +718,15 @@
                       <input type="hidden" id="se-gear-img-std" value="assets/gear-composite-paddle.jpg">
                     </div>
                   </div>
-                  <div class="flex items-center gap-1 w-24 flex-shrink-0">
-                    <span class="text-emerald-700 font-mono font-black">₱</span>
-                    <input type="number" id="se-price-paddle-std" oninput="markSiteEditorDirty()" min="0" step="5" value="50" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-2.5 py-2 text-sm text-slate-900 font-mono font-black focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-slate-500 font-bold mb-0.5">Capital / Cost (₱)</label>
+                    <input type="number" id="se-cost-paddle-std" oninput="markSiteEditorDirty()" min="0" step="5" value="0" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-rose-700 font-mono font-black">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-emerald-700 font-bold mb-0.5">Selling Price (₱)</label>
+                    <input type="number" id="se-price-paddle-std" oninput="markSiteEditorDirty()" min="0" step="5" value="50" class="w-full bg-white border border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-mono font-black">
                   </div>
                 </div>
               </div>
@@ -729,9 +746,15 @@
                       <input type="hidden" id="se-gear-img-carbon" value="assets/gear-carbon-paddle.jpg">
                     </div>
                   </div>
-                  <div class="flex items-center gap-1 w-24 flex-shrink-0">
-                    <span class="text-emerald-700 font-mono font-black">₱</span>
-                    <input type="number" id="se-price-paddle-carbon" oninput="markSiteEditorDirty()" min="0" step="5" value="100" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-2.5 py-2 text-sm text-slate-900 font-mono font-black focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-slate-500 font-bold mb-0.5">Capital / Cost (₱)</label>
+                    <input type="number" id="se-cost-paddle-carbon" oninput="markSiteEditorDirty()" min="0" step="5" value="0" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-rose-700 font-mono font-black">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-emerald-700 font-bold mb-0.5">Selling Price (₱)</label>
+                    <input type="number" id="se-price-paddle-carbon" oninput="markSiteEditorDirty()" min="0" step="5" value="100" class="w-full bg-white border border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-mono font-black">
                   </div>
                 </div>
               </div>
@@ -751,9 +774,15 @@
                       <input type="hidden" id="se-gear-img-branded" value="assets/gear-carbon-paddle.jpg">
                     </div>
                   </div>
-                  <div class="flex items-center gap-1 w-24 flex-shrink-0">
-                    <span class="text-emerald-700 font-mono font-black">₱</span>
-                    <input type="number" id="se-price-paddle-branded" oninput="markSiteEditorDirty()" min="0" step="5" value="200" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-2.5 py-2 text-sm text-slate-900 font-mono font-black focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-slate-500 font-bold mb-0.5">Capital / Cost (₱)</label>
+                    <input type="number" id="se-cost-paddle-branded" oninput="markSiteEditorDirty()" min="0" step="5" value="0" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-rose-700 font-mono font-black">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-emerald-700 font-bold mb-0.5">Selling Price (₱)</label>
+                    <input type="number" id="se-price-paddle-branded" oninput="markSiteEditorDirty()" min="0" step="5" value="200" class="w-full bg-white border border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-mono font-black">
                   </div>
                 </div>
               </div>
@@ -773,9 +802,15 @@
                       <input type="hidden" id="se-gear-img-ball" value="assets/gear-balls-x40.jpg">
                     </div>
                   </div>
-                  <div class="flex items-center gap-1 w-24 flex-shrink-0">
-                    <span class="text-emerald-700 font-mono font-black">₱</span>
-                    <input type="number" id="se-price-ball-single" oninput="markSiteEditorDirty()" min="0" step="5" value="50" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-2.5 py-2 text-sm text-slate-900 font-mono font-black focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-slate-500 font-bold mb-0.5">Capital / pc (₱)</label>
+                    <input type="number" id="se-cost-ball-single" oninput="markSiteEditorDirty()" min="0" step="1" value="30" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-rose-700 font-mono font-black">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-emerald-700 font-bold mb-0.5">Selling / pc (₱)</label>
+                    <input type="number" id="se-price-ball-single" oninput="markSiteEditorDirty()" min="0" step="5" value="50" class="w-full bg-white border border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-mono font-black">
                   </div>
                 </div>
               </div>
@@ -795,9 +830,15 @@
                       <input type="hidden" id="se-gear-img-bucket" value="assets/gear-balls-x40.jpg">
                     </div>
                   </div>
-                  <div class="flex items-center gap-1 w-24 flex-shrink-0">
-                    <span class="text-emerald-700 font-mono font-black">₱</span>
-                    <input type="number" id="se-price-balls-bucket" oninput="markSiteEditorDirty()" min="0" step="5" value="100" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-2.5 py-2 text-sm text-slate-900 font-mono font-black focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-slate-500 font-bold mb-0.5">Capital / Cost (₱)</label>
+                    <input type="number" id="se-cost-balls-bucket" oninput="markSiteEditorDirty()" min="0" step="5" value="0" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-rose-700 font-mono font-black">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-emerald-700 font-bold mb-0.5">Selling Price (₱)</label>
+                    <input type="number" id="se-price-balls-bucket" oninput="markSiteEditorDirty()" min="0" step="5" value="100" class="w-full bg-white border border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-mono font-black">
                   </div>
                 </div>
               </div>
@@ -817,9 +858,15 @@
                       <input type="hidden" id="se-gear-img-machine" value="assets/gear-ball-machine.jpg">
                     </div>
                   </div>
-                  <div class="flex items-center gap-1 w-24 flex-shrink-0">
-                    <span class="text-emerald-700 font-mono font-black">₱</span>
-                    <input type="number" id="se-price-machine" oninput="markSiteEditorDirty()" min="0" step="10" value="100" class="w-full bg-white border border-slate-300 focus:border-emerald-600 rounded-xl px-2.5 py-2 text-sm text-slate-900 font-mono font-black focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-slate-500 font-bold mb-0.5">Capital / Cost (₱)</label>
+                    <input type="number" id="se-cost-machine" oninput="markSiteEditorDirty()" min="0" step="5" value="0" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-rose-700 font-mono font-black">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-mono uppercase text-emerald-700 font-bold mb-0.5">Selling Price (₱)</label>
+                    <input type="number" id="se-price-machine" oninput="markSiteEditorDirty()" min="0" step="5" value="100" class="w-full bg-white border border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-mono font-black">
                   </div>
                 </div>
               </div>
@@ -1500,19 +1547,46 @@
 
       </section>
 
-      <!-- ================= 5. INVENTORY TAB (CUSTOM INVENTORY WITH PICTURE & AUTO-DEDUCT) ================= -->
+            <!-- ================= 5. INVENTORY TAB (WHOLESALE-TO-RETAIL CAPITAL & AUTO-DEDUCT) ================= -->
       <section id="tab-inventory" class="hidden space-y-6">
         
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-border">
           <div>
-            <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">CUSTOM INVENTORY &amp; REAL-TIME STOCK DEDUCTION</span>
-            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Stock &amp; Product Inventory</h2>
-            <p class="text-xs text-slate-400">Add custom products with pictures. Products sync to the POS &amp; Public Website, and automatically deduct stock when purchased.</p>
+            <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">WHOLESALE BOX / PACK TO PER-PIECE RETAIL &amp; STOCK SYSTEM</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Stock, Wholesale Capital &amp; Product Inventory</h2>
+            <p class="text-xs text-slate-400">Buy by the wholesale box/case/pack and sell per piece — or enter per-piece capital cost. Automatically computes your real profit per piece and total stock capital.</p>
           </div>
-          <div class="flex items-center gap-2 self-start sm:self-auto">
-            <button onclick="openAddInventoryModal()" class="px-5 py-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
-              + Add Custom Product
+          <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            <button onclick="switchTab('reports')" class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold uppercase tracking-wider transition">
+              📊 View Net Profit Report
             </button>
+            <button onclick="openAddInventoryModal()" class="px-5 py-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+              + Add Product (Wholesale or Per-Piece)
+            </button>
+          </div>
+        </div>
+
+        <!-- Inventory Capital & Profit Summary KPI Strip -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] font-mono uppercase text-slate-400 block">Capital Tied in Current Stock</span>
+            <span class="text-xl font-black text-amber-400 font-mono block mt-1" id="inv-kpi-stock-capital">₱0.00</span>
+            <span class="text-[10px] text-slate-500 block mt-0.5" id="inv-kpi-stock-units">0 total pieces in stock</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] font-mono uppercase text-slate-400 block">Expected Retail Selling Value</span>
+            <span class="text-xl font-black text-white font-mono block mt-1" id="inv-kpi-retail-value">₱0.00</span>
+            <span class="text-[10px] text-slate-500 block mt-0.5">If all current stock is sold per piece</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-lime/40">
+            <span class="text-[10px] font-mono uppercase text-brand-lime block">Projected Net Profit on Stock</span>
+            <span class="text-xl font-black text-brand-lime font-mono block mt-1" id="inv-kpi-projected-profit">+₱0.00</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Retail Value minus Wholesale Capital</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] font-mono uppercase text-slate-400 block">Average Product Profit Margin</span>
+            <span class="text-xl font-black text-sky-400 font-mono block mt-1" id="inv-kpi-avg-margin">0.0%</span>
+            <span class="text-[10px] text-slate-500 block mt-0.5" id="inv-kpi-missing-cost-note">All products tracked</span>
           </div>
         </div>
 
@@ -1533,15 +1607,17 @@
 
         <div class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden shadow-2xl">
           <div class="overflow-x-auto touch-scroll">
-            <table class="w-full text-left text-xs border-collapse min-w-[680px]">
+            <table class="w-full text-left text-xs border-collapse min-w-[920px]">
               <thead>
                 <tr class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px] bg-brand-black/40">
-                  <th class="py-3.5 px-4">Product Photo &amp; Name</th>
-                  <th class="py-3.5 px-4">Product Category</th>
-                  <th class="py-3.5 px-4">Unit Price (₱)</th>
-                  <th class="py-3.5 px-4">Available Stock Qty</th>
-                  <th class="py-3.5 px-4">Stock Status</th>
-                  <th class="py-3.5 px-4 text-right">Manage Product</th>
+                  <th class="py-3.5 px-4">Product &amp; Wholesale Pack Info</th>
+                  <th class="py-3.5 px-3">Category</th>
+                  <th class="py-3.5 px-3">Real Capital Cost / pc</th>
+                  <th class="py-3.5 px-3">Selling Price / pc</th>
+                  <th class="py-3.5 px-3">Actual Profit / pc &amp; Box</th>
+                  <th class="py-3.5 px-3">Available Stock (pcs)</th>
+                  <th class="py-3.5 px-3">Status</th>
+                  <th class="py-3.5 px-4 text-right">Manage / Restock</th>
                 </tr>
               </thead>
               <tbody id="inventory-tbody" class="divide-y divide-white/5"></tbody>
@@ -1551,46 +1627,278 @@
 
       </section>
 
-      <!-- ================= 6. SALES & REPORTS TAB ================= -->
+      <!-- ================= 6. SALES, CAPITAL & NET PROFIT INTELLIGENCE TAB ================= -->
       <section id="tab-reports" class="hidden space-y-6">
         
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-border">
+        <!-- Top Header & Period Filter Bar -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-border">
           <div>
-            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Sales &amp; Financial Ledger</h2>
-            <p class="text-xs text-slate-400">Consolidated collections across online bookings and front-desk POS sales.</p>
+            <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">REAL-TIME REVENUE, WHOLESALE CAPITAL (COGS) &amp; NET INCOME ENGINE</span>
+            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Sales, Capital &amp; Actual Net Profit Report</h2>
+            <p class="text-xs text-slate-400">Automatically deducts wholesale/unit product capital costs and club expenses from gross sales to compute the actual money you earn.</p>
           </div>
-          <button onclick="exportLedgerToCsv()" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold uppercase tracking-wider transition self-start sm:self-auto">
-            Export to CSV
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="p-5 rounded-2xl bg-brand-card border border-white/10">
-            <span class="text-[10px] text-slate-400 uppercase block mb-1">Court &amp; Booking Collections</span>
-            <span class="text-2xl font-black text-brand-lime font-mono" id="rep-court-rev">₱0.00</span>
-          </div>
-          <div class="p-5 rounded-2xl bg-brand-card border border-white/10">
-            <span class="text-[10px] text-slate-400 uppercase block mb-1">POS Retail Collections</span>
-            <span class="text-2xl font-black text-white font-mono" id="rep-pos-rev">₱0.00</span>
-          </div>
-          <div class="p-5 rounded-2xl bg-brand-card border border-white/10">
-            <span class="text-[10px] text-slate-400 uppercase block mb-1">Total Gross Revenue</span>
-            <span class="text-2xl font-black text-white font-mono" id="rep-total-rev">₱0.00</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Date Period Filter Pills -->
+            <div class="flex items-center bg-brand-black p-1 rounded-xl border border-white/10 text-[11px] font-bold">
+              <button type="button" onclick="setReportsPeriodFilter('ALL')" id="rep-period-ALL" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black transition">All Time</button>
+              <button type="button" onclick="setReportsPeriodFilter('TODAY')" id="rep-period-TODAY" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Today</button>
+              <button type="button" onclick="setReportsPeriodFilter('WEEK')" id="rep-period-WEEK" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">7 Days</button>
+              <button type="button" onclick="setReportsPeriodFilter('MONTH')" id="rep-period-MONTH" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">This Month</button>
+            </div>
+            <button type="button" onclick="runAiFinancialAudit(true)" class="px-4 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:bg-brand-limeHover transition shadow">
+              ✨ AI Profit Audit
+            </button>
+            <button type="button" onclick="exportLedgerToCsv()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold uppercase tracking-wider transition">
+              📥 Export Full CSV
+            </button>
           </div>
         </div>
 
-        <div class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden">
-          <div class="p-4 border-b border-white/10 text-xs font-bold uppercase text-white">Transaction History</div>
+        <!-- 6 Executive Financial KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+          <!-- 1. Gross Revenue -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">1. Gross Sales Collected</span>
+            <span class="text-xl font-black text-white font-mono block" id="rep-total-rev">₱0.00</span>
+            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-total-tx-count">0 transactions</span>
+          </div>
+
+          <!-- 2. Court Booking Revenue -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">2. Court Rental Revenue</span>
+            <span class="text-xl font-black text-sky-400 font-mono block" id="rep-court-rev">₱0.00</span>
+            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-court-profit-sub">Net Court Income: ₱0.00</span>
+          </div>
+
+          <!-- 3. Product / POS Gross Sales -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">3. Product Retail Sales</span>
+            <span class="text-xl font-black text-white font-mono block" id="rep-pos-rev">₱0.00</span>
+            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-pos-profit-sub">Product Profit: +₱0.00</span>
+          </div>
+
+          <!-- 4. Product Capital Cost (COGS) -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-amber-500/30">
+            <span class="text-[10px] text-amber-300 uppercase font-bold block mb-1">4. Capital Cost (COGS Sold)</span>
+            <span class="text-xl font-black text-amber-400 font-mono block" id="rep-total-cogs">-₱0.00</span>
+            <span class="text-[10px] text-slate-400 font-mono block mt-1">Real wholesale/unit cost of sold items</span>
+          </div>
+
+          <!-- 5. Club Operating Expenses -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-rose-500/30">
+            <span class="text-[10px] text-rose-300 uppercase font-bold block mb-1">5. Logged Club Expenses</span>
+            <span class="text-xl font-black text-rose-400 font-mono block" id="rep-total-expenses">-₱0.00</span>
+            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-gross-profit-sub">Gross Profit (Before Exp): ₱0.00</span>
+          </div>
+
+          <!-- 6. ACTUAL NET INCOME (Real Money Earned) -->
+          <div class="p-4 rounded-2xl bg-emerald-950/60 border-2 border-brand-lime shadow-lg">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] text-brand-lime uppercase font-black tracking-wider">6. ACTUAL NET INCOME</span>
+              <span id="rep-net-margin-badge" class="px-1.5 py-0.5 rounded bg-brand-lime text-brand-black font-mono font-black text-[9px]">0% Margin</span>
+            </div>
+            <span class="text-2xl font-black text-brand-lime font-mono block" id="rep-actual-net-income">₱0.00</span>
+            <span class="text-[10px] text-emerald-200 font-medium block mt-1">Real Money Earned (Sales − Capital − Exp)</span>
+          </div>
+        </div>
+
+        <!-- ================= AI FINANCIAL ADVISOR & WHOLESALE-TO-PER-PIECE CALCULATOR STUDIO ================= -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left (Col 5): Wholesale Box to Per-Piece Profit Calculator & Direct Saver -->
+          <div class="lg:col-span-5 p-5 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-lg space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">📦 WHOLESALE TO PER-PIECE CALCULATOR</span>
+                <h3 class="text-base font-black uppercase text-slate-900">Buy Wholesale (Box/Pack) → Sell Per Piece</h3>
+                <p class="text-[11px] text-slate-600">Compute exact capital per piece, profit per piece, and break-even count — or save directly to Inventory.</p>
+              </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Product Name (Optional — to save/update)</label>
+                <input type="text" id="sim-wh-name" placeholder="e.g. Nature's Spring 500ml, Gatorade Blue, Franklin X-40 Ball" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-bold">
+              </div>
+
+              <div class="grid grid-cols-3 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Boxes / Packs</label>
+                  <input type="number" id="sim-wh-boxes" oninput="updateWholesaleSimulator()" min="1" step="1" value="1" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-slate-900 font-mono font-black">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Pieces per Box</label>
+                  <input type="number" id="sim-wh-pcs" oninput="updateWholesaleSimulator()" min="1" step="1" value="24" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-slate-900 font-mono font-black">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-rose-700 mb-1">Wholesale Cost/Box (₱)</label>
+                  <input type="number" id="sim-wh-box-cost" oninput="updateWholesaleSimulator()" min="0" step="1" value="240" class="w-full bg-rose-50 border border-rose-300 rounded-lg px-2.5 py-2 text-rose-900 font-mono font-black">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5 items-end">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-emerald-800 mb-1">Retail Selling Price per Piece (₱)</label>
+                  <input type="number" id="sim-wh-sell-price" oninput="updateWholesaleSimulator()" min="0" step="1" value="25" class="w-full bg-emerald-50 border-2 border-emerald-500 rounded-lg px-3 py-2 text-emerald-950 font-mono font-black text-sm">
+                </div>
+                <div class="flex flex-wrap gap-1">
+                  <button type="button" onclick="applySimMarkup(1.5)" class="px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[10px] font-bold text-slate-800">+50% Markup</button>
+                  <button type="button" onclick="applySimMarkup(2)" class="px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[10px] font-bold text-slate-800">2× Cost</button>
+                  <button type="button" onclick="applySimMarkup(2.5)" class="px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[10px] font-bold text-slate-800">2.5× Cost</button>
+                </div>
+              </div>
+
+              <!-- Live Computed Result Box -->
+              <div class="p-3.5 rounded-xl bg-[#050E1D] text-white space-y-2 font-mono text-xs border border-slate-800">
+                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                  <span class="text-slate-400">Real Capital Cost per Piece:</span>
+                  <span class="text-amber-400 font-black text-sm" id="sim-out-unit-cost">₱10.00 / pc</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                  <span class="text-slate-400">Actual Money Earned per Piece:</span>
+                  <span class="text-[#9BE600] font-black text-sm" id="sim-out-unit-profit">+₱15.00 / pc (60.0%)</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                  <span class="text-slate-400">Total Wholesale Capital (<span id="sim-out-total-pcs">24</span> pcs):</span>
+                  <span class="text-white font-bold" id="sim-out-total-cap">₱240.00</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                  <span class="text-slate-400">Total Retail Sales When Sold Out:</span>
+                  <span class="text-white font-bold" id="sim-out-total-rev">₱600.00</span>
+                </div>
+                <div class="flex justify-between items-center pt-0.5">
+                  <span class="text-[#9BE600] font-sans font-black uppercase text-[11px]">TOTAL ACTUAL NET PROFIT:</span>
+                  <span class="text-[#9BE600] font-black text-base" id="sim-out-total-profit">+₱360.00</span>
+                </div>
+                <div class="text-[10px] text-sky-300 font-sans pt-1 border-t border-white/10" id="sim-out-breakeven">
+                  💡 <b>Break-Even:</b> Sell just <b>10 pieces</b> (₱250) to recover 100% of your ₱240 wholesale box capital! The remaining <b>14 pieces</b> are pure profit.
+                </div>
+              </div>
+
+              <button type="button" onclick="saveSimulatorProductToInventory()" class="w-full py-2.5 px-4 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+                ➕ Save / Update Product in Inventory with Wholesale Capital →
+              </button>
+            </div>
+          </div>
+
+          <!-- Right (Col 7): AI Financial Insights + Operating Expense Logger -->
+          <div class="lg:col-span-7 space-y-5">
+            
+            <!-- AI Profit & Revenue Intelligence Card -->
+            <div class="p-5 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-lg space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-8 h-8 rounded-lg bg-[#050E1D] text-[#9BE600] flex items-center justify-center font-black text-sm">🤖</span>
+                  <div>
+                    <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">AI FINANCIAL &amp; PROFITABILITY ENGINE</span>
+                    <h3 class="text-base font-black uppercase text-slate-900">Actual Income &amp; Capital Recovery Analysis</h3>
+                  </div>
+                </div>
+                <button type="button" onclick="runAiFinancialAudit(true)" class="px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] text-[10px] font-black uppercase hover:bg-slate-800 transition">
+                  🔄 Refresh AI Analysis
+                </button>
+              </div>
+              <div id="ai-financial-audit-box" class="space-y-2.5 text-xs text-slate-700">
+                <!-- Populated dynamically by runAiFinancialAudit() -->
+              </div>
+            </div>
+
+            <!-- Club Operating Expenses & Capital Outlay Logger -->
+            <div class="p-5 rounded-3xl bg-brand-card border border-brand-border space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+                <div>
+                  <span class="text-[10px] font-mono text-rose-400 uppercase tracking-widest block">DEDUCTIBLE OPERATING EXPENSES &amp; BILLS</span>
+                  <h3 class="text-sm font-black uppercase text-white">Log Club Expenses (Electricity, Staff, Maintenance, Restock)</h3>
+                  <p class="text-[11px] text-slate-400">Record club expenses here so your <b>Actual Net Income</b> reflects 100% real take-home cash.</p>
+                </div>
+              </div>
+
+              <form onsubmit="handleAddClubExpense(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs">
+                <div class="sm:col-span-3">
+                  <select id="exp-category-input" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+                    <option value="Electricity & Utilities">⚡ Electricity &amp; Utilities</option>
+                    <option value="Staff / Referee Pay">👷 Staff / Referee Pay</option>
+                    <option value="Wholesale Restock">📦 Wholesale Restock</option>
+                    <option value="Court Maintenance">🧹 Court Maintenance</option>
+                    <option value="Equipment & Balls">🎾 Equipment &amp; Balls</option>
+                    <option value="Other Expense">📋 Other Expense</option>
+                  </select>
+                </div>
+                <div class="sm:col-span-5">
+                  <input type="text" id="exp-title-input" required placeholder="Expense description (e.g. Electric Bill, Court Cleaner, Ice)" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+                </div>
+                <div class="sm:col-span-2">
+                  <input type="number" id="exp-amount-input" required min="1" step="0.01" placeholder="Amount (₱)" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-rose-400 font-mono font-black">
+                </div>
+                <div class="sm:col-span-2">
+                  <button type="submit" class="w-full h-full py-2.5 px-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-black uppercase text-[11px] transition">
+                    + Add Expense
+                  </button>
+                </div>
+              </form>
+
+              <div id="club-expenses-list" class="max-h-44 overflow-y-auto divide-y divide-white/5 rounded-xl bg-brand-black/50 border border-white/10 text-xs">
+                <!-- Populated by renderClubExpensesList() -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= ALL PRODUCTS CAPITAL COST VS. SELLING PRICE & PROFIT MATRIX ================= -->
+        <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 overflow-hidden shadow-lg">
+          <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">ALL PRODUCTS PROFITABILITY MATRIX (CUSTOM INVENTORY + WEBSITE GEAR)</span>
+              <h3 class="text-sm sm:text-base font-black uppercase text-slate-900">Edit Wholesale Box Cost, Per-Piece Capital &amp; Selling Price for Every Product</h3>
+              <p class="text-[11px] text-slate-600">Enter how much a wholesale box costs (or the per-piece capital cost) and your selling price per piece. Click <b>Save</b> on any row to immediately update your profit calculations.</p>
+            </div>
+            <button type="button" onclick="openAddInventoryModal()" class="px-4 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] font-black text-xs uppercase hover:bg-slate-800 transition">
+              + Add New Wholesale / Retail Product
+            </button>
+          </div>
           <div class="overflow-x-auto touch-scroll">
-            <table class="w-full text-left text-xs border-collapse min-w-[700px]">
+            <table class="w-full text-left text-xs border-collapse min-w-[940px]">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-600 uppercase tracking-wider text-[10px] bg-slate-100 font-black">
+                  <th class="py-3 px-4">Product Name &amp; Type</th>
+                  <th class="py-3 px-3">Wholesale Box Cost (₱)</th>
+                  <th class="py-3 px-3">Pcs / Box</th>
+                  <th class="py-3 px-3">Real Capital / pc (₱)</th>
+                  <th class="py-3 px-3">Selling Price / pc (₱)</th>
+                  <th class="py-3 px-3">Profit / pc &amp; Margin</th>
+                  <th class="py-3 px-3">Profit per Box</th>
+                  <th class="py-3 px-3">Stock Left</th>
+                  <th class="py-3 px-4 text-right">Quick Save</th>
+                </tr>
+              </thead>
+              <tbody id="reports-product-margin-tbody" class="divide-y divide-slate-200">
+                <!-- Populated by renderProductProfitMatrix() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= UPGRADED TRANSACTION HISTORY WITH CAPITAL COST & ACTUAL PROFIT ================= -->
+        <div class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden">
+          <div class="p-4 border-b border-white/10 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-black uppercase text-white block">Transaction History (Gross Revenue vs. Capital Cost vs. Actual Profit Earned)</span>
+              <span class="text-[11px] text-slate-400">You can click <b>✏️ Cost</b> on any transaction to adjust its exact capital/overhead cost.</span>
+            </div>
+          </div>
+          <div class="overflow-x-auto touch-scroll">
+            <table class="w-full text-left text-xs border-collapse min-w-[860px]">
               <thead>
                 <tr class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px] bg-brand-black/40">
-                  <th class="py-3.5 px-4">Transaction Ref ID</th>
-                  <th class="py-3.5 px-4">Revenue Category</th>
+                  <th class="py-3.5 px-4">Ref ID</th>
+                  <th class="py-3.5 px-3">Category</th>
                   <th class="py-3.5 px-4">Customer &amp; Order Details</th>
-                  <th class="py-3.5 px-4">Payment Method &amp; Ref No.</th>
-                  <th class="py-3.5 px-4">Amount Collected (₱)</th>
-                  <th class="py-3.5 px-4">Date &amp; Timestamp</th>
+                  <th class="py-3.5 px-3">Payment Method</th>
+                  <th class="py-3.5 px-3">Gross Collected (₱)</th>
+                  <th class="py-3.5 px-3">Capital Cost / COGS (₱)</th>
+                  <th class="py-3.5 px-3">Actual Money Earned (₱)</th>
+                  <th class="py-3.5 px-4">Date &amp; Time</th>
                 </tr>
               </thead>
               <tbody id="reports-tbody" class="divide-y divide-white/5 font-mono"></tbody>
@@ -1727,7 +2035,7 @@
               <div class="md:col-span-4 p-4 rounded-2xl bg-brand-card border border-white/10 text-center space-y-3">
                 <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">Active GCash QR Code</span>
                 <div class="p-2.5 rounded-2xl bg-white max-w-[170px] mx-auto shadow-lg">
-                  <img id="admin-qr-preview-img" src="assets/qr-gcash.png" alt="Active Official GCash QR" class="w-full h-auto rounded-lg">
+                  <img id="admin-qr-preview-img" src="assets/qr-gcash.png?v=20261029v9" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" alt="Active Official GCash QR" class="w-full h-auto rounded-lg" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
                 </div>
                 
                 <div class="space-y-1.5 pt-1">
@@ -1766,7 +2074,8 @@
                   <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Custom QR Image URL / Standee Path</label>
                   <div class="flex gap-2">
                     <input type="text" id="settings-custom-standee-url" placeholder="assets/qr-gcash.png or data:image/..." class="flex-1 bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:outline-none">
-                    <button type="button" onclick="saveOfficialPaymentSettings()" class="py-2.5 px-5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow whitespace-nowrap">Save &amp; Sync QR</button>
+                    <button type="button" onclick="saveOfficialPaymentSettings()" class="py-2.5 px-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow whitespace-nowrap">Save &amp; Sync QR</button>
+                    <button type="button" onclick="resetOfficialGcashQr()" class="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold uppercase text-[10px] tracking-wider transition whitespace-nowrap">Restore Official QR</button>
                   </div>
                   <p id="settings-pay-feedback" class="hidden text-xs font-bold text-brand-lime mt-1.5"></p>
                 </div>
@@ -1895,15 +2204,15 @@
 
   </div>
 
-  <!-- ================= MODAL: ADD / EDIT CUSTOM INVENTORY WITH PICTURE ================= -->
+    <!-- ================= MODAL: ADD / EDIT PRODUCT (WHOLESALE BOX-TO-PIECE OR PER-PIECE CAPITAL) ================= -->
   <div id="inventory-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
     <div onclick="closeInventoryModal()" class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-    <div class="relative z-10 w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/40 p-6 shadow-2xl touch-scroll">
+    <div class="relative z-10 w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-3xl bg-brand-card border border-brand-lime/40 p-6 shadow-2xl touch-scroll">
       
       <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
         <div>
-          <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">CUSTOM INVENTORY ITEM</span>
-          <h3 class="text-lg font-black uppercase text-white" id="inv-modal-title">Add Product with Picture</h3>
+          <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">WHOLESALE &amp; PER-PIECE CAPITAL INVENTORY SYSTEM</span>
+          <h3 class="text-lg font-black uppercase text-white" id="inv-modal-title">Add Product (Wholesale Box or Per-Piece)</h3>
         </div>
         <button onclick="closeInventoryModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
       </div>
@@ -1911,15 +2220,14 @@
       <form onsubmit="handleSaveInventoryItem(event)" class="space-y-4 text-xs">
         <input type="hidden" id="inv-item-id" value="">
 
-        <div>
-          <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Product Name *</label>
-          <input type="text" id="inv-item-name" required placeholder="e.g. Mineral Water 500ml, Franklin X-40 Ball, Carbon Paddle" class="w-full bg-brand-black border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-bold focus:outline-none focus:border-brand-lime">
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div class="sm:col-span-7">
+            <label class="block text-[10px] text-slate-300 uppercase mb-1 font-bold">Product Name *</label>
+            <input type="text" id="inv-item-name" required placeholder="e.g. Mineral Water 500ml, Gatorade, Franklin X-40 Ball, Overgrip" class="w-full bg-brand-black border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-bold focus:outline-none focus:border-brand-lime">
+          </div>
+          <div class="sm:col-span-5">
             <div class="flex items-center justify-between mb-1">
-              <label class="block text-[10px] text-slate-400 uppercase font-bold">Category *</label>
+              <label class="block text-[10px] text-slate-300 uppercase font-bold">Category *</label>
               <button type="button" onclick="toggleModalCustomCategoryInput()" id="toggle-custom-cat-btn" class="text-[9px] font-mono font-bold text-brand-lime hover:underline">+ Custom</button>
             </div>
             <select id="inv-item-cat" onchange="handleModalCategorySelectChange(this.value)" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-brand-lime">
@@ -1931,14 +2239,93 @@
             </select>
             <input type="text" id="inv-item-custom-cat" placeholder="Type custom category name..." class="hidden mt-2 w-full bg-brand-black border border-brand-lime rounded-xl px-3 py-2 text-xs text-brand-lime font-bold focus:outline-none">
           </div>
-          <div>
-            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Unit Price (₱) *</label>
-            <input type="number" id="inv-item-price" required min="0" step="1" placeholder="50" value="50" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-brand-lime font-mono font-black focus:outline-none focus:border-brand-lime">
+        </div>
+
+        <!-- HOW DO YOU BUY THIS PRODUCT? (Wholesale Box/Pack vs Per Piece) -->
+        <div class="p-4 rounded-2xl bg-brand-black/80 border border-brand-lime/30 space-y-3.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-[10px] font-mono font-black uppercase text-brand-lime tracking-wider">1. How do you buy / stock this product?</span>
+            <div class="grid grid-cols-2 gap-1.5 bg-brand-card p-1 rounded-xl border border-white/10">
+              <button type="button" id="inv-mode-btn-wholesale" onclick="setInventoryModalBuyMode('wholesale')" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black text-[11px] transition">
+                📦 Buy Wholesale (Box/Pack) → Sell Per Piece
+              </button>
+              <button type="button" id="inv-mode-btn-unit" onclick="setInventoryModalBuyMode('unit')" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white font-bold text-[11px] transition">
+                🏷️ Buy / Cost Per Single Piece
+              </button>
+            </div>
+            <input type="hidden" id="inv-buy-mode" value="wholesale">
           </div>
-          <div>
-            <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Starting Stock *</label>
-            <input type="number" id="inv-item-stock" required min="0" step="1" placeholder="24" value="24" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-mono font-black focus:outline-none focus:border-brand-lime">
+
+          <!-- WHOLESALE BOX / PACK INPUTS -->
+          <div id="inv-wholesale-fields" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+            <div>
+              <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Wholesale Package</label>
+              <select id="inv-wh-unit" onchange="recalcInventoryModalProfit()" class="w-full bg-brand-card border border-white/15 rounded-xl px-2.5 py-2 text-white font-bold text-xs">
+                <option value="Box / Case">Box / Case</option>
+                <option value="Pack / Bundle">Pack / Bundle</option>
+                <option value="Dozen (12 pcs)">Dozen (12 pcs)</option>
+                <option value="Bulk / Sack">Bulk / Sack</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Boxes / Packs Bought</label>
+              <input type="number" id="inv-wh-boxes" oninput="recalcInventoryModalProfit(true)" min="0.5" step="0.5" value="1" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono font-black">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Pieces per Box/Pack *</label>
+              <input type="number" id="inv-wh-pcs" oninput="recalcInventoryModalProfit(true)" min="1" step="1" value="24" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-white font-mono font-black">
+            </div>
+            <div>
+              <label class="block text-[10px] text-amber-300 uppercase mb-1 font-bold">Wholesale Cost / Box (₱)</label>
+              <input type="number" id="inv-wh-box-cost" oninput="recalcInventoryModalProfit(false)" min="0" step="0.01" placeholder="240" value="240" class="w-full bg-brand-card border border-amber-400/50 rounded-xl px-3 py-2 text-amber-300 font-mono font-black">
+            </div>
           </div>
+
+          <!-- PER-PIECE CAPITAL, SELLING PRICE & STOCK -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10">
+            <div>
+              <label class="block text-[10px] text-amber-300 uppercase mb-1 font-bold" id="inv-cost-price-label">Real Capital Cost / Piece (₱)</label>
+              <input type="number" id="inv-item-cost" oninput="handleManualUnitCostInput()" min="0" step="0.01" placeholder="10.00" value="10.00" class="w-full bg-brand-card border border-amber-400/40 rounded-xl px-3 py-2.5 text-amber-300 font-mono font-black focus:outline-none focus:border-amber-400">
+              <span class="text-[9px] text-slate-400 block mt-0.5" id="inv-cost-helper-txt">Auto-computed: Wholesale Box Cost ÷ Pieces</span>
+            </div>
+            <div>
+              <label class="block text-[10px] text-brand-lime uppercase mb-1 font-bold">Retail Selling Price / Piece (₱) *</label>
+              <input type="number" id="inv-item-price" required oninput="recalcInventoryModalProfit(false)" min="0" step="0.5" placeholder="25" value="25" class="w-full bg-brand-card border-2 border-brand-lime rounded-xl px-3 py-2.5 text-brand-lime font-mono font-black focus:outline-none">
+              <div class="flex gap-1 mt-1">
+                <button type="button" onclick="applyModalMarkup(1.5)" class="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[9px] text-slate-200 font-mono">+50%</button>
+                <button type="button" onclick="applyModalMarkup(2)" class="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[9px] text-slate-200 font-mono">2× Cost</button>
+                <button type="button" onclick="applyModalMarkup(2.5)" class="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[9px] text-slate-200 font-mono">2.5× Cost</button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] text-white uppercase mb-1 font-bold">Total Available Stock (Pieces) *</label>
+              <input type="number" id="inv-item-stock" required oninput="recalcInventoryModalProfit(false)" min="0" step="1" placeholder="24" value="24" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2.5 text-white font-mono font-black focus:outline-none focus:border-brand-lime">
+              <span class="text-[9px] text-slate-400 block mt-0.5">Deducts 1 piece per unit sold</span>
+            </div>
+          </div>
+
+          <!-- LIVE PROFIT & CAPITAL SUMMARY PREVIEW -->
+          <div class="p-3 rounded-xl bg-emerald-950/50 border border-brand-lime/40 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono">
+            <div class="p-2 rounded-lg bg-brand-black/60">
+              <span class="text-[9px] text-slate-400 uppercase block">Capital / Piece</span>
+              <span class="text-sm font-black text-amber-300" id="inv-prev-unit-cost">₱10.00</span>
+            </div>
+            <div class="p-2 rounded-lg bg-brand-black/60">
+              <span class="text-[9px] text-slate-400 uppercase block">Actual Profit / Piece</span>
+              <span class="text-sm font-black text-brand-lime" id="inv-prev-unit-profit">+₱15.00 (60%)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-brand-black/60">
+              <span class="text-[9px] text-slate-400 uppercase block">Total Stock Capital</span>
+              <span class="text-sm font-black text-white" id="inv-prev-total-cap">₱240.00</span>
+            </div>
+            <div class="p-2 rounded-lg bg-brand-black/60">
+              <span class="text-[9px] text-brand-lime uppercase block font-bold">Total Profit When Sold</span>
+              <span class="text-sm font-black text-brand-lime" id="inv-prev-total-profit">+₱360.00</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-sky-300 font-medium text-center" id="inv-prev-breakeven-note">
+            💡 Break-Even: Sell 10 pieces to recover 100% of your wholesale capital!
+          </p>
         </div>
 
         <!-- Product Picture Upload & Live Preview -->
@@ -1991,7 +2378,7 @@
         </div>
 
         <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
-          Save Product to Inventory →
+          Save Product, Wholesale Capital &amp; Selling Price →
         </button>
       </form>
 
@@ -2375,6 +2762,7 @@ function clearFieldError(fieldId) {
           salesLedger = data.sales || data.salesLedger || [];
           courtBlocks = data.blocks || [];
           posCatalog = data.inventory || [];
+          clubExpenses = data.expenses || [];
           customCategories = data.categories || [];
           if (Date.now() >= (typeof annMutationLockUntil !== 'undefined' ? annMutationLockUntil : 0)) {
             if (Array.isArray(data.announcements)) {
@@ -3289,15 +3677,136 @@ function clearFieldError(fieldId) {
       }
     }
 
+        // ================= WHOLESALE-TO-RETAIL CAPITAL, INVENTORY & NET PROFIT ENGINE =================
+    let clubExpenses = [];
+    let activeReportsPeriod = 'ALL';
+
+    function getResolvedItemUnitCost(item) {
+      if (!item) return 0;
+      const directCost = Number(item.costPrice || 0);
+      if (directCost > 0) return directCost;
+      const boxCost = Number(item.costPerBox || 0);
+      const pcs = Number(item.pcsPerBox || 0);
+      if (boxCost > 0 && pcs > 0) {
+        return Math.round((boxCost / pcs) * 100) / 100;
+      }
+      return 0;
+    }
+
+    function setInventoryModalBuyMode(mode) {
+      const hiddenEl = document.getElementById('inv-buy-mode');
+      const whBtn = document.getElementById('inv-mode-btn-wholesale');
+      const unBtn = document.getElementById('inv-mode-btn-unit');
+      const whFields = document.getElementById('inv-wholesale-fields');
+      const costHelper = document.getElementById('inv-cost-helper-txt');
+
+      if (hiddenEl) hiddenEl.value = mode;
+      if (mode === 'wholesale') {
+        if (whBtn) whBtn.className = 'px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black text-[11px] transition';
+        if (unBtn) unBtn.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white font-bold text-[11px] transition';
+        if (whFields) whFields.classList.remove('hidden');
+        if (costHelper) costHelper.textContent = 'Auto-computed: Wholesale Box Cost ÷ Pieces';
+        recalcInventoryModalProfit(false);
+      } else {
+        if (unBtn) unBtn.className = 'px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black text-[11px] transition';
+        if (whBtn) whBtn.className = 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white font-bold text-[11px] transition';
+        if (whFields) whFields.classList.add('hidden');
+        if (costHelper) costHelper.textContent = 'Direct capital / real cost per 1 unit';
+        recalcInventoryModalProfit(false);
+      }
+    }
+
+    function recalcInventoryModalProfit(syncStockFromBoxes = false) {
+      const mode = document.getElementById('inv-buy-mode')?.value || 'wholesale';
+      const boxes = Math.max(0.5, parseFloat(document.getElementById('inv-wh-boxes')?.value) || 1);
+      const pcsPerBox = Math.max(1, parseInt(document.getElementById('inv-wh-pcs')?.value, 10) || 24);
+      const costPerBox = Math.max(0, parseFloat(document.getElementById('inv-wh-box-cost')?.value) || 0);
+      const costEl = document.getElementById('inv-item-cost');
+      const priceEl = document.getElementById('inv-item-price');
+      const stockEl = document.getElementById('inv-item-stock');
+
+      if (mode === 'wholesale') {
+        const computedUnitCost = pcsPerBox > 0 ? Math.round((costPerBox / pcsPerBox) * 100) / 100 : 0;
+        if (costEl && document.activeElement !== costEl) {
+          costEl.value = computedUnitCost.toFixed(2);
+        }
+        if (syncStockFromBoxes && stockEl) {
+          const isEditing = Boolean(document.getElementById('inv-item-id')?.value);
+          if (!isEditing) {
+            stockEl.value = Math.round(boxes * pcsPerBox);
+          }
+        }
+      }
+
+      const unitCost = Math.max(0, parseFloat(costEl?.value) || 0);
+      const sellPrice = Math.max(0, parseFloat(priceEl?.value) || 0);
+      const stockQty = Math.max(0, parseInt(stockEl?.value, 10) || 0);
+
+      const unitProfit = sellPrice - unitCost;
+      const marginPct = sellPrice > 0 ? ((unitProfit / sellPrice) * 100) : 0;
+      const totalCap = mode === 'wholesale' && costPerBox > 0
+        ? (stockQty * unitCost)
+        : (stockQty * unitCost);
+      const totalProfit = stockQty * unitProfit;
+
+      const uCostOut = document.getElementById('inv-prev-unit-cost');
+      const uProfOut = document.getElementById('inv-prev-unit-profit');
+      const tCapOut = document.getElementById('inv-prev-total-cap');
+      const tProfOut = document.getElementById('inv-prev-total-profit');
+      const beNote = document.getElementById('inv-prev-breakeven-note');
+
+      if (uCostOut) uCostOut.textContent = '₱' + unitCost.toFixed(2);
+      if (uProfOut) {
+        uProfOut.textContent = (unitProfit >= 0 ? '+₱' : '-₱') + Math.abs(unitProfit).toFixed(2) + ' (' + marginPct.toFixed(0) + '%)';
+        uProfOut.className = 'text-sm font-black ' + (unitProfit >= 0 ? 'text-brand-lime' : 'text-rose-400');
+      }
+      if (tCapOut) tCapOut.textContent = '₱' + totalCap.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (tProfOut) {
+        tProfOut.textContent = (totalProfit >= 0 ? '+₱' : '-₱') + Math.abs(totalProfit).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+      if (beNote) {
+        if (sellPrice > 0 && totalCap > 0 && unitProfit > 0) {
+          const bePcs = Math.ceil(totalCap / sellPrice);
+          beNote.innerHTML = `💡 <b>Break-Even:</b> Sell just <b>${bePcs} piece${bePcs === 1 ? '' : 's'}</b> (₱${(bePcs * sellPrice).toFixed(0)}) to recover 100% of your ₱${totalCap.toFixed(0)} capital! The remaining <b>${Math.max(0, stockQty - bePcs)} pcs</b> are pure profit.`;
+        } else if (unitCost === 0) {
+          beNote.innerHTML = `💡 Enter your Wholesale Cost per Box or Capital per Piece so we can compute your exact profit margin.`;
+        } else {
+          beNote.innerHTML = `⚠️ Selling price (₱${sellPrice.toFixed(2)}) is below or equal to capital cost (₱${unitCost.toFixed(2)}). Increase selling price to earn a profit!`;
+        }
+      }
+    }
+
+    function handleManualUnitCostInput() {
+      const unitCost = Math.max(0, parseFloat(document.getElementById('inv-item-cost')?.value) || 0);
+      const pcsPerBox = Math.max(1, parseInt(document.getElementById('inv-wh-pcs')?.value, 10) || 24);
+      const boxCostEl = document.getElementById('inv-wh-box-cost');
+      if (boxCostEl && document.activeElement !== boxCostEl) {
+        boxCostEl.value = (unitCost * pcsPerBox).toFixed(2);
+      }
+      recalcInventoryModalProfit(false);
+    }
+
+    function applyModalMarkup(multiplier) {
+      const unitCost = Math.max(0, parseFloat(document.getElementById('inv-item-cost')?.value) || 0);
+      const priceEl = document.getElementById('inv-item-price');
+      if (priceEl && unitCost > 0) {
+        priceEl.value = Math.ceil(unitCost * multiplier);
+        recalcInventoryModalProfit(false);
+      }
+    }
+
     function openAddInventoryModal(editId) {
       const modal = document.getElementById('inventory-modal');
-      if (!modal) return;
       const titleEl = document.getElementById('inv-modal-title');
       const idEl = document.getElementById('inv-item-id');
       const nameEl = document.getElementById('inv-item-name');
-      const catEl = document.getElementById('inv-item-cat');
       const priceEl = document.getElementById('inv-item-price');
+      const costEl = document.getElementById('inv-item-cost');
       const stockEl = document.getElementById('inv-item-stock');
+      const whUnitEl = document.getElementById('inv-wh-unit');
+      const whBoxesEl = document.getElementById('inv-wh-boxes');
+      const whPcsEl = document.getElementById('inv-wh-pcs');
+      const whBoxCostEl = document.getElementById('inv-wh-box-cost');
       const previewEl = document.getElementById('inv-img-preview');
       const urlEl = document.getElementById('inv-img-url');
       const fileEl = document.getElementById('inv-img-file');
@@ -3307,92 +3816,48 @@ function clearFieldError(fieldId) {
       if (editId) {
         const existing = posCatalog.find(x => x.id === editId);
         if (existing) {
-          titleEl.textContent = 'Edit Inventory Product';
+          titleEl.textContent = 'Edit Product Capital Cost, Wholesale Pack & Price';
           idEl.value = existing.id;
           nameEl.value = existing.name;
           populateModalCategoryDropdown(existing.cat || 'Pro Shop');
           document.getElementById('inv-item-custom-cat')?.classList.add('hidden');
-          priceEl.value = existing.price;
-          stockEl.value = existing.stock;
+          const bMode = existing.buyMode || (Number(existing.pcsPerBox || 0) > 1 ? 'wholesale' : 'wholesale');
+          if (whUnitEl) whUnitEl.value = existing.wholesaleUnit || 'Box / Case';
+          if (whBoxesEl) whBoxesEl.value = existing.wholesaleBoxes || 1;
+          if (whPcsEl) whPcsEl.value = existing.pcsPerBox || 24;
+          const uCost = getResolvedItemUnitCost(existing);
+          if (whBoxCostEl) whBoxCostEl.value = existing.costPerBox || (uCost * (existing.pcsPerBox || 24)) || 0;
+          if (costEl) costEl.value = uCost.toFixed(2);
+          if (priceEl) priceEl.value = existing.price;
+          if (stockEl) stockEl.value = existing.stock;
+          setInventoryModalBuyMode(bMode);
           currentUploadedInventoryImg = existing.img || 'assets/gear-water-500ml.jpg';
-          previewEl.src = currentUploadedInventoryImg;
-          urlEl.value = currentUploadedInventoryImg.startsWith('data:') ? '(Custom Uploaded Photo)' : currentUploadedInventoryImg;
+          if (previewEl) previewEl.src = currentUploadedInventoryImg;
+          if (urlEl) urlEl.value = currentUploadedInventoryImg.startsWith('data:') ? '(Custom Uploaded Photo)' : currentUploadedInventoryImg;
+          recalcInventoryModalProfit(false);
         }
       } else {
-        titleEl.textContent = 'Add Custom Product with Picture';
+        titleEl.textContent = 'Add Product (Wholesale Box/Pack or Per-Piece)';
         idEl.value = '';
         nameEl.value = '';
         populateModalCategoryDropdown(activeInventoryCategoryFilter !== 'ALL' ? activeInventoryCategoryFilter : 'Refreshment');
         const cInp = document.getElementById('inv-item-custom-cat');
         if (cInp) { cInp.value = ''; cInp.classList.add('hidden'); }
-        priceEl.value = 50;
-        stockEl.value = 20;
+        if (whUnitEl) whUnitEl.value = 'Box / Case';
+        if (whBoxesEl) whBoxesEl.value = 1;
+        if (whPcsEl) whPcsEl.value = 24;
+        if (whBoxCostEl) whBoxCostEl.value = 240;
+        if (costEl) costEl.value = 10;
+        if (priceEl) priceEl.value = 25;
+        if (stockEl) stockEl.value = 24;
+        setInventoryModalBuyMode('wholesale');
         currentUploadedInventoryImg = 'assets/gear-water-500ml.jpg';
-        previewEl.src = currentUploadedInventoryImg;
-        urlEl.value = currentUploadedInventoryImg;
+        if (previewEl) previewEl.src = currentUploadedInventoryImg;
+        if (urlEl) urlEl.value = currentUploadedInventoryImg;
+        recalcInventoryModalProfit(false);
       }
 
       modal.classList.remove('hidden');
-    }
-
-    function closeInventoryModal() {
-      const modal = document.getElementById('inventory-modal');
-      if (modal) modal.classList.add('hidden');
-    }
-
-    function selectPresetInventoryImage(imgPath) {
-      currentUploadedInventoryImg = imgPath;
-      const previewEl = document.getElementById('inv-img-preview');
-      const urlEl = document.getElementById('inv-img-url');
-      if (previewEl) previewEl.src = imgPath;
-      if (urlEl) urlEl.value = imgPath;
-    }
-
-    function updateInventoryPreviewFromUrl(val) {
-      if (!val || val === '(Custom Uploaded Photo)') return;
-      currentUploadedInventoryImg = val.trim();
-      const previewEl = document.getElementById('inv-img-preview');
-      if (previewEl) previewEl.src = currentUploadedInventoryImg;
-    }
-
-    function handleInventoryImageUpload(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const maxDim = 320;
-          let w = img.width;
-          let h = img.height;
-          if (w > h) {
-            if (w > maxDim) { h = Math.round(h * (maxDim / w)); w = maxDim; }
-          } else {
-            if (h > maxDim) { w = Math.round(w * (maxDim / h)); h = maxDim; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          currentUploadedInventoryImg = dataUrl;
-          const previewEl = document.getElementById('inv-img-preview');
-          const urlEl = document.getElementById('inv-img-url');
-          if (previewEl) previewEl.src = dataUrl;
-          if (urlEl) urlEl.value = '(Custom Uploaded Photo)';
-          if (typeof uploadAssetToServer === 'function') {
-            uploadAssetToServer('inv', dataUrl).then(savedUrl => {
-              if (savedUrl) {
-                currentUploadedInventoryImg = savedUrl;
-                if (urlEl && !savedUrl.startsWith('data:')) urlEl.value = savedUrl;
-              }
-            }).catch(() => {});
-          }
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
     }
 
     async function handleSaveInventoryItem(event) {
@@ -3402,13 +3867,30 @@ function clearFieldError(fieldId) {
       const selCat = document.getElementById('inv-item-cat').value;
       const customCatVal = (document.getElementById('inv-item-custom-cat')?.value || '').trim();
       const cat = (selCat === '__CUSTOM__' || customCatVal) ? (customCatVal || 'Custom') : selCat;
-      const price = parseFloat(document.getElementById('inv-item-price').value) || 0;
-      const stock = parseInt(document.getElementById('inv-item-stock').value) || 0;
+
+      const buyMode = document.getElementById('inv-buy-mode')?.value || 'wholesale';
+      const wholesaleUnit = document.getElementById('inv-wh-unit')?.value || 'Box / Case';
+      const wholesaleBoxes = Math.max(0.5, parseFloat(document.getElementById('inv-wh-boxes')?.value) || 1);
+      const pcsPerBox = Math.max(1, parseInt(document.getElementById('inv-wh-pcs')?.value, 10) || 1);
+      const costPerBox = Math.max(0, parseFloat(document.getElementById('inv-wh-box-cost')?.value) || 0);
+      let costPrice = Math.max(0, parseFloat(document.getElementById('inv-item-cost')?.value) || 0);
+      if (buyMode === 'wholesale' && costPerBox > 0 && pcsPerBox > 0) {
+        costPrice = Math.round((costPerBox / pcsPerBox) * 100) / 100;
+      }
+      const price = Math.max(0, parseFloat(document.getElementById('inv-item-price')?.value) || 0);
+      const stock = Math.max(0, parseInt(document.getElementById('inv-item-stock')?.value, 10) || 0);
 
       const itemObj = {
         id: id,
         name: name,
         cat: cat,
+        buyMode: buyMode,
+        wholesaleUnit: wholesaleUnit,
+        wholesaleBoxes: wholesaleBoxes,
+        pcsPerBox: pcsPerBox,
+        costPerBox: costPerBox,
+        costPrice: costPrice,
+        totalCapitalInvested: Math.round(stock * costPrice * 100) / 100,
         price: price,
         stock: stock,
         img: currentUploadedInventoryImg || 'assets/gear-water-500ml.jpg'
@@ -3424,48 +3906,101 @@ function clearFieldError(fieldId) {
 
       closeInventoryModal();
       await fetchAdminStateFromServer(true);
-      switchTab('site-editor');
     }
 
-    async function adjustInventoryStockDelta(id, delta) {
-      const prod = posCatalog.find(p => p.id === id);
+    async function promptRestockWholesaleBox(itemId) {
+      const prod = posCatalog.find(x => x.id === itemId);
       if (!prod) return;
-      const newStock = Math.max(0, Number(prod.stock || 0) + delta);
+      const defaultPcs = Number(prod.pcsPerBox || 24);
+      const defaultBoxCost = Number(prod.costPerBox || (getResolvedItemUnitCost(prod) * defaultPcs) || 240);
+      const boxesStr = prompt(`📦 RESTOCK WHOLESALE BOX / PACK — ${prod.name}
+
+How many boxes/packs are you adding to stock?
+(1 box = ${defaultPcs} pieces)`, '1');
+      if (boxesStr === null) return;
+      const boxesAdded = Math.max(0.5, parseFloat(boxesStr) || 1);
+
+      const boxCostStr = prompt(`Wholesale Cost per Box/Pack (₱) for ${defaultPcs} pcs:
+(Current: ₱${defaultBoxCost.toFixed(2)}/box = ₱${(defaultBoxCost / defaultPcs).toFixed(2)}/pc)`, String(defaultBoxCost));
+      if (boxCostStr === null) return;
+      const costPerBox = Math.max(0, parseFloat(boxCostStr) || defaultBoxCost);
+
       try {
         await fetch('/api/inventory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'update_stock', id: id, stock: newStock })
+          body: JSON.stringify({
+            action: 'restock_wholesale',
+            id: itemId,
+            boxesAdded: boxesAdded,
+            pcsPerBox: defaultPcs,
+            costPerBox: costPerBox,
+            logExpense: false
+          })
         });
       } catch (e) {}
       await fetchAdminStateFromServer(true);
     }
 
-    async function deleteInventoryItem(id) {
-      if (!confirm('Remove this product from inventory?')) return;
-      try {
-        await fetch('/api/inventory', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'delete', id: id })
-        });
-      } catch (e) {}
-      await fetchAdminStateFromServer(true);
+    function updateInventorySummaryKpis() {
+      let totalCap = 0;
+      let totalRetail = 0;
+      let totalPieces = 0;
+      let marginSum = 0;
+      let marginCount = 0;
+      let missingCostCount = 0;
+
+      posCatalog.forEach(p => {
+        const stock = Math.max(0, Number(p.stock || 0));
+        const sell = Math.max(0, Number(p.price || 0));
+        const unitCost = getResolvedItemUnitCost(p);
+        totalPieces += stock;
+        totalCap += stock * unitCost;
+        totalRetail += stock * sell;
+        if (sell > 0) {
+          marginSum += ((sell - unitCost) / sell) * 100;
+          marginCount += 1;
+        }
+        if (unitCost <= 0) missingCostCount += 1;
+      });
+
+      const projProfit = totalRetail - totalCap;
+      const avgMargin = marginCount > 0 ? (marginSum / marginCount) : 0;
+
+      const capEl = document.getElementById('inv-kpi-stock-capital');
+      const unitsEl = document.getElementById('inv-kpi-stock-units');
+      const retEl = document.getElementById('inv-kpi-retail-value');
+      const profEl = document.getElementById('inv-kpi-projected-profit');
+      const mrgEl = document.getElementById('inv-kpi-avg-margin');
+      const noteEl = document.getElementById('inv-kpi-missing-cost-note');
+
+      if (capEl) capEl.textContent = '₱' + totalCap.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (unitsEl) unitsEl.textContent = `${totalPieces} total pieces across ${posCatalog.length} products`;
+      if (retEl) retEl.textContent = '₱' + totalRetail.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (profEl) profEl.textContent = (projProfit >= 0 ? '+₱' : '-₱') + Math.abs(projProfit).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (mrgEl) mrgEl.textContent = avgMargin.toFixed(1) + '%';
+      if (noteEl) {
+        noteEl.textContent = missingCostCount > 0
+          ? `⚠️ ${missingCostCount} item(s) have ₱0 capital cost set`
+          : `✅ All ${posCatalog.length} products have capital costs set`;
+        noteEl.className = 'text-[10px] block mt-0.5 ' + (missingCostCount > 0 ? 'text-amber-400 font-bold' : 'text-brand-lime');
+      }
     }
 
     function renderInventoryTable() {
+      updateInventorySummaryKpis();
       const tbody = document.getElementById('inventory-tbody');
       if (!tbody) return;
 
       if (posCatalog.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" class="py-12 px-4 text-center">
+            <td colspan="8" class="py-12 px-4 text-center">
               <div class="max-w-md mx-auto space-y-3">
                 <span class="text-sm font-black uppercase text-white block">Your Inventory List Is Empty</span>
-                <p class="text-xs text-slate-400">Click the button below to add your custom products with a photo, category, price, and starting stock count. When customers or POS staff buy an item, stock automatically deducts.</p>
+                <p class="text-xs text-slate-400">Add your drinks, balls, or paddles with their <b>Wholesale Box Cost</b> (e.g. ₱240 / box of 24 pcs) and <b>Per-Piece Selling Price</b> (e.g. ₱25/pc). Every sale automatically deducts stock and calculates your exact Net Profit!</p>
                 <button onclick="openAddInventoryModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition">
-                  + Add First Inventory Product
+                  + Add First Wholesale / Per-Piece Product
                 </button>
               </div>
             </td>
@@ -3477,11 +4012,20 @@ function clearFieldError(fieldId) {
         ? posCatalog
         : posCatalog.filter(p => p.cat === activeInventoryCategoryFilter);
       if (filteredInv.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-xs text-slate-400">No products in category "${activeInventoryCategoryFilter}" yet. Click <b>+ Add Custom Product</b> to add one!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-xs text-slate-400">No products in category "${activeInventoryCategoryFilter}" yet. Click <b>+ Add Product</b> to add one!</td></tr>`;
         return;
       }
+
       tbody.innerHTML = filteredInv.map(p => {
         const stockNum = Number(p.stock || 0);
+        const sellPrice = Number(p.price || 0);
+        const unitCost = getResolvedItemUnitCost(p);
+        const unitProfit = sellPrice - unitCost;
+        const marginPct = sellPrice > 0 ? Math.round((unitProfit / sellPrice) * 100) : 0;
+        const pcsPerBox = Number(p.pcsPerBox || 0);
+        const boxCost = Number(p.costPerBox || (pcsPerBox > 1 ? unitCost * pcsPerBox : 0));
+        const boxProfit = pcsPerBox > 1 ? (unitProfit * pcsPerBox) : 0;
+
         let badgeCls = 'bg-brand-lime/15 text-brand-lime border border-brand-lime/30';
         let badgeTxt = 'IN STOCK';
         if (stockNum === 0) {
@@ -3492,190 +4036,541 @@ function clearFieldError(fieldId) {
           badgeTxt = 'LOW STOCK';
         }
 
+        const whBadge = pcsPerBox > 1
+          ? `<span class="inline-block mt-0.5 px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30 text-[9px] font-mono">📦 Wholesale: ₱${boxCost.toFixed(0)} / ${pcsPerBox} pcs</span>`
+          : `<span class="inline-block mt-0.5 px-2 py-0.5 rounded bg-white/5 text-slate-400 text-[9px] font-mono">🏷️ Per-Piece Capital</span>`;
+
         return `
         <tr class="hover:bg-white/5 transition">
           <td class="py-3.5 px-4 font-bold text-white flex items-center gap-3">
-            <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${p.name}" class="w-11 h-11 rounded-xl object-cover border border-white/15 flex-shrink-0 bg-brand-black">
+            <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${pfEscapeHtml(p.name)}" class="w-11 h-11 rounded-xl object-cover border border-white/15 flex-shrink-0 bg-brand-black">
             <div>
-              <span class="block text-white font-bold">${p.name}</span>
-              <span class="text-[10px] font-mono text-slate-500">ID: ${p.id}</span>
+              <span class="block text-white font-bold">${pfEscapeHtml(p.name)}</span>
+              ${whBadge}
             </div>
           </td>
-          <td class="py-3.5 px-4 text-slate-300 font-semibold">${p.cat}</td>
-          <td class="py-3.5 px-4 font-mono font-black text-brand-lime">₱${Number(p.price).toFixed(2)}</td>
-          <td class="py-3.5 px-4">
-            <div class="flex items-center gap-2">
+          <td class="py-3.5 px-3 text-slate-300 font-semibold">${pfEscapeHtml(p.cat)}</td>
+          <td class="py-3.5 px-3 font-mono">
+            <span class="font-black ${unitCost > 0 ? 'text-amber-300' : 'text-slate-500'} block">₱${unitCost.toFixed(2)} / pc</span>
+            <span class="text-[10px] text-slate-400 block">Stock Cap: ₱${(stockNum * unitCost).toFixed(2)}</span>
+          </td>
+          <td class="py-3.5 px-3 font-mono font-black text-white text-sm">₱${sellPrice.toFixed(2)} / pc</td>
+          <td class="py-3.5 px-3 font-mono">
+            <span class="font-black ${unitProfit >= 0 ? 'text-brand-lime' : 'text-rose-400'} block">${unitProfit >= 0 ? '+₱' : '-₱'}${Math.abs(unitProfit).toFixed(2)} / pc (${marginPct}%)</span>
+            ${pcsPerBox > 1 ? `<span class="text-[10px] text-emerald-300 block">Box Profit: +₱${boxProfit.toFixed(0)} / box</span>` : `<span class="text-[10px] text-slate-400 block">Total Profit: +₱${(stockNum * unitProfit).toFixed(0)}</span>`}
+          </td>
+          <td class="py-3.5 px-3">
+            <div class="flex items-center gap-1.5">
               <button onclick="adjustInventoryStockDelta('${p.id}', -1)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center">-</button>
-              <span class="font-mono text-white font-black text-sm min-w-[36px] text-center">${stockNum}</span>
+              <span class="font-mono text-white font-black text-sm min-w-[34px] text-center">${stockNum}</span>
               <button onclick="adjustInventoryStockDelta('${p.id}', 1)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center">+</button>
             </div>
+            ${Number(p.soldCount || 0) > 0 ? `<span class="text-[9px] font-mono text-slate-400 block mt-0.5">Sold: ${p.soldCount} pcs</span>` : ''}
           </td>
-          <td class="py-3.5 px-4">
+          <td class="py-3.5 px-3">
             <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase ${badgeCls}">${badgeTxt}</span>
           </td>
-          <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-2">
-            <button onclick="openAddInventoryModal('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-brand-lime text-[10px] font-bold uppercase transition">Edit</button>
+          <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-1.5">
+            <button onclick="promptRestockWholesaleBox('${p.id}')" class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500 hover:text-brand-black text-sky-300 border border-sky-500/30 text-[10px] font-black uppercase transition" title="Add Wholesale Box">+📦 Box</button>
+            <button onclick="openAddInventoryModal('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-brand-lime text-[10px] font-bold uppercase transition">Edit Cost/Price</button>
             <button onclick="deleteInventoryItem('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Delete</button>
           </td>
         </tr>
       `}).join('');
     }
 
-    // ================= POINT OF SALE (POS) =================
-    function renderPosCatalog() {
-      const grid = document.getElementById('pos-catalog-grid');
-      if (!grid) return;
-
-      if (posCatalog.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full p-8 rounded-3xl bg-brand-card border border-white/10 text-center space-y-3">
-            <span class="text-sm font-black uppercase text-white block">No Products in Inventory Yet</span>
-            <p class="text-xs text-slate-400 max-w-sm mx-auto">Add your custom drinks, balls, or paddle rentals to the Inventory first. They will appear here with their picture and live stock count.</p>
-            <button onclick="openAddInventoryModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition">
-              + Add Custom Product with Picture
-            </button>
-          </div>`;
-        return;
+    function estimateTransactionCost(sale) {
+      if (!sale) return 0;
+      if (sale.cost !== undefined && sale.cost !== null && Number(sale.cost) > 0) {
+        return Number(sale.cost);
       }
-
-      const filteredPos = activePosCategoryFilter === 'ALL'
-        ? posCatalog
-        : posCatalog.filter(p => p.cat === activePosCategoryFilter);
-      if (filteredPos.length === 0) {
-        grid.innerHTML = `<div class="col-span-full p-6 rounded-2xl bg-brand-card border border-white/10 text-center text-xs text-slate-400">No items in category "${activePosCategoryFilter}".</div>`;
-        return;
+      // Dynamically infer cost from items or description if cost was 0
+      let inferred = 0;
+      const sc = currentSiteConfig || DEFAULT_SITE_CONFIG || {};
+      if (Array.isArray(sale.items) && sale.items.length > 0) {
+        sale.items.forEach(it => {
+          const q = Math.max(1, Number(it.qty || 1));
+          if (it.costPrice !== undefined && Number(it.costPrice) > 0) {
+            inferred += Number(it.costPrice) * q;
+          } else {
+            const match = posCatalog.find(p => p.id === it.id || String(p.name || '').toLowerCase() === String(it.name || '').toLowerCase());
+            if (match) inferred += getResolvedItemUnitCost(match) * q;
+          }
+        });
+      } else if (sale.desc) {
+        const dLow = String(sale.desc).toLowerCase();
+        posCatalog.forEach(p => {
+          const pName = String(p.name || '').toLowerCase();
+          if (pName && dLow.includes(pName)) {
+            const rx = new RegExp('(\\d+)x\\s*' + pName.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i');
+            const m = dLow.match(rx);
+            const q = m ? Math.max(1, parseInt(m[1], 10)) : 1;
+            inferred += getResolvedItemUnitCost(p) * q;
+          }
+        });
       }
-      grid.innerHTML = filteredPos.map(p => {
-        const outOfStock = Number(p.stock || 0) <= 0;
-        return `
-        <div onclick="${outOfStock ? "alert('Out of stock! Please restock in the Inventory tab.')" : `addPosItem('${p.id}')`}" class="p-3.5 rounded-2xl bg-brand-card border ${outOfStock ? 'border-brand-clay/30 opacity-60 cursor-not-allowed' : 'border-white/10 hover:border-brand-lime/40 cursor-pointer active:scale-95'} transition flex flex-col justify-between">
-          <div>
-            <div class="h-28 w-full rounded-xl overflow-hidden bg-brand-black mb-2.5 border border-white/5 relative">
-              <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${p.name}" class="w-full h-full object-cover">
-              <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full ${outOfStock ? 'bg-brand-clay text-white' : 'bg-brand-black/85 text-brand-lime border border-brand-lime/30'} text-[9px] font-mono font-bold">
-                ${outOfStock ? '0 Left' : `Stock: ${p.stock}`}
-              </span>
-            </div>
-            <span class="text-[9px] font-mono uppercase text-slate-400 block">${p.cat}</span>
-            <h4 class="font-bold text-white text-xs mt-0.5 leading-snug">${p.name}</h4>
-          </div>
-          <span class="text-brand-lime font-mono font-black text-sm block mt-2">₱${Number(p.price).toFixed(2)}</span>
-        </div>
-      `}).join('');
+      if (sale.type === 'Court Rental' && inferred <= 0) {
+        inferred = Number(sc.costCourtPerHour || 0);
+      }
+      return Math.round(inferred * 100) / 100;
     }
 
-    function addPosItem(id) {
-      const prod = posCatalog.find(p => p.id === id);
-      if (!prod) return;
-      const existing = posOrder.find(o => o.id === id);
-      const currentInCart = existing ? existing.qty : 0;
-      if (currentInCart + 1 > Number(prod.stock || 0)) {
-        alert(`Only ${prod.stock} units of "${prod.name}" available in stock!`);
-        return;
-      }
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        posOrder.push({ ...prod, qty: 1 });
-      }
-      renderPosOrder();
+    function filterLedgerByActivePeriod(list) {
+      if (activeReportsPeriod === 'ALL') return list;
+      const now = new Date();
+      const todayStr = now.toISOString().slice(0, 10);
+      return list.filter(entry => {
+        const dStr = String(entry.date || '').slice(0, 10);
+        if (!dStr) return true;
+        if (activeReportsPeriod === 'TODAY') {
+          return dStr === todayStr;
+        }
+        const entryDate = new Date(dStr + 'T12:00:00');
+        if (isNaN(entryDate.getTime())) return true;
+        const diffDays = (now - entryDate) / (1000 * 60 * 60 * 24);
+        if (activeReportsPeriod === 'WEEK') return diffDays <= 7;
+        if (activeReportsPeriod === 'MONTH') {
+          return entryDate.getMonth() === now.getMonth() && entryDate.getFullYear() === now.getFullYear();
+        }
+        return true;
+      });
     }
 
-    function renderPosOrder() {
-      const list = document.getElementById('pos-order-items');
-      const subtotalEl = document.getElementById('pos-subtotal');
-      const totalEl = document.getElementById('pos-total-due');
-      if (!list) return;
+    function setReportsPeriodFilter(period) {
+      activeReportsPeriod = period || 'ALL';
+      ['ALL', 'TODAY', 'WEEK', 'MONTH'].forEach(p => {
+        const btn = document.getElementById('rep-period-' + p);
+        if (btn) {
+          btn.className = (p === activeReportsPeriod)
+            ? 'px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black transition'
+            : 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition';
+        }
+      });
+      renderReportsLedger();
+    }
 
-      if (posOrder.length === 0) {
-        list.innerHTML = `<div class="text-center py-8 text-xs text-slate-500">Tap products on the left to add to order.</div>`;
-        if (subtotalEl) subtotalEl.textContent = '₱0.00';
-        if (totalEl) totalEl.textContent = '₱0.00';
+    function updateWholesaleSimulator() {
+      const boxes = Math.max(1, parseFloat(document.getElementById('sim-wh-boxes')?.value) || 1);
+      const pcs = Math.max(1, parseInt(document.getElementById('sim-wh-pcs')?.value, 10) || 24);
+      const boxCost = Math.max(0, parseFloat(document.getElementById('sim-wh-box-cost')?.value) || 0);
+      const sellPrice = Math.max(0, parseFloat(document.getElementById('sim-wh-sell-price')?.value) || 0);
+
+      const totalPcs = Math.round(boxes * pcs);
+      const totalCap = boxes * boxCost;
+      const unitCost = pcs > 0 ? (boxCost / pcs) : 0;
+      const unitProfit = sellPrice - unitCost;
+      const marginPct = sellPrice > 0 ? ((unitProfit / sellPrice) * 100) : 0;
+      const totalRev = totalPcs * sellPrice;
+      const totalProfit = totalRev - totalCap;
+
+      const elUnitCost = document.getElementById('sim-out-unit-cost');
+      const elUnitProf = document.getElementById('sim-out-unit-profit');
+      const elTotalPcs = document.getElementById('sim-out-total-pcs');
+      const elTotalCap = document.getElementById('sim-out-total-cap');
+      const elTotalRev = document.getElementById('sim-out-total-rev');
+      const elTotalProf = document.getElementById('sim-out-total-profit');
+      const elBe = document.getElementById('sim-out-breakeven');
+
+      if (elUnitCost) elUnitCost.textContent = `₱${unitCost.toFixed(2)} / pc`;
+      if (elUnitProf) {
+        elUnitProf.textContent = `${unitProfit >= 0 ? '+₱' : '-₱'}${Math.abs(unitProfit).toFixed(2)} / pc (${marginPct.toFixed(1)}%)`;
+        elUnitProf.className = 'font-black text-sm ' + (unitProfit >= 0 ? 'text-[#9BE600]' : 'text-rose-400');
+      }
+      if (elTotalPcs) elTotalPcs.textContent = String(totalPcs);
+      if (elTotalCap) elTotalCap.textContent = '₱' + totalCap.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (elTotalRev) elTotalRev.textContent = '₱' + totalRev.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (elTotalProf) {
+        elTotalProf.textContent = (totalProfit >= 0 ? '+₱' : '-₱') + Math.abs(totalProfit).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        elTotalProf.className = 'font-black text-base ' + (totalProfit >= 0 ? 'text-[#9BE600]' : 'text-rose-400');
+      }
+      if (elBe) {
+        if (sellPrice > 0 && totalCap > 0 && unitProfit > 0) {
+          const bePcs = Math.ceil(totalCap / sellPrice);
+          elBe.innerHTML = `💡 <b>Break-Even:</b> Sell just <b>${bePcs} piece${bePcs === 1 ? '' : 's'}</b> (₱${(bePcs * sellPrice).toFixed(0)}) to recover 100% of your ₱${totalCap.toFixed(0)} wholesale capital! The remaining <b>${Math.max(0, totalPcs - bePcs)} pieces</b> earn pure profit.`;
+        } else {
+          elBe.innerHTML = `💡 Adjust Wholesale Cost per Box and Retail Selling Price per Piece above to see break-even pieces.`;
+        }
+      }
+    }
+
+    function applySimMarkup(mult) {
+      const pcs = Math.max(1, parseInt(document.getElementById('sim-wh-pcs')?.value, 10) || 24);
+      const boxCost = Math.max(0, parseFloat(document.getElementById('sim-wh-box-cost')?.value) || 0);
+      const unitCost = pcs > 0 ? (boxCost / pcs) : 0;
+      const sellEl = document.getElementById('sim-wh-sell-price');
+      if (sellEl && unitCost > 0) {
+        sellEl.value = Math.ceil(unitCost * mult);
+        updateWholesaleSimulator();
+      }
+    }
+
+    async function saveSimulatorProductToInventory() {
+      const nameInp = document.getElementById('sim-wh-name');
+      const rawName = (nameInp?.value || '').trim() || prompt('Enter Product Name to save to Inventory (e.g. Mineral Water 500ml):', 'Mineral Water 500ml');
+      if (!rawName) return;
+
+      const boxes = Math.max(1, parseFloat(document.getElementById('sim-wh-boxes')?.value) || 1);
+      const pcs = Math.max(1, parseInt(document.getElementById('sim-wh-pcs')?.value, 10) || 24);
+      const boxCost = Math.max(0, parseFloat(document.getElementById('sim-wh-box-cost')?.value) || 0);
+      const sellPrice = Math.max(0, parseFloat(document.getElementById('sim-wh-sell-price')?.value) || 0);
+      const unitCost = Math.round((boxCost / pcs) * 100) / 100;
+      const totalStock = Math.round(boxes * pcs);
+
+      const existing = posCatalog.find(p => String(p.name || '').toLowerCase() === rawName.toLowerCase());
+      const itemObj = {
+        id: existing ? existing.id : ('inv-' + Date.now()),
+        name: rawName,
+        cat: existing ? existing.cat : 'Refreshment',
+        buyMode: 'wholesale',
+        wholesaleUnit: 'Box / Case',
+        wholesaleBoxes: boxes,
+        pcsPerBox: pcs,
+        costPerBox: boxCost,
+        costPrice: unitCost,
+        totalCapitalInvested: Math.round(boxes * boxCost * 100) / 100,
+        price: sellPrice,
+        stock: existing ? (Number(existing.stock || 0) + totalStock) : totalStock,
+        img: existing ? existing.img : 'assets/gear-water-500ml.jpg'
+      };
+
+      try {
+        await fetch('/api/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'add', item: itemObj })
+        });
+      } catch (e) {}
+      if (nameInp) nameInp.value = '';
+      await fetchAdminStateFromServer(true);
+      alert(`✅ Saved "${rawName}" to Inventory!
+• Wholesale: ₱${boxCost}/box (${pcs} pcs/box)
+• Real Capital: ₱${unitCost.toFixed(2)}/pc
+• Selling Price: ₱${sellPrice.toFixed(2)}/pc
+• Profit: +₱${(sellPrice - unitCost).toFixed(2)}/pc`);
+    }
+
+    async function handleAddClubExpense(e) {
+      e.preventDefault();
+      const cat = document.getElementById('exp-category-input')?.value || 'Other Expense';
+      const titleEl = document.getElementById('exp-title-input');
+      const amtEl = document.getElementById('exp-amount-input');
+      const title = (titleEl?.value || '').trim();
+      const amount = Math.max(0, parseFloat(amtEl?.value) || 0);
+      if (!title || amount <= 0) return;
+
+      try {
+        await fetch('/api/expenses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'add',
+            expense: { category: cat, title: title, amount: amount }
+          })
+        });
+      } catch (err) {}
+      if (titleEl) titleEl.value = '';
+      if (amtEl) amtEl.value = '';
+      await fetchAdminStateFromServer(true);
+    }
+
+    async function deleteClubExpense(id) {
+      try {
+        await fetch('/api/expenses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', id: id })
+        });
+      } catch (err) {}
+      await fetchAdminStateFromServer(true);
+    }
+
+    function renderClubExpensesList(filteredExpenses) {
+      const container = document.getElementById('club-expenses-list');
+      if (!container) return;
+      const list = filteredExpenses || clubExpenses || [];
+      if (list.length === 0) {
+        container.innerHTML = `<div class="p-3 text-center text-[11px] text-slate-500">No club operating expenses logged for this period.</div>`;
         return;
       }
-
-      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
-      if (subtotalEl) subtotalEl.textContent = '₱' + total.toFixed(2);
-      if (totalEl) totalEl.textContent = '₱' + total.toFixed(2);
-
-      list.innerHTML = posOrder.map((item, idx) => `
-        <div class="flex items-center justify-between p-2.5 rounded-xl bg-brand-black/60 border border-white/10 text-xs">
-          <div class="truncate flex-1 pr-2">
-            <span class="font-bold text-white block truncate">${item.name}</span>
-            <span class="text-[10px] text-brand-lime font-mono">₱${item.price} each</span>
+      container.innerHTML = list.map(exp => `
+        <div class="px-3.5 py-2.5 flex items-center justify-between gap-2 hover:bg-white/5">
+          <div class="min-w-0">
+            <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30 font-mono text-[9px] font-bold uppercase mr-1.5">${pfEscapeHtml(exp.category)}</span>
+            <span class="font-bold text-white">${pfEscapeHtml(exp.title)}</span>
+            <span class="text-[10px] font-mono text-slate-500 ml-2">${pfEscapeHtml(exp.date || '')}</span>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="changePosQty(${idx}, -1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold">-</button>
-            <span class="font-mono text-white text-xs px-1">${item.qty}</span>
-            <button onclick="changePosQty(${idx}, 1)" class="w-6 h-6 rounded bg-white/10 text-white font-bold">+</button>
+          <div class="flex items-center gap-2.5 flex-shrink-0">
+            <span class="font-mono font-black text-rose-400">-₱${Number(exp.amount || 0).toFixed(2)}</span>
+            <button type="button" onclick="deleteClubExpense('${exp.id}')" class="text-[10px] text-slate-400 hover:text-rose-400 font-bold uppercase">✕</button>
           </div>
         </div>
       `).join('');
-
-      calculatePosChange();
     }
 
-    function changePosQty(idx, delta) {
-      const item = posOrder[idx];
-      const prod = posCatalog.find(p => p.id === item.id);
-      if (delta > 0 && prod && (item.qty + delta > Number(prod.stock || 0))) {
-        alert(`Cannot exceed available stock (${prod.stock} units).`);
-        return;
-      }
-      posOrder[idx].qty += delta;
-      if (posOrder[idx].qty <= 0) {
-        posOrder.splice(idx, 1);
-      }
-      renderPosOrder();
+    function renderProductProfitMatrix() {
+      const tbody = document.getElementById('reports-product-margin-tbody');
+      if (!tbody) return;
+      const sc = currentSiteConfig || DEFAULT_SITE_CONFIG || {};
+
+      // Combine Custom Inventory Items + 6 Official Website Equipment Items ("the other products")
+      const websiteGearRows = [
+        { key: 'BallSingle', name: 'Pickleball Ball (Single)', priceKey: 'priceBallSingle', costKey: 'costBallSingle', defPrice: 50, defCost: 30, typeLabel: 'Website Gear / Retail' },
+        { key: 'PaddleStd', name: 'Standard Paddle Rental', priceKey: 'pricePaddleStd', costKey: 'costPaddleStd', defPrice: 50, defCost: 0, typeLabel: 'Website Gear Rental' },
+        { key: 'PaddleCarbon', name: 'Carbon Fiber Pro Paddle', priceKey: 'pricePaddleCarbon', costKey: 'costPaddleCarbon', defPrice: 100, defCost: 0, typeLabel: 'Website Gear Rental' },
+        { key: 'PaddleBranded', name: 'Branded Carbon Paddle', priceKey: 'pricePaddleBranded', costKey: 'costPaddleBranded', defPrice: 200, defCost: 0, typeLabel: 'Website Gear Rental' },
+        { key: 'BallsBucket', name: 'Training Balls (50 pcs Bucket)', priceKey: 'priceBallsBucket', costKey: 'costBallsBucket', defPrice: 100, defCost: 0, typeLabel: 'Website Gear Rental' },
+        { key: 'Machine', name: 'Training Ball Machine', priceKey: 'priceMachine', costKey: 'costMachine', defPrice: 100, defCost: 0, typeLabel: 'Website Gear Rental' }
+      ];
+
+      let htmlRows = '';
+
+      // 1. Custom Inventory Rows (Wholesale / Per-Piece)
+      posCatalog.forEach(p => {
+        const pcs = Math.max(1, Number(p.pcsPerBox || 24));
+        const uCost = getResolvedItemUnitCost(p);
+        const boxCost = Number(p.costPerBox || (uCost * pcs));
+        const sell = Number(p.price || 0);
+        const uProf = sell - uCost;
+        const mrg = sell > 0 ? Math.round((uProf / sell) * 100) : 0;
+        const boxProf = uProf * pcs;
+
+        htmlRows += `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-3 px-4">
+              <span class="font-black text-slate-900 block">${pfEscapeHtml(p.name)}</span>
+              <span class="text-[10px] font-mono text-emerald-700 font-bold uppercase">📦 Inventory (${pfEscapeHtml(p.cat)})</span>
+            </td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-1">
+                <span class="text-slate-400 font-mono">₱</span>
+                <input type="number" id="mat-boxcost-${p.id}" value="${boxCost.toFixed(2)}" min="0" step="1" oninput="syncMatrixRowFromBox('${p.id}')" class="w-20 bg-white border border-slate-300 rounded px-2 py-1 font-mono font-bold text-slate-900">
+              </div>
+            </td>
+            <td class="py-3 px-3">
+              <input type="number" id="mat-pcs-${p.id}" value="${pcs}" min="1" step="1" oninput="syncMatrixRowFromBox('${p.id}')" class="w-16 bg-white border border-slate-300 rounded px-2 py-1 font-mono font-bold text-slate-900">
+            </td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-1">
+                <span class="text-rose-700 font-mono font-bold">₱</span>
+                <input type="number" id="mat-ucost-${p.id}" value="${uCost.toFixed(2)}" min="0" step="0.01" oninput="syncMatrixRowFromUnit('${p.id}')" class="w-20 bg-rose-50 border border-rose-300 rounded px-2 py-1 font-mono font-black text-rose-900">
+              </div>
+            </td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-1">
+                <span class="text-emerald-700 font-mono font-bold">₱</span>
+                <input type="number" id="mat-sell-${p.id}" value="${sell.toFixed(2)}" min="0" step="1" class="w-20 bg-emerald-50 border border-emerald-400 rounded px-2 py-1 font-mono font-black text-slate-900">
+              </div>
+            </td>
+            <td class="py-3 px-3 font-mono">
+              <span class="font-black ${uProf >= 0 ? 'text-emerald-700' : 'text-rose-600'} block">${uProf >= 0 ? '+₱' : '-₱'}${Math.abs(uProf).toFixed(2)} / pc</span>
+              <span class="text-[10px] text-slate-500">${mrg}% Margin</span>
+            </td>
+            <td class="py-3 px-3 font-mono font-black text-emerald-800">+₱${boxProf.toFixed(0)} / box</td>
+            <td class="py-3 px-3 font-mono font-bold text-slate-800">${Number(p.stock || 0)} pcs</td>
+            <td class="py-3 px-4 text-right">
+              <button type="button" onclick="saveMatrixInventoryRow('${p.id}')" class="px-3 py-1.5 rounded-lg bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border border-[#050E1D] font-black uppercase text-[10px] shadow-sm">
+                💾 Save
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      // 2. Website Gear Products ("For the other products")
+      websiteGearRows.forEach(g => {
+        const sell = Number(sc[g.priceKey] !== undefined ? sc[g.priceKey] : g.defPrice);
+        const uCost = Number(sc[g.costKey] !== undefined ? sc[g.costKey] : g.defCost);
+        const uProf = sell - uCost;
+        const mrg = sell > 0 ? Math.round((uProf / sell) * 100) : 0;
+
+        htmlRows += `
+          <tr class="hover:bg-slate-50 transition bg-slate-50/60">
+            <td class="py-3 px-4">
+              <span class="font-black text-slate-900 block">${pfEscapeHtml(g.name)}</span>
+              <span class="text-[10px] font-mono text-sky-700 font-bold uppercase">🌐 ${pfEscapeHtml(g.typeLabel)}</span>
+            </td>
+            <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">Per Rental / Unit</td>
+            <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">1 pc</td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-1">
+                <span class="text-rose-700 font-mono font-bold">₱</span>
+                <input type="number" id="mat-gear-cost-${g.key}" value="${uCost.toFixed(2)}" min="0" step="1" class="w-20 bg-rose-50 border border-rose-300 rounded px-2 py-1 font-mono font-black text-rose-900">
+              </div>
+            </td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-1">
+                <span class="text-emerald-700 font-mono font-bold">₱</span>
+                <input type="number" id="mat-gear-sell-${g.key}" value="${sell.toFixed(2)}" min="0" step="1" class="w-20 bg-emerald-50 border border-emerald-400 rounded px-2 py-1 font-mono font-black text-slate-900">
+              </div>
+            </td>
+            <td class="py-3 px-3 font-mono">
+              <span class="font-black ${uProf >= 0 ? 'text-emerald-700' : 'text-rose-600'} block">${uProf >= 0 ? '+₱' : '-₱'}${Math.abs(uProf).toFixed(2)} / unit</span>
+              <span class="text-[10px] text-slate-500">${mrg}% Margin</span>
+            </td>
+            <td class="py-3 px-3 font-mono text-slate-500">—</td>
+            <td class="py-3 px-3 font-mono text-emerald-700 font-bold">Active</td>
+            <td class="py-3 px-4 text-right">
+              <button type="button" onclick="saveMatrixWebsiteGearRow('${g.key}', '${g.priceKey}', '${g.costKey}')" class="px-3 py-1.5 rounded-lg bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[10px] shadow-sm">
+                💾 Save Gear
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = htmlRows;
     }
 
-    function clearPosOrder() {
-      posOrder = [];
-      renderPosOrder();
+    function syncMatrixRowFromBox(id) {
+      const boxCost = Math.max(0, parseFloat(document.getElementById('mat-boxcost-' + id)?.value) || 0);
+      const pcs = Math.max(1, parseInt(document.getElementById('mat-pcs-' + id)?.value, 10) || 1);
+      const uEl = document.getElementById('mat-ucost-' + id);
+      if (uEl) uEl.value = (boxCost / pcs).toFixed(2);
     }
 
-    function calculatePosChange() {
-      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
-      const received = parseFloat(document.getElementById('pos-cash-received')?.value) || 0;
-      const changeEl = document.getElementById('pos-change-due');
-      if (changeEl) {
-        const change = Math.max(0, received - total);
-        changeEl.textContent = '₱' + change.toFixed(2);
-      }
+    function syncMatrixRowFromUnit(id) {
+      const uCost = Math.max(0, parseFloat(document.getElementById('mat-ucost-' + id)?.value) || 0);
+      const pcs = Math.max(1, parseInt(document.getElementById('mat-pcs-' + id)?.value, 10) || 1);
+      const bEl = document.getElementById('mat-boxcost-' + id);
+      if (bEl) bEl.value = (uCost * pcs).toFixed(2);
     }
 
-    async function completePosSale() {
-      if (posOrder.length === 0) {
-        alert('POS Order is empty!');
-        return;
-      }
-      const total = posOrder.reduce((acc, item) => acc + (item.price * item.qty), 0);
-      const payMode = document.getElementById('pos-payment-mode').value;
-      const ref = 'POS-' + Math.floor(1000 + Math.random() * 9000);
+    async function saveMatrixInventoryRow(id) {
+      const boxCost = Math.max(0, parseFloat(document.getElementById('mat-boxcost-' + id)?.value) || 0);
+      const pcs = Math.max(1, parseInt(document.getElementById('mat-pcs-' + id)?.value, 10) || 1);
+      const uCost = Math.max(0, parseFloat(document.getElementById('mat-ucost-' + id)?.value) || 0);
+      const sell = Math.max(0, parseFloat(document.getElementById('mat-sell-' + id)?.value) || 0);
 
-      const desc = posOrder.map(i => `${i.qty}x ${i.name}`).join(', ');
-      const salePayload = {
-        ref: ref,
-        type: 'POS Retail',
-        desc: desc,
-        method: payMode,
-        amount: total,
-        items: posOrder.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price }))
-      };
+      try {
+        await fetch('/api/inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'update_cost',
+            id: id,
+            costPerBox: boxCost,
+            pcsPerBox: pcs,
+            costPrice: uCost,
+            price: sell
+          })
+        });
+      } catch (e) {}
+      await fetchAdminStateFromServer(true);
+    }
 
+    async function saveMatrixWebsiteGearRow(key, priceKey, costKey) {
+      const uCost = Math.max(0, parseFloat(document.getElementById('mat-gear-cost-' + key)?.value) || 0);
+      const sell = Math.max(0, parseFloat(document.getElementById('mat-gear-sell-' + key)?.value) || 0);
+      currentSiteConfig[priceKey] = sell;
+      currentSiteConfig[costKey] = uCost;
+      currentSiteConfig.updatedAt = Date.now();
+      loadSiteConfigIntoEditor(currentSiteConfig, true);
+      await postSiteConfigToEndpoints(currentSiteConfig);
+      renderReportsLedger();
+    }
+
+    async function promptEditTransactionCost(ref, currentCost, currentAmt) {
+      const inp = prompt(`✏️ Edit Real Capital / Cost (₱) for Transaction ${ref}
+(Gross Amount Collected: ₱${Number(currentAmt || 0).toFixed(2)})
+
+Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0).toFixed(2)));
+      if (inp === null) return;
+      const newCost = Math.max(0, parseFloat(inp) || 0);
       try {
         await fetch('/api/sales', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(salePayload)
+          body: JSON.stringify({ action: 'update_cost', ref: ref, cost: newCost })
         });
       } catch (e) {}
-
-      clearPosOrder();
-      document.getElementById('pos-cash-received').value = '';
-      calculatePosChange();
       await fetchAdminStateFromServer(true);
-      alert('POS Sale Completed & Stock Deducted!\nRef: ' + ref + '\nTotal: ₱' + total.toFixed(2));
+    }
+
+    function runAiFinancialAudit(highlightBox = false) {
+      const box = document.getElementById('ai-financial-audit-box');
+      if (!box) return;
+
+      const filteredSales = filterLedgerByActivePeriod(salesLedger);
+      const filteredExp = filterLedgerByActivePeriod(clubExpenses);
+
+      const courtSales = filteredSales.filter(s => s.type === 'Court Rental');
+      const posSales = filteredSales.filter(s => s.type !== 'Court Rental');
+
+      const courtGross = courtSales.reduce((a, b) => a + Number(b.amount || 0), 0);
+      const courtCost = courtSales.reduce((a, b) => a + estimateTransactionCost(b), 0);
+      const courtNet = courtGross - courtCost;
+
+      const posGross = posSales.reduce((a, b) => a + Number(b.amount || 0), 0);
+      const posCost = posSales.reduce((a, b) => a + estimateTransactionCost(b), 0);
+      const posNet = posGross - posCost;
+
+      const totalGross = courtGross + posGross;
+      const totalCogs = courtCost + posCost;
+      const grossProfit = totalGross - totalCogs;
+      const totalExpenses = filteredExp.reduce((a, b) => a + Number(b.amount || 0), 0);
+      const actualNetIncome = grossProfit - totalExpenses;
+      const netMarginPct = totalGross > 0 ? ((actualNetIncome / totalGross) * 100) : 0;
+
+      // Inventory wholesale capital analysis
+      let stockCapital = 0;
+      let stockRetail = 0;
+      let zeroCostItems = [];
+      let bestProduct = null;
+      let bestUnitProfit = -999999;
+
+      posCatalog.forEach(p => {
+        const uCost = getResolvedItemUnitCost(p);
+        const sell = Number(p.price || 0);
+        const st = Number(p.stock || 0);
+        stockCapital += st * uCost;
+        stockRetail += st * sell;
+        if (uCost <= 0) zeroCostItems.push(p.name);
+        if ((sell - uCost) > bestUnitProfit && uCost > 0) {
+          bestUnitProfit = sell - uCost;
+          bestProduct = p;
+        }
+      });
+
+      const potentialStockProfit = stockRetail - stockCapital;
+
+      box.innerHTML = `
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-emerald-950 uppercase text-xs">💰 Actual Take-Home Profit Summary (${activeReportsPeriod})</span>
+            <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono font-black text-[10px]">Net Margin: ${netMarginPct.toFixed(1)}%</span>
+          </div>
+          <p class="text-xs text-slate-800 leading-relaxed">
+            Out of <b>₱${totalGross.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> gross sales collected, you spent <b>₱${totalCogs.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> on product/court capital (COGS) and <b>₱${totalExpenses.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> on logged club expenses — leaving <b class="text-emerald-800 underline">₱${actualNetIncome.toLocaleString('en-PH', {minimumFractionDigits:2})} in Actual Net Money Earned</b>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] font-mono font-black uppercase text-slate-500 block">🏓 Court Booking Earnings</span>
+            <span class="text-sm font-black text-slate-900 block mt-0.5">Net: ₱${courtNet.toLocaleString('en-PH', {minimumFractionDigits:2})} <span class="text-[11px] font-normal text-slate-500">(Gross: ₱${courtGross.toLocaleString()})</span></span>
+            <span class="text-[11px] text-slate-600 block mt-0.5">${courtSales.length} confirmed court session(s)</span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] font-mono font-black uppercase text-slate-500 block">🛒 Per-Piece Retail Product Profit</span>
+            <span class="text-sm font-black text-emerald-700 block mt-0.5">Net: +₱${posNet.toLocaleString('en-PH', {minimumFractionDigits:2})} <span class="text-[11px] font-normal text-slate-500">(Capital: ₱${posCost.toLocaleString()})</span></span>
+            <span class="text-[11px] text-slate-600 block mt-0.5">${posSales.length} POS / Pro-Shop order(s)</span>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-100 border border-slate-300 space-y-1">
+          <span class="text-[10px] font-mono font-black uppercase text-slate-700 block">📦 Wholesale Inventory Capital &amp; Projected Earnings</span>
+          <p class="text-[11px] text-slate-700">
+            • Unsold Stock Capital Invested: <b>₱${stockCapital.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> → Expected Retail Sales: <b>₱${stockRetail.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> → Projected Stock Profit: <b class="text-emerald-700">+₱${potentialStockProfit.toLocaleString('en-PH', {minimumFractionDigits:2})}</b>.
+          </p>
+          ${bestProduct ? `<p class="text-[11px] text-emerald-800 font-semibold">⭐ Highest-Profit Item: <b>${pfEscapeHtml(bestProduct.name)}</b> earns <b>+₱${bestUnitProfit.toFixed(2)} profit per piece</b> (Sell ₱${Number(bestProduct.price).toFixed(0)} vs Capital ₱${getResolvedItemUnitCost(bestProduct).toFixed(2)}).</p>` : ''}
+          ${zeroCostItems.length > 0 ? `<p class="text-[11px] text-amber-800 font-bold">⚠️ Tip: ${zeroCostItems.length} product(s) (${pfEscapeHtml(zeroCostItems.slice(0, 3).join(', '))}) have ₱0 capital cost set. Enter their Wholesale Box Cost in the table below for 100% accurate profit tracking!</p>` : `<p class="text-[11px] text-emerald-800 font-bold">✅ All inventory products have wholesale/per-piece capital costs configured!</p>`}
+        </div>
+      `;
+
+      if (highlightBox) {
+        box.classList.add('ring-2', 'ring-[#9BE600]');
+        setTimeout(() => box.classList.remove('ring-2', 'ring-[#9BE600]'), 1200);
+      }
     }
 
     // ================= REPORTS & CSV EXPORT =================
@@ -3683,38 +4578,117 @@ function clearFieldError(fieldId) {
       const tbody = document.getElementById('reports-tbody');
       if (!tbody) return;
 
-      const courtTotal = salesLedger.filter(s => s.type === 'Court Rental').reduce((a, b) => a + Number(b.amount || 0), 0);
-      const posTotal = salesLedger.filter(s => s.type !== 'Court Rental').reduce((a, b) => a + Number(b.amount || 0), 0);
-      document.getElementById('rep-court-rev').textContent = '₱' + courtTotal.toLocaleString() + '.00';
-      document.getElementById('rep-pos-rev').textContent = '₱' + posTotal.toLocaleString() + '.00';
-      document.getElementById('rep-total-rev').textContent = '₱' + (courtTotal + posTotal).toLocaleString() + '.00';
+      const filteredSales = filterLedgerByActivePeriod(salesLedger);
+      const filteredExp = filterLedgerByActivePeriod(clubExpenses);
 
-      if (salesLedger.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-10 text-center text-slate-500 text-xs font-sans">No sales transactions recorded yet.</td></tr>`;
+      const courtSales = filteredSales.filter(s => s.type === 'Court Rental');
+      const posSales = filteredSales.filter(s => s.type !== 'Court Rental');
+
+      const courtTotal = courtSales.reduce((a, b) => a + Number(b.amount || 0), 0);
+      const courtCost = courtSales.reduce((a, b) => a + estimateTransactionCost(b), 0);
+      const courtProfit = courtTotal - courtCost;
+
+      const posTotal = posSales.reduce((a, b) => a + Number(b.amount || 0), 0);
+      const posCost = posSales.reduce((a, b) => a + estimateTransactionCost(b), 0);
+      const posProfit = posTotal - posCost;
+
+      const grossTotal = courtTotal + posTotal;
+      const totalCogs = courtCost + posCost;
+      const grossProfit = grossTotal - totalCogs;
+      const totalExpenses = filteredExp.reduce((a, b) => a + Number(b.amount || 0), 0);
+      const actualNetIncome = grossProfit - totalExpenses;
+      const netMarginPct = grossTotal > 0 ? ((actualNetIncome / grossTotal) * 100) : 0;
+
+      const fmt = (n) => '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      const elTotalRev = document.getElementById('rep-total-rev');
+      const elTxCount = document.getElementById('rep-total-tx-count');
+      const elCourtRev = document.getElementById('rep-court-rev');
+      const elCourtSub = document.getElementById('rep-court-profit-sub');
+      const elPosRev = document.getElementById('rep-pos-rev');
+      const elPosSub = document.getElementById('rep-pos-profit-sub');
+      const elCogs = document.getElementById('rep-total-cogs');
+      const elExp = document.getElementById('rep-total-expenses');
+      const elGrossProfSub = document.getElementById('rep-gross-profit-sub');
+      const elNetInc = document.getElementById('rep-actual-net-income');
+      const elNetBadge = document.getElementById('rep-net-margin-badge');
+
+      if (elTotalRev) elTotalRev.textContent = fmt(grossTotal);
+      if (elTxCount) elTxCount.textContent = `${filteredSales.length} transaction(s)`;
+      if (elCourtRev) elCourtRev.textContent = fmt(courtTotal);
+      if (elCourtSub) elCourtSub.textContent = `Net Court Profit: ${fmt(courtProfit)}`;
+      if (elPosRev) elPosRev.textContent = fmt(posTotal);
+      if (elPosSub) elPosSub.textContent = `Actual Product Profit: +${fmt(posProfit)}`;
+      if (elCogs) elCogs.textContent = '-' + fmt(totalCogs);
+      if (elExp) elExp.textContent = '-' + fmt(totalExpenses);
+      if (elGrossProfSub) elGrossProfSub.textContent = `Gross Profit (Sales − COGS): ${fmt(grossProfit)}`;
+      if (elNetInc) {
+        elNetInc.textContent = (actualNetIncome >= 0 ? '' : '-') + fmt(Math.abs(actualNetIncome));
+        elNetInc.className = 'text-2xl font-black font-mono block ' + (actualNetIncome >= 0 ? 'text-brand-lime' : 'text-rose-400');
+      }
+      if (elNetBadge) elNetBadge.textContent = `${netMarginPct.toFixed(1)}% Net`;
+
+      updateWholesaleSimulator();
+      renderClubExpensesList(filteredExp);
+      renderProductProfitMatrix();
+      runAiFinancialAudit(false);
+
+      if (filteredSales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-center text-slate-500 text-xs font-sans">No sales transactions recorded for this period yet.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = salesLedger.map(s => `
+      tbody.innerHTML = filteredSales.map(s => {
+        const gross = Number(s.amount || 0);
+        const cogs = estimateTransactionCost(s);
+        const profit = gross - cogs;
+        const mrg = gross > 0 ? Math.round((profit / gross) * 100) : 0;
+        return `
         <tr class="hover:bg-white/5 transition">
-          <td class="py-3 px-4 font-bold text-brand-lime">${s.ref}</td>
-          <td class="py-3 px-4 text-slate-300 font-sans">${s.type}</td>
-          <td class="py-3 px-4 text-white font-sans truncate max-w-xs" title="${s.desc}">${s.desc}</td>
-          <td class="py-3 px-4 text-slate-300 font-mono text-[11px]">${s.method}</td>
-          <td class="py-3 px-4 font-bold text-white">₱${Number(s.amount || 0).toFixed(2)}</td>
-          <td class="py-3 px-4 text-slate-500 text-[11px]">${s.date}</td>
+          <td class="py-3 px-4 font-bold text-brand-lime">${pfEscapeHtml(s.ref)}</td>
+          <td class="py-3 px-3 text-slate-300 font-sans">${pfEscapeHtml(s.type)}</td>
+          <td class="py-3 px-4 text-white font-sans truncate max-w-xs" title="${pfEscapeHtml(s.desc)}">${pfEscapeHtml(s.desc)}</td>
+          <td class="py-3 px-3 text-slate-300 font-mono text-[11px]">${pfEscapeHtml(s.method)}</td>
+          <td class="py-3 px-3 font-bold text-white">₱${gross.toFixed(2)}</td>
+          <td class="py-3 px-3 text-amber-300">
+            <div class="flex items-center gap-1.5">
+              <span>-₱${cogs.toFixed(2)}</span>
+              <button type="button" onclick="promptEditTransactionCost('${s.ref}', ${cogs}, ${gross})" class="px-1.5 py-0.5 rounded bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[9px] font-sans font-bold text-slate-300 transition" title="Edit Capital Cost for this sale">✏️ Cost</button>
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <span class="font-black ${profit >= 0 ? 'text-brand-lime' : 'text-rose-400'}">${profit >= 0 ? '+₱' : '-₱'}${Math.abs(profit).toFixed(2)}</span>
+            <span class="text-[10px] text-slate-400 ml-1">(${mrg}%)</span>
+          </td>
+          <td class="py-3 px-4 text-slate-500 text-[11px]">${pfEscapeHtml(s.date)}</td>
         </tr>
-      `).join('');
+      `}).join('');
     }
 
     function exportLedgerToCsv() {
-      let csv = "Transaction Ref,Type,Description,Payment Method & Ref,Amount,Timestamp\n";
+      let csv = "Transaction Ref,Category,Description,Payment Method,Gross Collected (PHP),Capital Cost COGS (PHP),Actual Net Profit (PHP),Profit Margin %,Timestamp\n";
+      let totalGross = 0;
+      let totalCogs = 0;
       salesLedger.forEach(s => {
-        csv += `"${s.ref}","${s.type}","${s.desc}","${s.method}","${s.amount}","${s.date}"\n`;
+        const g = Number(s.amount || 0);
+        const c = estimateTransactionCost(s);
+        const p = g - c;
+        const m = g > 0 ? ((p / g) * 100).toFixed(1) + '%' : '0%';
+        totalGross += g;
+        totalCogs += c;
+        csv += `"${s.ref}","${s.type}","${String(s.desc || '').replace(/"/g, '""')}","${s.method}","${g.toFixed(2)}","${c.toFixed(2)}","${p.toFixed(2)}","${m}","${s.date}"
+`;
       });
+      const totalExp = (clubExpenses || []).reduce((a, b) => a + Number(b.amount || 0), 0);
+      const netIncome = (totalGross - totalCogs) - totalExp;
+      csv += `
+"SUMMARY TOTALS","","","Gross Sales:","${totalGross.toFixed(2)}","Total COGS: ${totalCogs.toFixed(2)}","Gross Profit: ${(totalGross - totalCogs).toFixed(2)}","Expenses: ${totalExp.toFixed(2)}","ACTUAL NET INCOME: PHP ${netIncome.toFixed(2)}"
+`;
+
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', 'pf-rally-ground-sales-report.csv');
+      link.setAttribute('download', 'pf-rally-ground-financial-profit-report.csv');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -4180,53 +5154,75 @@ function clearFieldError(fieldId) {
       }, 3000);
     });
       
-    function handleAdminQrFileUpload(event) {
+    async function handleAdminQrFileUpload(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
-        const dataUrl = e.target.result;
+      reader.onload = async function(e) {
+        let finalUrl = e.target.result;
+        if (typeof uploadAssetToServer === 'function') {
+          try {
+            finalUrl = await uploadAssetToServer('qrGcash', finalUrl);
+          } catch (err) {}
+        }
         const preview = document.getElementById('admin-qr-preview-img');
-        if (preview) preview.src = dataUrl;
+        if (preview) preview.src = finalUrl;
 
         const urlInput = document.getElementById('settings-custom-standee-url');
-        if (urlInput) urlInput.value = dataUrl;
+        if (urlInput) urlInput.value = finalUrl;
 
-        // Auto-save
-        saveOfficialPaymentSettings();
+        await saveOfficialPaymentSettings();
       };
       reader.readAsDataURL(file);
     }
 
+    async function resetOfficialGcashQr() {
+      const defaultUrl = 'assets/qr-gcash.png?v=20261029v9';
+      localStorage.removeItem('pf_custom_gcash_standee_url');
+      const urlInput = document.getElementById('settings-custom-standee-url');
+      if (urlInput) urlInput.value = defaultUrl;
+      const preview = document.getElementById('admin-qr-preview-img');
+      if (preview) preview.src = defaultUrl;
+      await saveOfficialPaymentSettings();
+    }
+
     async function saveOfficialPaymentSettings() {
       const gcash = (document.getElementById('settings-gcash-num')?.value || '09998832346').trim();
-      const gcashName = (document.getElementById('settings-gcash-name')?.value || 'P&F Rally Ground').trim();
-      const bdo = (document.getElementById('settings-bdo-num')?.value || '004588029143').trim();
-      const bpi = (document.getElementById('settings-bpi-num')?.value || '4891003274').trim();
-      const standee = (document.getElementById('settings-custom-standee-url')?.value || '').trim() || 'assets/qr-gcash.png';
+      const gcashName = (document.getElementById('settings-gcash-name')?.value || 'KA******E L.').trim();
+      const bdo = (document.getElementById('settings-bdo-num')?.value || '••••••••8678 (Dex)').trim();
+      const bpi = (document.getElementById('settings-bpi-num')?.value || '09998832346 (KATHERINE LIM)').trim();
+      let standee = (document.getElementById('settings-custom-standee-url')?.value || '').trim() || 'assets/qr-gcash.png?v=20261029v9';
+      if (standee.includes('qrserver.com') || standee === 'assets/qr-gcash.png') {
+        standee = 'assets/qr-gcash.png?v=20261029v9';
+      }
       const fb = document.getElementById('settings-pay-feedback');
 
       localStorage.setItem('pf_gcash_number', gcash);
       localStorage.setItem('pf_bdo_number', bdo);
       localStorage.setItem('pf_bpi_number', bpi);
-      localStorage.setItem('pf_custom_gcash_standee_url', standee);
+      if (standee.startsWith('assets/custom-') || standee.startsWith('data:image/')) {
+        localStorage.setItem('pf_custom_gcash_standee_url', standee);
+      } else {
+        localStorage.removeItem('pf_custom_gcash_standee_url');
+      }
 
-      // Post to Server
-      try {
-        await fetch('/api/payment-config', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            gcashNumber: gcash,
-            gcashName: gcashName,
-            bdoNumber: bdo,
-            bpiNumber: bpi,
-            standeeUrl: standee
-          })
-        });
-      } catch (e) {
-        console.warn('Saved payment settings locally');
+      const endpoints = ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'];
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              gcashNumber: gcash,
+              gcashName: gcashName,
+              bdoNumber: bdo,
+              bpiNumber: bpi,
+              standeeUrl: standee
+            })
+          });
+          if (res.ok) break;
+        } catch (e) {}
       }
 
       const preview = document.getElementById('admin-qr-preview-img');
@@ -4234,31 +5230,21 @@ function clearFieldError(fieldId) {
 
       if (fb) {
         fb.classList.remove('hidden');
-        fb.textContent = '✅ Official QR & payment details updated and synchronized with booking page!';
+        fb.textContent = '✅ Official GCash QR & payment details updated and synced across all booking pages!';
         setTimeout(() => fb.classList.add('hidden'), 4000);
       }
     }
 
     function loadAdminQrSettings() {
-      const standee = localStorage.getItem('pf_custom_gcash_standee_url') || 'assets/qr-gcash.png';
-      const gcash = localStorage.getItem('pf_gcash_number') || '09998832346';
-      const bdo = localStorage.getItem('pf_bdo_number') || '004588029143';
-      const bpi = localStorage.getItem('pf_bpi_number') || '4891003274';
-
+      let standee = localStorage.getItem('pf_custom_gcash_standee_url') || 'assets/qr-gcash.png?v=20261029v9';
+      if (standee.includes('qrserver.com') || standee === 'assets/qr-gcash.png') {
+        standee = 'assets/qr-gcash.png?v=20261029v9';
+        localStorage.removeItem('pf_custom_gcash_standee_url');
+      }
       const preview = document.getElementById('admin-qr-preview-img');
-      if (preview && standee) preview.src = standee;
-
+      if (preview) preview.src = standee;
       const urlInput = document.getElementById('settings-custom-standee-url');
-      if (urlInput && standee) urlInput.value = standee;
-
-      const gInput = document.getElementById('settings-gcash-num');
-      if (gInput && gcash) gInput.value = gcash;
-
-      const bdoInput = document.getElementById('settings-bdo-num');
-      if (bdoInput && bdo) bdoInput.value = bdo;
-
-      const bpiInput = document.getElementById('settings-bpi-num');
-      if (bpiInput && bpi) bpiInput.value = bpi;
+      if (urlInput) urlInput.value = standee;
     }
 
     function saveOfficialPaymentSettings_old() {
@@ -4613,6 +5599,13 @@ function clearFieldError(fieldId) {
       priceBallSingle: 50,
       priceBallsBucket: 100,
       priceMachine: 100,
+      costCourtPerHour: 0,
+      costPaddleStd: 0,
+      costPaddleCarbon: 0,
+      costPaddleBranded: 0,
+      costBallSingle: 30,
+      costBallsBucket: 0,
+      costMachine: 0,
       updatedAt: 0
     };
 
@@ -4809,6 +5802,13 @@ function clearFieldError(fieldId) {
       setVal('se-price-ball-single', cfg.priceBallSingle);
       setVal('se-price-balls-bucket', cfg.priceBallsBucket);
       setVal('se-price-machine', cfg.priceMachine);
+      setVal('se-cost-court-hr', cfg.costCourtPerHour);
+      setVal('se-cost-paddle-std', cfg.costPaddleStd);
+      setVal('se-cost-paddle-carbon', cfg.costPaddleCarbon);
+      setVal('se-cost-paddle-branded', cfg.costPaddleBranded);
+      setVal('se-cost-ball-single', cfg.costBallSingle);
+      setVal('se-cost-balls-bucket', cfg.costBallsBucket);
+      setVal('se-cost-machine', cfg.costMachine);
 
       setVal('se-hero-tagline', cfg.heroTagline);
       setVal('se-hero-title-1', cfg.heroTitleLine1);
@@ -4897,6 +5897,13 @@ function clearFieldError(fieldId) {
         priceBallSingle: num('se-price-ball-single', DEFAULT_SITE_CONFIG.priceBallSingle),
         priceBallsBucket: num('se-price-balls-bucket', DEFAULT_SITE_CONFIG.priceBallsBucket),
         priceMachine: num('se-price-machine', DEFAULT_SITE_CONFIG.priceMachine),
+        costCourtPerHour: num('se-cost-court-hr', DEFAULT_SITE_CONFIG.costCourtPerHour),
+        costPaddleStd: num('se-cost-paddle-std', DEFAULT_SITE_CONFIG.costPaddleStd),
+        costPaddleCarbon: num('se-cost-paddle-carbon', DEFAULT_SITE_CONFIG.costPaddleCarbon),
+        costPaddleBranded: num('se-cost-paddle-branded', DEFAULT_SITE_CONFIG.costPaddleBranded),
+        costBallSingle: num('se-cost-ball-single', DEFAULT_SITE_CONFIG.costBallSingle),
+        costBallsBucket: num('se-cost-balls-bucket', DEFAULT_SITE_CONFIG.costBallsBucket),
+        costMachine: num('se-cost-machine', DEFAULT_SITE_CONFIG.costMachine),
         updatedAt: Date.now()
       };
     }
@@ -5174,48 +6181,59 @@ function clearFieldError(fieldId) {
       if (!posCatalog || posCatalog.length === 0) {
         container.innerHTML = `
           <div class="col-span-full p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 text-center">
-            No custom Pro-Shop items added yet. All 6 standard court &amp; equipment rentals are editable in Section B above, or click <b>+ Add New Product / Item with Photo</b> to add custom merchandise!
+            No custom Pro-Shop items added yet. All 6 standard court &amp; equipment rentals are editable in Section B above, or click <b>+ Add New Product / Item with Photo</b> to add wholesale/per-piece merchandise!
           </div>`;
         return;
       }
-      container.innerHTML = posCatalog.map(item => `
+      container.innerHTML = posCatalog.map(item => {
+        const uCost = typeof getResolvedItemUnitCost === 'function' ? getResolvedItemUnitCost(item) : Number(item.costPrice || 0);
+        const sell = Number(item.price || 0);
+        const prof = sell - uCost;
+        return `
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
             <img src="${resolvePreviewAssetPath(item.img || 'assets/gear-water-500ml.jpg')}" onerror="this.src='assets/gear-water-500ml.jpg'" class="w-11 h-11 rounded-xl object-cover border border-slate-300 flex-shrink-0">
             <div class="min-w-0">
               <span class="font-bold text-slate-900 block truncate">${pfEscapeHtml(item.name)}</span>
-              <span class="text-[10px] font-mono text-emerald-700 font-bold">${pfEscapeHtml(item.cat || 'Pro Shop')}</span>
+              <span class="text-[10px] font-mono text-emerald-700 font-bold">${pfEscapeHtml(item.cat || 'Pro Shop')} • Profit: +₱${prof.toFixed(2)}/pc</span>
             </div>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <div class="flex items-center gap-1">
-              <span class="text-emerald-700 font-mono font-bold">₱</span>
-              <input type="number" id="se-inv-price-${item.id}" value="${Number(item.price || 0)}" min="0" class="w-20 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-slate-900 font-mono font-black text-xs">
+            <div class="flex items-center gap-1" title="Capital Cost per Piece">
+              <span class="text-rose-700 font-mono text-[10px] font-bold">Cost ₱</span>
+              <input type="number" id="se-inv-cost-${item.id}" value="${uCost.toFixed(2)}" min="0" step="0.01" class="w-16 bg-rose-50 border border-rose-300 rounded-lg px-2 py-1.5 text-rose-900 font-mono font-black text-xs">
+            </div>
+            <div class="flex items-center gap-1" title="Selling Price per Piece">
+              <span class="text-emerald-700 font-mono text-[10px] font-bold">Sell ₱</span>
+              <input type="number" id="se-inv-price-${item.id}" value="${sell}" min="0" class="w-16 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-slate-900 font-mono font-black text-xs">
             </div>
             <div class="flex items-center gap-1">
               <span class="text-slate-500 font-mono text-[10px]">Qty:</span>
-              <input type="number" id="se-inv-stock-${item.id}" value="${Number(item.stock || 0)}" min="0" class="w-16 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-slate-900 font-mono font-bold text-xs">
+              <input type="number" id="se-inv-stock-${item.id}" value="${Number(item.stock || 0)}" min="0" class="w-14 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-slate-900 font-mono font-bold text-xs">
             </div>
             <button type="button" onclick="saveInlineCustomItemPrice('${item.id}')" class="px-3 py-1.5 rounded-lg bg-[#9BE600] text-[#050E1D] border border-[#050E1D] font-black uppercase text-[10px] hover:bg-[#8ae000] transition">
               Save
             </button>
             <button type="button" onclick="openAddInventoryModal('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-white text-slate-800 border border-slate-300 font-bold uppercase text-[10px] hover:bg-slate-100 transition">
-              📷 Photo / Edit
+              📦 Wholesale / Photo
             </button>
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     async function saveInlineCustomItemPrice(itemId) {
+      const costEl = document.getElementById('se-inv-cost-' + itemId);
       const priceEl = document.getElementById('se-inv-price-' + itemId);
       const stockEl = document.getElementById('se-inv-stock-' + itemId);
       if (!priceEl) return;
+      const newCost = costEl ? Math.max(0, Number(costEl.value || 0)) : 0;
       const newPrice = Math.max(0, Number(priceEl.value || 0));
       const newStock = stockEl ? Math.max(0, parseInt(stockEl.value || 0, 10)) : 0;
 
       const target = posCatalog.find(x => x.id === itemId);
       if (target) {
+        target.costPrice = newCost;
         target.price = newPrice;
         target.stock = newStock;
       }
@@ -5223,15 +6241,16 @@ function clearFieldError(fieldId) {
         await fetch('/api/inventory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'update_price', id: itemId, price: newPrice, stock: newStock })
+          body: JSON.stringify({ action: 'update_cost', id: itemId, costPrice: newCost, price: newPrice, stock: newStock })
         });
       } catch (e) {}
       renderInventoryTable();
       renderPosCatalog();
       renderSiteEditorCustomInventoryPrices();
+      renderReportsLedger();
       const fb = document.getElementById('se-save-feedback');
       if (fb) {
-        fb.textContent = '✅ Custom product price & stock updated live on the website!';
+        fb.textContent = '✅ Custom product capital cost, selling price & stock updated live!';
         fb.classList.remove('hidden');
         setTimeout(() => fb.classList.add('hidden'), 3000);
       }
