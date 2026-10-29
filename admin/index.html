@@ -1627,249 +1627,266 @@
 
       </section>
 
-      <!-- ================= 6. SALES, CAPITAL & NET PROFIT INTELLIGENCE TAB ================= -->
+            <!-- ================= 6. SIMPLE SALES & ACTUAL MONEY EARNED REPORT TAB ================= -->
       <section id="tab-reports" class="hidden space-y-6">
         
-        <!-- Top Header & Period Filter Bar -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-3xl bg-brand-card border border-brand-border">
+        <!-- Top Header & Time Filter Bar (Simple Basic English) -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-3xl bg-white text-[#050E1D] border-2 border-slate-200 shadow-lg">
           <div>
-            <span class="text-[10px] font-mono text-brand-lime uppercase tracking-widest block">REAL-TIME REVENUE, WHOLESALE CAPITAL (COGS) &amp; NET INCOME ENGINE</span>
-            <h2 class="text-lg sm:text-xl font-black uppercase text-white">Sales, Capital &amp; Actual Net Profit Report</h2>
-            <p class="text-xs text-slate-400">Automatically deducts wholesale/unit product capital costs and club expenses from gross sales to compute the actual money you earn.</p>
+            <span class="px-2.5 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-mono font-black uppercase tracking-widest inline-block mb-1">EASY MONEY &amp; PROFIT TRACKER</span>
+            <h2 class="text-lg sm:text-2xl font-black uppercase text-[#050E1D]">Sales &amp; Actual Money Earned Report</h2>
+            <p class="text-xs sm:text-sm text-slate-600 font-medium">See how much money came in, how much you spent on products and bills, and how much <b>real money you earned</b>.</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <!-- Date Period Filter Pills -->
-            <div class="flex items-center bg-brand-black p-1 rounded-xl border border-white/10 text-[11px] font-bold">
-              <button type="button" onclick="setReportsPeriodFilter('ALL')" id="rep-period-ALL" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black transition">All Time</button>
-              <button type="button" onclick="setReportsPeriodFilter('TODAY')" id="rep-period-TODAY" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">Today</button>
-              <button type="button" onclick="setReportsPeriodFilter('WEEK')" id="rep-period-WEEK" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">7 Days</button>
-              <button type="button" onclick="setReportsPeriodFilter('MONTH')" id="rep-period-MONTH" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">This Month</button>
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-300 text-xs font-bold">
+              <button type="button" onclick="setReportsPeriodFilter('ALL')" id="rep-period-ALL" class="px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] font-black transition">All Time</button>
+              <button type="button" onclick="setReportsPeriodFilter('TODAY')" id="rep-period-TODAY" class="px-3 py-1.5 rounded-lg text-slate-700 hover:text-slate-950 transition">Today</button>
+              <button type="button" onclick="setReportsPeriodFilter('WEEK')" id="rep-period-WEEK" class="px-3 py-1.5 rounded-lg text-slate-700 hover:text-slate-950 transition">Last 7 Days</button>
+              <button type="button" onclick="setReportsPeriodFilter('MONTH')" id="rep-period-MONTH" class="px-3 py-1.5 rounded-lg text-slate-700 hover:text-slate-950 transition">This Month</button>
             </div>
-            <button type="button" onclick="runAiFinancialAudit(true)" class="px-4 py-2.5 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:bg-brand-limeHover transition shadow">
-              ✨ AI Profit Audit
+            <button type="button" onclick="runAiFinancialAudit(true)" class="px-4 py-2.5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] text-xs font-black uppercase tracking-wider transition shadow-sm">
+              🤖 Explain My Profit (AI)
             </button>
-            <button type="button" onclick="exportLedgerToCsv()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold uppercase tracking-wider transition">
-              📥 Export Full CSV
+            <button type="button" onclick="exportLedgerToCsv()" class="px-4 py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider transition">
+              📥 Download Excel / CSV
+            </button>
+            <button type="button" onclick="resetAllDatabaseData()" class="px-3.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-xs font-black uppercase tracking-wider transition">
+              🗑️ Reset Data
             </button>
           </div>
         </div>
 
-        <!-- 6 Executive Financial KPI Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
-          <!-- 1. Gross Revenue -->
-          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
-            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">1. Gross Sales Collected</span>
-            <span class="text-xl font-black text-white font-mono block" id="rep-total-rev">₱0.00</span>
-            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-total-tx-count">0 transactions</span>
+        <!-- ================= THE 3 BIG MONEY BOXES: EASY MATH FORMULA (A - B = C) ================= -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-[#050E1D] border-2 border-[#9BE600]/40 shadow-xl space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+            <span class="text-xs sm:text-sm font-black uppercase text-white tracking-wide">📌 How Your Real Money Is Computed: <span class="text-[#9BE600]">Money Received</span> &minus; <span class="text-amber-300">Buying Cost &amp; Bills</span> = <span class="text-[#9BE600] underline">Actual Money Earned</span></span>
+            <span class="text-xs font-mono text-slate-300" id="rep-total-tx-count">0 sales recorded</span>
           </div>
 
-          <!-- 2. Court Booking Revenue -->
-          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
-            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">2. Court Rental Revenue</span>
-            <span class="text-xl font-black text-sky-400 font-mono block" id="rep-court-rev">₱0.00</span>
-            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-court-profit-sub">Net Court Income: ₱0.00</span>
-          </div>
-
-          <!-- 3. Product / POS Gross Sales -->
-          <div class="p-4 rounded-2xl bg-brand-card border border-white/10">
-            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">3. Product Retail Sales</span>
-            <span class="text-xl font-black text-white font-mono block" id="rep-pos-rev">₱0.00</span>
-            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-pos-profit-sub">Product Profit: +₱0.00</span>
-          </div>
-
-          <!-- 4. Product Capital Cost (COGS) -->
-          <div class="p-4 rounded-2xl bg-brand-card border border-amber-500/30">
-            <span class="text-[10px] text-amber-300 uppercase font-bold block mb-1">4. Capital Cost (COGS Sold)</span>
-            <span class="text-xl font-black text-amber-400 font-mono block" id="rep-total-cogs">-₱0.00</span>
-            <span class="text-[10px] text-slate-400 font-mono block mt-1">Real wholesale/unit cost of sold items</span>
-          </div>
-
-          <!-- 5. Club Operating Expenses -->
-          <div class="p-4 rounded-2xl bg-brand-card border border-rose-500/30">
-            <span class="text-[10px] text-rose-300 uppercase font-bold block mb-1">5. Logged Club Expenses</span>
-            <span class="text-xl font-black text-rose-400 font-mono block" id="rep-total-expenses">-₱0.00</span>
-            <span class="text-[10px] text-slate-400 font-mono block mt-1" id="rep-gross-profit-sub">Gross Profit (Before Exp): ₱0.00</span>
-          </div>
-
-          <!-- 6. ACTUAL NET INCOME (Real Money Earned) -->
-          <div class="p-4 rounded-2xl bg-emerald-950/60 border-2 border-brand-lime shadow-lg">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[10px] text-brand-lime uppercase font-black tracking-wider">6. ACTUAL NET INCOME</span>
-              <span id="rep-net-margin-badge" class="px-1.5 py-0.5 rounded bg-brand-lime text-brand-black font-mono font-black text-[9px]">0% Margin</span>
+          <div class="grid grid-cols-1 lg:grid-cols-11 gap-3.5 items-stretch">
+            
+            <!-- BOX 1: TOTAL MONEY RECEIVED -->
+            <div class="lg:col-span-3 p-4 sm:p-5 rounded-2xl bg-white text-[#050E1D] border-2 border-slate-200 flex flex-col justify-between">
+              <div>
+                <span class="inline-block px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-mono font-black text-[10px] uppercase mb-1">STEP 1 &bull; MONEY IN</span>
+                <h3 class="text-sm font-black uppercase text-slate-900">💵 Total Money Received</h3>
+                <p class="text-[11px] text-slate-600 mt-0.5">All payments collected from customers.</p>
+                <span class="text-2xl sm:text-3xl font-black text-[#050E1D] font-mono block my-2.5" id="rep-total-rev">₱0.00</span>
+              </div>
+              <div class="pt-2.5 border-t border-slate-200 space-y-1 text-xs">
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600 font-medium">🎾 Court Bookings:</span>
+                  <b class="font-mono text-slate-900" id="rep-court-rev">₱0.00</b>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600 font-medium">🥤 Drinks &amp; Products Sold:</span>
+                  <b class="font-mono text-slate-900" id="rep-pos-rev">₱0.00</b>
+                </div>
+              </div>
             </div>
-            <span class="text-2xl font-black text-brand-lime font-mono block" id="rep-actual-net-income">₱0.00</span>
-            <span class="text-[10px] text-emerald-200 font-medium block mt-1">Real Money Earned (Sales − Capital − Exp)</span>
+
+            <!-- MINUS SIGN -->
+            <div class="lg:col-span-1 flex items-center justify-center">
+              <div class="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white font-black text-2xl flex items-center justify-center shadow">&minus;</div>
+            </div>
+
+            <!-- BOX 2: TOTAL BUYING COST & BILLS -->
+            <div class="lg:col-span-3 p-4 sm:p-5 rounded-2xl bg-white text-[#050E1D] border-2 border-rose-200 flex flex-col justify-between">
+              <div>
+                <span class="inline-block px-2 py-0.5 rounded bg-rose-100 text-rose-900 font-mono font-black text-[10px] uppercase mb-1">STEP 2 &bull; MONEY SPENT</span>
+                <h3 class="text-sm font-black uppercase text-slate-900">🏷️ Buying Cost &amp; Club Bills</h3>
+                <p class="text-[11px] text-slate-600 mt-0.5">Cost of products sold + club expenses.</p>
+                <span class="text-2xl sm:text-3xl font-black text-rose-600 font-mono block my-2.5" id="rep-total-deductions">-₱0.00</span>
+              </div>
+              <div class="pt-2.5 border-t border-slate-200 space-y-1 text-xs">
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600 font-medium">📦 Buying Cost of Sold Items:</span>
+                  <b class="font-mono text-rose-700" id="rep-total-cogs">-₱0.00</b>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600 font-medium">🧾 Club Bills / Expenses:</span>
+                  <b class="font-mono text-rose-700" id="rep-total-expenses">-₱0.00</b>
+                </div>
+              </div>
+            </div>
+
+            <!-- EQUALS SIGN -->
+            <div class="lg:col-span-1 flex items-center justify-center">
+              <div class="w-10 h-10 rounded-full bg-[#9BE600] text-[#050E1D] font-black text-2xl flex items-center justify-center shadow-lg">=</div>
+            </div>
+
+            <!-- BOX 3: ACTUAL MONEY EARNED (CLEAN TAKE-HOME PROFIT) -->
+            <div class="lg:col-span-3 p-4 sm:p-5 rounded-2xl bg-[#9BE600] text-[#050E1D] border-2 border-white shadow-2xl flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-1 mb-1">
+                  <span class="inline-block px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono font-black text-[10px] uppercase">STEP 3 &bull; REAL PROFIT</span>
+                  <span id="rep-net-margin-badge" class="px-2 py-0.5 rounded bg-white text-[#050E1D] font-mono font-black text-[10px] border border-[#050E1D]/20">0% Profit</span>
+                </div>
+                <h3 class="text-sm font-black uppercase text-[#050E1D]">✅ Actual Money We Earned</h3>
+                <p class="text-[11px] text-[#050E1D]/80 font-semibold mt-0.5">Your clean take-home money after all costs!</p>
+                <span class="text-2xl sm:text-3xl font-black text-[#050E1D] font-mono block my-2.5" id="rep-actual-net-income">₱0.00</span>
+              </div>
+              <div class="pt-2.5 border-t border-[#050E1D]/20 space-y-1 text-xs font-bold">
+                <div class="flex justify-between items-center">
+                  <span>🎾 Profit from Courts:</span>
+                  <span class="font-mono" id="rep-court-profit-sub">₱0.00</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span>🥤 Profit from Products:</span>
+                  <span class="font-mono" id="rep-pos-profit-sub">+₱0.00</span>
+                </div>
+                <span class="hidden" id="rep-gross-profit-sub"></span>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <!-- ================= AI FINANCIAL ADVISOR & WHOLESALE-TO-PER-PIECE CALCULATOR STUDIO ================= -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- ================= SIMPLE REPORT SECTION SWITCHER (SO IT IS NEVER CROWDED) ================= -->
+        <div class="p-3 rounded-2xl bg-white border-2 border-slate-200 flex flex-wrap items-center justify-between gap-2 shadow-sm">
+          <span class="text-xs font-black uppercase text-slate-700 px-2">📌 Choose What You Want to View or Edit:</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="setReportSubSection('ALL')" id="rep-sub-btn-ALL" class="px-3.5 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] text-xs font-black uppercase transition">📋 Show All Sections</button>
+            <button type="button" onclick="setReportSubSection('CALC')" id="rep-sub-btn-CALC" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">1️⃣ Box-to-Piece Calculator &amp; AI</button>
+            <button type="button" onclick="setReportSubSection('PRICES')" id="rep-sub-btn-PRICES" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">2️⃣ Product Buying &amp; Selling Prices</button>
+            <button type="button" onclick="setReportSubSection('BILLS')" id="rep-sub-btn-BILLS" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">3️⃣ Club Bills &amp; Expenses</button>
+            <button type="button" onclick="setReportSubSection('SALES')" id="rep-sub-btn-SALES" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">4️⃣ Sales List</button>
+          </div>
+        </div>
+
+        <!-- ================= SECTION 1: BUY BY BOX -> SELL PER PIECE CALCULATOR + AI HELPER ================= -->
+        <div id="rep-sec-CALC" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          <!-- Left (Col 5): Wholesale Box to Per-Piece Profit Calculator & Direct Saver -->
-          <div class="lg:col-span-5 p-5 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-lg space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div>
-                <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">📦 WHOLESALE TO PER-PIECE CALCULATOR</span>
-                <h3 class="text-base font-black uppercase text-slate-900">Buy Wholesale (Box/Pack) → Sell Per Piece</h3>
-                <p class="text-[11px] text-slate-600">Compute exact capital per piece, profit per piece, and break-even count — or save directly to Inventory.</p>
-              </div>
+          <!-- Left (Col 6): Easy Buy-by-Box, Sell-per-Piece Calculator -->
+          <div class="lg:col-span-6 p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-lg space-y-4">
+            <div class="border-b border-slate-200 pb-3">
+              <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 text-[10px] font-mono font-black uppercase tracking-wider inline-block mb-1">STEP 1 &bull; WHOLESALE TO PER-PIECE HELPER</span>
+              <h3 class="text-base sm:text-lg font-black uppercase text-slate-900">📦 Buy by Box &rarr; Sell per Piece Calculator</h3>
+              <p class="text-xs text-slate-600 mt-0.5">If you buy drinks or balls by the box/case and sell them one piece at a time, type the numbers below to see your exact profit per piece.</p>
             </div>
 
-            <div class="space-y-3 text-xs">
+            <div class="space-y-3.5 text-xs">
               <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Product Name (Optional — to save/update)</label>
-                <input type="text" id="sim-wh-name" placeholder="e.g. Nature's Spring 500ml, Gatorade Blue, Franklin X-40 Ball" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-bold">
+                <label class="block text-xs font-black text-slate-800 mb-1">1. Product Name (Type name if you want to save it to Inventory)</label>
+                <input type="text" id="sim-wh-name" placeholder="e.g. Gatorade Blue 500ml, Bottled Water, Pickleball" class="w-full bg-slate-50 border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold text-xs">
               </div>
 
-              <div class="grid grid-cols-3 gap-2.5">
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Boxes / Packs</label>
-                  <input type="number" id="sim-wh-boxes" oninput="updateWholesaleSimulator()" min="1" step="1" value="1" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-slate-900 font-mono font-black">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <label class="block text-[11px] font-black text-slate-700 mb-1">2. How Many Boxes?</label>
+                  <input type="number" id="sim-wh-boxes" oninput="updateWholesaleSimulator()" min="1" step="1" value="1" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-2 text-slate-900 font-mono font-black text-sm">
+                  <span class="text-[10px] text-slate-500 block mt-1">Number of boxes bought</span>
                 </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Pieces per Box</label>
-                  <input type="number" id="sim-wh-pcs" oninput="updateWholesaleSimulator()" min="1" step="1" value="24" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-slate-900 font-mono font-black">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <label class="block text-[11px] font-black text-slate-700 mb-1">3. Pieces in 1 Box</label>
+                  <input type="number" id="sim-wh-pcs" oninput="updateWholesaleSimulator()" min="1" step="1" value="24" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-2 text-slate-900 font-mono font-black text-sm">
+                  <span class="text-[10px] text-slate-500 block mt-1">e.g. 24 bottles in 1 case</span>
                 </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-rose-700 mb-1">Wholesale Cost/Box (₱)</label>
-                  <input type="number" id="sim-wh-box-cost" oninput="updateWholesaleSimulator()" min="0" step="1" value="240" class="w-full bg-rose-50 border border-rose-300 rounded-lg px-2.5 py-2 text-rose-900 font-mono font-black">
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2.5 items-end">
-                <div>
-                  <label class="block text-[10px] font-bold uppercase text-emerald-800 mb-1">Retail Selling Price per Piece (₱)</label>
-                  <input type="number" id="sim-wh-sell-price" oninput="updateWholesaleSimulator()" min="0" step="1" value="25" class="w-full bg-emerald-50 border-2 border-emerald-500 rounded-lg px-3 py-2 text-emerald-950 font-mono font-black text-sm">
-                </div>
-                <div class="flex flex-wrap gap-1">
-                  <button type="button" onclick="applySimMarkup(1.5)" class="px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[10px] font-bold text-slate-800">+50% Markup</button>
-                  <button type="button" onclick="applySimMarkup(2)" class="px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[10px] font-bold text-slate-800">2× Cost</button>
-                  <button type="button" onclick="applySimMarkup(2.5)" class="px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[10px] font-bold text-slate-800">2.5× Cost</button>
+                <div class="p-3 rounded-xl bg-rose-50 border border-rose-200">
+                  <label class="block text-[11px] font-black text-rose-800 mb-1">4. Price of 1 Box (₱)</label>
+                  <input type="number" id="sim-wh-box-cost" oninput="updateWholesaleSimulator()" min="0" step="1" value="240" class="w-full bg-white border border-rose-300 rounded-lg px-2.5 py-2 text-rose-900 font-mono font-black text-sm">
+                  <span class="text-[10px] text-rose-700 block mt-1">How much 1 box cost you</span>
                 </div>
               </div>
 
-              <!-- Live Computed Result Box -->
-              <div class="p-3.5 rounded-xl bg-[#050E1D] text-white space-y-2 font-mono text-xs border border-slate-800">
-                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
-                  <span class="text-slate-400">Real Capital Cost per Piece:</span>
-                  <span class="text-amber-400 font-black text-sm" id="sim-out-unit-cost">₱10.00 / pc</span>
+              <div class="p-3.5 rounded-xl bg-emerald-50 border-2 border-emerald-400">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                  <label class="text-xs font-black text-emerald-950">5. How Much Will You Sell 1 Piece For? (₱)</label>
+                  <div class="flex flex-wrap gap-1">
+                    <button type="button" onclick="applySimMarkup(1.5)" class="px-2 py-1 rounded bg-white hover:bg-emerald-100 border border-emerald-400 text-[10px] font-bold text-emerald-900">Auto +50% Profit</button>
+                    <button type="button" onclick="applySimMarkup(2)" class="px-2 py-1 rounded bg-white hover:bg-emerald-100 border border-emerald-400 text-[10px] font-bold text-emerald-900">Double (2&times; Cost)</button>
+                  </div>
                 </div>
-                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
-                  <span class="text-slate-400">Actual Money Earned per Piece:</span>
-                  <span class="text-[#9BE600] font-black text-sm" id="sim-out-unit-profit">+₱15.00 / pc (60.0%)</span>
+                <input type="number" id="sim-wh-sell-price" oninput="updateWholesaleSimulator()" min="0" step="1" value="25" class="w-full bg-white border-2 border-emerald-500 rounded-lg px-3 py-2 text-emerald-950 font-mono font-black text-base">
+              </div>
+
+              <!-- Easy Basic-English Answer Box -->
+              <div class="p-4 rounded-2xl bg-[#050E1D] text-white space-y-2.5 text-xs border-2 border-[#9BE600]">
+                <div class="text-[10px] font-mono font-black uppercase text-[#9BE600] tracking-wider">✅ EASY PROFIT RESULT:</div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                  <span class="text-slate-300">Buying Cost for <b>1 Piece</b>:</span>
+                  <span class="text-amber-300 font-mono font-black text-sm" id="sim-out-unit-cost">₱10.00 per piece</span>
                 </div>
-                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
-                  <span class="text-slate-400">Total Wholesale Capital (<span id="sim-out-total-pcs">24</span> pcs):</span>
-                  <span class="text-white font-bold" id="sim-out-total-cap">₱240.00</span>
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                  <span class="text-slate-300">Money You Earn on <b>Every 1 Piece Sold</b>:</span>
+                  <span class="text-[#9BE600] font-mono font-black text-sm" id="sim-out-unit-profit">+₱15.00 profit per piece (60%)</span>
                 </div>
-                <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
-                  <span class="text-slate-400">Total Retail Sales When Sold Out:</span>
-                  <span class="text-white font-bold" id="sim-out-total-rev">₱600.00</span>
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                  <span class="text-slate-300">Total You Paid for <b id="sim-out-total-pcs">24</b> Pieces:</span>
+                  <span class="text-white font-mono font-bold" id="sim-out-total-cap">₱240.00</span>
                 </div>
-                <div class="flex justify-between items-center pt-0.5">
-                  <span class="text-[#9BE600] font-sans font-black uppercase text-[11px]">TOTAL ACTUAL NET PROFIT:</span>
-                  <span class="text-[#9BE600] font-black text-base" id="sim-out-total-profit">+₱360.00</span>
+                <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                  <span class="text-slate-300">Total Sales When All Pieces Are Sold:</span>
+                  <span class="text-white font-mono font-bold" id="sim-out-total-rev">₱600.00</span>
                 </div>
-                <div class="text-[10px] text-sky-300 font-sans pt-1 border-t border-white/10" id="sim-out-breakeven">
-                  💡 <b>Break-Even:</b> Sell just <b>10 pieces</b> (₱250) to recover 100% of your ₱240 wholesale box capital! The remaining <b>14 pieces</b> are pure profit.
+                <div class="flex justify-between items-center pt-1">
+                  <span class="text-[#9BE600] font-black uppercase text-xs">🎉 TOTAL CLEAN MONEY YOU EARN:</span>
+                  <span class="text-[#9BE600] font-mono font-black text-lg" id="sim-out-total-profit">+₱360.00</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white/10 text-[11px] text-sky-200 leading-relaxed" id="sim-out-breakeven">
+                  💡 <b>How fast you get your money back:</b> Sell just <b>10 pieces</b> to get back your ₱240 box cost. The other <b>14 pieces</b> are 100% pure profit!
                 </div>
               </div>
 
-              <button type="button" onclick="saveSimulatorProductToInventory()" class="w-full py-2.5 px-4 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
-                ➕ Save / Update Product in Inventory with Wholesale Capital →
+              <button type="button" onclick="saveSimulatorProductToInventory()" class="w-full py-3 px-4 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow-md">
+                💾 Save This Product &amp; Price to Inventory &rarr;
               </button>
             </div>
           </div>
 
-          <!-- Right (Col 7): AI Financial Insights + Operating Expense Logger -->
-          <div class="lg:col-span-7 space-y-5">
-            
-            <!-- AI Profit & Revenue Intelligence Card -->
-            <div class="p-5 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-lg space-y-3">
+          <!-- Right (Col 6): AI Simple English Money Advisor -->
+          <div class="lg:col-span-6 p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
                 <div class="flex items-center gap-2.5">
-                  <span class="w-8 h-8 rounded-lg bg-[#050E1D] text-[#9BE600] flex items-center justify-center font-black text-sm">🤖</span>
+                  <span class="w-9 h-9 rounded-xl bg-[#050E1D] text-[#9BE600] flex items-center justify-center font-black text-base">🤖</span>
                   <div>
-                    <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">AI FINANCIAL &amp; PROFITABILITY ENGINE</span>
-                    <h3 class="text-base font-black uppercase text-slate-900">Actual Income &amp; Capital Recovery Analysis</h3>
+                    <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">SIMPLE ENGLISH AI REPORT</span>
+                    <h3 class="text-base sm:text-lg font-black uppercase text-slate-900">AI Easy Explanation of Your Money</h3>
                   </div>
                 </div>
-                <button type="button" onclick="runAiFinancialAudit(true)" class="px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] text-[10px] font-black uppercase hover:bg-slate-800 transition">
-                  🔄 Refresh AI Analysis
+                <button type="button" onclick="runAiFinancialAudit(true)" class="px-3.5 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] text-xs font-black uppercase hover:bg-slate-800 transition">
+                  🔄 Update AI Report
                 </button>
               </div>
-              <div id="ai-financial-audit-box" class="space-y-2.5 text-xs text-slate-700">
-                <!-- Populated dynamically by runAiFinancialAudit() -->
+              <div id="ai-financial-audit-box" class="space-y-3 text-xs sm:text-sm text-slate-800 leading-relaxed">
+                <!-- Populated dynamically by runAiFinancialAudit() in Simple English -->
               </div>
             </div>
 
-            <!-- Club Operating Expenses & Capital Outlay Logger -->
-            <div class="p-5 rounded-3xl bg-brand-card border border-brand-border space-y-4">
-              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
-                <div>
-                  <span class="text-[10px] font-mono text-rose-400 uppercase tracking-widest block">DEDUCTIBLE OPERATING EXPENSES &amp; BILLS</span>
-                  <h3 class="text-sm font-black uppercase text-white">Log Club Expenses (Electricity, Staff, Maintenance, Restock)</h3>
-                  <p class="text-[11px] text-slate-400">Record club expenses here so your <b>Actual Net Income</b> reflects 100% real take-home cash.</p>
-                </div>
-              </div>
-
-              <form onsubmit="handleAddClubExpense(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs">
-                <div class="sm:col-span-3">
-                  <select id="exp-category-input" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-                    <option value="Electricity & Utilities">⚡ Electricity &amp; Utilities</option>
-                    <option value="Staff / Referee Pay">👷 Staff / Referee Pay</option>
-                    <option value="Wholesale Restock">📦 Wholesale Restock</option>
-                    <option value="Court Maintenance">🧹 Court Maintenance</option>
-                    <option value="Equipment & Balls">🎾 Equipment &amp; Balls</option>
-                    <option value="Other Expense">📋 Other Expense</option>
-                  </select>
-                </div>
-                <div class="sm:col-span-5">
-                  <input type="text" id="exp-title-input" required placeholder="Expense description (e.g. Electric Bill, Court Cleaner, Ice)" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-                </div>
-                <div class="sm:col-span-2">
-                  <input type="number" id="exp-amount-input" required min="1" step="0.01" placeholder="Amount (₱)" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-rose-400 font-mono font-black">
-                </div>
-                <div class="sm:col-span-2">
-                  <button type="submit" class="w-full h-full py-2.5 px-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-black uppercase text-[11px] transition">
-                    + Add Expense
-                  </button>
-                </div>
-              </form>
-
-              <div id="club-expenses-list" class="max-h-44 overflow-y-auto divide-y divide-white/5 rounded-xl bg-brand-black/50 border border-white/10 text-xs">
-                <!-- Populated by renderClubExpensesList() -->
-              </div>
+            <div class="p-3.5 rounded-2xl bg-slate-100 border border-slate-300 text-xs text-slate-700">
+              <b>💡 Quick Guide:</b> Want to change the buying cost or selling price of any product (including paddles, balls, and ball machine)? Scroll down to <b>Step 2</b> below and click <b>💾 Save</b> on any row!
             </div>
-
           </div>
+
         </div>
 
-        <!-- ================= ALL PRODUCTS CAPITAL COST VS. SELLING PRICE & PROFIT MATRIX ================= -->
-        <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 overflow-hidden shadow-lg">
-          <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <!-- ================= SECTION 2: ALL PRODUCTS BUYING PRICE VS. SELLING PRICE LIST ================= -->
+        <div id="rep-sec-PRICES" class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 overflow-hidden shadow-lg">
+          <div class="p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50">
             <div>
-              <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">ALL PRODUCTS PROFITABILITY MATRIX (CUSTOM INVENTORY + WEBSITE GEAR)</span>
-              <h3 class="text-sm sm:text-base font-black uppercase text-slate-900">Edit Wholesale Box Cost, Per-Piece Capital &amp; Selling Price for Every Product</h3>
-              <p class="text-[11px] text-slate-600">Enter how much a wholesale box costs (or the per-piece capital cost) and your selling price per piece. Click <b>Save</b> on any row to immediately update your profit calculations.</p>
+              <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-mono font-black uppercase tracking-wider inline-block mb-1">STEP 2 &bull; SET BUYING &amp; SELLING PRICES FOR ALL ITEMS</span>
+              <h3 class="text-base sm:text-lg font-black uppercase text-slate-900">🏷️ All Products: Buying Cost vs. Selling Price (Store Items + Website Gear)</h3>
+              <p class="text-xs text-slate-600 mt-0.5">Type how much you bought each item for (by Box or per Piece) and how much you sell it for. Click <b>💾 Save</b> on any row to update your profit report.</p>
             </div>
-            <button type="button" onclick="openAddInventoryModal()" class="px-4 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] font-black text-xs uppercase hover:bg-slate-800 transition">
-              + Add New Wholesale / Retail Product
+            <button type="button" onclick="openAddInventoryModal()" class="px-4 py-2.5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase transition shadow-sm">
+              + Add New Product
             </button>
           </div>
           <div class="overflow-x-auto touch-scroll">
-            <table class="w-full text-left text-xs border-collapse min-w-[940px]">
+            <table class="w-full text-left text-xs border-collapse min-w-[920px]">
               <thead>
-                <tr class="border-b border-slate-200 text-slate-600 uppercase tracking-wider text-[10px] bg-slate-100 font-black">
-                  <th class="py-3 px-4">Product Name &amp; Type</th>
-                  <th class="py-3 px-3">Wholesale Box Cost (₱)</th>
-                  <th class="py-3 px-3">Pcs / Box</th>
-                  <th class="py-3 px-3">Real Capital / pc (₱)</th>
-                  <th class="py-3 px-3">Selling Price / pc (₱)</th>
-                  <th class="py-3 px-3">Profit / pc &amp; Margin</th>
-                  <th class="py-3 px-3">Profit per Box</th>
-                  <th class="py-3 px-3">Stock Left</th>
-                  <th class="py-3 px-4 text-right">Quick Save</th>
+                <tr class="border-b-2 border-slate-200 text-slate-700 uppercase tracking-wider text-[11px] bg-slate-100 font-black">
+                  <th class="py-3.5 px-4">Product Name</th>
+                  <th class="py-3.5 px-3">Price of 1 Box (₱)</th>
+                  <th class="py-3.5 px-3">Pieces in 1 Box</th>
+                  <th class="py-3.5 px-3 bg-rose-50 text-rose-900">Buying Cost for 1 Piece (₱)</th>
+                  <th class="py-3.5 px-3 bg-emerald-50 text-emerald-900">Selling Price for 1 Piece (₱)</th>
+                  <th class="py-3.5 px-3">Money Earned per Piece</th>
+                  <th class="py-3.5 px-3">Money Earned per Box</th>
+                  <th class="py-3.5 px-3">Stock Left</th>
+                  <th class="py-3.5 px-4 text-right">Save Change</th>
                 </tr>
               </thead>
               <tbody id="reports-product-margin-tbody" class="divide-y divide-slate-200">
@@ -1879,25 +1896,71 @@
           </div>
         </div>
 
-        <!-- ================= UPGRADED TRANSACTION HISTORY WITH CAPITAL COST & ACTUAL PROFIT ================= -->
-        <div class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden">
-          <div class="p-4 border-b border-white/10 flex flex-wrap items-center justify-between gap-2">
+        <!-- ================= SECTION 3: CLUB BILLS & EXTRA EXPENSES ================= -->
+        <div id="rep-sec-BILLS" class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-lg space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
             <div>
-              <span class="text-xs font-black uppercase text-white block">Transaction History (Gross Revenue vs. Capital Cost vs. Actual Profit Earned)</span>
-              <span class="text-[11px] text-slate-400">You can click <b>✏️ Cost</b> on any transaction to adjust its exact capital/overhead cost.</span>
+              <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-900 text-[10px] font-mono font-black uppercase tracking-wider inline-block mb-1">STEP 3 &bull; RECORD CLUB BILLS &amp; SPENDING</span>
+              <h3 class="text-base sm:text-lg font-black uppercase text-slate-900">🧾 Club Bills &amp; Extra Expenses (Electricity, Staff, Repairs, Stock)</h3>
+              <p class="text-xs text-slate-600 mt-0.5">Add any bills or extra spending here so it is subtracted from your total money.</p>
+            </div>
+            <button type="button" onclick="clearAllClubExpenses()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-xs font-black uppercase transition">
+              🗑️ Reset / Clear All Bills
+            </button>
+          </div>
+
+          <form onsubmit="handleAddClubExpense(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+            <div class="sm:col-span-3">
+              <label class="block text-[10px] font-black uppercase text-slate-700 mb-1">Type of Bill / Expense</label>
+              <select id="exp-category-input" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                <option value="Electricity & Water">⚡ Electricity &amp; Water Bill</option>
+                <option value="Staff / Helper Pay">👷 Staff / Helper Pay</option>
+                <option value="Bought Stock / Boxes">📦 Bought Stock / Boxes</option>
+                <option value="Court Cleaning & Repair">🧹 Court Cleaning &amp; Repair</option>
+                <option value="Paddles & Balls">🎾 Paddles &amp; Balls</option>
+                <option value="Other Spending">📋 Other Spending</option>
+              </select>
+            </div>
+            <div class="sm:col-span-5">
+              <label class="block text-[10px] font-black uppercase text-slate-700 mb-1">What Did You Pay For?</label>
+              <input type="text" id="exp-title-input" required placeholder="e.g. Electric Bill, Ice & Water, Court Cleaner" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-[10px] font-black uppercase text-rose-700 mb-1">Amount Paid (₱)</label>
+              <input type="number" id="exp-amount-input" required min="1" step="0.01" placeholder="₱0.00" class="w-full bg-white border border-rose-300 rounded-xl px-3 py-2.5 text-rose-700 font-mono font-black">
+            </div>
+            <div class="sm:col-span-2 flex items-end">
+              <button type="submit" class="w-full py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black uppercase text-xs transition shadow">
+                + Add Bill
+              </button>
+            </div>
+          </form>
+
+          <div id="club-expenses-list" class="max-h-56 overflow-y-auto divide-y divide-slate-200 rounded-2xl bg-white border border-slate-200 text-xs">
+            <!-- Populated by renderClubExpensesList() -->
+          </div>
+        </div>
+
+        <!-- ================= SECTION 4: ALL SALES LIST (MONEY IN, BUYING COST & PROFIT PER SALE) ================= -->
+        <div id="rep-sec-SALES" class="rounded-3xl bg-brand-card border border-brand-border overflow-hidden shadow-lg">
+          <div class="p-5 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="px-2 py-0.5 rounded bg-brand-lime/20 text-brand-lime text-[10px] font-mono font-black uppercase tracking-wider inline-block mb-1">STEP 4 &bull; EVERY SALE &amp; REAL MONEY EARNED</span>
+              <h3 class="text-base sm:text-lg font-black uppercase text-white">📋 Sales List (Money Received vs. Buying Cost vs. Actual Money Earned)</h3>
+              <p class="text-xs text-slate-300 mt-0.5">Every court booking and product sale is listed below. Click <b>✏️ Edit Cost</b> on any row if you want to change the buying cost for that sale.</p>
             </div>
           </div>
           <div class="overflow-x-auto touch-scroll">
             <table class="w-full text-left text-xs border-collapse min-w-[860px]">
               <thead>
-                <tr class="border-b border-white/10 text-slate-400 uppercase tracking-wider text-[10px] bg-brand-black/40">
-                  <th class="py-3.5 px-4">Ref ID</th>
-                  <th class="py-3.5 px-3">Category</th>
-                  <th class="py-3.5 px-4">Customer &amp; Order Details</th>
-                  <th class="py-3.5 px-3">Payment Method</th>
-                  <th class="py-3.5 px-3">Gross Collected (₱)</th>
-                  <th class="py-3.5 px-3">Capital Cost / COGS (₱)</th>
-                  <th class="py-3.5 px-3">Actual Money Earned (₱)</th>
+                <tr class="border-b border-white/10 text-slate-300 uppercase tracking-wider text-[11px] bg-brand-black/60 font-black">
+                  <th class="py-3.5 px-4">Receipt #</th>
+                  <th class="py-3.5 px-3">Type of Sale</th>
+                  <th class="py-3.5 px-4">What Customer Bought</th>
+                  <th class="py-3.5 px-3">Paid Via</th>
+                  <th class="py-3.5 px-3">Money Received (₱)</th>
+                  <th class="py-3.5 px-3 text-amber-300">Buying Cost (₱)</th>
+                  <th class="py-3.5 px-3 text-brand-lime">Actual Money Earned (₱)</th>
                   <th class="py-3.5 px-4">Date &amp; Time</th>
                 </tr>
               </thead>
@@ -3393,28 +3456,39 @@ function clearFieldError(fieldId) {
       await fetchAdminStateFromServer(true);
     }
 
-    async function adminResetDateSchedule() {
+    function adminResetDateSchedule() {
       const dateYMD = getAdminSelectedDateYMD();
-      try {
-        await fetch('/api/blocks', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'clear_date', date: dateYMD })
-        });
-      } catch (err) {}
-      await fetchAdminStateFromServer(true);
+      openTypeResetConfirmModal(
+        'Reset Court Schedule for ' + dateYMD,
+        'This will clear all custom Open Court, Open Play, and Closed rules for ' + dateYMD + ' and return this date to the regular schedule.',
+        async () => {
+          try {
+            await fetch('/api/blocks', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'clear_date', date: dateYMD })
+            });
+          } catch (err) {}
+          await fetchAdminStateFromServer(true);
+        }
+      );
     }
 
-    async function adminClearAllOverrides() {
-      if (!confirm('Clear all custom court calendar rules and return all dates to the default schedule?')) return;
-      try {
-        await fetch('/api/blocks', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'clear_date', date: 'ALL' })
-        });
-      } catch (err) {}
-      await fetchAdminStateFromServer(true);
+    function adminClearAllOverrides() {
+      openTypeResetConfirmModal(
+        'Reset All Court Calendar Rules (All Dates)',
+        'This will remove all custom Open Court, Open Play, and Closed rules across all dates and return the calendar to the default schedule.',
+        async () => {
+          try {
+            await fetch('/api/blocks', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'clear_date', date: 'ALL' })
+            });
+          } catch (err) {}
+          await fetchAdminStateFromServer(true);
+        }
+      );
     }
 
     function renderScheduleBlocks() {
@@ -4142,8 +4216,8 @@ How many boxes/packs are you adding to stock?
         const btn = document.getElementById('rep-period-' + p);
         if (btn) {
           btn.className = (p === activeReportsPeriod)
-            ? 'px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black font-black transition'
-            : 'px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition';
+            ? 'px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] font-black transition'
+            : 'px-3 py-1.5 rounded-lg text-slate-700 hover:text-slate-950 transition';
         }
       });
       renderReportsLedger();
@@ -4289,19 +4363,19 @@ How many boxes/packs are you adding to stock?
       if (!container) return;
       const list = filteredExpenses || clubExpenses || [];
       if (list.length === 0) {
-        container.innerHTML = `<div class="p-3 text-center text-[11px] text-slate-500">No club operating expenses logged for this period.</div>`;
+        container.innerHTML = `<div class="p-4 text-center text-xs text-slate-500">No club bills or extra expenses recorded yet.</div>`;
         return;
       }
       container.innerHTML = list.map(exp => `
-        <div class="px-3.5 py-2.5 flex items-center justify-between gap-2 hover:bg-white/5">
+        <div class="px-4 py-3 flex items-center justify-between gap-2 hover:bg-slate-50">
           <div class="min-w-0">
-            <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30 font-mono text-[9px] font-bold uppercase mr-1.5">${pfEscapeHtml(exp.category)}</span>
-            <span class="font-bold text-white">${pfEscapeHtml(exp.title)}</span>
+            <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200 font-mono text-[10px] font-bold uppercase mr-2">${pfEscapeHtml(exp.category)}</span>
+            <span class="font-bold text-slate-900">${pfEscapeHtml(exp.title)}</span>
             <span class="text-[10px] font-mono text-slate-500 ml-2">${pfEscapeHtml(exp.date || '')}</span>
           </div>
-          <div class="flex items-center gap-2.5 flex-shrink-0">
-            <span class="font-mono font-black text-rose-400">-₱${Number(exp.amount || 0).toFixed(2)}</span>
-            <button type="button" onclick="deleteClubExpense('${exp.id}')" class="text-[10px] text-slate-400 hover:text-rose-400 font-bold uppercase">✕</button>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <span class="font-mono font-black text-rose-600 text-sm">-₱${Number(exp.amount || 0).toFixed(2)}</span>
+            <button type="button" onclick="deleteClubExpense('${exp.id}')" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white text-[10px] font-bold uppercase transition">Delete</button>
           </div>
         </div>
       `).join('');
@@ -4511,7 +4585,6 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const actualNetIncome = grossProfit - totalExpenses;
       const netMarginPct = totalGross > 0 ? ((actualNetIncome / totalGross) * 100) : 0;
 
-      // Inventory wholesale capital analysis
       let stockCapital = 0;
       let stockRetail = 0;
       let zeroCostItems = [];
@@ -4532,38 +4605,42 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       });
 
       const potentialStockProfit = stockRetail - stockCapital;
+      const periodNames = { ALL: 'All Time', TODAY: 'Today', WEEK: 'Last 7 Days', MONTH: 'This Month' };
+      const periodLabel = periodNames[activeReportsPeriod] || 'All Time';
 
       box.innerHTML = `
-        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 space-y-1.5">
+        <div class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-400 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-black text-emerald-950 uppercase text-xs">💰 Actual Take-Home Profit Summary (${activeReportsPeriod})</span>
-            <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono font-black text-[10px]">Net Margin: ${netMarginPct.toFixed(1)}%</span>
+            <span class="font-black text-emerald-950 uppercase text-xs">✅ Simple Summary (${periodLabel})</span>
+            <span class="px-2.5 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono font-black text-[11px]">You keep ${netMarginPct.toFixed(0)}% as profit</span>
           </div>
-          <p class="text-xs text-slate-800 leading-relaxed">
-            Out of <b>₱${totalGross.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> gross sales collected, you spent <b>₱${totalCogs.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> on product/court capital (COGS) and <b>₱${totalExpenses.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> on logged club expenses — leaving <b class="text-emerald-800 underline">₱${actualNetIncome.toLocaleString('en-PH', {minimumFractionDigits:2})} in Actual Net Money Earned</b>.
+          <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+            1. Customers paid you a total of <b>₱${totalGross.toLocaleString('en-PH', {minimumFractionDigits:2})}</b>.<br>
+            2. The items you sold cost you <b>₱${totalCogs.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> to buy, and you paid <b>₱${totalExpenses.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> for club bills.<br>
+            3. After subtracting those costs, your <b class="text-emerald-800 underline">Actual Money Earned is ₱${actualNetIncome.toLocaleString('en-PH', {minimumFractionDigits:2})}</b>.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="text-[10px] font-mono font-black uppercase text-slate-500 block">🏓 Court Booking Earnings</span>
-            <span class="text-sm font-black text-slate-900 block mt-0.5">Net: ₱${courtNet.toLocaleString('en-PH', {minimumFractionDigits:2})} <span class="text-[11px] font-normal text-slate-500">(Gross: ₱${courtGross.toLocaleString()})</span></span>
-            <span class="text-[11px] text-slate-600 block mt-0.5">${courtSales.length} confirmed court session(s)</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[11px] font-black uppercase text-slate-600 block">🎾 Money from Court Bookings</span>
+            <span class="text-base font-black text-slate-900 block mt-0.5">₱${courtNet.toLocaleString('en-PH', {minimumFractionDigits:2})}</span>
+            <span class="text-[11px] text-slate-500 block">From ${courtSales.length} court booking(s)</span>
           </div>
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="text-[10px] font-mono font-black uppercase text-slate-500 block">🛒 Per-Piece Retail Product Profit</span>
-            <span class="text-sm font-black text-emerald-700 block mt-0.5">Net: +₱${posNet.toLocaleString('en-PH', {minimumFractionDigits:2})} <span class="text-[11px] font-normal text-slate-500">(Capital: ₱${posCost.toLocaleString()})</span></span>
-            <span class="text-[11px] text-slate-600 block mt-0.5">${posSales.length} POS / Pro-Shop order(s)</span>
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[11px] font-black uppercase text-slate-600 block">🥤 Profit from Drinks &amp; Products</span>
+            <span class="text-base font-black text-emerald-700 block mt-0.5">+₱${posNet.toLocaleString('en-PH', {minimumFractionDigits:2})}</span>
+            <span class="text-[11px] text-slate-500 block">Sales: ₱${posGross.toLocaleString()} &minus; Buying Cost: ₱${posCost.toLocaleString()}</span>
           </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-slate-100 border border-slate-300 space-y-1">
-          <span class="text-[10px] font-mono font-black uppercase text-slate-700 block">📦 Wholesale Inventory Capital &amp; Projected Earnings</span>
-          <p class="text-[11px] text-slate-700">
-            • Unsold Stock Capital Invested: <b>₱${stockCapital.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> → Expected Retail Sales: <b>₱${stockRetail.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> → Projected Stock Profit: <b class="text-emerald-700">+₱${potentialStockProfit.toLocaleString('en-PH', {minimumFractionDigits:2})}</b>.
+        <div class="p-3.5 rounded-xl bg-slate-100 border border-slate-300 space-y-1.5 text-xs">
+          <span class="font-black uppercase text-slate-800 block">📦 Money Waiting in Your Unsold Stock:</span>
+          <p class="text-slate-700">
+            • You spent <b>₱${stockCapital.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> to buy your current stock. When all of it is sold, you will collect <b>₱${stockRetail.toLocaleString('en-PH', {minimumFractionDigits:2})}</b> and earn <b class="text-emerald-700">+₱${potentialStockProfit.toLocaleString('en-PH', {minimumFractionDigits:2})} in extra profit</b>.
           </p>
-          ${bestProduct ? `<p class="text-[11px] text-emerald-800 font-semibold">⭐ Highest-Profit Item: <b>${pfEscapeHtml(bestProduct.name)}</b> earns <b>+₱${bestUnitProfit.toFixed(2)} profit per piece</b> (Sell ₱${Number(bestProduct.price).toFixed(0)} vs Capital ₱${getResolvedItemUnitCost(bestProduct).toFixed(2)}).</p>` : ''}
-          ${zeroCostItems.length > 0 ? `<p class="text-[11px] text-amber-800 font-bold">⚠️ Tip: ${zeroCostItems.length} product(s) (${pfEscapeHtml(zeroCostItems.slice(0, 3).join(', '))}) have ₱0 capital cost set. Enter their Wholesale Box Cost in the table below for 100% accurate profit tracking!</p>` : `<p class="text-[11px] text-emerald-800 font-bold">✅ All inventory products have wholesale/per-piece capital costs configured!</p>`}
+          ${bestProduct ? `<p class="text-emerald-900 font-semibold">⭐ <b>Best Profit Product:</b> Every 1 piece of <b>${pfEscapeHtml(bestProduct.name)}</b> earns you <b>+₱${bestUnitProfit.toFixed(2)} clean profit</b> (Bought at ₱${getResolvedItemUnitCost(bestProduct).toFixed(2)}, Sold at ₱${Number(bestProduct.price).toFixed(2)}).</p>` : ''}
+          ${zeroCostItems.length > 0 ? `<p class="text-amber-900 font-bold">⚠️ <b>Friendly Reminder:</b> ${zeroCostItems.length} item(s) (${pfEscapeHtml(zeroCostItems.slice(0, 3).join(', '))}) have ₱0 buying cost set. Scroll down to Step 2 and enter their buying price so your profit is 100% accurate.</p>` : `<p class="text-emerald-800 font-bold">✅ All products in your inventory have buying prices set!</p>`}
         </div>
       `;
 
@@ -4609,6 +4686,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const elPosSub = document.getElementById('rep-pos-profit-sub');
       const elCogs = document.getElementById('rep-total-cogs');
       const elExp = document.getElementById('rep-total-expenses');
+      const elDed = document.getElementById('rep-total-deductions');
+      if (elDed) elDed.textContent = '-' + fmt(totalCogs + totalExpenses);
       const elGrossProfSub = document.getElementById('rep-gross-profit-sub');
       const elNetInc = document.getElementById('rep-actual-net-income');
       const elNetBadge = document.getElementById('rep-net-margin-badge');
@@ -4694,14 +4773,121 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       document.body.removeChild(link);
     }
 
-    async function resetAllDatabaseData() {
-      if (!confirm('Are you sure you want to empty all bookings, blocks, sales, and inventory?')) return;
-      try {
-        await fetch('/api/reset', { method: 'POST' });
-      } catch (e) {}
-      localStorage.clear();
-      await fetchAdminStateFromServer(true);
-      alert('All database records have been emptied.');
+
+    // ================= UNIVERSAL "TYPE RESET TO CONFIRM" SAFETY ENGINE =================
+    let pendingTypeResetCallback = null;
+
+    function openTypeResetConfirmModal(title, description, onConfirmFn) {
+      pendingTypeResetCallback = onConfirmFn;
+      const modal = document.getElementById('admin-type-reset-modal');
+      const titleEl = document.getElementById('type-reset-modal-title');
+      const descEl = document.getElementById('type-reset-modal-desc');
+      const inpEl = document.getElementById('type-reset-modal-input');
+      const errEl = document.getElementById('type-reset-modal-error');
+      const btnEl = document.getElementById('type-reset-confirm-btn');
+
+      if (titleEl) titleEl.textContent = title || 'Confirm Reset';
+      if (descEl) descEl.textContent = description || 'This action will reset the selected settings or data. Type RESET below to continue.';
+      if (inpEl) inpEl.value = '';
+      if (errEl) errEl.classList.add('hidden');
+      if (btnEl) {
+        btnEl.className = 'py-2.5 px-5 rounded-xl bg-slate-200 text-slate-400 font-black uppercase text-xs transition cursor-not-allowed';
+      }
+      if (modal) {
+        modal.classList.remove('hidden');
+        setTimeout(() => { if (inpEl) inpEl.focus(); }, 60);
+      }
+    }
+
+    function handleTypeResetInputChange() {
+      const inpEl = document.getElementById('type-reset-modal-input');
+      const errEl = document.getElementById('type-reset-modal-error');
+      const btnEl = document.getElementById('type-reset-confirm-btn');
+      const val = (inpEl?.value || '').trim().toUpperCase();
+      if (errEl) errEl.classList.add('hidden');
+      if (btnEl) {
+        if (val === 'RESET') {
+          btnEl.className = 'py-2.5 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black uppercase text-xs transition shadow-lg cursor-pointer';
+        } else {
+          btnEl.className = 'py-2.5 px-5 rounded-xl bg-slate-200 text-slate-400 font-black uppercase text-xs transition cursor-not-allowed';
+        }
+      }
+    }
+
+    async function confirmTypeResetModalAction() {
+      const inpEl = document.getElementById('type-reset-modal-input');
+      const errEl = document.getElementById('type-reset-modal-error');
+      const val = (inpEl?.value || '').trim().toUpperCase();
+      if (val !== 'RESET') {
+        if (errEl) errEl.classList.remove('hidden');
+        if (inpEl) inpEl.focus();
+        return;
+      }
+      const fn = pendingTypeResetCallback;
+      closeTypeResetModal();
+      if (typeof fn === 'function') {
+        await fn();
+      }
+    }
+
+    function closeTypeResetModal() {
+      const modal = document.getElementById('admin-type-reset-modal');
+      if (modal) modal.classList.add('hidden');
+      pendingTypeResetCallback = null;
+    }
+
+    function setReportSubSection(sec) {
+      const sections = ['CALC', 'PRICES', 'BILLS', 'SALES'];
+      sections.forEach(s => {
+        const el = document.getElementById('rep-sec-' + s);
+        if (el) {
+          if (sec === 'ALL' || sec === s) {
+            el.classList.remove('hidden');
+          } else {
+            el.classList.add('hidden');
+          }
+        }
+      });
+      ['ALL', 'CALC', 'PRICES', 'BILLS', 'SALES'].forEach(k => {
+        const btn = document.getElementById('rep-sub-btn-' + k);
+        if (btn) {
+          btn.className = (k === sec)
+            ? 'px-3.5 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] text-xs font-black uppercase transition shadow-sm'
+            : 'px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition';
+        }
+      });
+    }
+
+    async function clearAllClubExpenses() {
+      openTypeResetConfirmModal(
+        'Reset & Clear All Club Bills',
+        'This will clear all recorded club bills and operating expenses from the report. Type RESET below to confirm.',
+        async () => {
+          try {
+            await fetch('/api/expenses', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'clear' })
+            });
+          } catch (e) {}
+          await fetchAdminStateFromServer(true);
+        }
+      );
+    }
+
+    function resetAllDatabaseData() {
+      openTypeResetConfirmModal(
+        'Reset All Database Records',
+        'This will permanently clear all court bookings, calendar rules, sales history, expenses, and inventory back to default. Type RESET below to confirm.',
+        async () => {
+          try {
+            await fetch('/api/reset', { method: 'POST' });
+          } catch (e) {}
+          localStorage.clear();
+          await fetchAdminStateFromServer(true);
+          alert('✅ All database records have been reset.');
+        }
+      );
     }
 
     
@@ -5177,14 +5363,20 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       reader.readAsDataURL(file);
     }
 
-    async function resetOfficialGcashQr() {
-      const defaultUrl = 'assets/qr-gcash.png?v=20261029v9';
-      localStorage.removeItem('pf_custom_gcash_standee_url');
-      const urlInput = document.getElementById('settings-custom-standee-url');
-      if (urlInput) urlInput.value = defaultUrl;
-      const preview = document.getElementById('admin-qr-preview-img');
-      if (preview) preview.src = defaultUrl;
-      await saveOfficialPaymentSettings();
+    function resetOfficialGcashQr() {
+      openTypeResetConfirmModal(
+        'Restore Default Official GCash QR',
+        'This will reset your custom QR image back to the official club GCash QR code (KA******E L. • 0999 883 2346).',
+        async () => {
+          const defaultUrl = 'assets/qr-gcash.png?v=20261029v9';
+          localStorage.removeItem('pf_custom_gcash_standee_url');
+          const urlInput = document.getElementById('settings-custom-standee-url');
+          if (urlInput) urlInput.value = defaultUrl;
+          const preview = document.getElementById('admin-qr-preview-img');
+          if (preview) preview.src = defaultUrl;
+          await saveOfficialPaymentSettings();
+        }
+      );
     }
 
     async function saveOfficialPaymentSettings() {
@@ -5484,13 +5676,18 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       renderAdminAnnouncements();
     }
 
-    async function clearAllAnnouncements() {
-      if (!confirm('Clear all announcements from the Live Announcement Board?')) return;
-      announcements = [];
-      broadcastAnnouncementsLive();
-      renderAdminAnnouncements();
-      await postAnnouncementMutationToServer({ action: 'clear' });
-      renderAdminAnnouncements();
+    function clearAllAnnouncements() {
+      openTypeResetConfirmModal(
+        'Reset & Clear All Live Announcements',
+        'This will remove all announcements and photos from the public Live Announcement Board.',
+        async () => {
+          announcements = [];
+          broadcastAnnouncementsLive();
+          renderAdminAnnouncements();
+          await postAnnouncementMutationToServer({ action: 'clear' });
+          renderAdminAnnouncements();
+        }
+      );
     }
 
     function renderAdminAnnouncements() {
@@ -6057,7 +6254,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
     }
 
-    async function restoreMainWebsiteDefaultDesign() {
+    function restoreMainWebsiteDefaultDesign() {
+      openTypeResetConfirmModal(
+        'Reset Entire Website Design, Photos & Prices to Default',
+        'This will reset all website hero photos, court photos, rental prices, and text back to the original factory design.',
+        async () => {
+          await _execRestoreMainWebsiteDefaultDesign();
+        }
+      );
+    }
+    async function _execRestoreMainWebsiteDefaultDesign() {
       siteEditorDirty = false;
       uploadedAssetStore = {};
       currentSiteConfig = { ...DEFAULT_SITE_CONFIG, updatedAt: Date.now() };
@@ -6078,7 +6284,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       return restoreMainWebsiteDefaultDesign();
     }
 
-    async function restoreDefaultHeroAndCourtAssets() {
+    function restoreDefaultHeroAndCourtAssets() {
+      openTypeResetConfirmModal(
+        'Reset Hero Slideshow & Court Photos to Default',
+        'This will reset all Hero Slideshow images and Court 1–4 photos back to the original default photos.',
+        async () => {
+          await _execRestoreDefaultHeroAndCourtAssets();
+        }
+      );
+    }
+    async function _execRestoreDefaultHeroAndCourtAssets() {
       const assetDefaults = {
         heroSlide1: DEFAULT_SITE_CONFIG.heroSlide1,
         heroSlide2: DEFAULT_SITE_CONFIG.heroSlide2,
@@ -6096,7 +6311,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       await saveSiteConfigToServer(false);
     }
 
-    async function restoreDefaultPricesAndGear() {
+    function restoreDefaultPricesAndGear() {
+      openTypeResetConfirmModal(
+        'Reset Court Rates & Equipment Prices to Default',
+        'This will reset Daytime/Nighttime court rates, Open Play rate, and all 6 equipment rental prices back to their original default amounts.',
+        async () => {
+          await _execRestoreDefaultPricesAndGear();
+        }
+      );
+    }
+    async function _execRestoreDefaultPricesAndGear() {
       const priceGearDefaults = {
         dayRate: DEFAULT_SITE_CONFIG.dayRate,
         nightRate: DEFAULT_SITE_CONFIG.nightRate,
@@ -6122,7 +6346,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       await saveSiteConfigToServer(false);
     }
 
-    async function restoreDefaultWebsiteText() {
+    function restoreDefaultWebsiteText() {
+      openTypeResetConfirmModal(
+        'Reset Website Text & Contact Info to Default',
+        'This will reset the club title, hero headline, phone number, address, and court names back to default.',
+        async () => {
+          await _execRestoreDefaultWebsiteText();
+        }
+      );
+    }
+    async function _execRestoreDefaultWebsiteText() {
       const textDefaults = {
         clubLogo: DEFAULT_SITE_CONFIG.clubLogo,
         clubName: DEFAULT_SITE_CONFIG.clubName,
@@ -6256,5 +6489,54 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
     }
   </script>
+
+  <!-- ================= UNIVERSAL "TYPE RESET TO CONFIRM" SAFETY POP-UP MODAL ================= -->
+  <div id="admin-type-reset-modal" class="fixed inset-0 z-[95] hidden flex items-center justify-center p-4">
+    <div onclick="closeTypeResetModal()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-md rounded-2xl bg-white text-[#050E1D] border-2 border-rose-600 p-6 shadow-2xl space-y-4" style="border-radius:5px;">
+      <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 flex items-center justify-center font-black text-lg flex-shrink-0">⚠️</div>
+          <div>
+            <span class="text-[10px] font-mono font-black uppercase tracking-widest text-rose-700 block">SAFETY CONFIRMATION POP-UP</span>
+            <h3 id="type-reset-modal-title" class="text-base font-black uppercase text-[#050E1D]">Confirm Reset</h3>
+          </div>
+        </div>
+        <button type="button" onclick="closeTypeResetModal()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs flex items-center justify-center">✕</button>
+      </div>
+
+      <p id="type-reset-modal-desc" class="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed bg-rose-50 border border-rose-200 p-3.5 rounded-xl">
+        Are you sure you want to reset this data?
+      </p>
+
+      <div class="space-y-1.5">
+        <label for="type-reset-modal-input" class="block text-xs font-black text-[#050E1D]">
+          To prevent accidental clicks, please type <span class="px-2 py-0.5 rounded bg-rose-600 text-white font-mono">RESET</span> in the box below:
+        </label>
+        <input
+          type="text"
+          id="type-reset-modal-input"
+          autocomplete="off"
+          oninput="handleTypeResetInputChange()"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();confirmTypeResetModalAction();}"
+          placeholder="Type RESET here to confirm..."
+          class="w-full bg-white border-2 border-slate-300 focus:border-rose-600 rounded-xl px-3.5 py-2.5 text-sm font-mono font-black text-[#050E1D] uppercase tracking-wider focus:outline-none"
+        >
+        <p id="type-reset-modal-error" class="hidden text-xs font-bold text-rose-600">
+          ⚠️ Please type the exact word RESET first before clicking confirm.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200">
+        <button type="button" onclick="closeTypeResetModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-black uppercase text-xs transition">
+          Cancel (Keep Data)
+        </button>
+        <button type="button" id="type-reset-confirm-btn" onclick="confirmTypeResetModalAction()" class="py-2.5 px-5 rounded-xl bg-slate-300 text-slate-500 font-black uppercase text-xs transition cursor-not-allowed">
+          🗑️ Confirm Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

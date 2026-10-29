@@ -1427,96 +1427,128 @@
         </div>
       </div>
 
-      <!-- 1. GCash QR Code Section (High-Contrast Verified InstaPay QR Ph + Full Standee & Download) -->
+            <!-- 1. GCash QR Code Section (Clean UX + Zoom QR + Save QR + Full Card Toggle) -->
       <div id="modal-qr-section" class="mb-4">
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-brand-lime/30">
-          <div class="sm:col-span-5 p-3 rounded-2xl bg-white w-56 sm:w-full max-w-[230px] mx-auto text-center shadow-2xl border-2 border-brand-lime">
-            <img id="locked-qr-img" data-qr-mode="qr" src="assets/qr-gcash.png?v=20261029v9" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" onclick="pfOpenQrStandeeLightbox('gcash')" alt="P&amp;F Rally Ground GCash QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;" title="Click to enlarge GCash QR">
-            <div class="mt-1.5 text-[9px] font-mono text-slate-900 font-black uppercase tracking-wider">Official GCash QR Ph</div>
-            <div class="mt-1.5 grid grid-cols-2 gap-1">
-              <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="py-1 px-1.5 rounded bg-[#050E1D] text-[#9BE600] text-[9px] font-black uppercase tracking-wider hover:opacity-90 transition">🔍 Zoom QR</button>
-              <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="py-1 px-1.5 rounded bg-[#9BE600] text-[#050E1D] text-[9px] font-black uppercase tracking-wider hover:opacity-90 transition">📥 Save QR</button>
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/95 rounded-2xl p-4 border-2 border-brand-lime/40 shadow-lg">
+          <div class="sm:col-span-5 flex flex-col items-center">
+            <div class="p-3 rounded-2xl bg-white w-52 sm:w-full max-w-[215px] mx-auto text-center shadow-2xl border-2 border-brand-lime">
+              <img id="locked-qr-img" data-qr-mode="qr" src="assets/qr-gcash.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" onclick="pfOpenQrStandeeLightbox('gcash')" alt="P&amp;F Rally Ground GCash QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;" title="Tap to zoom GCash QR">
+              <div class="mt-1.5 text-[9px] font-mono text-[#0057E7] font-black uppercase tracking-wider">Official GCash QR Ph</div>
             </div>
-            <button type="button" onclick="pfToggleQrCardView('gcash', 'locked-qr-img', this)" class="mt-1 w-full py-1 px-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 text-[9px] font-bold uppercase transition">🪪 Show Full GCash Card</button>
+            <div class="w-52 sm:w-full max-w-[215px] mt-2 space-y-1.5">
+              <div class="grid grid-cols-2 gap-1.5">
+                <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="py-1.5 px-2 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase tracking-wider hover:opacity-95 transition shadow flex items-center justify-center gap-1">🔍 Zoom QR</button>
+                <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="py-1.5 px-2 rounded-lg bg-white text-[#050E1D] text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow flex items-center justify-center gap-1">📥 Save QR</button>
+              </div>
+              <button type="button" onclick="pfToggleQrCardView('gcash', 'locked-qr-img', this)" class="w-full py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-bold uppercase transition">🪪 Show Full GCash Card</button>
+            </div>
           </div>
-          <div class="sm:col-span-7 text-xs space-y-2 font-mono">
-            <div class="flex justify-between items-center text-slate-400">
-              <span>Merchant:</span> <b class="text-white">KA******E L.</b>
+
+          <div class="sm:col-span-7 text-xs space-y-2.5">
+            <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-2 font-mono">
+              <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
+                <span>Account Name:</span> <b class="text-white text-sm">KA******E L.</b>
+              </div>
+              <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
+                <span>GCash Number:</span>
+                <span class="flex items-center gap-1.5">
+                  <b class="text-brand-lime font-black text-sm">0999 883 2346</b>
+                  <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black text-[10px] font-sans font-black uppercase transition">Copy</button>
+                </span>
+              </div>
+              <div class="flex justify-between items-center text-slate-400">
+                <span>Amount to Pay:</span>
+                <span class="text-brand-lime font-black text-base" id="manual-modal-amount">₱400.00</span>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-slate-400">
-              <span>GCash No:</span>
-              <span class="flex items-center gap-1.5">
-                <b class="text-brand-lime font-bold">0999 883 2346</b>
-                <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2 py-0.5 rounded bg-brand-lime/20 hover:bg-brand-lime hover:text-brand-black text-[10px] text-brand-lime font-sans font-bold transition">Copy</button>
-              </span>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 font-sans space-y-1 leading-snug">
+              <div class="font-black text-brand-lime uppercase text-[10px]">How to Pay with GCash:</div>
+              <div>1. Tap <b>🔍 Zoom QR</b> to scan easily, or tap <b>📥 Save QR</b> and upload it inside the <b>GCash App (QR &rarr; Upload QR)</b>.</div>
+              <div>2. Or use <b>GCash Express Send</b> to <b class="text-white">0999 883 2346</b>.</div>
             </div>
-            <div class="flex justify-between items-center text-slate-400">
-              <span>Amount:</span>
-              <span class="text-brand-lime font-black text-sm" id="manual-modal-amount">₱400.00</span>
-            </div>
-            <p class="text-[10px] text-slate-300 font-sans leading-tight pt-1.5 border-t border-white/10">
-              💡 <b>3 Easy Ways to Pay via GCash:</b><br>
-              1. <b>Scan QR</b> above (or tap <b>🔍 Zoom QR</b>).<br>
-              2. Tap <b>📥 Save QR</b> &rarr; open GCash &rarr; <b>QR &rarr; Upload QR</b>.<br>
-              3. Or use GCash <b>Express Send</b> to <b class="text-brand-lime">0999 883 2346</b> (<b class="text-white">KA******E L.</b>).
-            </p>
           </div>
         </div>
       </div>
 
-      <!-- 2. Maya QR Code Section -->
+      <!-- 2. Maya QR Code Section (Clean UX + Zoom QR + Save QR + Full Card Toggle) -->
       <div id="modal-maya-section" class="hidden mb-4">
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-[#002B49]/60">
-          <div class="sm:col-span-5 p-2.5 rounded-2xl bg-white w-52 sm:w-full max-w-[210px] mx-auto text-center shadow-2xl border-2 border-emerald-500/40">
-            <img id="locked-maya-qr-img" src="assets/qr-maya.png?v=20261029v9" onclick="pfOpenQrStandeeLightbox('maya')" class="cursor-pointer w-full aspect-square object-contain rounded-lg" alt="P&amp;F Rally Ground Maya QR" class="w-full aspect-square object-contain rounded-lg">
-            <div class="mt-1.5 text-[9px] font-mono text-[#002B49] font-black uppercase tracking-wider">Official Maya QR</div>
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/95 rounded-2xl p-4 border-2 border-emerald-500/40 shadow-lg">
+          <div class="sm:col-span-5 flex flex-col items-center">
+            <div class="p-3 rounded-2xl bg-white w-52 sm:w-full max-w-[215px] mx-auto text-center shadow-2xl border-2 border-emerald-500">
+              <img id="locked-maya-qr-img" data-qr-mode="qr" src="assets/qr-maya.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-maya.png';" onclick="pfOpenQrStandeeLightbox('maya')" alt="P&amp;F Rally Ground Maya QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;" title="Tap to zoom Maya QR">
+              <div class="mt-1.5 text-[9px] font-mono text-emerald-800 font-black uppercase tracking-wider">Official Maya QR Ph</div>
+            </div>
+            <div class="w-52 sm:w-full max-w-[215px] mt-2 space-y-1.5">
+              <div class="grid grid-cols-2 gap-1.5">
+                <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="py-1.5 px-2 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase tracking-wider hover:opacity-95 transition shadow flex items-center justify-center gap-1">🔍 Zoom QR</button>
+                <button type="button" onclick="pfDownloadOfficialQr('maya')" class="py-1.5 px-2 rounded-lg bg-white text-[#050E1D] text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow flex items-center justify-center gap-1">📥 Save QR</button>
+              </div>
+              <button type="button" onclick="pfToggleQrCardView('maya', 'locked-maya-qr-img', this)" class="w-full py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-bold uppercase transition">🪪 Show Full Maya Card</button>
+            </div>
           </div>
-          <div class="sm:col-span-7 text-xs space-y-2 font-mono">
-            <div class="flex justify-between items-center text-slate-400">
-              <span>Merchant:</span> <b class="text-white">KATHERINE LIM</b>
+
+          <div class="sm:col-span-7 text-xs space-y-2.5">
+            <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-2 font-mono">
+              <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
+                <span>Account Name:</span> <b class="text-white text-sm">KATHERINE LIM</b>
+              </div>
+              <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
+                <span>Maya Number:</span>
+                <span class="flex items-center gap-1.5">
+                  <b class="text-brand-lime font-black text-sm">0999 883 2346</b>
+                  <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black text-[10px] font-sans font-black uppercase transition">Copy</button>
+                </span>
+              </div>
+              <div class="flex justify-between items-center text-slate-400">
+                <span>Amount to Pay:</span>
+                <span class="text-brand-lime font-black text-base" id="manual-modal-maya-amount">₱400.00</span>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-slate-400">
-              <span>Maya No:</span>
-              <span class="flex items-center gap-1.5">
-                <b class="text-brand-lime font-bold">0999 883 2346</b>
-                <button type="button" onclick="copyPaymentAccount('09998832346', this)" class="px-2 py-0.5 rounded bg-brand-lime/20 hover:bg-brand-lime hover:text-brand-black text-[10px] text-brand-lime font-sans font-bold transition">Copy</button>
-              </span>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 font-sans space-y-1 leading-snug">
+              <div class="font-black text-brand-lime uppercase text-[10px]">How to Pay with Maya:</div>
+              <div>1. Tap <b>🔍 Zoom QR</b> to scan easily, or tap <b>📥 Save QR</b> and upload it inside the <b>Maya App</b>.</div>
+              <div>2. Or send money directly to Maya number <b class="text-white">0999 883 2346</b>.</div>
             </div>
-            <div class="flex justify-between items-center text-slate-400">
-              <span>Amount:</span>
-              <span class="text-brand-lime font-black text-sm" id="manual-modal-maya-amount">₱400.00</span>
-            </div>
-            <p class="text-[10px] text-slate-400 font-sans leading-tight pt-1 border-t border-white/10">
-              💡 Scan in Maya app or Send Money to <b class="text-white">0999 883 2346</b>.
-            </p>
           </div>
         </div>
       </div>
 
-      <!-- 3. Bank Transfer Section (BDO InstaPay) -->
+      <!-- 3. Bank Transfer Section (BDO InstaPay — Clean UX + Zoom QR + Save QR + Full Card Toggle) -->
       <div id="modal-bank-section" class="hidden mb-4">
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/90 rounded-2xl p-4 border border-[#0072CE]/60">
-          <div class="sm:col-span-5 p-2.5 rounded-2xl bg-white w-52 sm:w-full max-w-[210px] mx-auto text-center shadow-2xl border-2 border-[#0072CE]/40">
-            <img id="locked-bank-qr-img" src="assets/qr-bdo.png?v=20261029v9" onclick="pfOpenQrStandeeLightbox('bank')" class="cursor-pointer w-full aspect-square object-contain rounded-lg" alt="BDO InstaPay QR" class="w-full aspect-square object-contain rounded-lg">
-            <div class="mt-1.5 text-[9px] font-mono text-[#0072CE] font-black uppercase tracking-wider">Official BDO InstaPay</div>
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/95 rounded-2xl p-4 border-2 border-[#0072CE]/50 shadow-lg">
+          <div class="sm:col-span-5 flex flex-col items-center">
+            <div class="p-3 rounded-2xl bg-white w-52 sm:w-full max-w-[215px] mx-auto text-center shadow-2xl border-2 border-[#0072CE]">
+              <img id="locked-bank-qr-img" data-qr-mode="qr" src="assets/qr-bdo.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-bdo.png';" onclick="pfOpenQrStandeeLightbox('bank')" alt="BDO InstaPay QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;" title="Tap to zoom BDO QR">
+              <div class="mt-1.5 text-[9px] font-mono text-[#0072CE] font-black uppercase tracking-wider">Official BDO InstaPay QR</div>
+            </div>
+            <div class="w-52 sm:w-full max-w-[215px] mt-2 space-y-1.5">
+              <div class="grid grid-cols-2 gap-1.5">
+                <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="py-1.5 px-2 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase tracking-wider hover:opacity-95 transition shadow flex items-center justify-center gap-1">🔍 Zoom QR</button>
+                <button type="button" onclick="pfDownloadOfficialQr('bank')" class="py-1.5 px-2 rounded-lg bg-white text-[#050E1D] text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow flex items-center justify-center gap-1">📥 Save QR</button>
+              </div>
+              <button type="button" onclick="pfToggleQrCardView('bank', 'locked-bank-qr-img', this)" class="w-full py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-bold uppercase transition">🪪 Show Full BDO Card</button>
+            </div>
           </div>
-          <div class="sm:col-span-7 text-xs space-y-2 font-mono">
-            <div class="flex justify-between items-center text-slate-400">
-              <span>Recipient:</span> <b class="text-white">Dex</b>
+
+          <div class="sm:col-span-7 text-xs space-y-2.5">
+            <div class="p-3 rounded-xl bg-brand-card border border-white/10 space-y-2 font-mono">
+              <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
+                <span>Bank &amp; Recipient:</span> <b class="text-white text-sm">BDO Unibank &bull; Dex</b>
+              </div>
+              <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
+                <span>BDO Account No:</span>
+                <b class="text-brand-lime font-black text-sm">••••••••8678</b>
+              </div>
+              <div class="flex justify-between items-center text-slate-400">
+                <span>Amount to Pay:</span>
+                <span class="text-brand-lime font-black text-base" id="manual-modal-bank-amount">₱400.00</span>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-slate-400">
-              <span>BDO No:</span>
-              <span class="flex items-center gap-1.5">
-                <b class="text-brand-lime font-bold">••••••••8678</b>
-              </span>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 font-sans space-y-1 leading-snug">
+              <div class="font-black text-brand-lime uppercase text-[10px]">How to Pay via BDO / Bank Transfer:</div>
+              <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload it in <b>BDO Online / BDO Pay / BPI / UnionBank / GCash</b>.</div>
+              <div>2. Enter the <b>Reference Number</b> from your bank receipt below.</div>
             </div>
-            <div class="flex justify-between items-center text-slate-400">
-              <span>Amount:</span>
-              <span class="text-brand-lime font-black text-sm" id="manual-modal-bank-amount">₱400.00</span>
-            </div>
-            <p class="text-[10px] text-slate-400 font-sans leading-tight pt-1 border-t border-white/10">
-              💡 Scan this BDO InstaPay QR with any Philippine mobile banking app.
-            </p>
           </div>
         </div>
       </div>
@@ -1665,7 +1697,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261029v9"></script>
+  <script src="app.js?v=20261029v10"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
