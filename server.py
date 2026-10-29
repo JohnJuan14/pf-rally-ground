@@ -86,7 +86,7 @@ DEFAULT_DB = {
         "liveBannerText": "LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!",
         "bentoSectionTag": "EXPERIENCE",
         "bentoSectionTitle": "PLAY THE CLUB",
-        "bentoSectionDesc": "Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.",
+        "bentoSectionDesc": "Open daily 6:00 AM – 12:00 midnight across Courts 1 – 4. Check court hire rates, equipment rentals, and live court availability below.",
         "scheduleHeading": "COURT TIMELINE",
         "openPlayScheduleText": "All 4 courts open daily 6:00 AM – 12:00 Midnight • Click any available time slot below to book",
         "dayRate": 400,
@@ -478,9 +478,9 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             if not isinstance(items, list):
                 items = [str(items)]
 
-            booking_ref = sanitize_str(body.get("ref") or ("PF-" + str(int(datetime.now().timestamp() * 1000))[-6:]), 30)
+            booking_ref = sanitize_str(body.get("ref") or body.get("refCode") or body.get("id") or ("PF-" + str(int(datetime.now().timestamp() * 1000))[-6:]), 30)
             court_val = sanitize_str(body.get("court", "Court 01"), 250)
-            date_val = sanitize_str(body.get("date", ""), 40)
+            date_val = sanitize_str(body.get("date") or body.get("dateYMD") or "", 40)
             time_val = sanitize_str(body.get("time", "Today • 06:00 PM"), 100)
             if date_val and date_val not in time_val:
                 display_time = f"{date_val} • {time_val}"
@@ -518,6 +518,28 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             target_cnum = normalize_court_num(new_booking["court"])
             target_ymd = extract_date_ymd(new_booking["date"], new_booking["time"])
             target_slots = extract_covered_slots(new_booking["time"])
+            now_dt = datetime.now()
+            today_ymd_str = now_dt.strftime("%Y-%m-%d")
+            if re.match(r"^\d{4}-\d{2}-\d{2}$", target_ymd):
+                if target_ymd < today_ymd_str:
+                    self._send_json({
+                        "ok": False,
+                        "error": f"Expired Schedule Error: The selected date ({target_ymd}) has already passed. Please choose today or a future date."
+                    }, status=409)
+                    return
+                elif target_ymd == today_ymd_str and target_slots:
+                    for s_lbl in target_slots:
+                        m_hr = re.match(r"^(\d{1,2}):(\d{2})\s*(AM|PM)$", s_lbl, re.I)
+                        if m_hr:
+                            hr12 = int(m_hr.group(1))
+                            ampm = m_hr.group(3).upper()
+                            hr24 = 0 if (ampm == "AM" and hr12 == 12) else (hr12 + 12 if (ampm == "PM" and hr12 != 12) else hr12)
+                            if hr24 <= now_dt.hour:
+                                self._send_json({
+                                    "ok": False,
+                                    "error": f"Expired Time Slot Error: {s_lbl} Today ({target_ymd}) has already passed. Please choose a future time slot."
+                                }, status=409)
+                                return
             if target_slots:
                 for b in db.get("bookings", []):
                     if b.get("status") in ("CANCELLED", "DECLINED"):
@@ -799,7 +821,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     })
             elif action == "reset_slot":
                 court_val = sanitize_str(body.get("court", ""), 60).lower()
-                date_val = sanitize_str(body.get("date", ""), 40).lower()
+                date_val = sanitize_str(body.get("date") or body.get("dateYMD") or "", 40).lower()
                 hours_val = sanitize_str(body.get("hours", ""), 60).lower()
                 db["blocks"] = [
                     b for b in db["blocks"]
@@ -810,7 +832,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     )
                 ]
             elif action == "clear_date":
-                date_val = sanitize_str(body.get("date", ""), 40)
+                date_val = sanitize_str(body.get("date") or body.get("dateYMD") or "", 40)
                 if not date_val or date_val.upper() == "ALL":
                     db["blocks"] = []
                 else:
