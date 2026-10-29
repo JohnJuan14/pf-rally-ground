@@ -2,6 +2,7 @@
   "version": 2,
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.py" },
     { "source": "/book", "destination": "/book.html" },
     { "source": "/my-booking", "destination": "/check-booking.html" },
     { "source": "/admin", "destination": "/admin/index.html" },

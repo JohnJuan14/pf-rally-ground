@@ -229,8 +229,13 @@ async function syncStateFromServer() {
           if (typeof renderLiveScheduleMatrix === 'function') {
             renderLiveScheduleMatrix();
           }
-          if (Array.isArray(data.announcements)) {
+          if (Array.isArray(data.announcements) && data.announcements.length > 0) {
             localStorage.setItem('pf_announcements', JSON.stringify(data.announcements));
+          } else if (localStorage.getItem('pf_announcements_cleared') !== '1') {
+            try {
+              const locAnn = JSON.parse(localStorage.getItem('pf_announcements') || '[]');
+              if (Array.isArray(locAnn) && locAnn.length > 0) sharedServerState.announcements = locAnn;
+            } catch (e) {}
           }
           if (typeof renderPublicInventoryCatalog === 'function') {
             renderPublicInventoryCatalog();
@@ -1406,15 +1411,36 @@ function getDefaultWelcomeAnnouncements() {
 }
 
 function getLiveAnnouncementsList() {
-  if (sharedServerState && Array.isArray(sharedServerState.announcements) && sharedServerState.announcements.length > 0) {
-    return sharedServerState.announcements;
-  }
   try {
     const cached = JSON.parse(localStorage.getItem('pf_announcements') || 'null');
+    if (sharedServerState && Array.isArray(sharedServerState.announcements) && sharedServerState.announcements.length > 0) {
+      return sharedServerState.announcements;
+    }
     if (Array.isArray(cached) && cached.length > 0) return cached;
   } catch (e) {}
   return getDefaultWelcomeAnnouncements();
 }
+
+try {
+  window.addEventListener('storage', (ev) => {
+    if (ev.key === 'pf_announcements') {
+      try {
+        const parsed = JSON.parse(ev.newValue || '[]');
+        if (sharedServerState) sharedServerState.announcements = parsed;
+      } catch (e) {}
+      renderPublicAnnouncementBoard();
+    }
+  });
+  if (typeof BroadcastChannel !== 'undefined') {
+    const bc = new BroadcastChannel('pf_live_sync');
+    bc.onmessage = (ev) => {
+      if (ev.data && Array.isArray(ev.data.announcements)) {
+        if (sharedServerState) sharedServerState.announcements = ev.data.announcements;
+        renderPublicAnnouncementBoard();
+      }
+    };
+  }
+} catch (e) {}
 
 function toggleAnnouncementBoard(forceState) {
   const win = document.getElementById('announcement-board-window');
@@ -1514,4 +1540,3 @@ function renderPublicAnnouncementBoard() {
     `;
   }).join('');
 }
-

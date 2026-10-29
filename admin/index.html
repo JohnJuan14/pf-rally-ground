@@ -1557,7 +1557,18 @@ function clearFieldError(fieldId) {
           courtBlocks = data.blocks || [];
           posCatalog = data.inventory || [];
           customCategories = data.categories || [];
-          announcements = data.announcements || [];
+          if (Array.isArray(data.announcements) && data.announcements.length > 0) {
+            announcements = data.announcements;
+            localStorage.setItem('pf_announcements', JSON.stringify(announcements));
+          } else if (localStorage.getItem('pf_announcements_cleared') !== '1') {
+            try {
+              const locAnn = JSON.parse(localStorage.getItem('pf_announcements') || '[]');
+              if (Array.isArray(locAnn) && locAnn.length > 0) {
+                announcements = locAnn;
+                fetch('/api/announcements', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'sync', announcements: locAnn }) }).catch(() => {});
+              } else { announcements = []; }
+            } catch (e) { announcements = []; }
+          } else { announcements = []; }
           if (data.gmailConfig && typeof syncGmailUiState === 'function') {
             syncGmailUiState(data.gmailConfig);
           }
@@ -1588,6 +1599,7 @@ function clearFieldError(fieldId) {
       renderPosCatalog();
       renderInventoryTable();
       renderReportsLedger();
+      if (typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
     }
 
     // ================= TAB NAVIGATION =================
@@ -3147,9 +3159,22 @@ function clearFieldError(fieldId) {
     }
 
 
-    // ================= ADMIN ANNOUNCEMENT BOARD STUDIO ENGINE =================
+// ================= ADMIN ANNOUNCEMENT BOARD STUDIO ENGINE =================
     let announcements = [];
+    try {
+      announcements = JSON.parse(localStorage.getItem('pf_announcements') || '[]');
+    } catch (e) { announcements = []; }
     let currentAnnouncementPhotoDataUrl = '';
+
+    function broadcastAnnouncementsLive() {
+      try {
+        localStorage.setItem('pf_announcements', JSON.stringify(announcements));
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('pf_live_sync');
+          bc.postMessage({ type: 'ANNOUNCEMENTS_UPDATED', announcements: announcements });
+        }
+      } catch (e) {}
+    }
 
     function handleAnnouncementPhotoSelect(event) {
       const file = event.target.files && event.target.files[0];
@@ -3229,6 +3254,10 @@ function clearFieldError(fieldId) {
         btn.textContent = 'Publishing Live...';
       }
 
+      localStorage.removeItem('pf_announcements_cleared');
+      announcements = [newAnn, ...announcements.filter(a => a.id !== newAnn.id)];
+      broadcastAnnouncementsLive();
+
       try {
         const res = await fetch('/api/announcements', {
           method: 'POST',
@@ -3237,15 +3266,12 @@ function clearFieldError(fieldId) {
         });
         if (res.ok) {
           const data = await res.json();
-          if (data && Array.isArray(data.announcements)) {
+          if (data && Array.isArray(data.announcements) && data.announcements.length > 0) {
             announcements = data.announcements;
-            localStorage.setItem('pf_announcements', JSON.stringify(announcements));
+            broadcastAnnouncementsLive();
           }
         }
-      } catch (err) {
-        announcements.unshift(newAnn);
-        localStorage.setItem('pf_announcements', JSON.stringify(announcements));
-      }
+      } catch (err) {}
 
       if (document.getElementById('ann-title-input')) document.getElementById('ann-title-input').value = '';
       if (document.getElementById('ann-message-input')) document.getElementById('ann-message-input').value = '';
@@ -3257,11 +3283,13 @@ function clearFieldError(fieldId) {
         btn.textContent = 'Publish to Live Announcement Board →';
       }
 
-      await fetchAdminStateFromServer(true);
       renderAdminAnnouncements();
     }
 
     async function togglePinAnnouncement(id) {
+      announcements = announcements.map(a => a.id === id ? { ...a, pinned: !a.pinned } : a);
+      broadcastAnnouncementsLive();
+      renderAdminAnnouncements();
       try {
         await fetch('/api/announcements', {
           method: 'POST',
@@ -3269,12 +3297,14 @@ function clearFieldError(fieldId) {
           body: JSON.stringify({ action: 'toggle_pin', id: id })
         });
       } catch (e) {}
-      await fetchAdminStateFromServer(true);
-      renderAdminAnnouncements();
     }
 
     async function deleteAnnouncement(id) {
       if (!confirm('Delete this announcement from the public board?')) return;
+      announcements = announcements.filter(a => a.id !== id);
+      if (announcements.length === 0) localStorage.setItem('pf_announcements_cleared', '1');
+      broadcastAnnouncementsLive();
+      renderAdminAnnouncements();
       try {
         await fetch('/api/announcements', {
           method: 'POST',
@@ -3282,12 +3312,15 @@ function clearFieldError(fieldId) {
           body: JSON.stringify({ action: 'delete', id: id })
         });
       } catch (e) {}
-      await fetchAdminStateFromServer(true);
-      renderAdminAnnouncements();
     }
 
     async function clearAllAnnouncements() {
       if (!confirm('Clear all announcements from the Live Announcement Board?')) return;
+      announcements = [];
+      localStorage.setItem('pf_announcements_cleared', '1');
+      localStorage.removeItem('pf_announcements');
+      broadcastAnnouncementsLive();
+      renderAdminAnnouncements();
       try {
         await fetch('/api/announcements', {
           method: 'POST',
@@ -3295,9 +3328,6 @@ function clearFieldError(fieldId) {
           body: JSON.stringify({ action: 'clear' })
         });
       } catch (e) {}
-      localStorage.removeItem('pf_announcements');
-      await fetchAdminStateFromServer(true);
-      renderAdminAnnouncements();
     }
 
     function renderAdminAnnouncements() {
@@ -3352,7 +3382,6 @@ function clearFieldError(fieldId) {
         `;
       }).join('');
     }
-
   </script>
 </body>
 </html>
