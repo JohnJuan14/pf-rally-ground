@@ -1687,6 +1687,7 @@
           <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="drawer-time-chips">
             <!-- 18 time chips -->
           </div>
+          <p id="drawer-expired-time-error" class="hidden"></p>
 
           <div class="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
             <span>Selected Start: <b class="text-brand-lime" id="drawer-selected-slot-badge">06:00 AM</b></span>
@@ -2409,6 +2410,13 @@
                 <span class="hidden sm:inline">Open Play</span>
               </span>
             </td>`;
+          } else if (slotInfo.status === 'EXPIRED') {
+            return `<td class="p-1 sm:p-1.5 text-center">
+              <button type="button" onclick="alert('⚠️ Expired Time Slot: ${h.time} on ' + (selectedScheduleDateYMD || 'Today') + ' has already passed. Please choose an upcoming time slot.')" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-200 text-slate-500 border border-slate-300 text-[10px] sm:text-xs font-bold cursor-not-allowed truncate" title="This time slot has already passed">
+                <span class="sm:hidden">Passed</span>
+                <span class="hidden sm:inline">Expired • Passed</span>
+              </button>
+            </td>`;
           } else {
             return `<td class="p-1 sm:p-1.5 text-center">
               <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-1.5 sm:py-2 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-emerald-100/90 hover:bg-[#9BE600] active:bg-[#9BE600] text-emerald-800 hover:text-[#050E1D] border border-emerald-300 hover:border-[#65a30d] transition text-[10px] sm:text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm">
@@ -2595,10 +2603,19 @@
           btn.disabled = true;
           btn.className = 'py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[11px] font-mono font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#365314] font-black">Open Play</span>`;
+        } else if (slotInfo.status === 'EXPIRED') {
+          btn.className = 'py-2.5 px-2 rounded-xl bg-slate-900/90 text-slate-500 border border-slate-700/80 text-[11px] font-mono font-bold opacity-60 hover:border-rose-500/60 transition';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-400 font-black">Expired</span>`;
+          btn.onclick = () => {
+            if (typeof pfShowExpiredSlotBanner === 'function') {
+              pfShowExpiredSlotBanner('drawer-expired-time-error', slot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
+            }
+          };
         } else {
           btn.className = `time-chip ${isSelected ? 'time-chip-active' : ''}`;
           btn.textContent = slot;
           btn.onclick = () => {
+            if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
             DRAWER_STATE.selectedStartSlot = slot;
             const badge = document.getElementById('drawer-selected-slot-badge');
             if (badge) badge.textContent = slot;
@@ -2670,7 +2687,12 @@
         if (found) DRAWER_STATE.selectedDateLabel = found.label;
       }
       if (courtNum) drawerSetCourt(courtNum);
-      if (slotTime) DRAWER_STATE.selectedStartSlot = slotTime;
+      if (slotTime) {
+        DRAWER_STATE.selectedStartSlot = slotTime;
+      } else if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot)) {
+        DRAWER_STATE.selectedStartSlot = pfGetNextUpcomingSlot(DRAWER_STATE.selectedDateVal, ALL_HOURS_SLOTS);
+      }
+      if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
       const badge = document.getElementById('drawer-selected-slot-badge');
       if (badge) badge.textContent = DRAWER_STATE.selectedStartSlot;
 
@@ -2688,6 +2710,10 @@
     }
 
     function handleDrawerProceed() {
+      if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot)) {
+        pfShowExpiredSlotBanner('drawer-expired-time-error', DRAWER_STATE.selectedStartSlot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
+        return;
+      }
       const name = document.getElementById('cust-name')?.value.trim();
       const phone = document.getElementById('cust-phone')?.value.trim();
 

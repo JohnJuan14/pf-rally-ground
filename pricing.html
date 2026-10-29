@@ -1378,6 +1378,7 @@
           <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="drawer-time-chips">
             <!-- 18 time chips -->
           </div>
+          <p id="drawer-expired-time-error" class="hidden"></p>
 
           <div class="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
             <span>Selected Start: <b class="text-brand-lime" id="drawer-selected-slot-badge">06:00 AM</b></span>
@@ -1586,21 +1587,6 @@
           <button type="button" id="modal-pay-btn-bank" data-modal-pay="bank" onclick="selectPayMode('bank')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1">
             <span>BDO / Bank</span>
           </button>
-        </div>
-      </div>
-
-                  <!-- Exact Amount QR Generator Bar (Pre-Fills Exact Amount in GCash, Maya & BDO Apps) -->
-      <div class="mb-4 p-3.5 rounded-2xl bg-brand-black/90 border-2 border-brand-lime/50 space-y-2">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <span class="text-[10px] font-mono font-black uppercase tracking-wider text-brand-lime block">⚡ EXACT QR AMOUNT GENERATOR (GCASH • MAYA • BDO)</span>
-            <p class="text-[11px] text-slate-300" data-qr-amount-status="1">⚡ Pre-Filled in GCash, Maya &amp; BDO QR: <b class="text-brand-lime font-mono">₱400.00</b></p>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-xs font-mono font-black text-brand-lime">₱</span>
-            <input type="number" id="pf-modal-qr-exact-amount" min="0" step="10" value="400.00" oninput="if(typeof pfSetExactQrAmount==='function')pfSetExactQrAmount(this.value, false)" class="w-28 bg-brand-card border-2 border-brand-lime rounded-xl px-2.5 py-1.5 text-xs text-white font-mono font-black focus:outline-none">
-            <button type="button" onclick="if(typeof pfSetExactQrAmount==='function')pfSetExactQrAmount(document.getElementById('pf-modal-qr-exact-amount').value, true)" class="px-3 py-1.5 rounded-xl bg-brand-lime text-brand-black font-black text-[10px] uppercase tracking-wider hover:opacity-95 transition whitespace-nowrap">Generate QR</button>
-          </div>
         </div>
       </div>
 
@@ -2316,10 +2302,19 @@
           btn.disabled = true;
           btn.className = 'py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[11px] font-mono font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#365314] font-black">Open Play</span>`;
+        } else if (slotInfo.status === 'EXPIRED') {
+          btn.className = 'py-2.5 px-2 rounded-xl bg-slate-900/90 text-slate-500 border border-slate-700/80 text-[11px] font-mono font-bold opacity-60 hover:border-rose-500/60 transition';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-400 font-black">Expired</span>`;
+          btn.onclick = () => {
+            if (typeof pfShowExpiredSlotBanner === 'function') {
+              pfShowExpiredSlotBanner('drawer-expired-time-error', slot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
+            }
+          };
         } else {
           btn.className = `time-chip ${isSelected ? 'time-chip-active' : ''}`;
           btn.textContent = slot;
           btn.onclick = () => {
+            if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
             DRAWER_STATE.selectedStartSlot = slot;
             const badge = document.getElementById('drawer-selected-slot-badge');
             if (badge) badge.textContent = slot;
@@ -2391,7 +2386,12 @@
         if (found) DRAWER_STATE.selectedDateLabel = found.label;
       }
       if (courtNum) drawerSetCourt(courtNum);
-      if (slotTime) DRAWER_STATE.selectedStartSlot = slotTime;
+      if (slotTime) {
+        DRAWER_STATE.selectedStartSlot = slotTime;
+      } else if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot)) {
+        DRAWER_STATE.selectedStartSlot = pfGetNextUpcomingSlot(DRAWER_STATE.selectedDateVal, ALL_HOURS_SLOTS);
+      }
+      if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
       const badge = document.getElementById('drawer-selected-slot-badge');
       if (badge) badge.textContent = DRAWER_STATE.selectedStartSlot;
 
@@ -2409,6 +2409,10 @@
     }
 
     function handleDrawerProceed() {
+      if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot)) {
+        pfShowExpiredSlotBanner('drawer-expired-time-error', DRAWER_STATE.selectedStartSlot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
+        return;
+      }
       const name = document.getElementById('cust-name')?.value.trim();
       const phone = document.getElementById('cust-phone')?.value.trim();
 

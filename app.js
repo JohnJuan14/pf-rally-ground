@@ -2422,6 +2422,76 @@ document.addEventListener('visibilitychange', () => {
 });
 
 
+// ================= EXPIRED DATE & TIME SLOT VALIDATION ENGINE =================
+function pfParseSlotHour24(slotStr) {
+  if (!slotStr) return -1;
+  const m = String(slotStr).trim().match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (!m) return -1;
+  let hr = parseInt(m[1], 10);
+  const ampm = m[3].toUpperCase();
+  if (ampm === 'PM' && hr !== 12) hr += 12;
+  if (ampm === 'AM' && hr === 12) hr = 0;
+  return hr;
+}
+
+function pfIsSlotExpired(dateYMD, slotStr) {
+  const now = new Date();
+  const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const targetDate = (dateYMD && dateYMD !== 'Today' && /^\d{4}-\d{2}-\d{2}$/.test(String(dateYMD).trim()))
+    ? String(dateYMD).trim()
+    : todayYMD;
+
+  if (targetDate < todayYMD) return true;
+  if (targetDate > todayYMD) return false;
+
+  const slotHr = pfParseSlotHour24(slotStr);
+  if (slotHr < 0) return false;
+  const curHr = now.getHours();
+  const curMin = now.getMinutes();
+  // A slot like 08:00 AM is expired once the clock is past 08:00 AM (e.g. 08:01 AM or later)
+  if (slotHr < curHr) return true;
+  if (slotHr === curHr && curMin > 0) return true;
+  return false;
+}
+
+function pfGetNextUpcomingSlot(dateYMD, allSlots) {
+  const slots = Array.isArray(allSlots) && allSlots.length > 0 ? allSlots : [
+    '06:00 AM','07:00 AM','08:00 AM','09:00 AM','10:00 AM','11:00 AM',
+    '12:00 PM','01:00 PM','02:00 PM','03:00 PM','04:00 PM','05:00 PM',
+    '06:00 PM','07:00 PM','08:00 PM','09:00 PM','10:00 PM','11:00 PM'
+  ];
+  for (const s of slots) {
+    if (!pfIsSlotExpired(dateYMD, s)) return s;
+  }
+  return slots[slots.length - 1];
+}
+
+function pfShowExpiredSlotBanner(bannerId, slotStr, dateLabel) {
+  let el = document.getElementById(bannerId);
+  const msg = `⚠️ Expired Time Slot: ${slotStr} on ${dateLabel || 'Today'} has already passed. Please select a future time slot.`;
+  if (el) {
+    el.textContent = msg;
+    el.className = 'p-3 rounded-xl bg-rose-500/20 border-2 border-rose-500 text-rose-200 text-xs font-black mt-2 block animate-pulse';
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    alert(msg);
+  }
+}
+
+function pfClearExpiredSlotBanner(bannerId) {
+  const el = document.getElementById(bannerId);
+  if (el) {
+    el.className = 'hidden';
+    el.textContent = '';
+  }
+}
+
+window.pfParseSlotHour24 = pfParseSlotHour24;
+window.pfIsSlotExpired = pfIsSlotExpired;
+window.pfGetNextUpcomingSlot = pfGetNextUpcomingSlot;
+window.pfShowExpiredSlotBanner = pfShowExpiredSlotBanner;
+window.pfClearExpiredSlotBanner = pfClearExpiredSlotBanner;
+
 // ================= ADMIN-SYNCED COURT SLOT STATUS ENGINE =================
 function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings) {
   const cNum = Number(courtNum || 1);
@@ -2521,6 +2591,9 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     }
   }
 
+  if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, slotStr)) {
+    return { status: 'EXPIRED', override: null, reason: 'Time Passed' };
+  }
   return { status: 'AVAILABLE', override: null, reason: 'Available' };
 }
 window.pfResolveCourtSlot = pfResolveCourtSlot;
@@ -2869,11 +2942,26 @@ function pfRefreshRescheduleTimeOptions() {
       } else if (st && st.status === 'OPEN_PLAY') {
         disabled = true;
         suffix = ' (Open Play)';
+      } else if ((st && st.status === 'EXPIRED') || (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, rawSlot))) {
+        disabled = false;
+        suffix = ' (Expired / Passed)';
       }
     }
     opt.disabled = disabled;
     opt.textContent = rawSlot + suffix;
   });
+  const msgEl = document.getElementById('resched-feedback-msg');
+  if (targetDate && timeSel.value && typeof pfIsSlotExpired === 'function') {
+    if (pfIsSlotExpired(targetDate, timeSel.value)) {
+      if (msgEl) {
+        msgEl.innerHTML = `⚠️ <b>Expired Date/Time Error:</b> ${timeSel.value} on ${targetDate} has already passed. Please select a future date and time.`;
+        msgEl.className = 'text-xs font-bold text-rose-200 bg-rose-500/20 border-2 border-rose-500 p-2.5 rounded-xl mt-2 block';
+      }
+    } else if (msgEl && msgEl.textContent.includes('Expired Date/Time Error')) {
+      msgEl.className = 'hidden';
+      msgEl.textContent = '';
+    }
+  }
 }
 
 function pfToggleRescheduleForm(forceOpen = null) {
@@ -2912,6 +3000,13 @@ async function pfSubmitBookingReschedule() {
     if (msgEl) {
       msgEl.textContent = 'Please choose a new date for your booking.';
       msgEl.className = 'text-xs font-bold text-brand-clay mt-2 block';
+    }
+    return;
+  }
+  if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(newDate, newTime)) {
+    if (msgEl) {
+      msgEl.innerHTML = `⚠️ <b>Expired Date/Time Error:</b> ${newTime} on ${newDate} has already passed. Please select a future date and time.`;
+      msgEl.className = 'text-xs font-bold text-rose-200 bg-rose-500/20 border-2 border-rose-500 p-2.5 rounded-xl mt-2 block';
     }
     return;
   }
