@@ -537,12 +537,18 @@
   <header class="fixed top-0 left-0 right-0 w-full max-w-[100vw] z-50 transition-all duration-300 bg-white lg:bg-brand-black/95 border-b-2 border-slate-200 lg:border-b lg:border-brand-lime/20 shadow-lg lg:shadow-none lg:backdrop-blur-xl">
     <!-- Official Logo Court Color Stripe -->
     <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
+    <!-- Live Site Update Top Banner (Synced from Admin Website Editor) -->
+    <div id="live-site-update-banner" class="bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] border-b border-[#9BE600]/40 text-white px-3 py-1.5 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow-md">
+      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9BE600] text-[#050E1D] font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
+      <span id="live-site-update-banner-text" class="text-slate-100 font-semibold truncate max-w-[78vw] sm:max-w-none">LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!</span>
+      <button type="button" onclick="toggleAnnouncementBoard(true)" class="hidden sm:inline-flex items-center gap-1 text-[#9BE600] hover:underline font-mono text-[10px] font-black ml-1 flex-shrink-0">View Feed →</button>
+    </div>
     <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-3">
       
       <!-- Official Brand Logo + Club Name (Connected to Admin Login Portal) -->
       <div class="flex items-center gap-2.5 flex-shrink-0">
         <a href="index.html" class="group flex-shrink-0" aria-label="P&amp;F Rally Ground Home">
-          <img src="assets/logo.png" alt="P&amp;F Rally Ground Official Logo" class="h-11 w-11 sm:h-14 sm:w-14 rounded-xl object-contain bg-white p-0.5 shadow-md border border-slate-200 lg:border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
+          <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Official Logo" class="h-11 w-11 sm:h-14 sm:w-14 rounded-xl object-contain bg-white p-0.5 shadow-md border border-slate-200 lg:border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
         </a>
         <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left focus:outline-none">
           <span class="text-sm sm:text-base font-black uppercase tracking-tight text-[#050E1D] lg:text-white group-hover:text-[#0E8A2D] lg:group-hover:text-brand-lime transition-colors block leading-none font-display" data-site-club-name="1">P&amp;F Rally Ground</span>
@@ -644,11 +650,11 @@
     <!-- Dynamic 5-Second Background Carousel (Top-Aligned Framing so Player Head is 100% Visible) -->
     <div id="hero-carousel-container" class="absolute top-16 sm:top-20 bottom-0 left-0 right-0 z-0 overflow-hidden">
       <!-- Slide 1: Original Championship Court (Top-framed so player's head is completely visible) -->
-      <div id="slide-0" class="carousel-slide absolute inset-0 bg-cover transition-all duration-1000 ease-out opacity-100 scale-100" style="background-image: url('assets/hero-slide-1.jpg'); background-position: center top; filter: brightness(0.95) contrast(1.05);"></div>
+      <div id="slide-0" class="carousel-slide absolute inset-0 bg-cover transition-all duration-1000 ease-out opacity-100 scale-100" style="background-image: url('assets/hero-slide-1.jpg'); background-position: center top; filter: brightness(0.95) contrast(1.05);"><img id="slide-img-0" src="assets/hero-slide-1.jpg" alt="Hero Slide 1" class="w-full h-full object-cover object-top"></div>
       <!-- Slide 2: 1,000-Lux Covered Stadium Architectural Night View -->
-      <div id="slide-1" class="carousel-slide absolute inset-0 bg-cover transition-all duration-1000 ease-out opacity-0 scale-105" style="background-image: url('assets/hero-slide-2.jpg'); background-position: center 20%; filter: brightness(0.93) contrast(1.05);"></div>
+      <div id="slide-1" class="carousel-slide absolute inset-0 bg-cover transition-all duration-1000 ease-out opacity-0 scale-105" style="background-image: url('assets/hero-slide-2.jpg'); background-position: center 20%; filter: brightness(0.93) contrast(1.05);"><img id="slide-img-1" src="assets/hero-slide-2.jpg" alt="Hero Slide 2" class="w-full h-full object-cover" style="object-position: center 20%;"></div>
       <!-- Slide 3: High-Action Kitchen Line Doubles Shot -->
-      <div id="slide-2" class="carousel-slide absolute inset-0 bg-cover transition-all duration-1000 ease-out opacity-0 scale-105" style="background-image: url('assets/hero-slide-3.jpg'); background-position: center 15%; filter: brightness(0.93) contrast(1.05);"></div>
+      <div id="slide-2" class="carousel-slide absolute inset-0 bg-cover transition-all duration-1000 ease-out opacity-0 scale-105" style="background-image: url('assets/hero-slide-3.jpg'); background-position: center 15%; filter: brightness(0.93) contrast(1.05);"><img id="slide-img-2" src="assets/hero-slide-3.jpg" alt="Hero Slide 3" class="w-full h-full object-cover" style="object-position: center 15%;"></div>
       
       <!-- Luxury Dark Vignette Overlay -->
       <div class="absolute inset-0 hero-mask z-10 pointer-events-none"></div>
@@ -1175,7 +1181,7 @@
         <div class="sm:col-span-2 lg:col-span-4 space-y-3.5">
           <div class="inline-flex items-center gap-3">
             <a href="index.html" class="group flex-shrink-0">
-              <img src="assets/logo.png" alt="P&amp;F Rally Ground Official Logo" class="h-14 w-14 rounded-2xl object-contain bg-white p-1 shadow-lg border border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
+              <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Official Logo" class="h-14 w-14 rounded-2xl object-contain bg-white p-1 shadow-lg border border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
             </a>
             <a href="/admin/?login=1" onclick="return openAdminPortal(event)" title="Staff &amp; Admin Login Portal" class="group text-left">
               <span class="text-base sm:text-lg font-black text-white group-hover:text-brand-lime transition-colors tracking-tight uppercase block leading-none font-display" data-site-club-name="1">P&amp;F Rally Ground</span>

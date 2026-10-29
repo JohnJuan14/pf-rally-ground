@@ -229,18 +229,15 @@ async function syncStateFromServer() {
           if (typeof renderLiveScheduleMatrix === 'function') {
             renderLiveScheduleMatrix();
           }
-          if (Array.isArray(data.announcements) && data.announcements.length > 0) {
+          if (Array.isArray(data.announcements)) {
+            sharedServerState.announcements = data.announcements;
             localStorage.setItem('pf_announcements', JSON.stringify(data.announcements));
-          } else if (localStorage.getItem('pf_announcements_cleared') !== '1') {
-            try {
-              const locAnn = JSON.parse(localStorage.getItem('pf_announcements') || '[]');
-              if (Array.isArray(locAnn) && locAnn.length > 0) sharedServerState.announcements = locAnn;
-            } catch (e) {}
           }
           if (typeof renderPublicInventoryCatalog === 'function') {
             renderPublicInventoryCatalog();
           }
           if (data.siteConfig && typeof data.siteConfig === 'object') {
+            sharedServerState.siteConfig = data.siteConfig;
             localStorage.setItem('pf_site_config', JSON.stringify(data.siteConfig));
             if (typeof applySiteConfig === 'function') applySiteConfig(data.siteConfig);
           }
@@ -1301,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startCarouselTimer();
   }
   // Poll every 4 seconds so Admin changes (blocks/confirmations) reflect live
-  setInterval(syncStateFromServer, 4000);
+  setInterval(syncStateFromServer, 2500);
 });
 
 
@@ -1417,11 +1414,11 @@ function getDefaultWelcomeAnnouncements() {
 
 function getLiveAnnouncementsList() {
   try {
-    const cached = JSON.parse(localStorage.getItem('pf_announcements') || 'null');
-    if (sharedServerState && Array.isArray(sharedServerState.announcements) && sharedServerState.announcements.length > 0) {
+    if (sharedServerState && Array.isArray(sharedServerState.announcements)) {
       return sharedServerState.announcements;
     }
-    if (Array.isArray(cached) && cached.length > 0) return cached;
+    const cached = JSON.parse(localStorage.getItem('pf_announcements') || 'null');
+    if (Array.isArray(cached)) return cached;
   } catch (e) {}
   return getDefaultWelcomeAnnouncements();
 }
@@ -1567,7 +1564,8 @@ function renderPublicAnnouncementBoard() {
 // ================= LIVE WEBSITE, HERO PHOTO, LIVE BANNER & MASTER PRICE EDITOR ENGINE =================
 const DEFAULT_PF_SITE_CONFIG = {
   clubName: 'P&F Rally Ground',
-  clubSubtitle: 'Pickleball Club • Daraga, Albay',
+  clubSubtitle: 'Pickleball Club • Daraga',
+  clubLogo: 'assets/logo.png',
   heroTagline: 'PHILIPPINES • 4 PRO PICKLEBALL COURTS',
   heroTitleLine1: 'PLAY.',
   heroTitleLine2: 'COMPETE.',
@@ -1578,8 +1576,18 @@ const DEFAULT_PF_SITE_CONFIG = {
   heroSlide1: 'assets/hero-slide-1.jpg',
   heroSlide2: 'assets/hero-slide-2.jpg',
   heroSlide3: 'assets/hero-slide-3.jpg',
+  court1Img: 'assets/court-aerial-vertical.jpg',
+  court2Img: 'assets/court-aerial-angled.jpg',
+  court3Img: 'assets/hero.jpg',
+  court4Img: 'assets/court-aerial-angled.jpg',
+  gearStdImg: 'assets/gear-composite-paddle.jpg',
+  gearCarbonImg: 'assets/gear-carbon-paddle.jpg',
+  gearBrandedImg: 'assets/gear-joola-perseus.jpg',
+  gearBallImg: 'assets/gear-balls-x40.jpg',
+  gearBucketImg: 'assets/gear-ball-basket.jpg',
+  gearMachineImg: 'assets/gear-ball-machine.jpg',
   liveBannerEnabled: true,
-  liveBannerText: '🏓 All 4 Championship Courts Open Today (6AM – 12AM) • Book Online with Instant QR Verification!',
+  liveBannerText: 'LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!',
   bentoSectionTitle: 'PLAY THE CLUB',
   bentoSectionDesc: 'Everything you need to play, improve, and compete under one roof. World-class surface, vibrant community, and zero booking friction.',
   openPlayScheduleText: 'Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM',
@@ -1594,13 +1602,14 @@ const DEFAULT_PF_SITE_CONFIG = {
   priceBallSingle: 50,
   priceBallsBucket: 100,
   priceMachine: 100,
-  court1Name: 'Court 01 (Indoor Championship)',
-  court2Name: 'Court 02 (Indoor Tournament)',
-  court3Name: 'Court 03 (Covered Outdoor)',
-  court4Name: 'Court 04 (Pro Training Court)',
-  clubAddress: 'Phase IV, Doña Maria Subd., Velasco St., Tagas, Daraga, Albay',
+  court1Name: 'Court 01 — Indoor Championship',
+  court2Name: 'Court 02 — Indoor Tournament',
+  court3Name: 'Court 03 — Covered Outdoor',
+  court4Name: 'Court 04 — Pro Training Court',
+  clubAddress: 'Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay',
   clubPhone: '0999 883 2346',
-  clubHours: '6:00 AM – 12:00 Midnight'
+  clubHours: '6:00 AM – 12:00 AM',
+  updatedAt: 0
 };
 
 function getSiteConfig() {
@@ -1611,7 +1620,11 @@ function getSiteConfig() {
   const serverCfg = (sharedServerState && sharedServerState.siteConfig && typeof sharedServerState.siteConfig === 'object')
     ? sharedServerState.siteConfig
     : {};
-  const merged = Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg);
+  const savedTs = Number(saved.updatedAt || 0);
+  const srvTs = Number(serverCfg.updatedAt || 0);
+  const merged = (savedTs > srvTs)
+    ? Object.assign({}, DEFAULT_PF_SITE_CONFIG, serverCfg, saved)
+    : Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg);
   window.PF_SITE_CONFIG = merged;
   return merged;
 }
@@ -1621,24 +1634,23 @@ window.PF_SITE_CONFIG = getSiteConfig();
 function applySiteConfig(incomingCfg) {
   if (incomingCfg && typeof incomingCfg === 'object') {
     try {
-      const current = getSiteConfig();
-      const updated = Object.assign({}, current, incomingCfg);
+      const updated = Object.assign({}, DEFAULT_PF_SITE_CONFIG, incomingCfg);
       localStorage.setItem('pf_site_config', JSON.stringify(updated));
       if (sharedServerState) sharedServerState.siteConfig = updated;
     } catch (e) {}
   }
   const cfg = getSiteConfig();
 
-  const dayRate = Number(cfg.dayRate || 400);
-  const nightRate = Number(cfg.nightRate || 500);
-  const incPlayers = Number(cfg.includedPlayers || 6);
-  const extraFee = Number(cfg.extraPlayerFee || 100);
-  const pStd = Number(cfg.pricePaddleStd || 50);
-  const pCarb = Number(cfg.pricePaddleCarbon || 100);
-  const pBrand = Number(cfg.pricePaddleBranded || 200);
-  const pBall = Number(cfg.priceBallSingle || 50);
-  const pBucket = Number(cfg.priceBallsBucket || 100);
-  const pMach = Number(cfg.priceMachine || 100);
+  const dayRate = Number(cfg.dayRate ?? 400);
+  const nightRate = Number(cfg.nightRate ?? 500);
+  const incPlayers = Number(cfg.includedPlayers ?? 6);
+  const extraFee = Number(cfg.extraPlayerFee ?? 100);
+  const pStd = Number(cfg.pricePaddleStd ?? 50);
+  const pCarb = Number(cfg.pricePaddleCarbon ?? 100);
+  const pBrand = Number(cfg.pricePaddleBranded ?? 200);
+  const pBall = Number(cfg.priceBallSingle ?? 50);
+  const pBucket = Number(cfg.priceBallsBucket ?? 100);
+  const pMach = Number(cfg.priceMachine ?? 100);
 
   // 1. Update courtNames map
   if (cfg.court1Name) courtNames[1] = cfg.court1Name;
@@ -1649,32 +1661,81 @@ function applySiteConfig(incomingCfg) {
   // 2. Render or update Live Top Update Banner (#live-site-update-banner)
   let bannerEl = document.getElementById('live-site-update-banner');
   const headerEl = document.querySelector('header');
-  if (cfg.liveBannerEnabled && String(cfg.liveBannerText || '').trim()) {
+  const bannerText = String(cfg.liveBannerText || '').trim();
+  const showBanner = Boolean(cfg.liveBannerEnabled) && bannerText.length > 0;
+  if (showBanner) {
     if (!bannerEl && headerEl) {
       bannerEl = document.createElement('div');
       bannerEl.id = 'live-site-update-banner';
       bannerEl.className = 'bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] border-b border-[#9BE600]/40 text-white px-3 py-1.5 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow-md';
-      headerEl.insertBefore(bannerEl, headerEl.firstChild);
+      headerEl.insertBefore(bannerEl, headerEl.children[1] || headerEl.firstChild);
     }
     if (bannerEl) {
       bannerEl.classList.remove('hidden');
+      bannerEl.style.display = 'flex';
       bannerEl.innerHTML = `
         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9BE600] text-[#050E1D] font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
-        <span class="text-slate-100 font-semibold truncate max-w-[78vw] sm:max-w-none">${pfEscapeHtml(cfg.liveBannerText)}</span>
+        <span id="live-site-update-banner-text" class="text-slate-100 font-semibold truncate max-w-[78vw] sm:max-w-none">${pfEscapeHtml(bannerText)}</span>
         <button type="button" onclick="toggleAnnouncementBoard(true)" class="hidden sm:inline-flex items-center gap-1 text-[#9BE600] hover:underline font-mono text-[10px] font-black ml-1 flex-shrink-0">View Feed →</button>
       `;
     }
   } else if (bannerEl) {
     bannerEl.classList.add('hidden');
+    bannerEl.style.display = 'none';
   }
 
-  // 3. Update Hero Background Slides (#slide-0, #slide-1, #slide-2)
-  const s0 = document.getElementById('slide-0');
-  const s1 = document.getElementById('slide-1');
-  const s2 = document.getElementById('slide-2');
-  if (s0 && cfg.heroSlide1) s0.style.backgroundImage = `url('${cfg.heroSlide1}')`;
-  if (s1 && cfg.heroSlide2) s1.style.backgroundImage = `url('${cfg.heroSlide2}')`;
-  if (s2 && cfg.heroSlide3) s2.style.backgroundImage = `url('${cfg.heroSlide3}')`;
+  // 3. Update Hero Background Slides (#slide-0..2 and #slide-img-0..2)
+  const applyHeroSlideAsset = (idx, rawUrl) => {
+    if (!rawUrl) return;
+    const urlStr = String(rawUrl).trim();
+    const slideDiv = document.getElementById('slide-' + idx);
+    const slideImg = document.getElementById('slide-img-' + idx);
+    if (slideDiv) {
+      slideDiv.style.backgroundImage = 'url("' + urlStr.replace(/"/g, '\"') + '")';
+    }
+    if (slideImg && slideImg.getAttribute('src') !== urlStr) {
+      slideImg.setAttribute('src', urlStr);
+    }
+  };
+  applyHeroSlideAsset(0, cfg.heroSlide1);
+  applyHeroSlideAsset(1, cfg.heroSlide2);
+  applyHeroSlideAsset(2, cfg.heroSlide3);
+
+  // 3B. Update Court 01-04 Showcase Images on courts.html
+  const courtImgs = { 1: cfg.court1Img, 2: cfg.court2Img, 3: cfg.court3Img, 4: cfg.court4Img };
+  [1, 2, 3, 4].forEach(num => {
+    const cUrl = courtImgs[num];
+    if (cUrl) {
+      document.querySelectorAll(`[data-site-court-img="${num}"]`).forEach(imgEl => {
+        if (imgEl.getAttribute('src') !== cUrl) imgEl.setAttribute('src', cUrl);
+      });
+    }
+  });
+
+  // 3C. Update Equipment Rental Images on pricing.html & book.html
+  const gearImgs = {
+    'paddle-std': cfg.gearStdImg,
+    'paddle-carbon': cfg.gearCarbonImg,
+    'paddle-branded': cfg.gearBrandedImg,
+    'ball-single': cfg.gearBallImg,
+    'balls-bucket': cfg.gearBucketImg,
+    'machine': cfg.gearMachineImg
+  };
+  Object.keys(gearImgs).forEach(gKey => {
+    const gUrl = gearImgs[gKey];
+    if (gUrl) {
+      document.querySelectorAll(`[data-site-gear-img="${gKey}"]`).forEach(imgEl => {
+        if (imgEl.getAttribute('src') !== gUrl) imgEl.setAttribute('src', gUrl);
+      });
+    }
+  });
+
+  // 3D. Update Club Logo across header & footer
+  if (cfg.clubLogo) {
+    document.querySelectorAll('[data-site-logo]').forEach(imgEl => {
+      if (imgEl.getAttribute('src') !== cfg.clubLogo) imgEl.setAttribute('src', cfg.clubLogo);
+    });
+  }
 
   // 4. Update Hero Text & Headlines on index.html
   const setTxt = (id, val) => {
@@ -1783,7 +1844,7 @@ function applySiteConfig(incomingCfg) {
   bindCartBtn('pricing-btn-balls-bucket', 'gear-training-balls', 'Training balls (50 pcs)', pBucket, 'Rental');
   bindCartBtn('pricing-btn-machine', 'gear-training-machine', 'Training machine (per hour)', pMach, 'Rental');
 
-  // Update book.html GEAR_CATALOG if present
+  // Update book.html GEAR_CATALOG prices and images if present
   if (typeof GEAR_CATALOG !== 'undefined' && Array.isArray(GEAR_CATALOG)) {
     const mapPrices = {
       'standard': pStd,
@@ -1793,9 +1854,21 @@ function applySiteConfig(incomingCfg) {
       'training': pBucket,
       'training-machine': pMach
     };
+    const mapGearImgs = {
+      'standard': cfg.gearStdImg,
+      'carbon': cfg.gearCarbonImg,
+      'branded': cfg.gearBrandedImg,
+      'ball': cfg.gearBallImg,
+      'training': cfg.gearBucketImg,
+      'training-machine': cfg.gearMachineImg
+    };
     GEAR_CATALOG.forEach(item => {
       if (mapPrices[item.id] !== undefined) item.price = mapPrices[item.id];
+      if (mapGearImgs[item.id]) item.img = mapGearImgs[item.id];
     });
+    if (typeof renderGearList === 'function') {
+      try { renderGearList(); } catch (e) {}
+    }
   }
 
   // Re-run calculators & schedule matrix if present on page
@@ -1809,3 +1882,10 @@ function applySiteConfig(incomingCfg) {
     try { updateSummary(); } catch (e) {}
   }
 }
+
+window.addEventListener('focus', () => {
+  if (typeof syncStateFromServer === 'function') syncStateFromServer();
+});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && typeof syncStateFromServer === 'function') syncStateFromServer();
+});

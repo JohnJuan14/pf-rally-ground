@@ -38,11 +38,9 @@ DEFAULT_DB = {
         "standeeUrl": "assets/qr-gcash.png"
     },
     "siteConfig": {
-        "heroSlide1": "assets/hero-slide-1.jpg",
-        "heroSlide2": "assets/hero-slide-2.jpg",
-        "heroSlide3": "assets/hero-slide-3.jpg",
-        "liveBannerEnabled": True,
-        "liveBannerText": "LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM - 12:00 Midnight • Book Online via GCash, Maya, or BDO!",
+        "clubName": "P&F Rally Ground",
+        "clubSubtitle": "Pickleball Club • Daraga",
+        "clubLogo": "assets/logo.png",
         "heroTagline": "PHILIPPINES • 4 PRO PICKLEBALL COURTS",
         "heroTitleLine1": "PLAY.",
         "heroTitleLine2": "COMPETE.",
@@ -50,20 +48,26 @@ DEFAULT_DB = {
         "heroSubtitle": "Your home court in Daraga, Albay for premier rallies, tournament-grade cushion surfaces, pro equipment rentals, and verified online booking.",
         "heroPrimaryBtn": "Book Your Court",
         "heroSecondaryBtn": "View Live Schedule",
-        "clubName": "P&F Rally Ground",
-        "clubSubtitle": "Pickleball Club • Daraga",
-        "clubAddress": "Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay",
-        "clubHours": "6:00 AM – 12:00 AM",
-        "clubPhone": "0999 883 2346",
+        "heroSlide1": "assets/hero-slide-1.jpg",
+        "heroSlide2": "assets/hero-slide-2.jpg",
+        "heroSlide3": "assets/hero-slide-3.jpg",
+        "court1Img": "assets/court-aerial-vertical.jpg",
+        "court2Img": "assets/court-aerial-angled.jpg",
+        "court3Img": "assets/hero.jpg",
+        "court4Img": "assets/court-aerial-angled.jpg",
+        "gearStdImg": "assets/gear-composite-paddle.jpg",
+        "gearCarbonImg": "assets/gear-carbon-paddle.jpg",
+        "gearBrandedImg": "assets/gear-joola-perseus.jpg",
+        "gearBallImg": "assets/gear-balls-x40.jpg",
+        "gearBucketImg": "assets/gear-ball-basket.jpg",
+        "gearMachineImg": "assets/gear-ball-machine.jpg",
+        "liveBannerEnabled": True,
+        "liveBannerText": "LIVE CLUB UPDATE: All 4 Pro Cushion Courts Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or BDO!",
         "bentoSectionTag": "EXPERIENCE",
         "bentoSectionTitle": "PLAY THE CLUB",
         "bentoSectionDesc": "Everything you need to play, improve, and compete under one roof. World-class surface, vibrant community, and zero booking friction.",
         "scheduleHeading": "COURT TIMELINE",
         "openPlayScheduleText": "Open Play: Mon 3–6 PM • Tue–Thu 3–8 PM • Fri 3–11 PM • Sat 6–10 PM",
-        "court1Name": "Championship",
-        "court2Name": "Tournament",
-        "court3Name": "Covered Outdoor",
-        "court4Name": "Pro Training",
         "dayRate": 400,
         "nightRate": 500,
         "includedPlayers": 6,
@@ -74,8 +78,16 @@ DEFAULT_DB = {
         "pricePaddleBranded": 200,
         "priceBallSingle": 50,
         "priceBallsBucket": 100,
-        "priceMachine": 100
-    }
+        "priceMachine": 100,
+        "court1Name": "Court 01 — Indoor Championship",
+        "court2Name": "Court 02 — Indoor Tournament",
+        "court3Name": "Court 03 — Covered Outdoor",
+        "court4Name": "Court 04 — Pro Training Court",
+        "clubAddress": "Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay",
+        "clubPhone": "0999 883 2346",
+        "clubHours": "6:00 AM – 12:00 AM",
+        "updatedAt": 0
+}
 }
 
 
@@ -187,7 +199,12 @@ class handler(http.server.BaseHTTPRequestHandler):
             self._send_json({"ok": True, "announcements": db.get("announcements", [])})
             return
         elif parsed.path == "/api/site-config":
-            self._send_json({"ok": True, "siteConfig": db.get("siteConfig") or DEFAULT_DB["siteConfig"]})
+            db = load_db()
+            default_sc = DEFAULT_DB.get("siteConfig", {})
+            current_sc = dict(default_sc)
+            if isinstance(db.get("siteConfig"), dict):
+                current_sc.update(db["siteConfig"])
+            self._send_json({"ok": True, "siteConfig": current_sc})
             return
         elif parsed.path == "/api/payment-config":
             cfg = db.get("paymentConfig") or DEFAULT_DB["paymentConfig"]
@@ -248,9 +265,29 @@ class handler(http.server.BaseHTTPRequestHandler):
                 db["announcements"] = [a for a in db["announcements"] if a.get("id") != aid]
             elif action == "clear":
                 db["announcements"] = []
+            elif action == "sync":
+                incoming_list = body.get("announcements")
+                if isinstance(incoming_list, list):
+                    db["announcements"] = incoming_list
+            elif action == "edit":
+                aid = body.get("id")
+                for a in db["announcements"]:
+                    if a.get("id") == aid:
+                        if "title" in body:
+                            a["title"] = sanitize_str(body.get("title", ""), 140)
+                        if "message" in body:
+                            a["message"] = sanitize_str(body.get("message", ""), 1200)
+                        if "category" in body:
+                            a["category"] = sanitize_str(body.get("category", "Club Update"), 50)
+                        if "img" in body:
+                            a["img"] = body.get("img", "")
+                        if "pinned" in body:
+                            a["pinned"] = bool(body.get("pinned", False))
+                        break
+            db["announcementsUpdatedAt"] = int(body.get("updatedAt") or int(time.time() * 1000))
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
-            self._send_json({"ok": True, "announcements": db["announcements"], "state": db})
+            self._send_json({"ok": True, "announcements": db["announcements"], "announcementsUpdatedAt": db["announcementsUpdatedAt"], "state": db})
             return
 
         elif parsed.path == "/api/bookings":
@@ -412,27 +449,105 @@ class handler(http.server.BaseHTTPRequestHandler):
             self._send_json({"ok": True, "state": db})
             return
 
+        elif parsed.path == "/api/upload-asset":
+            slot = re.sub(r"[^a-zA-Z0-9_-]", "", str(body.get("slot", "asset")))[:40] or "asset"
+            data_url = str(body.get("dataUrl", "")).strip()
+            if not data_url.startswith("data:image/"):
+                self._send_json({"ok": False, "error": "Invalid image dataUrl"}, status=400)
+                return
+            saved_url = data_url
+            try:
+                import base64
+                header, b64_data = data_url.split(",", 1)
+                ext = "jpg"
+                if "png" in header:
+                    ext = "png"
+                elif "webp" in header:
+                    ext = "webp"
+                img_bytes = base64.b64decode(b64_data)
+                ts_ms = int(time.time() * 1000)
+                fname = f"custom-{slot}-{ts_ms}.{ext}"
+                target_dirs = []
+                if "PUBLIC_DIR" in globals():
+                    target_dirs.append(os.path.join(PUBLIC_DIR, "assets"))
+                    target_dirs.append(os.path.join(PUBLIC_DIR, "admin", "assets"))
+                if "ADMIN_DIR" in globals():
+                    target_dirs.append(os.path.join(ADMIN_DIR, "assets"))
+                wrote_any = False
+                for tdir in target_dirs:
+                    try:
+                        os.makedirs(tdir, exist_ok=True)
+                        with open(os.path.join(tdir, fname), "wb") as img_f:
+                            img_f.write(img_bytes)
+                        wrote_any = True
+                    except Exception:
+                        pass
+                if wrote_any:
+                    saved_url = f"assets/{fname}"
+            except Exception:
+                saved_url = data_url
+
+            default_sc = DEFAULT_DB.get("siteConfig", {})
+            if slot in default_sc or slot in (
+                "heroSlide1", "heroSlide2", "heroSlide3",
+                "court1Img", "court2Img", "court3Img", "court4Img",
+                "gearStdImg", "gearCarbonImg", "gearBrandedImg", "gearBallImg", "gearBucketImg", "gearMachineImg",
+                "clubLogo"
+            ):
+                current_sc = dict(default_sc)
+                if isinstance(db.get("siteConfig"), dict):
+                    current_sc.update(db["siteConfig"])
+                current_sc[slot] = saved_url
+                current_sc["updatedAt"] = int(time.time() * 1000)
+                db["siteConfig"] = current_sc
+                save_db(db)
+            self._send_json({"ok": True, "slot": slot, "url": saved_url, "siteConfig": db.get("siteConfig", {})})
+            return
+
         elif parsed.path == "/api/site-config":
             incoming = body.get("siteConfig") if isinstance(body.get("siteConfig"), dict) else body
-            current_sc = dict(DEFAULT_DB["siteConfig"])
+            default_sc = DEFAULT_DB.get("siteConfig", {})
+            current_sc = dict(default_sc)
             if isinstance(db.get("siteConfig"), dict):
                 current_sc.update(db["siteConfig"])
             if body.get("action") == "reset":
-                current_sc = dict(DEFAULT_DB["siteConfig"])
+                current_sc = dict(default_sc)
+                current_sc["updatedAt"] = int(time.time() * 1000)
             elif isinstance(incoming, dict):
                 for k, v in incoming.items():
-                    if k in current_sc:
-                        if isinstance(DEFAULT_DB["siteConfig"][k], bool):
-                            current_sc[k] = bool(v)
-                        elif isinstance(DEFAULT_DB["siteConfig"][k], (int, float)):
-                            try:
-                                current_sc[k] = float(v) if "." in str(v) else int(float(v))
-                            except Exception:
-                                pass
-                        elif k in ("heroSlide1", "heroSlide2", "heroSlide3"):
-                            current_sc[k] = str(v or "").strip() or DEFAULT_DB["siteConfig"][k]
-                        else:
-                            current_sc[k] = sanitize_str(v, 500)
+                    if k in ("action",):
+                        continue
+                    def_val = default_sc.get(k)
+                    if k == "updatedAt":
+                        try:
+                            current_sc["updatedAt"] = int(v)
+                        except Exception:
+                            current_sc["updatedAt"] = int(time.time() * 1000)
+                    elif isinstance(def_val, bool) or k == "liveBannerEnabled":
+                        current_sc[k] = bool(v)
+                    elif isinstance(def_val, (int, float)) or k in (
+                        "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate",
+                        "pricePaddleStd", "pricePaddleCarbon", "pricePaddleBranded",
+                        "priceBallSingle", "priceBallsBucket", "priceMachine"
+                    ):
+                        try:
+                            current_sc[k] = float(v) if "." in str(v) else int(float(v))
+                        except Exception:
+                            pass
+                    elif k in (
+                        "heroSlide1", "heroSlide2", "heroSlide3",
+                        "court1Img", "court2Img", "court3Img", "court4Img",
+                        "gearStdImg", "gearCarbonImg", "gearBrandedImg", "gearBallImg", "gearBucketImg", "gearMachineImg",
+                        "clubLogo"
+                    ) or str(v or "").startswith("data:image/"):
+                        val_str = str(v or "").strip()
+                        if val_str:
+                            current_sc[k] = val_str
+                        elif def_val:
+                            current_sc[k] = def_val
+                    else:
+                        current_sc[k] = sanitize_str(v, 800)
+                current_sc["updatedAt"] = int(time.time() * 1000)
             db["siteConfig"] = current_sc
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
