@@ -1877,7 +1877,7 @@ function renderPublicInventoryCatalog() {
           <span class="text-lg font-black text-white font-mono">₱${Number(item.price).toFixed(0)}</span>
           ${outOfStock
             ? `<button disabled class="px-3 py-1.5 rounded-lg bg-white/5 text-slate-500 text-xs font-bold cursor-not-allowed">Sold Out</button>`
-            : `<button onclick="addItemToCart('${item.id}', '${safeName}', ${Number(item.price)}, '${safeCat}'); toggleCartDrawer();" class="px-3.5 py-1.5 rounded-lg bg-brand-lime text-brand-black hover:bg-brand-limeHover text-xs font-black transition active:scale-95">+ Buy</button>`
+            : `<button onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-brand-lime text-brand-black hover:bg-brand-limeHover text-xs font-black transition active:scale-95">Book with Court →</button>`
           }
         </div>
       </div>
@@ -2392,7 +2392,7 @@ function applySiteConfig(incomingCfg) {
   const bindCartBtn = (id, itemKey, itemName, priceVal, catLabel) => {
     const btn = document.getElementById(id);
     if (btn) {
-      btn.setAttribute('onclick', `addItemToCart('${itemKey}', '${itemName}', ${priceVal}, '${catLabel}'); toggleCartDrawer();`);
+      btn.setAttribute('onclick', 'openBookingDrawer()');
     }
   };
   bindCartBtn('pricing-btn-paddle-std', 'gear-standard', 'Standard paddle', pStd, 'Rental');

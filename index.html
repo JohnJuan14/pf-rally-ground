@@ -850,13 +850,6 @@
           <span id="header-ann-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-black flex items-center justify-center leading-none">1</span>
         </button>
 
-        <!-- Live Cart Button -->
-        <button type="button" onclick="toggleCartDrawer()" class="whitespace-nowrap h-9 sm:h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#050E1D] lg:border-brand-lime/30 text-white flex items-center gap-1.5 sm:gap-2 transition active:scale-95 shadow-md relative flex-shrink-0" title="View Reservation Cart">
-          <svg class="w-4 h-4 text-[#9BE600] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span class="hidden sm:inline text-xs font-bold uppercase tracking-wider">Cart</span>
-          <span id="header-cart-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] text-[10px] font-black flex items-center justify-center leading-none">0</span>
-        </button>
-
         <!-- Book Court CTA -->
         <button type="button" onclick="openBookingDrawer()" class="whitespace-nowrap btn-sheen h-9 sm:h-10 px-2.5 sm:px-4 xl:px-5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] border-2 border-[#050E1D]/15 lg:border-transparent font-black text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 shadow-md flex-shrink-0">
           <span>Book Court</span>
@@ -1277,9 +1270,6 @@
             <a href="check-booking.html" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
               My Booking Pass →
             </a>
-            <button type="button" onclick="toggleCartDrawer()" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
-              Reservation Cart →
-            </button>
             <a href="/admin/" onclick="return openAdminPortal(event)" class="col-span-2 lg:col-span-1 py-2.5 px-3 rounded-xl bg-brand-lime/15 border border-brand-lime/40 hover:bg-brand-lime text-brand-lime hover:text-brand-black font-black transition text-center lg:text-left">
               🛡️ Admin Portal →
             </a>
@@ -1312,51 +1302,6 @@
   </footer>
 
   <!-- ================= UNIFIED CART DRAWER, RESERVATION DRAWER & PAYMENT MODALS ================= -->
-  
-  <!-- 1. CART DRAWER (SLIDE-OVER FROM RIGHT) -->
-  <div id="cart-drawer" class="fixed inset-0 z-50 hidden">
-    <div onclick="toggleCartDrawer()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
-    
-    <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-md bg-brand-dark border-l border-brand-lime/25 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="cart-panel">
-      
-      <!-- Cart Header -->
-      <div class="flex-shrink-0 px-4 sm:px-5 py-4 border-b border-white/10 flex items-center justify-between bg-brand-dark/95 backdrop-blur-md">
-        <div class="flex items-center gap-2.5">
-          <img src="assets/logo.png" alt="P&amp;F Logo" class="h-9 w-9 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
-          <div>
-            <h3 class="text-base font-black uppercase tracking-tight text-white leading-none">Your Reservation Cart</h3>
-            <p class="text-[10px] text-slate-300 mt-1">Court Reservations &amp; Pro Equipment Rentals</p>
-          </div>
-        </div>
-        <button onclick="toggleCartDrawer()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95">✕</button>
-      </div>
-
-      <!-- Cart Items List (Scrollable) -->
-      <div class="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-3 overscroll-contain touch-scroll" id="cart-items-container"></div>
-
-      <!-- Live Inventory Quick-Add Section -->
-      <div id="cart-live-addons-wrap" class="hidden flex-shrink-0 px-4 sm:px-5 py-3 border-t border-white/10 bg-brand-black/60">
-        <span class="text-[10px] font-black uppercase tracking-wider text-brand-lime block mb-2">Available Club Inventory Add-Ons</span>
-        <div id="cart-live-addons-grid" class="grid grid-cols-2 gap-2 text-xs"></div>
-      </div>
-
-      <!-- Cart Footer & Checkout Button -->
-      <div class="flex-shrink-0 p-4 sm:p-5 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl">
-        <div class="flex items-baseline justify-between mb-3">
-          <div>
-            <span class="text-xs text-slate-300 block font-semibold">Total Amount to Settle</span>
-            <span class="text-[10px] text-slate-400 font-mono">GCash • Maya • BDO InstaPay</span>
-          </div>
-          <span id="cart-total-amount" class="text-2xl font-black text-brand-lime font-mono">₱0</span>
-        </div>
-        <button onclick="proceedToCartCheckout()" id="cart-checkout-btn" class="w-full py-3.5 rounded-2xl bg-brand-lime text-brand-black font-black uppercase tracking-wider text-xs hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center justify-center gap-2">
-          <span>Proceed to Checkout</span>
-          <span>→</span>
-        </button>
-      </div>
-
-    </div>
-  </div>
 
   <!-- 2. AUTHENTIC DATE-RAIL COURT RESERVATION DRAWER -->
   <div id="booking-drawer" class="fixed inset-0 z-50 hidden">
