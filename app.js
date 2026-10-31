@@ -1,3 +1,40 @@
+// ================= VERCEL SERVERLESS API ROUTER & ENDPOINT NORMALIZER =================
+(function initPfVercelFetchNormalizer() {
+  if (typeof window === 'undefined' || typeof window.fetch !== 'function' || window.__pfVercelFetchNormalized) return;
+  window.__pfVercelFetchNormalized = true;
+  const origFetch = window.fetch.bind(window);
+  window.fetch = function(input, init) {
+    try {
+      const reqUrl = (typeof input === 'string') ? input : (input && input.url ? input.url : '');
+      const host = (window.location && window.location.hostname) || '';
+      const isLocal = (host === 'localhost' || host === '127.0.0.1' || window.location.protocol === 'file:');
+      // Block cross-origin localhost fallbacks when running on live HTTPS production (e.g. Vercel)
+      if (!isLocal && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(reqUrl)) {
+        return Promise.reject(new Error('Skipped localhost fallback on production host'));
+      }
+      // Rewrite /api/<subpath> to /api/index?__path=<subpath> on Vercel so cleanUrls never 404s
+      if (!isLocal && typeof input === 'string' && input.startsWith('/api/') && !input.startsWith('/api/index')) {
+        const qIdx = input.indexOf('?');
+        const pathPart = (qIdx >= 0 ? input.slice(0, qIdx) : input).replace(/^\/api\/+/, '');
+        const existingQuery = qIdx >= 0 ? '&' + input.slice(qIdx + 1) : '';
+        input = `/api/index?__path=${encodeURIComponent(pathPart)}${existingQuery}`;
+      }
+    } catch (e) {}
+    return origFetch(input, init);
+  };
+})();
+
+function pfGetApiEndpoints(apiPath) {
+  const cleanPath = apiPath.startsWith('/') ? apiPath : ('/' + apiPath);
+  const host = (typeof window !== 'undefined' && window.location && window.location.hostname) || '';
+  const isLocal = (host === 'localhost' || host === '127.0.0.1' || (typeof window !== 'undefined' && window.location.protocol === 'file:'));
+  if (!isLocal) {
+    return [cleanPath];
+  }
+  return [cleanPath, `http://localhost:8088${cleanPath}`, `http://127.0.0.1:8089${cleanPath}`, `http://localhost:8089${cleanPath}`];
+}
+window.pfGetApiEndpoints = pfGetApiEndpoints;
+
 function pfEscapeHtml(str) {
   return String(str || '')
     .replace(/&/g, '&amp;')
@@ -223,9 +260,27 @@ async function syncStateFromServer() {
           } else if (localBlocks.length > 0 && (!Array.isArray(data.blocks) || data.blocks.length === 0)) {
             data.blocks = localBlocks;
           }
+          // Merge local bookings with server bookings so a cold serverless instance never wipes active customer bookings
+          let existingLocalBks = [];
+          try { existingLocalBks = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]') || []; } catch (e) {}
+          const srvBookings = Array.isArray(data.bookings) ? data.bookings : [];
+          const srvRefMap = new Map();
+          srvBookings.forEach(b => { if (b && b.ref) srvRefMap.set(String(b.ref).toUpperCase(), b); });
+          // If server has more than default demo bookings or updated state, prefer server; also preserve any local booking created in this browser session
+          const mergedBookings = [...srvBookings];
+          existingLocalBks.forEach(lb => {
+            if (lb && lb.ref && !srvRefMap.has(String(lb.ref).toUpperCase())) {
+              // Only keep local booking if server appears cold/empty (<= 2 default bookings)
+              if (srvBookings.length <= 2) {
+                mergedBookings.unshift(lb);
+                srvRefMap.set(String(lb.ref).toUpperCase(), lb);
+              }
+            }
+          });
+          data.bookings = mergedBookings;
           sharedServerState = data;
           window.sharedServerState = sharedServerState;
-          localStorage.setItem('pf_all_bookings', JSON.stringify(data.bookings));
+          localStorage.setItem('pf_all_bookings', JSON.stringify(mergedBookings));
           // Also keep latest_booking updated if its status changed in Admin
           const latestRaw = localStorage.getItem('latest_booking');
           if (latestRaw) {
@@ -2459,7 +2514,18 @@ document.addEventListener('visibilitychange', () => {
 });
 
 
-// ================= EXPIRED DATE & TIME SLOT VALIDATION ENGINE =================
+// ================= EXPIRED DATE & TIME SLOT VALIDATION ENGINE (PHILIPPINE TIME UTC+8) =================
+function pfGetPhilippineNow() {
+  const now = new Date();
+  const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+  return new Date(utcMs + (8 * 3600000));
+}
+
+function pfGetPhilippineTodayYMD() {
+  const now = pfGetPhilippineNow();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
 function pfParseSlotHour24(slotStr) {
   if (!slotStr) return -1;
   const m = String(slotStr).trim().match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
@@ -2471,9 +2537,16 @@ function pfParseSlotHour24(slotStr) {
   return hr;
 }
 
+function pfIsDateExpired(dateYMD) {
+  if (!dateYMD || dateYMD === 'Today') return false;
+  const clean = String(dateYMD).trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(clean)) return false;
+  return clean < pfGetPhilippineTodayYMD();
+}
+
 function pfIsSlotExpired(dateYMD, slotStr) {
-  const now = new Date();
-  const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const now = pfGetPhilippineNow();
+  const todayYMD = pfGetPhilippineTodayYMD();
   const targetDate = (dateYMD && dateYMD !== 'Today' && /^\d{4}-\d{2}-\d{2}$/.test(String(dateYMD).trim()))
     ? String(dateYMD).trim()
     : todayYMD;
@@ -2484,10 +2557,8 @@ function pfIsSlotExpired(dateYMD, slotStr) {
   const slotHr = pfParseSlotHour24(slotStr);
   if (slotHr < 0) return false;
   const curHr = now.getHours();
-  const curMin = now.getMinutes();
-  // A slot like 08:00 AM is expired once the clock is past 08:00 AM (e.g. 08:01 AM or later)
-  if (slotHr < curHr) return true;
-  if (slotHr === curHr && curMin > 0) return true;
+  // In Philippine Standard Time (UTC+8), a slot starting at or before the current hour has already started/passed
+  if (slotHr <= curHr) return true;
   return false;
 }
 
@@ -2505,10 +2576,13 @@ function pfGetNextUpcomingSlot(dateYMD, allSlots) {
 
 function pfShowExpiredSlotBanner(bannerId, slotStr, dateLabel) {
   let el = document.getElementById(bannerId);
-  const msg = `⚠️ Expired Time Slot: ${slotStr} on ${dateLabel || 'Today'} has already passed. Please select a future time slot.`;
+  const isPastDay = pfIsDateExpired(dateLabel) || pfIsDateExpired(slotStr);
+  const msg = isPastDay
+    ? `⚠️ Expired Date Selected: ${dateLabel || slotStr} has already passed. Please select today (${pfGetPhilippineTodayYMD()}) or an upcoming date.`
+    : `⚠️ Expired Time Slot: ${slotStr} on ${dateLabel || 'Today'} (Philippine Time) has already passed. Please select a future time slot.`;
   if (el) {
     el.textContent = msg;
-    el.className = 'p-3 rounded-xl bg-rose-500/20 border-2 border-rose-500 text-rose-200 text-xs font-black mt-2 block animate-pulse';
+    el.className = 'p-3 rounded-xl bg-rose-500/20 border-2 border-rose-500 text-rose-200 text-xs font-black mt-2 block';
     el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } else {
     alert(msg);
@@ -2523,6 +2597,9 @@ function pfClearExpiredSlotBanner(bannerId) {
   }
 }
 
+window.pfGetPhilippineNow = pfGetPhilippineNow;
+window.pfGetPhilippineTodayYMD = pfGetPhilippineTodayYMD;
+window.pfIsDateExpired = pfIsDateExpired;
 window.pfParseSlotHour24 = pfParseSlotHour24;
 window.pfIsSlotExpired = pfIsSlotExpired;
 window.pfGetNextUpcomingSlot = pfGetNextUpcomingSlot;
@@ -2539,22 +2616,26 @@ function pfNormalizeCourtNumber(courtVal) {
 
 function pfExtractBookingDateYMD(b, todayYMD) {
   if (!b) return '';
+  const fallbackToday = todayYMD || pfGetPhilippineTodayYMD();
   const dRaw = String(b.date || '').trim();
   if (/^\d{4}-\d{2}-\d{2}$/.test(dRaw)) return dRaw;
-  if (dRaw.toLowerCase().startsWith('today')) return todayYMD;
+  if (dRaw.toLowerCase().startsWith('today')) return fallbackToday;
   const tRaw = String(b.time || '').trim();
   const ymdMatch = tRaw.match(/(\d{4}-\d{2}-\d{2})/) || dRaw.match(/(\d{4}-\d{2}-\d{2})/);
   if (ymdMatch) return ymdMatch[1];
-  if (tRaw.toLowerCase().includes('today')) return todayYMD;
+  if (tRaw.toLowerCase().includes('today')) return fallbackToday;
   return dRaw;
 }
 
 function pfBookingMatchesTargetDate(b, targetDate, todayYMD) {
-  const extracted = pfExtractBookingDateYMD(b, todayYMD);
-  if (extracted && extracted === targetDate) return true;
+  const fallbackToday = todayYMD || pfGetPhilippineTodayYMD();
+  const extracted = pfExtractBookingDateYMD(b, fallbackToday);
+  if (extracted && /^\d{4}-\d{2}-\d{2}$/.test(extracted)) {
+    return extracted === targetDate;
+  }
   const combined = `${b.date || ''} ${b.time || ''}`;
   if (combined.includes(targetDate)) return true;
-  if (targetDate === todayYMD && /today/i.test(combined)) return true;
+  if (targetDate === fallbackToday && /today/i.test(combined)) return true;
   if (/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
     try {
       const dt = new Date(targetDate + 'T12:00:00');
@@ -2583,14 +2664,18 @@ function pfBookingCoversSlot(bTimeStr, slotStr) {
 }
 
 function pfGetAllMergedBookings(liveBookings) {
-  if (Array.isArray(liveBookings) && liveBookings.length > 0) return liveBookings;
   const srv = (window.sharedServerState && Array.isArray(window.sharedServerState.bookings)) ? window.sharedServerState.bookings : [];
   let locAll = [];
   let locPub = [];
+  let latestBk = null;
   try { locAll = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]') || []; } catch (e) {}
   try { locPub = JSON.parse(localStorage.getItem('pf_public_bookings') || '[]') || []; } catch (e) {}
+  try { latestBk = JSON.parse(localStorage.getItem('latest_booking') || 'null'); } catch (e) {}
+  const passBk = (typeof currentLoadedPassData !== 'undefined' && currentLoadedPassData) ? currentLoadedPassData : null;
+  const customArr = Array.isArray(liveBookings) ? liveBookings : [];
+
   const map = new Map();
-  [...srv, ...locAll, ...locPub].forEach(b => {
+  [...customArr, ...srv, ...locAll, ...locPub, ...(latestBk ? [latestBk] : []), ...(passBk ? [passBk] : [])].forEach(b => {
     if (b && b.ref && !map.has(String(b.ref).toUpperCase())) {
       map.set(String(b.ref).toUpperCase(), b);
     }
@@ -2602,9 +2687,10 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
   const cNum = Number(courtNum || 1);
   const courtZero = 'Court 0' + cNum;
   const courtPlain = 'Court ' + cNum;
-  const now = new Date();
-  const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const targetDate = (dateYMD && dateYMD !== 'Today') ? String(dateYMD) : todayYMD;
+  const todayYMD = pfGetPhilippineTodayYMD();
+  const targetDate = (dateYMD && dateYMD !== 'Today' && /^\d{4}-\d{2}-\d{2}$/.test(String(dateYMD).trim()))
+    ? String(dateYMD).trim()
+    : todayYMD;
 
   // 1. Check active bookings first (merged across server + localStorage)
   const bookingsArr = pfGetAllMergedBookings(liveBookings);
@@ -2620,8 +2706,8 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return { status: 'BOOKED', booking: bookedMatch, reason: bookedMatch.name || 'Booked' };
   }
 
-  // 2. Check if date or time slot is already EXPIRED (Past dates/hours cannot be booked even if marked Open)
-  const isExpiredSlot = (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, slotStr));
+  // 2. Check if date or time slot is already EXPIRED in Philippine Standard Time (UTC+8)
+  const isExpiredSlot = pfIsSlotExpired(targetDate, slotStr);
 
   // 3. Check Admin Calendar Overrides (blocks merged from server + localStorage)
   let storedBlocks = [];
@@ -3019,12 +3105,21 @@ function pfCheckRescheduleConflict(targetDate, courtNum, startSlot, durationHrs,
   const courtLabel = 'Court ' + cNum;
   const dur = Math.max(1, Number(durationHrs || 1));
   const startIdx = PF_RESCHED_ALL_SLOTS.indexOf(startSlot);
+  const todayYMD = pfGetPhilippineTodayYMD();
+
+  if (targetDate && /^\d{4}-\d{2}-\d{2}$/.test(targetDate) && targetDate < todayYMD) {
+    return {
+      ok: false,
+      code: 'EXPIRED_DATE',
+      html: `⚠️ <b>Expired Date Error:</b> The selected date (<b>${targetDate}</b>) has already passed. Please select today (<b>${todayYMD}</b>) or a future date.`
+    };
+  }
 
   if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, startSlot)) {
     return {
       ok: false,
       code: 'EXPIRED',
-      html: `⚠️ <b>Expired Date/Time Error:</b> <b>${startSlot}</b> on <b>${targetDate}</b> has already passed. Please select a future date and time.`
+      html: `⚠️ <b>Expired Time Slot Error:</b> <b>${startSlot}</b> on <b>${targetDate}</b> (Philippine Time) has already passed. Please select an upcoming time slot.`
     };
   }
 
@@ -3049,7 +3144,7 @@ function pfCheckRescheduleConflict(targetDate, courtNum, startSlot, durationHrs,
         return {
           ok: false,
           code: 'ALREADY_BOOKED_SELF',
-          html: `❌ <b>Schedule Already Booked Error:</b> <b>${courtLabel}</b> at <b>${slotToCheck}</b> on <b>${targetDate}</b> is already booked by your current reservation (<b>${currentRef}</b>). Please select a different available date, court, or time slot to reschedule.`
+          html: `ℹ️ <b>Current Reservation Slot:</b> <b>${courtLabel}</b> at <b>${slotToCheck}</b> on <b>${targetDate}</b> is already your current active schedule (<b>${currentRef}</b>). Please choose a different date, court, or time slot to reschedule.`
         };
       }
       return {
@@ -3079,7 +3174,7 @@ function pfCheckRescheduleConflict(targetDate, courtNum, startSlot, durationHrs,
       return {
         ok: false,
         code: 'EXPIRED',
-        html: `⚠️ <b>Expired Date/Time Error:</b> <b>${slotToCheck}</b> on <b>${targetDate}</b> has already passed. Please select a future date and time.`
+        html: `⚠️ <b>Expired Time Slot Error:</b> <b>${slotToCheck}</b> on <b>${targetDate}</b> (Philippine Time) has already passed. Please select an upcoming time slot.`
       };
     }
   }
@@ -3097,14 +3192,16 @@ function pfShowRescheduleErrorBanner(msgEl, htmlMsg) {
   msgEl.className = 'text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-3 rounded-xl mt-2.5 block shadow-lg';
 }
 
-function pfRefreshRescheduleTimeOptions() {
+function pfRefreshRescheduleTimeOptions(triggerSource = '') {
   const dateInp = document.getElementById('resched-new-date');
   const courtSel = document.getElementById('resched-new-court');
   const timeSel = document.getElementById('resched-new-time');
   const refEl = document.getElementById('res-ref');
   if (!dateInp || !courtSel || !timeSel) return;
 
-  const targetDate = dateInp.value;
+  const todayYMD = pfGetPhilippineTodayYMD();
+  const targetDate = dateInp.value || todayYMD;
+  const isPastDay = /^\d{4}-\d{2}-\d{2}$/.test(targetDate) && targetDate < todayYMD;
   const cNum = pfNormalizeCourtNumber(courtSel.value || '1');
   const currentRef = refEl ? refEl.textContent.trim().toUpperCase() : '';
 
@@ -3115,12 +3212,14 @@ function pfRefreshRescheduleTimeOptions() {
   Array.from(timeSel.options).forEach(opt => {
     const rawSlot = opt.value;
     let suffix = ' (✓ Available)';
-    if (targetDate && typeof pfResolveCourtSlot === 'function') {
+    if (isPastDay) {
+      suffix = ' (⏰ Expired Date)';
+    } else if (targetDate && typeof pfResolveCourtSlot === 'function') {
       const st = pfResolveCourtSlot(targetDate, cNum, rawSlot);
       if (st && st.status === 'BOOKED') {
         const bookedRef = (st.booking && st.booking.ref) ? String(st.booking.ref).toUpperCase() : '';
         if (bookedRef && bookedRef === currentRef) {
-          suffix = ' (❌ Already Booked — Your Current Slot)';
+          suffix = ' (📍 Your Current Slot)';
         } else {
           suffix = ' (❌ Already Booked)';
         }
@@ -3132,12 +3231,32 @@ function pfRefreshRescheduleTimeOptions() {
         suffix = ' (⏰ Expired / Passed)';
       }
     }
-    // Keep opt.disabled = false so selecting a booked or expired slot immediately triggers the red error banner!
     opt.disabled = false;
     opt.textContent = rawSlot + suffix;
   });
 
+  // When opening the form, changing Date/Court, or right after saving, auto-select the first truly available slot
+  if (!isPastDay && triggerSource !== 'time') {
+    const curCheck = pfCheckRescheduleConflict(targetDate, cNum, timeSel.value, durHrs, currentRef);
+    if (!curCheck.ok) {
+      const nextAvail = PF_RESCHED_ALL_SLOTS.find(s => pfCheckRescheduleConflict(targetDate, cNum, s, durHrs, currentRef).ok);
+      if (nextAvail) {
+        timeSel.value = nextAvail;
+      }
+    }
+  }
+
   const msgEl = document.getElementById('resched-feedback-msg');
+  if (triggerSource === 'saved') {
+    return;
+  }
+  if (isPastDay) {
+    pfShowRescheduleErrorBanner(
+      msgEl,
+      `⚠️ <b>Expired Date Error:</b> The selected date (<b>${targetDate}</b>) has already passed. Please select today (<b>${todayYMD}</b>) or a future date.`
+    );
+    return;
+  }
   if (targetDate && timeSel.value) {
     const check = pfCheckRescheduleConflict(targetDate, cNum, timeSel.value, durHrs, currentRef);
     if (!check.ok) {
@@ -3158,8 +3277,7 @@ async function pfToggleRescheduleForm(forceOpen = null) {
     if (typeof syncStateFromServer === 'function') {
       try { await syncStateFromServer(); } catch (e) {}
     }
-    const now = new Date();
-    const todayYmd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const todayYmd = pfGetPhilippineTodayYMD();
     const refEl = document.getElementById('res-ref');
     const currentRef = refEl ? refEl.textContent.trim().toUpperCase() : '';
     const allBookings = pfGetAllMergedBookings();
@@ -3169,7 +3287,15 @@ async function pfToggleRescheduleForm(forceOpen = null) {
     if (dateInput) {
       dateInput.min = todayYmd;
       const bDate = activeBookingObj ? pfExtractBookingDateYMD(activeBookingObj, todayYmd) : '';
-      dateInput.value = (bDate && /^\d{4}-\d{2}-\d{2}$/.test(bDate) && bDate >= todayYmd) ? bDate : todayYmd;
+      let initDate = (bDate && /^\d{4}-\d{2}-\d{2}$/.test(bDate) && bDate >= todayYmd) ? bDate : todayYmd;
+      // If all slots today are already expired, default to tomorrow in PHT
+      const anyTodayAvail = PF_RESCHED_ALL_SLOTS.some(s => !pfIsSlotExpired(initDate, s));
+      if (!anyTodayAvail) {
+        const phtTom = pfGetPhilippineNow();
+        phtTom.setDate(phtTom.getDate() + 1);
+        initDate = `${phtTom.getFullYear()}-${String(phtTom.getMonth() + 1).padStart(2, '0')}-${String(phtTom.getDate()).padStart(2, '0')}`;
+      }
+      dateInput.value = initDate;
     }
 
     const courtSel = document.getElementById('resched-new-court');
@@ -3184,18 +3310,7 @@ async function pfToggleRescheduleForm(forceOpen = null) {
       msgEl.innerHTML = '';
     }
 
-    // Pre-select the first truly AVAILABLE upcoming slot so the form starts on a valid option
-    const timeSel = document.getElementById('resched-new-time');
-    if (timeSel && dateInput && courtSel) {
-      const cNum = pfNormalizeCourtNumber(courtSel.value);
-      const durHrs = pfGetBookingDurationHours(activeBookingObj);
-      const firstAvail = PF_RESCHED_ALL_SLOTS.find(s => pfCheckRescheduleConflict(dateInput.value, cNum, s, durHrs, currentRef).ok);
-      if (firstAvail) {
-        timeSel.value = firstAvail;
-      }
-    }
-
-    pfRefreshRescheduleTimeOptions();
+    pfRefreshRescheduleTimeOptions('init');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } else {
     panel.classList.add('hidden');
@@ -3212,7 +3327,6 @@ async function pfSubmitBookingReschedule() {
     return;
   }
 
-  // Always sync latest server state before checking conflicts
   if (typeof syncStateFromServer === 'function') {
     try { await syncStateFromServer(); } catch (e) {}
   }
@@ -3235,7 +3349,8 @@ async function pfSubmitBookingReschedule() {
   const cNum = pfNormalizeCourtNumber(newCourt);
   const cleanCourtLabel = 'Court ' + cNum;
   const allBookings = pfGetAllMergedBookings();
-  const existingBooking = allBookings.find(b => b && String(b.ref || '').toUpperCase() === refId.toUpperCase()) || null;
+  const existingBooking = allBookings.find(b => b && String(b.ref || '').toUpperCase() === refId.toUpperCase())
+    || (typeof currentLoadedPassData !== 'undefined' && currentLoadedPassData ? currentLoadedPassData : null);
   const durHrs = pfGetBookingDurationHours(existingBooking);
 
   // Strict Conflict & Expired Validation
@@ -3250,8 +3365,18 @@ async function pfSubmitBookingReschedule() {
     ? `${newDate} • ${newTime} (${durHrs} hr)`
     : `${newDate} • ${newTime}`;
 
-  const updatedBooking = Object.assign({}, existingBooking || { ref: refId }, {
-    ref: existingBooking ? existingBooking.ref : refId,
+  const baseBooking = existingBooking || {
+    ref: refId,
+    name: (document.getElementById('res-name')?.textContent || 'Valued Guest').trim(),
+    phone: (document.getElementById('res-phone')?.textContent || '0999 883 2346').trim(),
+    paymentMethod: (document.getElementById('res-paymethod')?.textContent || 'GCash').trim(),
+    transactionRef: (document.getElementById('res-payref')?.textContent || 'N/A').trim(),
+    total: Number(String(document.getElementById('res-total')?.textContent || '400').replace(/[^0-9.]/g, '')) || 400,
+    status: (document.getElementById('res-status-badge')?.textContent || 'PENDING').trim()
+  };
+
+  const updatedBooking = Object.assign({}, baseBooking, {
+    ref: baseBooking.ref || refId,
     date: newDate,
     court: cleanCourtLabel,
     time: newTimeSchedule,
@@ -3259,27 +3384,28 @@ async function pfSubmitBookingReschedule() {
     rescheduledAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
   });
 
-  if (Array.isArray(updatedBooking.items)) {
+  if (Array.isArray(updatedBooking.items) && updatedBooking.items.length > 0) {
     updatedBooking.items = updatedBooking.items.map(it => {
       if (typeof it === 'string' && /court/i.test(it)) {
-        return it.replace(/Court\s*0*[1-4]/i, cleanCourtLabel);
+        return `${cleanCourtLabel} (${newTimeSchedule})`;
       }
       if (it && typeof it === 'object' && it.isCourt) {
         return Object.assign({}, it, { name: cleanCourtLabel, subtitle: newTimeSchedule });
       }
       return it;
     });
+  } else {
+    updatedBooking.items = [`${cleanCourtLabel} (${newTimeSchedule})`];
   }
 
   _pfIsSubmittingReschedule = true;
-  const saveBtn = document.querySelector('#reschedule-booking-form-panel button[onclick*="pfSubmitBookingReschedule"]');
+  const saveBtn = document.querySelector('#reschedule-booking-panel button[onclick*="pfSubmitBookingReschedule"]');
   if (saveBtn) {
     saveBtn.disabled = true;
     saveBtn.style.opacity = '0.65';
   }
 
-  // Send to server and verify no 409 conflict from backend
-  const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://127.0.0.1:8089/api/bookings', 'http://localhost:8089/api/bookings'];
+  const endpoints = pfGetApiEndpoints('/api/bookings');
   let serverRejected = null;
   for (const url of endpoints) {
     try {
@@ -3316,7 +3442,10 @@ async function pfSubmitBookingReschedule() {
     return;
   }
 
-  // Update all localStorage caches
+  // Update all localStorage caches & currentLoadedPassData
+  if (typeof currentLoadedPassData !== 'undefined') {
+    currentLoadedPassData = updatedBooking;
+  }
   ['pf_all_bookings', 'pf_public_bookings'].forEach(storageKey => {
     try {
       const arr = JSON.parse(localStorage.getItem(storageKey) || '[]') || [];
@@ -3361,12 +3490,16 @@ async function pfSubmitBookingReschedule() {
   const resTimeEl = document.getElementById('res-time');
   if (resTimeEl) resTimeEl.textContent = newTimeSchedule;
 
-  pfRefreshRescheduleTimeOptions();
+  if (typeof renderLiveScheduleMatrix === 'function') {
+    try { renderLiveScheduleMatrix(); } catch (e) {}
+  }
 
   if (msgEl) {
     msgEl.innerHTML = `✅ Booking <b>${pfEscapeHtml(refId)}</b> has been successfully rescheduled to <b>${pfEscapeHtml(cleanCourtLabel)}</b> on <b>${pfEscapeHtml(newTimeSchedule)}</b>!`;
     msgEl.className = 'text-xs font-bold text-brand-lime bg-brand-lime/15 border-2 border-brand-lime p-3 rounded-xl mt-2.5 block shadow-md';
   }
+
+  pfRefreshRescheduleTimeOptions('saved');
 }
 
 function pfInitRescheduleHashMode() {

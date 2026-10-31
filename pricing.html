@@ -1743,7 +1743,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261029v14"></script>
+  <script src="app.js?v=20261031v2"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -1793,7 +1793,7 @@
 
     function generateDrawerDays() {
       DRAWER_STATE.daysList = [];
-      const today = new Date();
+      const today = (typeof window.pfGetPhilippineNow === 'function') ? window.pfGetPhilippineNow() : new Date();
       const pad2 = n => String(n).padStart(2, '0');
       const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
@@ -1841,16 +1841,39 @@
       return false;
     }
 
+    function ensureDynamicScheduleDateExists(ymd) {
+      if (!ymd || !/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return null;
+      if (DRAWER_STATE.daysList.length === 0) generateDrawerDays();
+      let found = DRAWER_STATE.daysList.find(d => d.value === ymd);
+      if (!found) {
+        const dt = new Date(ymd + 'T12:00:00');
+        const todayYMD = (typeof window.pfGetPhilippineTodayYMD === 'function') ? window.pfGetPhilippineTodayYMD() : '';
+        const isPast = todayYMD && ymd < todayYMD;
+        const wk = isPast ? 'Expired' : new Intl.DateTimeFormat('en-PH', { weekday: 'short' }).format(dt);
+        const mo = new Intl.DateTimeFormat('en-PH', { month: 'short' }).format(dt);
+        const sLbl = (isPast ? '⏰ Expired: ' : '') + new Intl.DateTimeFormat('en-PH', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).format(dt);
+        const fullLbl = new Intl.DateTimeFormat('en-PH', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(dt);
+        found = {
+          value: ymd,
+          weekday: wk,
+          day: dt.getDate(),
+          month: mo,
+          shortLabel: sLbl,
+          label: fullLbl,
+          isExpiredDate: isPast
+        };
+        DRAWER_STATE.daysList.unshift(found);
+      }
+      return found;
+    }
+
     function jumpScheduleToDate(ymd) {
       if (!ymd) return;
+      const found = ensureDynamicScheduleDateExists(ymd);
       selectedScheduleDateYMD = ymd;
       DRAWER_STATE.selectedDateVal = ymd;
-      const found = DRAWER_STATE.daysList.find(d => d.value === ymd);
       if (found) {
         DRAWER_STATE.selectedDateLabel = found.shortLabel;
-      } else {
-        const dt = new Date(ymd + 'T12:00:00');
-        DRAWER_STATE.selectedDateLabel = new Intl.DateTimeFormat('en-PH', { weekday: 'short', month: 'short', day: 'numeric' }).format(dt);
       }
       initScheduleDateCarousel();
       renderLiveScheduleMatrix();
@@ -1858,14 +1881,24 @@
 
     function jumpDrawerToDate(ymd) {
       if (!ymd) return;
+      const found = ensureDynamicScheduleDateExists(ymd);
       selectedScheduleDateYMD = ymd;
       DRAWER_STATE.selectedDateVal = ymd;
-      const found = DRAWER_STATE.daysList.find(d => d.value === ymd);
       if (found) {
         DRAWER_STATE.selectedDateLabel = found.shortLabel;
+      }
+      const todayYMD = (typeof window.pfGetPhilippineTodayYMD === 'function') ? window.pfGetPhilippineTodayYMD() : '';
+      if (todayYMD && ymd < todayYMD) {
+        if (typeof pfShowExpiredSlotBanner === 'function') {
+          pfShowExpiredSlotBanner('drawer-expired-time-error', ymd, found ? found.label : ymd);
+        }
       } else {
-        const dt = new Date(ymd + 'T12:00:00');
-        DRAWER_STATE.selectedDateLabel = new Intl.DateTimeFormat('en-PH', { weekday: 'short', month: 'short', day: 'numeric' }).format(dt);
+        if (typeof pfClearExpiredSlotBanner === 'function') {
+          pfClearExpiredSlotBanner('drawer-expired-time-error');
+        }
+        if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(ymd, DRAWER_STATE.selectedStartSlot)) {
+          DRAWER_STATE.selectedStartSlot = pfGetNextUpcomingSlot(ymd, ALL_HOURS_SLOTS);
+        }
       }
       renderDrawerDateRail();
       renderDrawerSlots();
@@ -1933,6 +1966,28 @@
       const thead = document.getElementById('schedule-table-head');
       const tbody = document.getElementById('schedule-matrix-rows');
       if (!thead || !tbody) return;
+
+      const todayPhtYMD = (typeof window.pfGetPhilippineTodayYMD === 'function') ? window.pfGetPhilippineTodayYMD() : '';
+      if (!selectedScheduleDateYMD && todayPhtYMD) {
+        selectedScheduleDateYMD = todayPhtYMD;
+      }
+      const isPastScheduleDate = Boolean(todayPhtYMD && selectedScheduleDateYMD && /^\d{4}-\d{2}-\d{2}$/.test(selectedScheduleDateYMD) && selectedScheduleDateYMD < todayPhtYMD);
+      const schedTableEl = document.getElementById('schedule-table');
+      if (schedTableEl && schedTableEl.parentElement) {
+        let expBanner = document.getElementById('public-schedule-expired-date-banner');
+        if (isPastScheduleDate) {
+          if (!expBanner) {
+            expBanner = document.createElement('div');
+            expBanner.id = 'public-schedule-expired-date-banner';
+            schedTableEl.parentElement.insertBefore(expBanner, schedTableEl);
+          }
+          expBanner.className = 'mb-3 p-3.5 rounded-2xl bg-rose-600 text-white border-2 border-rose-900 shadow-lg flex flex-wrap items-center justify-between gap-2 text-xs font-black';
+          expBanner.innerHTML = `<span>⏰ EXPIRED DATE VIEW (${selectedScheduleDateYMD}): All time slots on this past date have already passed and cannot be booked.</span><button type="button" onclick="jumpScheduleToDate('${todayPhtYMD}')" class="px-3 py-1.5 rounded-xl bg-[#9BE600] text-[#050E1D] font-mono font-black uppercase text-[11px] shadow">Jump to Today (${todayPhtYMD}) →</button>`;
+        } else if (expBanner) {
+          expBanner.className = 'hidden';
+          expBanner.innerHTML = '';
+        }
+      }
 
       const isSingleCourt = currentScheduleFilter !== 'ALL';
       const courtsToShow = isSingleCourt ? [Number(currentScheduleFilter)] : [1, 2, 3, 4];
@@ -2554,7 +2609,7 @@
       let syncedToServer = false;
       let serverConflictErr = null;
       let finalRef = generatedRef;
-      const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://127.0.0.1:8089/api/bookings', 'http://localhost:8089/api/bookings'];
+      const endpoints = (typeof window.pfGetApiEndpoints === 'function') ? window.pfGetApiEndpoints('/api/bookings') : ['/api/bookings'];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {

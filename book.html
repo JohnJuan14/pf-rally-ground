@@ -655,8 +655,12 @@
               <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Choose a date</h2>
             </div>
             
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <span id="selected-date-label" class="text-xs sm:text-sm font-bold text-slate-800 hidden sm:block font-mono bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">Today</span>
+              <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs font-mono font-bold text-slate-800 cursor-pointer">
+                <span>📅</span>
+                <input type="date" id="book-native-date-picker" onchange="jumpBookToDate(this.value)" class="bg-transparent text-slate-900 font-mono text-xs focus:outline-none cursor-pointer">
+              </label>
               <div class="flex items-center gap-1.5">
                 <button type="button" id="slider-prev-btn" class="slider-arrow-btn-light" title="Previous Days" aria-label="Previous Days">&larr;</button>
                 <button type="button" id="slider-next-btn" class="slider-arrow-btn-light" title="Next Days" aria-label="Next Days">&rarr;</button>
@@ -725,6 +729,7 @@
             <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="time-chips-container">
               <!-- Injected via renderTimeChips() -->
             </div>
+            <div id="book-expired-time-error" class="hidden"></div>
           </div>
 
           <div class="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-slate-300 font-mono">
@@ -1774,7 +1779,7 @@
   </div>
 
   
-  <script src="app.js?v=20261029v14"></script>
+  <script src="app.js?v=20261031v2"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>
@@ -1826,10 +1831,10 @@
       return hour24 >= 18 ? nightR : dayR;
     }
 
-    // 1. Generate 31 Days for Date Rail
+    // 1. Generate 31 Days for Date Rail (Philippine Standard Time UTC+8)
     function generateDays() {
       daysList = [];
-      const today = new Date();
+      const today = (typeof window.pfGetPhilippineNow === "function") ? window.pfGetPhilippineNow() : new Date();
       for (let i = 0; i < 31; i++) {
         const d = new Date(today);
         d.setHours(12, 0, 0, 0);
@@ -1844,6 +1849,37 @@
       }
       selectedDateValue = daysList[0].value;
       selectedDateLabel = daysList[0].label;
+      if (typeof window.pfIsSlotExpired === "function" && window.pfIsSlotExpired(selectedDateValue, selectedStartSlot)) {
+        selectedStartSlot = window.pfGetNextUpcomingSlot(selectedDateValue, ALL_SLOTS);
+      }
+      const picker = document.getElementById("book-native-date-picker");
+      if (picker) picker.value = selectedDateValue;
+    }
+
+    function jumpBookToDate(ymd) {
+      if (!ymd || !/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return;
+      if (daysList.length === 0) generateDays();
+      const todayYMD = (typeof window.pfGetPhilippineTodayYMD === "function") ? window.pfGetPhilippineTodayYMD() : "";
+      const isPast = Boolean(todayYMD && ymd < todayYMD);
+      let found = daysList.find(d => d.value === ymd);
+      if (!found) {
+        const dt = new Date(ymd + "T12:00:00");
+        found = {
+          value: ymd,
+          weekday: isPast ? "Expired" : new Intl.DateTimeFormat("en-PH", { weekday: "short" }).format(dt),
+          day: dt.getDate(),
+          month: new Intl.DateTimeFormat("en-PH", { month: "short" }).format(dt),
+          label: (isPast ? "⏰ Expired: " : "") + new Intl.DateTimeFormat("en-PH", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(dt)
+        };
+        daysList.unshift(found);
+      }
+      selectDate(ymd, null);
+      renderDateRail();
+      if (isPast && typeof pfShowExpiredSlotBanner === "function") {
+        pfShowExpiredSlotBanner("book-expired-time-error", ymd, found.label);
+      } else if (typeof pfClearExpiredSlotBanner === "function") {
+        pfClearExpiredSlotBanner("book-expired-time-error");
+      }
     }
 
     // 2. Render Date Rail
@@ -1876,6 +1912,17 @@
       selectedDateValue = dateVal;
       const found = daysList.find(d => d.value === dateVal);
       if (found) selectedDateLabel = found.label;
+      const picker = document.getElementById("book-native-date-picker");
+      if (picker) picker.value = dateVal;
+      const todayYMD = (typeof window.pfGetPhilippineTodayYMD === "function") ? window.pfGetPhilippineTodayYMD() : "";
+      if (todayYMD && dateVal < todayYMD) {
+        if (typeof pfShowExpiredSlotBanner === "function") pfShowExpiredSlotBanner("book-expired-time-error", dateVal, selectedDateLabel);
+      } else {
+        if (typeof pfClearExpiredSlotBanner === "function") pfClearExpiredSlotBanner("book-expired-time-error");
+        if (typeof window.pfIsSlotExpired === "function" && window.pfIsSlotExpired(dateVal, selectedStartSlot)) {
+          selectedStartSlot = window.pfGetNextUpcomingSlot(dateVal, ALL_SLOTS);
+        }
+      }
 
       document.querySelectorAll("#date-rail-container .date-tile").forEach(b => {
         b.classList.remove("date-tile-active");
@@ -2219,7 +2266,7 @@
 
       // 1. Send to server (/api/bookings) and verify no 409 schedule conflict
       let serverConflictErr = null;
-      const endpoints = ["/api/bookings", "http://localhost:8088/api/bookings", "http://127.0.0.1:8089/api/bookings", "http://localhost:8089/api/bookings"];
+      const endpoints = (typeof window.pfGetApiEndpoints === "function") ? window.pfGetApiEndpoints("/api/bookings") : ["/api/bookings"];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -2352,7 +2399,7 @@
       let syncedToServer = false;
       let serverConflictErr = null;
       let finalRef = generatedRef;
-      const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://127.0.0.1:8089/api/bookings', 'http://localhost:8089/api/bookings'];
+      const endpoints = (typeof window.pfGetApiEndpoints === 'function') ? window.pfGetApiEndpoints('/api/bookings') : ['/api/bookings'];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -2596,7 +2643,7 @@ Your booking is now waiting in the Admin Portal for approval!`);
       renderTimeChips();
       updateSummary();
       syncAdminQr();
-      setupSliderInteraction('date-rail-container', 'book-slider-prev', 'book-slider-next');
+      setupSliderInteraction('date-rail-container', 'slider-prev-btn', 'slider-next-btn');
     });
   </script>
 </body>

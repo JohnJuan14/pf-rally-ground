@@ -169,6 +169,16 @@ def save_db(data):
 
 
 
+
+def resolve_api_route(parsed_url):
+    qs = urllib.parse.parse_qs(parsed_url.query)
+    sub = (qs.get("__path") or qs.get("path") or [""])[0].strip("/")
+    if sub:
+        return "/api/" + sub
+    if parsed_url.path in ("/api/index", "/api/index.py"):
+        return "/api/state"
+    return parsed_url.path
+
 def get_pht_now():
     return datetime.now(timezone(timedelta(hours=8)))
 
@@ -301,6 +311,8 @@ class handler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith('/api/'):
+            parsed = parsed._replace(path=resolve_api_route(parsed))
         db = load_db()
         if parsed.path == "/api/state":
             public_state = {k: v for k, v in db.items() if k != "adminPassword"}
@@ -342,6 +354,8 @@ class handler(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith('/api/'):
+            parsed = parsed._replace(path=resolve_api_route(parsed))
         length = int(self.headers.get("Content-Length", 0))
         raw_body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
         try:
@@ -629,23 +643,25 @@ class handler(http.server.BaseHTTPRequestHandler):
             new_status = sanitize_str(body.get("status", "CONFIRMED"), 40).upper()
             target = next((b for b in db["bookings"] if b.get("ref") == ref), None)
             if target:
+                old_status = str(target.get("status", "")).upper()
                 target["status"] = new_status
-                if new_status == "CONFIRMED":
-                    if not any(s.get("ref") == ref for s in db.get("salesLedger", [])):
+                if new_status == "CONFIRMED" and old_status != "CONFIRMED":
+                    if not any(s.get("ref") == ref for s in db["salesLedger"]):
+                        amt_val = parse_amount(target.get("total", 0), 0.0)
                         bk_cost = compute_and_deduct_inventory_for_items(db, target.get("items", []), deduct_stock=False)
                         if bk_cost <= 0:
                             bk_cost = float((db.get("siteConfig") or {}).get("costCourtPerHour", 0) or 0)
-                        amt = float(parse_amount(target.get("total", 400), 400.0))
                         db["salesLedger"].insert(0, {
                             "ref": target["ref"],
                             "type": "Court Rental",
-                            "desc": f"{target.get('court', 'Court 01')} ({target.get('name', 'Guest')}) - Ref: {target.get('transactionRef', 'N/A')}",
-                            "method": target.get("paymentMethod") or target.get("paymentMode") or "GCash",
-                            "amount": amt,
+                            "desc": f"{target.get('court', 'Court 1')} ({target.get('name', 'Guest')}) - Ref: {target.get('transactionRef', 'Verified')}",
+                            "method": target.get("paymentMethod", "GCash"),
+                            "amount": amt_val,
                             "cost": round(bk_cost, 2),
-                            "profit": round(amt - bk_cost, 2),
+                            "profit": round(amt_val - bk_cost, 2),
                             "date": get_pht_now().strftime("%Y-%m-%d %H:%M")
                         })
+                    trigger_booking_gmail_notifications(db, target)
                 elif new_status in ("DECLINED", "CANCELLED"):
                     db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
             save_db(db)

@@ -2795,7 +2795,6 @@
         </div>
 
         <p id="modal-booking-error-banner" class="hidden text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-3 rounded-xl"></p>
-        <p id="modal-booking-error-banner" class="hidden text-xs font-bold text-rose-100 bg-rose-600/25 border-2 border-rose-500 p-3 rounded-xl"></p>
         <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow mt-4">
           Save &amp; Sync Booking →
         </button>
@@ -3150,6 +3149,20 @@ function clearFieldError(fieldId) {
       window.__pfAdminFetchIntercepted = true;
       const origFetch = window.fetch.bind(window);
       window.fetch = async function(input, init) {
+        try {
+          const reqStr = (typeof input === 'string') ? input : (input && input.url ? input.url : '');
+          const host = (window.location && window.location.hostname) || '';
+          const isLocal = (host === 'localhost' || host === '127.0.0.1' || window.location.protocol === 'file:');
+          if (!isLocal && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(reqStr)) {
+            return Promise.reject(new Error('Skipped localhost fallback on production host'));
+          }
+          if (!isLocal && typeof input === 'string' && input.startsWith('/api/') && !input.startsWith('/api/index')) {
+            const qIdx = input.indexOf('?');
+            const pathPart = (qIdx >= 0 ? input.slice(0, qIdx) : input).replace(/^\/api\/+/, '');
+            const existingQuery = qIdx >= 0 ? '&' + input.slice(qIdx + 1) : '';
+            input = `/api/index?__path=${encodeURIComponent(pathPart)}${existingQuery}`;
+          }
+        } catch (e) {}
         const method = ((init && init.method) || 'GET').toUpperCase();
         const urlStr = typeof input === 'string' ? input : (input && input.url ? input.url : '');
         if (method === 'POST' && urlStr.includes('/api/') && !urlStr.includes('/api/sync-state')) {
@@ -4036,14 +4049,20 @@ function clearFieldError(fieldId) {
     let adminCalendarClickMode = 'ASK';
     let currentEditingSlot = { courtNum: 1, timeStr: '06:00 PM', dateYMD: '' };
 
-    function getAdminLocalTodayYMD() {
+    function getAdminPhilippineNow() {
       const now = new Date();
+      const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+      return new Date(utcMs + (8 * 3600000));
+    }
+
+    function getAdminLocalTodayYMD() {
+      const now = getAdminPhilippineNow();
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     }
 
     function isAdminSlotExpired(dateYMD, slotStr) {
       if (!dateYMD || !/^\d{4}-\d{2}-\d{2}$/.test(dateYMD)) return false;
-      const now = new Date();
+      const now = getAdminPhilippineNow();
       const todayYMD = getAdminLocalTodayYMD();
       if (dateYMD < todayYMD) return true;
       if (dateYMD > todayYMD) return false;

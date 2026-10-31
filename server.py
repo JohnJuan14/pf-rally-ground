@@ -180,6 +180,16 @@ def save_db(data):
 
 
 
+
+def resolve_api_route(parsed_url):
+    qs = urllib.parse.parse_qs(parsed_url.query)
+    sub = (qs.get("__path") or qs.get("path") or [""])[0].strip("/")
+    if sub:
+        return "/api/" + sub
+    if parsed_url.path in ("/api/index", "/api/index.py"):
+        return "/api/state"
+    return parsed_url.path
+
 def get_pht_now():
     return datetime.now(timezone(timedelta(hours=8)))
 
@@ -391,6 +401,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith('/api/'):
+            parsed = parsed._replace(path=resolve_api_route(parsed))
         if parsed.path == "/api/state":
             db = load_db()
             public_state = {k: v for k, v in db.items() if k != "adminPassword"}
@@ -455,6 +467,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith('/api/'):
+            parsed = parsed._replace(path=resolve_api_route(parsed))
         length = int(self.headers.get("Content-Length", 0))
         if length > 5 * 1024 * 1024:
             self._send_json({"ok": False, "error": "Payload too large."}, status=413)
@@ -719,10 +733,10 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
 
         elif parsed.path == "/api/bookings/status":
             ref = body.get("ref")
-            new_status = sanitize_str(body.get("status", "CONFIRMED"), 40)
+            new_status = sanitize_str(body.get("status", "CONFIRMED"), 40).upper()
             target = next((b for b in db["bookings"] if b.get("ref") == ref), None)
             if target:
-                old_status = target.get("status")
+                old_status = str(target.get("status", "")).upper()
                 target["status"] = new_status
                 if new_status == "CONFIRMED" and old_status != "CONFIRMED":
                     if not any(s.get("ref") == ref for s in db["salesLedger"]):
@@ -733,14 +747,33 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                         db["salesLedger"].insert(0, {
                             "ref": target["ref"],
                             "type": "Court Rental",
-                            "desc": f"{target['court']} ({target['name']}) - Ref: {target.get('transactionRef', 'Verified')}",
+                            "desc": f"{target.get('court', 'Court 1')} ({target.get('name', 'Guest')}) - Ref: {target.get('transactionRef', 'Verified')}",
                             "method": target.get("paymentMethod", "GCash"),
                             "amount": amt_val,
                             "cost": round(bk_cost, 2),
                             "profit": round(amt_val - bk_cost, 2),
-                            "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                            "date": get_pht_now().strftime("%Y-%m-%d %H:%M")
                         })
                     trigger_booking_gmail_notifications(db, target)
+                elif new_status in ("DECLINED", "CANCELLED"):
+                    db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
+            save_db(db)
+            db["sales"] = db.get("salesLedger", [])
+            self._send_json({"ok": True, "state": db})
+            return
+
+        elif parsed.path == "/api/sync-state":
+            for k in ["bookings", "blocks", "salesLedger", "inventory", "categories", "announcements"]:
+                if k in body and isinstance(body[k], list):
+                    db[k] = body[k]
+            if "siteConfig" in body and isinstance(body["siteConfig"], dict):
+                merged_sc = dict(db.get("siteConfig") or {})
+                merged_sc.update(body["siteConfig"])
+                db["siteConfig"] = merged_sc
+            if "paymentConfig" in body and isinstance(body["paymentConfig"], dict):
+                merged_pc = dict(db.get("paymentConfig") or {})
+                merged_pc.update(body["paymentConfig"])
+                db["paymentConfig"] = merged_pc
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
