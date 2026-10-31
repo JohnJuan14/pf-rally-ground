@@ -1514,62 +1514,6 @@
             <div id="adm-calendar-action-feedback" class="hidden p-2.5 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-black"></div>
           </div>
 
-          <!-- Editable Daily Open Play Schedule Controller (Default: 3:00 PM – 6:00 PM Across All 4 Courts) -->
-
-          <div class="p-4 sm:p-5 rounded-2xl bg-[#1a2e05]/90 border-2 border-[#84cc16] space-y-3.5 mb-6 shadow-xl">
-
-            <div class="flex flex-wrap items-center justify-between gap-3">
-
-              <div>
-
-                <div class="flex items-center gap-2">
-
-                  <span class="px-2.5 py-0.5 rounded bg-[#d9f99d] text-[#365314] font-mono text-[10px] font-black uppercase">🎾 EDITABLE OPEN PLAY SCHEDULE (ALL 4 COURTS)</span>
-
-                  <span id="adm-openplay-live-badge" class="text-[11px] font-mono font-bold text-[#bef264]">● Active: 3:00 PM – 6:00 PM</span>
-
-                </div>
-
-                <h3 class="text-sm sm:text-base font-black uppercase text-white mt-1">Default Daily Open Play Hours Across Courts 1 – 4</h3>
-
-                <p class="text-xs text-slate-200">Click any time slot pill below to add or remove hours from the default Open Play schedule across all 4 courts, or click any individual cell in the matrix below to switch a single court between <b>Open Play</b>, <b>Open Court (₱400/₱500)</b>, or <b>Closed</b>.</p>
-
-              </div>
-
-              <div class="flex flex-wrap items-center gap-2">
-
-                <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 border border-[#84cc16]/50 text-xs font-black text-[#d9f99d] cursor-pointer">
-
-                  <input type="checkbox" id="adm-openplay-enabled-toggle" checked onchange="toggleAdminDefaultOpenPlayEnabled(this.checked)" class="w-4 h-4 accent-[#84cc16]">
-
-                  <span>Enable Daily Open Play</span>
-
-                </label>
-
-                <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold uppercase transition">
-
-                  ↺ Reset to 3:00 PM – 6:00 PM
-
-                </button>
-
-                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-[#9BE600] hover:bg-[#bef264] text-[#050E1D] font-black text-xs uppercase transition shadow-lg">
-
-                  💾 Save Open Play Hours
-
-                </button>
-
-              </div>
-
-            </div>
-
-            <div id="adm-openplay-hour-pills" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-1.5 pt-1"></div>
-
-            <div id="adm-calendar-action-feedback" class="hidden p-2.5 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-black"></div>
-
-          </div>
-
-
-
           <!-- Active Calendar Overrides & Blocks List -->
           <div class="mb-6">
             <div class="flex items-center justify-between mb-2">
