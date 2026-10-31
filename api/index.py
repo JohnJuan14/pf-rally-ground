@@ -175,8 +175,10 @@ def resolve_api_route(parsed_url):
     sub = (qs.get("__path") or qs.get("path") or [""])[0].strip("/")
     if sub:
         return "/api/" + sub
-    if parsed_url.path in ("/api/index", "/api/index.py"):
+    if parsed_url.path in ("/", "/index", "/index.py", "/api/index", "/api/index.py"):
         return "/api/state"
+    if not parsed_url.path.startswith("/api/"):
+        return "/api/" + parsed_url.path.lstrip("/")
     return parsed_url.path
 
 def get_pht_now():
@@ -311,8 +313,7 @@ class handler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path.startswith('/api/'):
-            parsed = parsed._replace(path=resolve_api_route(parsed))
+        parsed = parsed._replace(path=resolve_api_route(parsed))
         db = load_db()
         if parsed.path == "/api/state":
             public_state = {k: v for k, v in db.items() if k != "adminPassword"}
@@ -354,8 +355,7 @@ class handler(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path.startswith('/api/'):
-            parsed = parsed._replace(path=resolve_api_route(parsed))
+        parsed = parsed._replace(path=resolve_api_route(parsed))
         length = int(self.headers.get("Content-Length", 0))
         raw_body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
         try:

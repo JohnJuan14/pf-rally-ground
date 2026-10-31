@@ -12,13 +12,7 @@
       if (!isLocal && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(reqUrl)) {
         return Promise.reject(new Error('Skipped localhost fallback on production host'));
       }
-      // Rewrite /api/<subpath> to /api/index?__path=<subpath> on Vercel so cleanUrls never 404s
-      if (!isLocal && typeof input === 'string' && input.startsWith('/api/') && !input.startsWith('/api/index')) {
-        const qIdx = input.indexOf('?');
-        const pathPart = (qIdx >= 0 ? input.slice(0, qIdx) : input).replace(/^\/api\/+/, '');
-        const existingQuery = qIdx >= 0 ? '&' + input.slice(qIdx + 1) : '';
-        input = `/api/index?__path=${encodeURIComponent(pathPart)}${existingQuery}`;
-      }
+
     } catch (e) {}
     return origFetch(input, init);
   };

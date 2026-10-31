@@ -3156,12 +3156,7 @@ function clearFieldError(fieldId) {
           if (!isLocal && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(reqStr)) {
             return Promise.reject(new Error('Skipped localhost fallback on production host'));
           }
-          if (!isLocal && typeof input === 'string' && input.startsWith('/api/') && !input.startsWith('/api/index')) {
-            const qIdx = input.indexOf('?');
-            const pathPart = (qIdx >= 0 ? input.slice(0, qIdx) : input).replace(/^\/api\/+/, '');
-            const existingQuery = qIdx >= 0 ? '&' + input.slice(qIdx + 1) : '';
-            input = `/api/index?__path=${encodeURIComponent(pathPart)}${existingQuery}`;
-          }
+
         } catch (e) {}
         const method = ((init && init.method) || 'GET').toUpperCase();
         const urlStr = typeof input === 'string' ? input : (input && input.url ? input.url : '');
