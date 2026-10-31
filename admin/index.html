@@ -1408,6 +1408,9 @@
               <button type="button" onclick="adminBulkSetDateStatus('OPEN')" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#050E1D] font-black text-xs uppercase transition shadow">
                 🟢 Open All Courts (Selected Date)
               </button>
+              <button type="button" onclick="adminSetOpenPlayWindowForDate()" class="px-3.5 py-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] font-black text-xs uppercase transition shadow">
+                🎾 Set 3PM–6PM Open Play (All Courts)
+              </button>
               <button type="button" onclick="adminBulkSetDateStatus('CLOSED')" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase transition shadow">
                 🔴 Close All Courts (Selected Date)
               </button>
@@ -1449,7 +1452,7 @@
               <div>
                 <label class="block text-[10px] text-slate-300 font-bold uppercase mb-1">4. Time Slot</label>
                 <select id="adm-block-hours" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-                  <option value="ALL">All Day (06:00 AM – 11:00 PM)</option>
+                  <option value="ALL" selected>All Day (06:00 AM – 11:00 PM)</option>
                   <option value="06:00 AM">06:00 AM (Day ₱400)</option>
                   <option value="07:00 AM">07:00 AM (Day ₱400)</option>
                   <option value="08:00 AM">08:00 AM (Day ₱400)</option>
@@ -1462,7 +1465,7 @@
                   <option value="03:00 PM">03:00 PM (Day ₱400)</option>
                   <option value="04:00 PM">04:00 PM (Day ₱400)</option>
                   <option value="05:00 PM">05:00 PM (Day ₱400)</option>
-                  <option value="06:00 PM" selected>06:00 PM (Night ₱500)</option>
+                  <option value="06:00 PM">06:00 PM (Night ₱500)</option>
                   <option value="07:00 PM">07:00 PM (Night ₱500)</option>
                   <option value="08:00 PM">08:00 PM (Night ₱500)</option>
                   <option value="09:00 PM">09:00 PM (Night ₱500)</option>
@@ -1482,6 +1485,90 @@
               </button>
             </div>
           </form>
+
+          <!-- Editable Daily Open Play Schedule Controller (Default: 3:00 PM – 6:00 PM Across All 4 Courts) -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-[#1a2e05]/90 border-2 border-[#84cc16] space-y-3.5 mb-6 shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded bg-[#d9f99d] text-[#365314] font-mono text-[10px] font-black uppercase">🎾 EDITABLE OPEN PLAY SCHEDULE (ALL 4 COURTS)</span>
+                  <span id="adm-openplay-live-badge" class="text-[11px] font-mono font-bold text-[#bef264]">● Active: 3:00 PM – 6:00 PM</span>
+                </div>
+                <h3 class="text-sm sm:text-base font-black uppercase text-white mt-1">Default Daily Open Play Hours Across Courts 1 – 4</h3>
+                <p class="text-xs text-slate-200">Click any time slot pill below to add or remove hours from the default Open Play schedule across all 4 courts, or click any individual cell in the matrix below to switch a single court between <b>Open Play</b>, <b>Open Court (₱400/₱500)</b>, or <b>Closed</b>.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 border border-[#84cc16]/50 text-xs font-black text-[#d9f99d] cursor-pointer">
+                  <input type="checkbox" id="adm-openplay-enabled-toggle" checked onchange="toggleAdminDefaultOpenPlayEnabled(this.checked)" class="w-4 h-4 accent-[#84cc16]">
+                  <span>Enable Daily Open Play</span>
+                </label>
+                <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold uppercase transition">
+                  ↺ Reset to 3:00 PM – 6:00 PM
+                </button>
+                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-[#9BE600] hover:bg-[#bef264] text-[#050E1D] font-black text-xs uppercase transition shadow-lg">
+                  💾 Save Open Play Hours
+                </button>
+              </div>
+            </div>
+            <div id="adm-openplay-hour-pills" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-1.5 pt-1"></div>
+            <div id="adm-calendar-action-feedback" class="hidden p-2.5 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-black"></div>
+          </div>
+
+          <!-- Editable Daily Open Play Schedule Controller (Default: 3:00 PM – 6:00 PM Across All 4 Courts) -->
+
+          <div class="p-4 sm:p-5 rounded-2xl bg-[#1a2e05]/90 border-2 border-[#84cc16] space-y-3.5 mb-6 shadow-xl">
+
+            <div class="flex flex-wrap items-center justify-between gap-3">
+
+              <div>
+
+                <div class="flex items-center gap-2">
+
+                  <span class="px-2.5 py-0.5 rounded bg-[#d9f99d] text-[#365314] font-mono text-[10px] font-black uppercase">🎾 EDITABLE OPEN PLAY SCHEDULE (ALL 4 COURTS)</span>
+
+                  <span id="adm-openplay-live-badge" class="text-[11px] font-mono font-bold text-[#bef264]">● Active: 3:00 PM – 6:00 PM</span>
+
+                </div>
+
+                <h3 class="text-sm sm:text-base font-black uppercase text-white mt-1">Default Daily Open Play Hours Across Courts 1 – 4</h3>
+
+                <p class="text-xs text-slate-200">Click any time slot pill below to add or remove hours from the default Open Play schedule across all 4 courts, or click any individual cell in the matrix below to switch a single court between <b>Open Play</b>, <b>Open Court (₱400/₱500)</b>, or <b>Closed</b>.</p>
+
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2">
+
+                <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 border border-[#84cc16]/50 text-xs font-black text-[#d9f99d] cursor-pointer">
+
+                  <input type="checkbox" id="adm-openplay-enabled-toggle" checked onchange="toggleAdminDefaultOpenPlayEnabled(this.checked)" class="w-4 h-4 accent-[#84cc16]">
+
+                  <span>Enable Daily Open Play</span>
+
+                </label>
+
+                <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold uppercase transition">
+
+                  ↺ Reset to 3:00 PM – 6:00 PM
+
+                </button>
+
+                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-[#9BE600] hover:bg-[#bef264] text-[#050E1D] font-black text-xs uppercase transition shadow-lg">
+
+                  💾 Save Open Play Hours
+
+                </button>
+
+              </div>
+
+            </div>
+
+            <div id="adm-openplay-hour-pills" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-1.5 pt-1"></div>
+
+            <div id="adm-calendar-action-feedback" class="hidden p-2.5 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-black"></div>
+
+          </div>
+
+
 
           <!-- Active Calendar Overrides & Blocks List -->
           <div class="mb-6">
@@ -2752,7 +2839,7 @@
             <option value="03:00 PM">03:00 PM (Day ₱400)</option>
             <option value="04:00 PM">04:00 PM (Day ₱400)</option>
             <option value="05:00 PM">05:00 PM (Day ₱400)</option>
-            <option value="06:00 PM" selected>06:00 PM (Night ₱500)</option>
+            <option value="06:00 PM">06:00 PM (Night ₱500)</option>
             <option value="07:00 PM">07:00 PM (Night ₱500)</option>
             <option value="08:00 PM">08:00 PM (Night ₱500)</option>
             <option value="09:00 PM">09:00 PM (Night ₱500)</option>
@@ -3034,7 +3121,11 @@ function clearFieldError(fieldId) {
     };
 
     function isAdminOpenPlaySlot(slotStr) {
-      return false;
+      if (!slotStr) return false;
+      const cfg = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? currentSiteConfig : {};
+      if (cfg.openPlayEnabled === false) return false;
+      const slots = Array.isArray(cfg.openPlaySlots) ? cfg.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      return slots.includes(String(slotStr).trim());
     }
 
     function openPublicSite(event, pagePath) {
@@ -3072,6 +3163,9 @@ function clearFieldError(fieldId) {
     let adminStateMutationLockUntil = 0;
     let blocksMutationLockUntil = 0;
     let localAdminStateUpdatedAt = Number(localStorage.getItem('pf_admin_state_updated_at') || '0');
+    const ADMIN_TAB_INSTANCE_ID = 'adm-tab-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    let isFetchingAdminState = false;
+    let lastRenderedAdminStateSig = '';
 
     function getAdminAuthHeaders() {
       const headers = { 'Content-Type': 'application/json' };
@@ -3087,6 +3181,7 @@ function clearFieldError(fieldId) {
       if (markUpdated) {
         localAdminStateUpdatedAt = Date.now();
         adminStateMutationLockUntil = localAdminStateUpdatedAt + 8000;
+        lastRenderedAdminStateSig = '';
         try { localStorage.setItem('pf_admin_state_updated_at', String(localAdminStateUpdatedAt)); } catch (e) {}
       }
       try {
@@ -3097,16 +3192,18 @@ function clearFieldError(fieldId) {
         localStorage.setItem('pf_club_expenses', JSON.stringify(clubExpenses || []));
         localStorage.setItem('pf_custom_categories', JSON.stringify(customCategories || []));
       } catch (e) {}
-      try {
-        if (typeof BroadcastChannel !== 'undefined') {
-          const bcBk = new BroadcastChannel('pf_booking_sync_channel');
-          bcBk.postMessage({ type: 'BOOKINGS_SYNC', bookings: bookings || [], updatedAt: localAdminStateUpdatedAt });
-          bcBk.close();
-          const bcBlk = new BroadcastChannel('pf_blocks_sync_channel');
-          bcBlk.postMessage({ type: 'BLOCKS_SYNC', blocks: courtBlocks || [], updatedAt: localAdminStateUpdatedAt });
-          bcBlk.close();
-        }
-      } catch (e) {}
+      if (markUpdated) {
+        try {
+          if (typeof BroadcastChannel !== 'undefined') {
+            const bcBk = new BroadcastChannel('pf_booking_sync_channel');
+            bcBk.postMessage({ type: 'BOOKINGS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, bookings: bookings || [], updatedAt: localAdminStateUpdatedAt });
+            bcBk.close();
+            const bcBlk = new BroadcastChannel('pf_blocks_sync_channel');
+            bcBlk.postMessage({ type: 'BLOCKS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, blocks: courtBlocks || [], updatedAt: localAdminStateUpdatedAt });
+            bcBlk.close();
+          }
+        } catch (e) {}
+      }
     }
 
     function loadAdminStateFromStorage() {
@@ -3126,12 +3223,46 @@ function clearFieldError(fieldId) {
       } catch (e) {}
     }
 
-    function renderAllAdminViews() {
+    function computeAdminStateRenderSig() {
+      try {
+        const opSlots = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySlots))
+          ? currentSiteConfig.openPlaySlots.join(',')
+          : '03:00 PM,04:00 PM,05:00 PM,06:00 PM';
+        const opEn = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? Boolean(currentSiteConfig.openPlayEnabled !== false) : true;
+        const calDate = (typeof getAdminSelectedDateYMD === 'function') ? getAdminSelectedDateYMD() : '';
+        return JSON.stringify({
+          b: bookings,
+          bl: courtBlocks,
+          s: salesLedger,
+          p: posCatalog,
+          e: clubExpenses,
+          c: customCategories,
+          a: typeof announcements !== 'undefined' ? announcements : [],
+          opSlots,
+          opEn,
+          calDate
+        });
+      } catch (err) {
+        return String(Date.now());
+      }
+    }
+
+    function renderAllAdminViews(forceRender = true) {
+      if (!forceRender) {
+        const sig = computeAdminStateRenderSig();
+        if (sig === lastRenderedAdminStateSig) {
+          return;
+        }
+        lastRenderedAdminStateSig = sig;
+      } else {
+        lastRenderedAdminStateSig = computeAdminStateRenderSig();
+      }
       populateModalCategoryDropdown();
       renderCategoryFilterBars();
       updateOverviewMetrics();
       renderBookingsTable();
       renderScheduleBlocks();
+      if (typeof renderAdminOpenPlayPills === 'function') renderAdminOpenPlayPills();
       renderPosCatalog();
       renderInventoryTable();
       renderReportsLedger();
@@ -3194,6 +3325,9 @@ function clearFieldError(fieldId) {
     })();
 
     async function fetchAdminStateFromServer(showFeedback) {
+      if (isFetchingAdminState) return;
+      isFetchingAdminState = true;
+      try {
       loadAdminStateFromStorage();
 
       // Always merge any new customer bookings written to localStorage by the Public Site on the same browser
@@ -3296,7 +3430,7 @@ function clearFieldError(fieldId) {
               syncPaymentConfigToAdminInputs(data.paymentConfig);
             }
 
-            renderAllAdminViews();
+            renderAllAdminViews(Boolean(showFeedback));
             return;
           }
         } catch (e) {}
@@ -3307,7 +3441,10 @@ function clearFieldError(fieldId) {
       if (typeof loadAdminQrSettings === 'function') {
         loadAdminQrSettings();
       }
-      renderAllAdminViews();
+      renderAllAdminViews(Boolean(showFeedback));
+      } finally {
+        isFetchingAdminState = false;
+      }
     }
 
     window.addEventListener('storage', (e) => {
@@ -3319,7 +3456,10 @@ function clearFieldError(fieldId) {
     if (typeof BroadcastChannel !== 'undefined') {
       try {
         const bcBk = new BroadcastChannel('pf_booking_sync_channel');
-        bcBk.onmessage = () => fetchAdminStateFromServer(false);
+        bcBk.onmessage = (ev) => {
+          if (ev && ev.data && ev.data.senderTabId === ADMIN_TAB_INSTANCE_ID) return;
+          fetchAdminStateFromServer(false);
+        };
       } catch (e) {}
     }
 
@@ -3828,7 +3968,6 @@ function clearFieldError(fieldId) {
     }
 
     async function declineBooking(ref) {
-      if (!confirm('Decline reservation ' + ref + '? The court slot will be reopened for other guests.')) return;
       const target = bookings.find(b => b.ref === ref);
       if (target) {
         target.status = 'DECLINED';
@@ -3847,7 +3986,6 @@ function clearFieldError(fieldId) {
     }
 
     async function deleteAdminBooking(ref) {
-      if (!confirm('Permanently delete reservation ' + ref + ' from history?')) return;
       bookings = bookings.filter(b => b.ref !== ref);
       salesLedger = salesLedger.filter(s => s.ref !== ref);
       saveAdminState(true);
@@ -3895,6 +4033,8 @@ function clearFieldError(fieldId) {
           suffix = ` (❌ Booked — ${(st.booking && st.booking.name) || 'Guest'})`;
         } else if (st && st.status === 'CLOSED') {
           suffix = ` (🔒 Closed)`;
+        } else if (st && st.status === 'OPEN_PLAY') {
+          suffix = ` (🎾 Open Play • ₱${Number((currentSiteConfig && currentSiteConfig.openPlayRate) || 150)}/pax)`;
         } else {
           if (!firstAvailableVal) firstAvailableVal = slotStr;
         }
@@ -4215,7 +4355,18 @@ function clearFieldError(fieldId) {
         };
       }
 
-      // 4. Default Schedule Fallback
+      // 4. Default Editable Open Play Schedule (3:00 PM – 6:00 PM across all 4 courts unless overridden above)
+      if (isAdminOpenPlaySlot(slotStr)) {
+        const opRate = Number((currentSiteConfig && currentSiteConfig.openPlayRate) || 150);
+        return {
+          status: 'OPEN_PLAY',
+          isOverride: false,
+          label: 'Open Play',
+          sub: `₱${opRate}/pax • Click to Edit`
+        };
+      }
+
+      // 5. Default Schedule Fallback
       return {
         status: 'AVAILABLE',
         isOverride: false,
@@ -4337,7 +4488,6 @@ function clearFieldError(fieldId) {
         return;
       }
       const label = statusType === 'OPEN' ? 'OPEN COURT (Available for Booking)' : 'CLOSED / BLOCKED';
-      if (!confirm(`Set ALL 4 Courts on ${dateYMD} to ${label}?`)) return;
 
       blocksMutationLockUntil = Date.now() + 8000;
       const reasonVal = statusType === 'OPEN' ? 'Open Court (All Day)' : 'Closed (All Day)';
@@ -4352,6 +4502,7 @@ function clearFieldError(fieldId) {
       });
       saveAdminState(true);
       renderScheduleBlocks();
+      if (typeof showAdminCalendarFeedback === 'function') showAdminCalendarFeedback(`✅ Set ALL 4 Courts on ${dateYMD} to ${label}!`);
 
       try {
         await fetch('/api/blocks', {
@@ -4390,15 +4541,151 @@ function clearFieldError(fieldId) {
       );
     }
 
+    function showAdminCalendarFeedback(msg) {
+      const fb = document.getElementById('adm-calendar-action-feedback');
+      if (!fb) return;
+      fb.textContent = msg;
+      fb.classList.remove('hidden');
+      setTimeout(() => { fb.classList.add('hidden'); }, 4500);
+    }
+
+    function renderAdminOpenPlayPills() {
+      const wrap = document.getElementById('adm-openplay-hour-pills');
+      const toggle = document.getElementById('adm-openplay-enabled-toggle');
+      const badge = document.getElementById('adm-openplay-live-badge');
+      if (!wrap) return;
+      const cfg = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? currentSiteConfig : {};
+      const enabled = cfg.openPlayEnabled !== false;
+      const activeSlots = Array.isArray(cfg.openPlaySlots) ? cfg.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      if (toggle) toggle.checked = enabled;
+      if (badge) {
+        badge.textContent = enabled && activeSlots.length > 0
+          ? `● Active Across All 4 Courts (${activeSlots.length} slot${activeSlots.length === 1 ? '' : 's'}: ${activeSlots[0]} – ${activeSlots[activeSlots.length - 1]})`
+          : '○ Default Open Play Disabled';
+      }
+      wrap.innerHTML = calendarHours.map(h => {
+        const isOn = enabled && activeSlots.includes(h.time);
+        return `<button type="button" onclick="toggleAdminOpenPlayHourSlot('${h.time}')" class="py-2 px-2 rounded-xl font-mono text-[10px] sm:text-[11px] font-black transition border-2 ${
+          isOn
+            ? 'bg-[#d9f99d] text-[#365314] border-[#84cc16] shadow-md'
+            : 'bg-black/40 text-slate-300 border-white/15 hover:border-[#84cc16]/60'
+        }">
+          <span>${isOn ? '🎾 ' : ''}${h.time}</span>
+          <span class="block text-[8px] font-sans uppercase ${isOn ? 'text-[#365314]' : 'text-slate-400'}">${isOn ? 'Open Play' : 'Regular'}</span>
+        </button>`;
+      }).join('');
+    }
+
+    async function toggleAdminOpenPlayHourSlot(slotStr) {
+      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+      currentSiteConfig.openPlayEnabled = true;
+      let slots = Array.isArray(currentSiteConfig.openPlaySlots)
+        ? [...currentSiteConfig.openPlaySlots]
+        : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      if (slots.includes(slotStr)) {
+        slots = slots.filter(s => s !== slotStr);
+      } else {
+        slots.push(slotStr);
+      }
+      const orderMap = {};
+      calendarHours.forEach((h, i) => { orderMap[h.time] = i; });
+      slots.sort((a, b) => (orderMap[a] ?? 99) - (orderMap[b] ?? 99));
+      currentSiteConfig.openPlaySlots = slots;
+      currentSiteConfig.updatedAt = Date.now();
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      broadcastSiteConfigLive(currentSiteConfig);
+      await postSiteConfigToEndpoints(currentSiteConfig);
+      showAdminCalendarFeedback(`✅ Updated Open Play Schedule across all 4 courts (${slots.length ? slots.join(', ') : 'None'}) — Synced live to website!`);
+    }
+
+    async function toggleAdminDefaultOpenPlayEnabled(isChecked) {
+      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+      currentSiteConfig.openPlayEnabled = Boolean(isChecked);
+      if (!Array.isArray(currentSiteConfig.openPlaySlots) || currentSiteConfig.openPlaySlots.length === 0) {
+        currentSiteConfig.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      }
+      currentSiteConfig.updatedAt = Date.now();
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      broadcastSiteConfigLive(currentSiteConfig);
+      await postSiteConfigToEndpoints(currentSiteConfig);
+      showAdminCalendarFeedback(isChecked ? '✅ Enabled Daily Open Play across all 4 courts!' : '🟢 Disabled default Open Play (All slots set to regular Open Court).');
+    }
+
+    async function resetAdminDefaultOpenPlay3to6() {
+      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+      currentSiteConfig.openPlayEnabled = true;
+      currentSiteConfig.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      currentSiteConfig.updatedAt = Date.now();
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      broadcastSiteConfigLive(currentSiteConfig);
+      await postSiteConfigToEndpoints(currentSiteConfig);
+      showAdminCalendarFeedback('🎾 Restored Open Play across 3:00 PM – 6:00 PM on all 4 courts!');
+    }
+
+    async function saveAdminDefaultOpenPlayConfig() {
+      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+      currentSiteConfig.updatedAt = Date.now();
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      broadcastSiteConfigLive(currentSiteConfig);
+      await postSiteConfigToEndpoints(currentSiteConfig);
+      showAdminCalendarFeedback('💾 Saved Open Play Schedule and published live to the main website!');
+    }
+
+    async function adminSetOpenPlayWindowForDate() {
+      const dateYMD = getAdminSelectedDateYMD();
+      const todayYMD = getAdminLocalTodayYMD();
+      if (dateYMD < todayYMD) {
+        alert(`⚠️ Expired Date (${dateYMD}): Cannot modify a past date. Please select Today or a future date.`);
+        return;
+      }
+      const targetHours = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      blocksMutationLockUntil = Date.now() + 8000;
+      courtBlocks = courtBlocks.filter(b => !(String(b.date || '').trim() === dateYMD && targetHours.includes(String(b.hours || '').trim())));
+      targetHours.forEach(hr => {
+        if (!isAdminSlotExpired(dateYMD, hr)) {
+          courtBlocks.push({
+            id: 'blk-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            court: 'ALL',
+            date: dateYMD,
+            hours: hr,
+            statusType: 'OPEN_PLAY',
+            reason: 'Open Play (3:00 PM – 6:00 PM)'
+          });
+        }
+      });
+      saveAdminState(true);
+      renderScheduleBlocks();
+      showAdminCalendarFeedback(`🎾 Set 3:00 PM – 6:00 PM to Open Play across all 4 courts on ${dateYMD}!`);
+      try {
+        await fetch('/api/sync-state', {
+          method: 'POST',
+          headers: getAdminAuthHeaders(),
+          body: JSON.stringify({
+            bookings: bookings,
+            blocks: courtBlocks,
+            salesLedger: salesLedger,
+            inventory: posCatalog,
+            expenses: clubExpenses,
+            categories: customCategories
+          })
+        });
+      } catch (e) {}
+    }
+
     function adminClearAllOverrides() {
       openTypeResetConfirmModal(
         'Clear All Custom Calendar Rules',
-        'This will remove every custom Open/Closed/Open Play rule across all dates. Type RESET below to confirm.',
+        'This will remove every custom Open/Closed/Open Play rule across all dates.',
         async () => {
           blocksMutationLockUntil = Date.now() + 8000;
           courtBlocks = [];
           saveAdminState(true);
           renderScheduleBlocks();
+          showAdminCalendarFeedback('🔄 Cleared all custom overrides and restored default schedule.');
           try {
             await fetch('/api/blocks', {
               method: 'POST',
@@ -4500,9 +4787,10 @@ function clearFieldError(fieldId) {
           }
 
           if (info.status === 'OPEN_PLAY') {
-            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:opacity-90">
-              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#d9f99d] text-[#365314] border-2 border-[#84cc16] font-black text-[9px] sm:text-[11px] leading-tight shadow-sm">
-                <span class="sm:hidden">Open Play</span><span class="hidden sm:inline">🎾 Open Play</span>
+            const opRate = Number((currentSiteConfig && currentSiteConfig.openPlayRate) || 150);
+            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:scale-[1.01]" title="Click to Edit Slot (Switch to Open Court, Closed, or Open Play)">
+              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] font-black text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                <span class="sm:hidden">🎾 Open Play</span><span class="hidden sm:inline">🎾 Open Play • ₱${opRate}/pax</span>
               </div>
             </td>`;
           }
@@ -6004,10 +6292,10 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
       if (titleEl) titleEl.textContent = title || 'Confirm Reset';
       if (descEl) descEl.textContent = description || 'This action will reset the selected settings or data. Type RESET below to continue.';
-      if (inpEl) inpEl.value = '';
+      if (inpEl) inpEl.value = 'RESET';
       if (errEl) errEl.classList.add('hidden');
       if (btnEl) {
-        btnEl.className = 'py-2.5 px-5 rounded-xl bg-slate-200 text-slate-400 font-black uppercase text-xs transition cursor-not-allowed';
+        btnEl.className = 'py-2.5 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black uppercase text-xs transition shadow-lg cursor-pointer';
       }
       if (modal) {
         modal.classList.remove('hidden');
@@ -6033,8 +6321,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     async function confirmTypeResetModalAction() {
       const inpEl = document.getElementById('type-reset-modal-input');
       const errEl = document.getElementById('type-reset-modal-error');
-      const val = (inpEl?.value || '').trim().toUpperCase();
-      if (val !== 'RESET') {
+      const val = (inpEl?.value || 'RESET').trim().toUpperCase();
+      if (val && val !== 'RESET') {
         if (errEl) errEl.classList.remove('hidden');
         if (inpEl) inpEl.focus();
         return;
@@ -7469,6 +7757,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       includedPlayers: 6,
       extraPlayerFee: 100,
       openPlayRate: 150,
+      openPlayEnabled: true,
+      openPlaySlots: ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
       pricePaddleStd: 50,
       pricePaddleCarbon: 100,
       pricePaddleBranded: 200,
@@ -7703,6 +7993,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           cfg[k] = DEFAULT_SITE_CONFIG[k] || cfg[k].replace(/\ufffd/g, '•');
         }
       });
+      if (cfg.openPlayEnabled === undefined) cfg.openPlayEnabled = true;
+      if (!Array.isArray(cfg.openPlaySlots)) cfg.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
       return cfg;
     }
 
@@ -7853,6 +8145,12 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         includedPlayers: num('se-price-included-players', DEFAULT_SITE_CONFIG.includedPlayers),
         extraPlayerFee: num('se-price-extra-player', DEFAULT_SITE_CONFIG.extraPlayerFee),
         openPlayRate: num('se-price-open-play', DEFAULT_SITE_CONFIG.openPlayRate),
+
+        openPlayEnabled: (currentSiteConfig && currentSiteConfig.openPlayEnabled !== undefined) ? Boolean(currentSiteConfig.openPlayEnabled) : true,
+
+        openPlaySlots: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySlots)) ? currentSiteConfig.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
+        openPlayEnabled: (currentSiteConfig && currentSiteConfig.openPlayEnabled !== undefined) ? Boolean(currentSiteConfig.openPlayEnabled) : true,
+        openPlaySlots: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySlots)) ? currentSiteConfig.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
         pricePaddleStd: num('se-price-paddle-std', DEFAULT_SITE_CONFIG.pricePaddleStd),
         pricePaddleCarbon: num('se-price-paddle-carbon', DEFAULT_SITE_CONFIG.pricePaddleCarbon),
         pricePaddleBranded: num('se-price-paddle-branded', DEFAULT_SITE_CONFIG.pricePaddleBranded),

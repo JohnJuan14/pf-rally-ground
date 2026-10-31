@@ -2150,6 +2150,8 @@ const DEFAULT_PF_SITE_CONFIG = {
   includedPlayers: 6,
   extraPlayerFee: 100,
   openPlayRate: 150,
+  openPlayEnabled: true,
+  openPlaySlots: ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
   pricePaddleStd: 50,
   pricePaddleCarbon: 100,
   pricePaddleBranded: 200,
@@ -2179,6 +2181,10 @@ function getSiteConfig() {
   const merged = (savedTs > srvTs)
     ? Object.assign({}, DEFAULT_PF_SITE_CONFIG, serverCfg, saved)
     : Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg);
+  if (merged.openPlayEnabled === undefined) merged.openPlayEnabled = true;
+  if (!Array.isArray(merged.openPlaySlots)) {
+    merged.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+  }
   window.PF_SITE_CONFIG = merged;
   return merged;
 }
@@ -2423,8 +2429,11 @@ function applySiteConfig(incomingCfg) {
   // 5. Update All Visible Prices via data-site-price attributes across all pages
   document.querySelectorAll('[data-site-price="day-hr"]').forEach(el => { el.textContent = `₱${dayRate} / hr`; });
   document.querySelectorAll('[data-site-price="night-hr"]').forEach(el => { el.textContent = `₱${nightRate} / hr`; });
+  const openPlayRate = Number(cfg.openPlayRate ?? 150);
   document.querySelectorAll('[data-site-price="day-num"]').forEach(el => { el.textContent = `₱${dayRate}`; });
   document.querySelectorAll('[data-site-price="night-num"]').forEach(el => { el.textContent = `₱${nightRate}`; });
+  document.querySelectorAll('[data-site-price="open-play-num"]').forEach(el => { el.textContent = `₱${openPlayRate}`; });
+  document.querySelectorAll('[data-site-price="open-play-pax"]').forEach(el => { el.textContent = `₱${openPlayRate}/pax`; });
   document.querySelectorAll('[data-site-price="day-night-badge"]').forEach(el => { el.textContent = `Day: ₱${dayRate}/hr • Night: ₱${nightRate}/hr`; });
   document.querySelectorAll('[data-site-price="included-players"]').forEach(el => { el.textContent = `Up to ${incPlayers} Players`; });
   document.querySelectorAll('[data-site-price="extra-player-fee"]').forEach(el => { el.textContent = `+₱${extraFee} / player`; });
@@ -2562,6 +2571,9 @@ function pfGetNextUpcomingSlot(dateYMD, allSlots) {
     '12:00 PM','01:00 PM','02:00 PM','03:00 PM','04:00 PM','05:00 PM',
     '06:00 PM','07:00 PM','08:00 PM','09:00 PM','10:00 PM','11:00 PM'
   ];
+  for (const s of slots) {
+    if (!pfIsSlotExpired(dateYMD, s) && (typeof pfIsDefaultOpenPlaySlot !== 'function' || !pfIsDefaultOpenPlaySlot(dateYMD, s))) return s;
+  }
   for (const s of slots) {
     if (!pfIsSlotExpired(dateYMD, s)) return s;
   }
@@ -2755,12 +2767,25 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return { status: 'CLOSED', override: matchedBlock, reason: matchedBlock.reason || 'Closed' };
   }
 
-  // 4. Default schedule fallback: Expired check first, otherwise Available
+  // 4. Default schedule fallback: Expired check first, then Editable Open Play (default 3:00 PM – 6:00 PM across all courts), otherwise Available
   if (isExpiredSlot) {
     return { status: 'EXPIRED', override: null, reason: 'Time Passed' };
   }
+  if (pfIsDefaultOpenPlaySlot(targetDate, slotStr)) {
+    return { status: 'OPEN_PLAY', override: null, reason: 'Open Play (3:00 PM – 6:00 PM)' };
+  }
   return { status: 'AVAILABLE', override: null, reason: 'Available' };
 }
+
+function pfIsDefaultOpenPlaySlot(dateYMD, slotStr) {
+  if (!slotStr) return false;
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  if (cfg && cfg.openPlayEnabled === false) return false;
+  const defaultSlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+  const activeSlots = (cfg && Array.isArray(cfg.openPlaySlots)) ? cfg.openPlaySlots : defaultSlots;
+  return activeSlots.includes(String(slotStr).trim());
+}
+window.pfIsDefaultOpenPlaySlot = pfIsDefaultOpenPlaySlot;
 window.pfResolveCourtSlot = pfResolveCourtSlot;
 window.pfNormalizeCourtNumber = pfNormalizeCourtNumber;
 window.pfExtractBookingDateYMD = pfExtractBookingDateYMD;

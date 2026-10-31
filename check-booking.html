@@ -1769,7 +1769,10 @@
     }
 
     function isOpenPlaySlot(dateYMD, slotStr) {
-      return false;
+      if (typeof window.pfIsDefaultOpenPlaySlot === 'function') {
+        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr);
+      }
+      return ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'].includes(String(slotStr || '').trim());
     }
 
     function ensureDynamicScheduleDateExists(ymd) {
@@ -1949,45 +1952,39 @@
         const compactTime = h.time.replace(':00 ', ' ');
 
         const cells = courtsToShow.map(cNum => {
-          const courtLabelZero = 'Court 0' + cNum;
-          const courtLabelPlain = 'Court ' + cNum;
+          const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
+            ? window.pfResolveCourtSlot(selectedScheduleDateYMD, cNum, h.time, liveBlocks, liveBookings)
+            : { status: openPlayActive ? 'OPEN_PLAY' : 'AVAILABLE', reason: '' };
 
-          const isLiveBlocked = liveBlocks.some(bl => {
-            if (!bl.court) return false;
-            const matchesCourt = bl.court.includes(courtLabelZero) || bl.court.includes(courtLabelPlain) || bl.court.toLowerCase().includes('all');
-            if (!matchesCourt) return false;
-            if (bl.date && selectedScheduleDateYMD && bl.date !== selectedScheduleDateYMD) return false;
-            return bl.hours && bl.hours.includes(h.time);
-          });
-
-          const isLiveBooked = liveBookings.some(b => {
-            if (b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
-            if (!b.court) return false;
-            const matchesCourt = String(b.court).includes(courtLabelZero) || String(b.court).includes(courtLabelPlain) || String(b.court) === String(cNum);
-            if (!matchesCourt) return false;
-            if (!b.time || !String(b.time).includes(h.time)) return false;
-            if (b.date && selectedScheduleDateYMD) return b.date === selectedScheduleDateYMD;
-            return true;
-          });
-
-          if (isLiveBlocked) {
+          if (slotInfo.status === 'CLOSED') {
+            const cReason = (slotInfo.reason && slotInfo.reason !== 'Closed') ? `Closed • ${pfEscapeHtml(slotInfo.reason)}` : 'Closed';
             return `<td class="p-1 sm:p-1.5 text-center">
-              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-800 text-white border border-slate-900 text-[10px] sm:text-xs font-black shadow-sm truncate">
-                Closed
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-800 text-white border border-slate-900 text-[10px] sm:text-xs font-black shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'Closed')}">
+                <span class="sm:hidden">Closed</span>
+                <span class="hidden sm:inline">${cReason}</span>
               </span>
             </td>`;
-          } else if (isLiveBooked) {
+          } else if (slotInfo.status === 'BOOKED') {
             return `<td class="p-1 sm:p-1.5 text-center">
               <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-rose-100/95 text-rose-700 border border-rose-300 text-[10px] sm:text-xs font-black shadow-sm truncate">
                 Booked
               </span>
             </td>`;
-          } else if (openPlayActive) {
+          } else if (slotInfo.status === 'OPEN_PLAY') {
+            const opRate = Number((window.PF_SITE_CONFIG && window.PF_SITE_CONFIG.openPlayRate) || 150);
             return `<td class="p-1 sm:p-1.5 text-center">
-              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[10px] sm:text-xs font-black shadow-sm truncate" title="Reserved for Open Play">
-                <span class="sm:hidden">${isSingleCourt ? 'Open Play' : 'Open'}</span>
-                <span class="hidden sm:inline">Open Play</span>
-              </span>
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-1.5 sm:py-2 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] transition text-[10px] sm:text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm" title="Open Play Session (₱${opRate}/pax) — Click to Book or Join">
+                <span class="sm:hidden">${isSingleCourt ? '🎾 Open Play • ₱' + opRate : '🎾 Open Play'}</span>
+                <span class="hidden sm:inline">🎾 Open Play</span>
+                <span class="hidden sm:inline text-[10px] font-mono font-bold opacity-90">₱${opRate}/pax</span>
+              </button>
+            </td>`;
+          } else if (slotInfo.status === 'EXPIRED') {
+            return `<td class="p-1 sm:p-1.5 text-center">
+              <button type="button" onclick="alert('⚠️ Expired Time Slot: ${h.time} on ' + (selectedScheduleDateYMD || 'Today') + ' has already passed. Please choose an upcoming time slot.')" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-200 text-slate-500 border border-slate-300 text-[10px] sm:text-xs font-bold cursor-not-allowed truncate" title="This time slot has already passed">
+                <span class="sm:hidden">Passed</span>
+                <span class="hidden sm:inline">Expired • Passed</span>
+              </button>
             </td>`;
           } else {
             return `<td class="p-1 sm:p-1.5 text-center">
@@ -2173,9 +2170,18 @@
           btn.className = 'py-2.5 px-2 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 text-[11px] font-mono font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-700 font-black">Booked</span>`;
         } else if (slotInfo.status === 'OPEN_PLAY') {
-          btn.disabled = true;
-          btn.className = 'py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-[11px] font-mono font-bold cursor-not-allowed';
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#365314] font-black">Open Play</span>`;
+          btn.className = isSelected
+            ? 'time-chip time-chip-active ring-2 ring-[#84cc16]'
+            : 'py-2 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-[11px] font-mono font-black transition leading-tight';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play</span>`;
+          btn.onclick = () => {
+            if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
+            DRAWER_STATE.selectedStartSlot = slot;
+            const badge = document.getElementById('drawer-selected-slot-badge');
+            if (badge) badge.textContent = slot;
+            renderDrawerSlots();
+            recalculateDrawerTotal();
+          };
         } else if (slotInfo.status === 'EXPIRED') {
           btn.className = 'py-2.5 px-2 rounded-xl bg-slate-900/90 text-slate-500 border border-slate-700/80 text-[11px] font-mono font-bold opacity-60 hover:border-rose-500/60 transition';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-400 font-black">Expired</span>`;

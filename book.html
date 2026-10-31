@@ -1995,7 +1995,10 @@
     };
 
     function isBookOpenPlay(dateYMD, slotStr) {
-      return false;
+      if (typeof window.pfIsDefaultOpenPlaySlot === 'function') {
+        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr);
+      }
+      return ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'].includes(String(slotStr || '').trim());
     }
 
     function renderTimeChips() {
@@ -2026,9 +2029,16 @@
           btn.disabled = true;
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-700 font-black">Booked</span>`;
         } else if (slotInfo.status === 'OPEN_PLAY') {
-          btn.className = "py-2.5 px-2 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-mono font-bold cursor-not-allowed leading-tight";
-          btn.disabled = true;
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#365314] font-black">Open Play</span>`;
+          btn.className = isSelected
+            ? "time-chip time-chip-active ring-2 ring-[#84cc16]"
+            : "py-2.5 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-xs font-mono font-black transition leading-tight";
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play</span>`;
+          btn.onclick = () => {
+            if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
+            selectedStartSlot = slot;
+            renderTimeChips();
+            updateSummary();
+          };
         } else if (slotInfo.status === 'EXPIRED') {
           btn.className = "py-2.5 px-2 rounded-xl bg-slate-900/90 text-slate-500 border border-slate-700/80 text-xs font-mono font-bold opacity-60 hover:border-rose-500/60 leading-tight transition";
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-400 font-black">Expired</span>`;

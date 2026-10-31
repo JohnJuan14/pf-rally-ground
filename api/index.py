@@ -82,6 +82,8 @@ DEFAULT_DB = {
         "includedPlayers": 6,
         "extraPlayerFee": 100,
         "openPlayRate": 150,
+        "openPlayEnabled": True,
+        "openPlaySlots": ["03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM"],
         "pricePaddleStd": 50,
         "pricePaddleCarbon": 100,
         "pricePaddleBranded": 200,
@@ -1046,8 +1048,10 @@ class handler(http.server.BaseHTTPRequestHandler):
                             current_sc["updatedAt"] = int(v)
                         except Exception:
                             current_sc["updatedAt"] = int(time.time() * 1000)
-                    elif isinstance(def_val, bool) or k == "liveBannerEnabled":
+                    elif isinstance(def_val, bool) or k in ("liveBannerEnabled", "openPlayEnabled"):
                         current_sc[k] = bool(v)
+                    elif k == "openPlaySlots" and isinstance(v, list):
+                        current_sc[k] = [sanitize_str(x, 30) for x in v if str(x).strip()]
                     elif isinstance(def_val, (int, float)) or k in (
                         "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate",
                         "pricePaddleStd", "pricePaddleCarbon", "pricePaddleBranded",
