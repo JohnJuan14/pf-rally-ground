@@ -18,6 +18,8 @@ LOCKOUT_SECONDS = 60
 
 DEFAULT_DB = {
     "bookings": [],
+    "deletedBookingRefs": [],
+    "bookingsUpdatedAt": 0,
     "blocks": [],
     "salesLedger": [],
     "expenses": [],
@@ -137,9 +139,11 @@ def _normalize_db_dict(data):
         data = json.loads(json.dumps(DEFAULT_DB))
     if "adminPassword" not in data or not data["adminPassword"]:
         data["adminPassword"] = ""
-    for k in ["bookings", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
+    for k in ["bookings", "deletedBookingRefs", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
         if k not in data or not isinstance(data[k], list):
             data[k] = []
+    if "bookingsUpdatedAt" not in data:
+        data["bookingsUpdatedAt"] = 0
     if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
         data["gmailConfig"] = dict(DEFAULT_DB["gmailConfig"])
     if "paymentConfig" not in data or not isinstance(data["paymentConfig"], dict):
@@ -692,9 +696,16 @@ class handler(http.server.BaseHTTPRequestHandler):
                 return
 
         elif parsed.path == "/api/sync-state":
-            # Hydrate cold serverless instance with client's latest verified state
-            if isinstance(body.get("bookings"), list) and len(body["bookings"]) >= len(db.get("bookings", [])):
-                db["bookings"] = body["bookings"]
+            del_refs = set(str(r).strip().upper() for r in (db.get("deletedBookingRefs") or []) if r)
+            if isinstance(body.get("deletedBookingRefs"), list):
+                for r in body["deletedBookingRefs"]:
+                    if r:
+                        del_refs.add(str(r).strip().upper())
+            db["deletedBookingRefs"] = list(del_refs)[-500:]
+            if isinstance(body.get("bookings"), list):
+                db["bookings"] = [b for b in body["bookings"] if isinstance(b, dict) and str(b.get("ref", "")).strip().upper() not in del_refs]
+            db["bookingsUpdatedAt"] = int(time.time() * 1000)
+            db["updatedAt"] = db["bookingsUpdatedAt"]
             if isinstance(body.get("blocks"), list):
                 db["blocks"] = body["blocks"]
             if isinstance(body.get("salesLedger"), list) and len(body["salesLedger"]) >= len(db.get("salesLedger", [])):
@@ -754,9 +765,16 @@ class handler(http.server.BaseHTTPRequestHandler):
             return
 
         elif parsed.path == "/api/bookings/delete":
-            ref = body.get("ref")
-            db["bookings"] = [b for b in db["bookings"] if b.get("ref") != ref]
-            db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
+            ref = str(body.get("ref") or "").strip()
+            ref_upper = ref.upper()
+            db["bookings"] = [b for b in db.get("bookings", []) if str(b.get("ref", "")).strip().upper() != ref_upper]
+            db["salesLedger"] = [s for s in db.get("salesLedger", []) if str(s.get("ref", "")).strip().upper() != ref_upper]
+            del_list = [str(r).strip().upper() for r in (db.get("deletedBookingRefs") or []) if r]
+            if ref_upper and ref_upper not in del_list:
+                del_list.append(ref_upper)
+            db["deletedBookingRefs"] = del_list[-500:]
+            db["bookingsUpdatedAt"] = int(time.time() * 1000)
+            db["updatedAt"] = db["bookingsUpdatedAt"]
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -1221,7 +1239,16 @@ class handler(http.server.BaseHTTPRequestHandler):
             keep_pw = db.get("adminPassword", "")
             keep_sc = db.get("siteConfig")
             keep_pc = db.get("paymentConfig")
+            prev_del = [str(r).strip().upper() for r in (db.get("deletedBookingRefs") or []) if r]
+            for b in (db.get("bookings") or []):
+                if isinstance(b, dict) and b.get("ref"):
+                    ru = str(b["ref"]).strip().upper()
+                    if ru not in prev_del:
+                        prev_del.append(ru)
             db = json.loads(json.dumps(DEFAULT_DB))
+            db["deletedBookingRefs"] = prev_del[-500:]
+            db["bookingsUpdatedAt"] = int(time.time() * 1000)
+            db["updatedAt"] = db["bookingsUpdatedAt"]
             db["adminPassword"] = keep_pw
             if isinstance(keep_sc, dict):
                 db["siteConfig"] = keep_sc

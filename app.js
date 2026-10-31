@@ -254,36 +254,60 @@ async function syncStateFromServer() {
           } else if (localBlocks.length > 0 && (!Array.isArray(data.blocks) || data.blocks.length === 0)) {
             data.blocks = localBlocks;
           }
-          // Merge local bookings with server bookings so a cold serverless instance never wipes active customer bookings
+          // Synchronize deleted booking refs from server + localStorage so deleted bookings never resurrect
+          let localDelRefs = [];
+          try { localDelRefs = JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || []; } catch (e) {}
+          const srvDelRefs = Array.isArray(data.deletedBookingRefs) ? data.deletedBookingRefs : [];
+          const deletedSet = new Set([...localDelRefs, ...srvDelRefs].map(r => String(r || '').trim().toUpperCase()).filter(Boolean));
+          try { localStorage.setItem('pf_deleted_booking_refs', JSON.stringify(Array.from(deletedSet).slice(-500))); } catch (e) {}
+
           let existingLocalBks = [];
           try { existingLocalBks = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]') || []; } catch (e) {}
-          const srvBookings = Array.isArray(data.bookings) ? data.bookings : [];
+          const srvBookings = (Array.isArray(data.bookings) ? data.bookings : []).filter(b => b && b.ref && !deletedSet.has(String(b.ref).trim().toUpperCase()));
           const srvRefMap = new Map();
-          srvBookings.forEach(b => { if (b && b.ref) srvRefMap.set(String(b.ref).toUpperCase(), b); });
-          // If server has more than default demo bookings or updated state, prefer server; also preserve any local booking created in this browser session
+          srvBookings.forEach(b => { if (b && b.ref) srvRefMap.set(String(b.ref).trim().toUpperCase(), b); });
+
+          // Server is authoritative! Only keep a local booking if it was just created (<10s ago) in this browser tab and not deleted
+          const nowMs = Date.now();
           const mergedBookings = [...srvBookings];
           existingLocalBks.forEach(lb => {
-            if (lb && lb.ref && !srvRefMap.has(String(lb.ref).toUpperCase())) {
-              // Only keep local booking if server appears cold/empty (<= 2 default bookings)
-              if (srvBookings.length <= 2) {
-                mergedBookings.unshift(lb);
-                srvRefMap.set(String(lb.ref).toUpperCase(), lb);
-              }
+            if (!lb || !lb.ref) return;
+            const refU = String(lb.ref).trim().toUpperCase();
+            if (deletedSet.has(refU) || srvRefMap.has(refU)) return;
+            const savedAt = Number(lb._localSavedAt || lb._createdAt || 0);
+            if (savedAt > 0 && (nowMs - savedAt) < 10000) {
+              mergedBookings.unshift(lb);
+              srvRefMap.set(refU, lb);
+            } else {
+              try { localStorage.removeItem('booking_' + lb.ref); } catch (e) {}
             }
           });
           data.bookings = mergedBookings;
+          data.deletedBookingRefs = Array.from(deletedSet);
+          data._hasSyncedFromServer = true;
           sharedServerState = data;
           window.sharedServerState = sharedServerState;
           localStorage.setItem('pf_all_bookings', JSON.stringify(mergedBookings));
-          // Also keep latest_booking updated if its status changed in Admin
+          localStorage.setItem('pf_shared_bookings', JSON.stringify(mergedBookings));
+          localStorage.setItem('pf_public_bookings', JSON.stringify(mergedBookings));
+
+          // Keep latest_booking updated if its status changed in Admin, or remove it if deleted in Admin
           const latestRaw = localStorage.getItem('latest_booking');
           if (latestRaw) {
-            const latest = JSON.parse(latestRaw);
-            const updated = data.bookings.find(b => b.ref === latest.ref);
-            if (updated) {
-              localStorage.setItem('latest_booking', JSON.stringify(updated));
-              localStorage.setItem('booking_' + updated.ref, JSON.stringify(updated));
-            }
+            try {
+              const latest = JSON.parse(latestRaw);
+              if (latest && latest.ref) {
+                const latRefU = String(latest.ref).trim().toUpperCase();
+                const updated = mergedBookings.find(b => String(b.ref || '').trim().toUpperCase() === latRefU);
+                if (updated && !deletedSet.has(latRefU)) {
+                  localStorage.setItem('latest_booking', JSON.stringify(updated));
+                  localStorage.setItem('booking_' + updated.ref, JSON.stringify(updated));
+                } else {
+                  localStorage.removeItem('latest_booking');
+                  localStorage.removeItem('booking_' + latest.ref);
+                }
+              }
+            } catch (e) {}
           }
           const newSyncSig = JSON.stringify({
             b: (data.bookings || []).map(x => `${x.ref}:${x.status}:${x.date}:${x.time}:${x.court}`),
@@ -293,8 +317,9 @@ async function syncStateFromServer() {
             scT: data.siteConfig ? data.siteConfig.updatedAt : 0,
             hr: (typeof pfGetPhilippineNow === 'function') ? pfGetPhilippineNow().getHours() : new Date().getHours()
           });
-          const sigChanged = (window.__pfLastPublicSyncSig !== newSyncSig);
+          const sigChanged = (window.__pfLastPublicSyncSig !== newSyncSig) || !window.__pfFirstPublicSyncRendered;
           window.__pfLastPublicSyncSig = newSyncSig;
+          window.__pfFirstPublicSyncRendered = true;
           if (sigChanged) {
             if (typeof renderLiveScheduleMatrix === 'function') {
               renderLiveScheduleMatrix();
@@ -352,6 +377,7 @@ async function syncStateFromServer() {
 }
 
 async function pushBookingToServer(bookingData) {
+  bookingData._localSavedAt = Date.now();
   // Always save to localStorage first
   let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
   allBookings = allBookings.filter(b => b.ref !== bookingData.ref);
@@ -2690,20 +2716,29 @@ function pfBookingCoversSlot(bTimeStr, slotStr) {
 }
 
 function pfGetAllMergedBookings(liveBookings) {
+  let localDelRefs = [];
+  try { localDelRefs = JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || []; } catch (e) {}
+  const srvDelRefs = (window.sharedServerState && Array.isArray(window.sharedServerState.deletedBookingRefs))
+    ? window.sharedServerState.deletedBookingRefs
+    : [];
+  const deletedSet = new Set([...localDelRefs, ...srvDelRefs].map(r => String(r || '').trim().toUpperCase()).filter(Boolean));
+
+  const hasSynced = Boolean(window.sharedServerState && window.sharedServerState._hasSyncedFromServer);
   const srv = (window.sharedServerState && Array.isArray(window.sharedServerState.bookings)) ? window.sharedServerState.bookings : [];
   let locAll = [];
-  let locPub = [];
-  let latestBk = null;
   try { locAll = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]') || []; } catch (e) {}
-  try { locPub = JSON.parse(localStorage.getItem('pf_public_bookings') || '[]') || []; } catch (e) {}
-  try { latestBk = JSON.parse(localStorage.getItem('latest_booking') || 'null'); } catch (e) {}
-  const passBk = (typeof currentLoadedPassData !== 'undefined' && currentLoadedPassData) ? currentLoadedPassData : null;
   const customArr = Array.isArray(liveBookings) ? liveBookings : [];
 
+  // Once synced with server, server + pf_all_bookings (which is synced with server) is authoritative
+  const sourceList = hasSynced ? [...srv, ...locAll] : [...customArr, ...srv, ...locAll];
+
   const map = new Map();
-  [...customArr, ...srv, ...locAll, ...locPub, ...(latestBk ? [latestBk] : []), ...(passBk ? [passBk] : [])].forEach(b => {
-    if (b && b.ref && !map.has(String(b.ref).toUpperCase())) {
-      map.set(String(b.ref).toUpperCase(), b);
+  sourceList.forEach(b => {
+    if (!b || !b.ref) return;
+    const refU = String(b.ref).trim().toUpperCase();
+    if (deletedSet.has(refU)) return;
+    if (!map.has(refU)) {
+      map.set(refU, b);
     }
   });
   return Array.from(map.values());
@@ -2812,6 +2847,65 @@ window.pfNormalizeCourtNumber = pfNormalizeCourtNumber;
 window.pfExtractBookingDateYMD = pfExtractBookingDateYMD;
 window.pfBookingCoversSlot = pfBookingCoversSlot;
 window.pfGetAllMergedBookings = pfGetAllMergedBookings;
+
+// Instant cross-tab sync when Admin deletes/modifies bookings or court blocks
+(function setupPublicRealtimeBookingSync() {
+  if (window.__pfPublicRealtimeBookingSyncInstalled) return;
+  window.__pfPublicRealtimeBookingSyncInstalled = true;
+  function refreshPublicBookingViews() {
+    if (typeof renderLiveScheduleMatrix === 'function') {
+      try { renderLiveScheduleMatrix(); } catch (e) {}
+    }
+    if (typeof renderDrawerSlots === 'function') {
+      try { renderDrawerSlots(); } catch (e) {}
+    }
+    if (typeof renderTimeChips === 'function') {
+      try { renderTimeChips(); } catch (e) {}
+    }
+  }
+  if (typeof BroadcastChannel !== 'undefined') {
+    try {
+      const bcBk = new BroadcastChannel('pf_booking_sync_channel');
+      bcBk.onmessage = (ev) => {
+        if (ev && ev.data && Array.isArray(ev.data.bookings)) {
+          if (Array.isArray(ev.data.deletedBookingRefs)) {
+            try { localStorage.setItem('pf_deleted_booking_refs', JSON.stringify(ev.data.deletedBookingRefs)); } catch (e) {}
+          }
+          if (window.sharedServerState) {
+            window.sharedServerState.bookings = ev.data.bookings;
+            window.sharedServerState._hasSyncedFromServer = true;
+          }
+          try {
+            localStorage.setItem('pf_all_bookings', JSON.stringify(ev.data.bookings));
+            localStorage.setItem('pf_shared_bookings', JSON.stringify(ev.data.bookings));
+            localStorage.setItem('pf_public_bookings', JSON.stringify(ev.data.bookings));
+          } catch (e) {}
+          refreshPublicBookingViews();
+        }
+        syncStateFromServer();
+      };
+      const bcBlk = new BroadcastChannel('pf_blocks_sync_channel');
+      bcBlk.onmessage = (ev) => {
+        if (ev && ev.data && Array.isArray(ev.data.blocks)) {
+          if (window.sharedServerState) {
+            window.sharedServerState.blocks = ev.data.blocks;
+          }
+          try { localStorage.setItem('pf_court_blocks', JSON.stringify(ev.data.blocks)); } catch (e) {}
+          refreshPublicBookingViews();
+        }
+        syncStateFromServer();
+      };
+    } catch (e) {}
+  }
+  window.addEventListener('storage', (e) => {
+    if (!e || !e.key) return;
+    if (['pf_all_bookings', 'pf_shared_bookings', 'pf_deleted_booking_refs', 'pf_court_blocks'].includes(e.key)) {
+      syncStateFromServer();
+      refreshPublicBookingViews();
+    }
+  });
+})();
+
 
 
 // ================= EXACT-AMOUNT EMVCo QRPh GENERATOR (GCASH • MAYA • BDO) =================

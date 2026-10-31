@@ -2609,6 +2609,7 @@
       }
 
       try {
+        bookingPayload._localSavedAt = Date.now();
         let allBookings = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
         allBookings = allBookings.filter(b => b.ref !== bookingPayload.ref);
         allBookings.unshift(bookingPayload);

@@ -3141,9 +3141,11 @@ function clearFieldError(fieldId) {
       } catch (e) {}
       if (markUpdated) {
         try {
+          localStorage.setItem('pf_public_bookings', JSON.stringify(bookings || []));
           if (typeof BroadcastChannel !== 'undefined') {
+            const delRefs = JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || [];
             const bcBk = new BroadcastChannel('pf_booking_sync_channel');
-            bcBk.postMessage({ type: 'BOOKINGS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, bookings: bookings || [], updatedAt: localAdminStateUpdatedAt });
+            bcBk.postMessage({ type: 'BOOKINGS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, bookings: bookings || [], deletedBookingRefs: delRefs, updatedAt: localAdminStateUpdatedAt });
             bcBk.close();
             const bcBlk = new BroadcastChannel('pf_blocks_sync_channel');
             bcBlk.postMessage({ type: 'BLOCKS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, blocks: courtBlocks || [], updatedAt: localAdminStateUpdatedAt });
@@ -3282,10 +3284,17 @@ function clearFieldError(fieldId) {
       // Always merge any new customer bookings written to localStorage by the Public Site on the same browser
       let foundNewLocalBooking = false;
       try {
-        const deletedRefs = new Set(JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]'));
+        const deletedRefs = new Set((JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || []).map(r => String(r || '').trim().toUpperCase()));
+        bookings = (bookings || []).filter(b => b && b.ref && !deletedRefs.has(String(b.ref).trim().toUpperCase()));
         const sBks = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]') || [];
         const aBks = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]') || [];
-        const localSharedBks = [...sBks, ...aBks].filter(b => b && b.ref && !deletedRefs.has(b.ref));
+        const localSharedBks = [...sBks, ...aBks].filter(b => {
+          if (!b || !b.ref) return false;
+          const ru = String(b.ref).trim().toUpperCase();
+          if (deletedRefs.has(ru)) return false;
+          const savedAt = Number(b._localSavedAt || b._createdAt || 0);
+          return savedAt > 0 && (Date.now() - savedAt) < 15000;
+        });
         if (Array.isArray(localSharedBks) && localSharedBks.length > 0) {
           localSharedBks.forEach(lb => {
             if (!lb || !lb.ref) return;
@@ -3938,25 +3947,43 @@ function clearFieldError(fieldId) {
     }
 
     async function deleteAdminBooking(ref) {
-      bookings = bookings.filter(b => b.ref !== ref);
-      salesLedger = salesLedger.filter(s => s.ref !== ref);
+      const refUpper = String(ref || '').trim().toUpperCase();
+      bookings = bookings.filter(b => String(b.ref || '').trim().toUpperCase() !== refUpper);
+      salesLedger = salesLedger.filter(s => String(s.ref || '').trim().toUpperCase() !== refUpper);
       try {
-        const delList = JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || [];
-        if (!delList.includes(ref)) delList.push(ref);
-        localStorage.setItem('pf_deleted_booking_refs', JSON.stringify(delList.slice(-200)));
+        const delList = (JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || []).map(r => String(r || '').trim().toUpperCase());
+        if (refUpper && !delList.includes(refUpper)) delList.push(refUpper);
+        localStorage.setItem('pf_deleted_booking_refs', JSON.stringify(delList.slice(-500)));
         localStorage.removeItem('booking_' + ref);
+        localStorage.removeItem('booking_' + refUpper);
         const lat = JSON.parse(localStorage.getItem('latest_booking') || 'null');
-        if (lat && lat.ref === ref) localStorage.removeItem('latest_booking');
+        if (lat && String(lat.ref || '').trim().toUpperCase() === refUpper) {
+          localStorage.removeItem('latest_booking');
+        }
+        ['pf_all_bookings', 'pf_shared_bookings', 'pf_public_bookings'].forEach(k => {
+          try {
+            const arr = JSON.parse(localStorage.getItem(k) || '[]') || [];
+            localStorage.setItem(k, JSON.stringify(arr.filter(b => b && String(b.ref || '').trim().toUpperCase() !== refUpper)));
+          } catch (e) {}
+        });
       } catch (e) {}
       saveAdminState(true);
       renderAllAdminViews();
-      try {
-        await fetch('/api/bookings/delete', {
-          method: 'POST',
-          headers: getAdminAuthHeaders(),
-          body: JSON.stringify({ ref: ref })
-        });
-      } catch (e) {}
+      const delEndpoints = ['/api/bookings/delete'];
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        delEndpoints.push('http://localhost:8088/api/bookings/delete');
+        delEndpoints.push('http://127.0.0.1:8089/api/bookings/delete');
+      }
+      for (const ep of delEndpoints) {
+        try {
+          const res = await fetch(ep, {
+            method: 'POST',
+            headers: getAdminAuthHeaders(),
+            body: JSON.stringify({ ref: ref })
+          });
+          if (res.ok) break;
+        } catch (e) {}
+      }
     }
 
     // ================= NEW STAFF BOOKING MODAL =================
@@ -4346,6 +4373,15 @@ function clearFieldError(fieldId) {
       }
 
       blocksMutationLockUntil = Date.now() + 8000;
+
+      // If this slot currently has an active booking and Admin sets it to Open Court / Open Play / Closed / Reset, remove the booking too
+      const cNumMatch = parseInt(String(courtLabel || '').replace(/[^0-9]/g, ''), 10) || 0;
+      if (cNumMatch > 0 && slotStr && slotStr !== 'ALL') {
+        const curSlotInfo = resolveAdminSlotStatus(dateYMD, cNumMatch, slotStr);
+        if (curSlotInfo && curSlotInfo.status === 'BOOKED' && curSlotInfo.booking && curSlotInfo.booking.ref) {
+          await deleteAdminBooking(curSlotInfo.booking.ref);
+        }
+      }
 
       if (statusType === 'RESET') {
         courtBlocks = courtBlocks.filter(b => !(
