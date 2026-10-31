@@ -2321,10 +2321,18 @@
       localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
       localStorage.setItem('booking_' + newRef, JSON.stringify(bookingPayload));
 
-      // 2. Save in localStorage
-      const all = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
+      // 2. Save in localStorage & notify Admin
+      const all = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]').filter(b => b && b.ref !== bookingPayload.ref);
       all.unshift(bookingPayload);
       localStorage.setItem('pf_all_bookings', JSON.stringify(all));
+      localStorage.setItem('pf_shared_bookings', JSON.stringify(all));
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('pf_booking_sync_channel');
+          bc.postMessage({ type: 'NEW_PUBLIC_BOOKING', booking: bookingPayload, bookings: all, updatedAt: Date.now() });
+          bc.close();
+        }
+      } catch (e) {}
 
       // 3. Show Success Modal
       document.getElementById("conf-ref-id").textContent = newRef;

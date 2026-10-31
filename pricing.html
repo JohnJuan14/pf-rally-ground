@@ -2682,8 +2682,14 @@
         allBookings = allBookings.filter(b => b.ref !== bookingPayload.ref);
         allBookings.unshift(bookingPayload);
         localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+        localStorage.setItem('pf_shared_bookings', JSON.stringify(allBookings));
         localStorage.setItem('latest_booking', JSON.stringify(bookingPayload));
         localStorage.setItem('booking_' + bookingPayload.ref, JSON.stringify(bookingPayload));
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('pf_booking_sync_channel');
+          bc.postMessage({ type: 'NEW_PUBLIC_BOOKING', booking: bookingPayload, bookings: allBookings, updatedAt: Date.now() });
+          bc.close();
+        }
       } catch (e) {}
 
       closePaymentModal();

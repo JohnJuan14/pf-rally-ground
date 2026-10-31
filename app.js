@@ -237,7 +237,7 @@ const courtNames = {
 // ================= REAL-TIME SERVER SYNC =================
 
 async function syncStateFromServer() {
-  const endpoints = ['/api/state', 'http://localhost:8088/api/state', 'http://127.0.0.1:8089/api/state', 'http://localhost:8089/api/state'];
+  const endpoints = pfGetApiEndpoints('/api/state');
   for (const url of endpoints) {
     try {
       const res = await fetch(url, { cache: 'no-store' });
@@ -357,11 +357,19 @@ async function pushBookingToServer(bookingData) {
   allBookings = allBookings.filter(b => b.ref !== bookingData.ref);
   allBookings.unshift(bookingData);
   localStorage.setItem('pf_all_bookings', JSON.stringify(allBookings));
+  localStorage.setItem('pf_shared_bookings', JSON.stringify(allBookings));
   localStorage.setItem('latest_booking', JSON.stringify(bookingData));
   localStorage.setItem('booking_' + bookingData.ref, JSON.stringify(bookingData));
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      const bc = new BroadcastChannel('pf_booking_sync_channel');
+      bc.postMessage({ type: 'NEW_PUBLIC_BOOKING', booking: bookingData, bookings: allBookings, updatedAt: Date.now() });
+      bc.close();
+    }
+  } catch (e) {}
 
   // Push to unified backend API
-  const endpoints = ['/api/bookings', 'http://localhost:8088/api/bookings', 'http://localhost:8089/api/bookings'];
+  const endpoints = pfGetApiEndpoints('/api/bookings');
   for (const url of endpoints) {
     try {
       const res = await fetch(url, {

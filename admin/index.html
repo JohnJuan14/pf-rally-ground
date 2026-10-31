@@ -285,11 +285,11 @@
     <div class="p-4 border-t border-white/10 bg-brand-black/40 text-[11px] text-slate-400 space-y-2.5">
       <a href="/" onclick="return openPublicSite(event, 'index.html')" class="w-full py-2 px-3 rounded-xl bg-white/5 hover:bg-brand-lime/15 border border-white/10 hover:border-brand-lime/40 text-slate-200 hover:text-brand-lime font-bold text-xs flex items-center justify-between transition">
         <span>Public Booking Site</span>
-        <span class="font-mono text-[10px]">8088</span>
+        <span class="font-mono text-[10px]">LIVE</span>
       </a>
       <div class="flex items-center justify-between">
         <span class="flex items-center gap-1.5 font-bold text-brand-lime"><span class="w-2 h-2 rounded-full bg-brand-lime animate-pulse"></span> Public Site Synced</span>
-        <span class="font-mono text-slate-500">8088↔8089</span>
+        <span class="font-mono text-slate-500">LIVE SYNC</span>
       </div>
       <div class="text-[10px] text-slate-500 leading-tight">
         Phase IV, Doña Maria Subd., Daraga, Albay
@@ -3130,6 +3130,9 @@ function clearFieldError(fieldId) {
       }
       try {
         localStorage.setItem('pf_shared_bookings', JSON.stringify(bookings || []));
+        if (markUpdated) {
+          localStorage.setItem('pf_all_bookings', JSON.stringify(bookings || []));
+        }
         localStorage.setItem('pf_court_blocks', JSON.stringify(courtBlocks || []));
         localStorage.setItem('pf_sales_ledger', JSON.stringify(salesLedger || []));
         localStorage.setItem('pf_pos_catalog', JSON.stringify(posCatalog || []));
@@ -3153,7 +3156,9 @@ function clearFieldError(fieldId) {
     function loadAdminStateFromStorage() {
       try {
         const sb = JSON.parse(localStorage.getItem('pf_shared_bookings') || 'null');
+        const ab = JSON.parse(localStorage.getItem('pf_all_bookings') || 'null');
         if (Array.isArray(sb) && sb.length > 0 && bookings.length === 0) bookings = sb;
+        else if (Array.isArray(ab) && ab.length > 0 && bookings.length === 0) bookings = ab;
         const cb = JSON.parse(localStorage.getItem('pf_court_blocks') || 'null');
         if (Array.isArray(cb) && cb.length > 0 && courtBlocks.length === 0) courtBlocks = cb;
         const sl = JSON.parse(localStorage.getItem('pf_sales_ledger') || 'null');
@@ -3277,7 +3282,10 @@ function clearFieldError(fieldId) {
       // Always merge any new customer bookings written to localStorage by the Public Site on the same browser
       let foundNewLocalBooking = false;
       try {
-        const localSharedBks = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]');
+        const deletedRefs = new Set(JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]'));
+        const sBks = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]') || [];
+        const aBks = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]') || [];
+        const localSharedBks = [...sBks, ...aBks].filter(b => b && b.ref && !deletedRefs.has(b.ref));
         if (Array.isArray(localSharedBks) && localSharedBks.length > 0) {
           localSharedBks.forEach(lb => {
             if (!lb || !lb.ref) return;
@@ -3511,7 +3519,7 @@ function clearFieldError(fieldId) {
           feed.innerHTML = `
             <div class="p-8 rounded-2xl bg-brand-black/40 border border-white/5 text-center space-y-2">
               <span class="text-xs font-bold uppercase text-slate-400 block">Calendar &amp; Bookings Are Currently Empty</span>
-              <p class="text-[11px] text-slate-500 max-w-md mx-auto">When a guest books a court or buys an item on the public website (Port 8088), their booking and GCash Reference Number will appear here automatically.</p>
+              <p class="text-[11px] text-slate-500 max-w-md mx-auto">When a guest books a court or buys an item on the public booking website, their booking and GCash Reference Number will appear here automatically.</p>
             </div>`;
         } else {
           feed.innerHTML = bookings.slice(0, 6).map(b => `
@@ -3932,6 +3940,14 @@ function clearFieldError(fieldId) {
     async function deleteAdminBooking(ref) {
       bookings = bookings.filter(b => b.ref !== ref);
       salesLedger = salesLedger.filter(s => s.ref !== ref);
+      try {
+        const delList = JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || [];
+        if (!delList.includes(ref)) delList.push(ref);
+        localStorage.setItem('pf_deleted_booking_refs', JSON.stringify(delList.slice(-200)));
+        localStorage.removeItem('booking_' + ref);
+        const lat = JSON.parse(localStorage.getItem('latest_booking') || 'null');
+        if (lat && lat.ref === ref) localStorage.removeItem('latest_booking');
+      } catch (e) {}
       saveAdminState(true);
       renderAllAdminViews();
       try {
@@ -4003,8 +4019,13 @@ function clearFieldError(fieldId) {
       }
 
       if (amtEl && timeSel.value) {
-        const isNightSel = ['06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM'].includes(timeSel.value);
-        amtEl.value = isNightSel ? nightRate : dayRate;
+        const selSt = resolveAdminSlotStatus(targetDate, cNum, timeSel.value);
+        if (selSt && selSt.status === 'OPEN_PLAY') {
+          amtEl.value = 0;
+        } else {
+          const isNightSel = ['06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM'].includes(timeSel.value);
+          amtEl.value = isNightSel ? nightRate : dayRate;
+        }
       }
     }
 
@@ -4037,7 +4058,7 @@ function clearFieldError(fieldId) {
       const phone = (document.getElementById('modal-guest-phone').value || '').trim() || '0999 883 2346';
       const payMode = document.getElementById('modal-pay-mode').value || 'GCash';
       const payRef = (document.getElementById('modal-pay-ref').value || '').trim() || 'STAFF-RESERVATION';
-      const amount = parseInt(document.getElementById('modal-amount').value, 10) || 400;
+      const parsedStaffAmt = parseInt(document.getElementById('modal-amount').value, 10); const amount = (Number.isFinite(parsedStaffAmt) && parsedStaffAmt >= 0) ? parsedStaffAmt : 400;
       const errBanner = document.getElementById('modal-booking-error-banner');
 
       if (!name || name.length < 2) {
@@ -7246,7 +7267,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         }
       } catch (e) {}
 
-      const endpoints = ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'];
+      const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -7298,7 +7319,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         labelMap[ch] || labelMap.all,
         descMap[ch] || descMap.all,
         async () => {
-          const endpoints = ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'];
+          const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
           let updatedCfg = null;
           for (const ep of endpoints) {
             try {

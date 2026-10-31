@@ -130,43 +130,125 @@ def append_security_log(db, event_type, detail, ip="127.0.0.1"):
     db["securityLog"] = db["securityLog"][:40]
 
 
+_MEMORY_DB = None
+
+def _normalize_db_dict(data):
+    if not isinstance(data, dict):
+        data = json.loads(json.dumps(DEFAULT_DB))
+    if "adminPassword" not in data or not data["adminPassword"]:
+        data["adminPassword"] = ""
+    for k in ["bookings", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
+        if k not in data or not isinstance(data[k], list):
+            data[k] = []
+    if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
+        data["gmailConfig"] = dict(DEFAULT_DB["gmailConfig"])
+    if "paymentConfig" not in data or not isinstance(data["paymentConfig"], dict):
+        data["paymentConfig"] = dict(DEFAULT_DB["paymentConfig"])
+    else:
+        merged_pc = dict(DEFAULT_DB["paymentConfig"])
+        merged_pc.update(data["paymentConfig"])
+        data["paymentConfig"] = merged_pc
+    if "siteConfig" not in data or not isinstance(data["siteConfig"], dict):
+        data["siteConfig"] = dict(DEFAULT_DB["siteConfig"])
+    else:
+        merged_sc = dict(DEFAULT_DB["siteConfig"])
+        merged_sc.update(data["siteConfig"])
+        data["siteConfig"] = merged_sc
+    return data
+
+
+def _kv_get_db():
+    kv_url = (os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL") or "").strip().rstrip("/")
+    kv_token = (os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN") or "").strip()
+    if not kv_url or not kv_token:
+        return None
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"{kv_url}/get/pf_rally_ground_db",
+            headers={"Authorization": f"Bearer {kv_token}"}
+        )
+        with urllib.request.urlopen(req, timeout=2.5) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+            raw_res = payload.get("result")
+            if isinstance(raw_res, str) and raw_res:
+                return json.loads(raw_res)
+            elif isinstance(raw_res, dict):
+                return raw_res
+    except Exception:
+        pass
+    return None
+
+
+def _kv_set_db(data):
+    kv_url = (os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL") or "").strip().rstrip("/")
+    kv_token = (os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN") or "").strip()
+    if not kv_url or not kv_token:
+        return
+    try:
+        import urllib.request
+        body_bytes = json.dumps(["SET", "pf_rally_ground_db", json.dumps(data)]).encode("utf-8")
+        req = urllib.request.Request(
+            kv_url,
+            data=body_bytes,
+            headers={"Authorization": f"Bearer {kv_token}", "Content-Type": "application/json"},
+            method="POST"
+        )
+        urllib.request.urlopen(req, timeout=2.5).read()
+    except Exception:
+        pass
+
+
 def load_db():
-    if not os.path.exists(DB_FILE):
+    global _MEMORY_DB
+    kv_data = _kv_get_db()
+    if isinstance(kv_data, dict):
+        _MEMORY_DB = _normalize_db_dict(kv_data)
         try:
             with open(DB_FILE, "w", encoding="utf-8") as f:
-                json.dump(DEFAULT_DB, f, indent=2)
+                json.dump(_MEMORY_DB, f)
         except Exception:
             pass
-        return json.loads(json.dumps(DEFAULT_DB))
+        return _MEMORY_DB
+
+    if os.path.exists(DB_FILE):
+        try:
+            with open(DB_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                _MEMORY_DB = _normalize_db_dict(data)
+                return _MEMORY_DB
+        except Exception:
+            pass
+
+    if isinstance(_MEMORY_DB, dict):
+        return _normalize_db_dict(_MEMORY_DB)
+
+    _MEMORY_DB = _normalize_db_dict(json.loads(json.dumps(DEFAULT_DB)))
     try:
-        with open(DB_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if "adminPassword" not in data or not data["adminPassword"]:
-                data["adminPassword"] = ""
-            for k in ["bookings", "blocks", "salesLedger", "inventory", "categories", "announcements", "securityLog"]:
-                if k not in data or not isinstance(data[k], list):
-                    data[k] = []
-            if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
-                data["gmailConfig"] = dict(DEFAULT_DB["gmailConfig"])
-            if "siteConfig" not in data or not isinstance(data["siteConfig"], dict):
-                data["siteConfig"] = dict(DEFAULT_DB["siteConfig"])
-            else:
-                merged_sc = dict(DEFAULT_DB["siteConfig"])
-                merged_sc.update(data["siteConfig"])
-                data["siteConfig"] = merged_sc
-            return data
+        with open(DB_FILE, "w", encoding="utf-8") as f:
+            json.dump(_MEMORY_DB, f, indent=2)
     except Exception:
-        return json.loads(json.dumps(DEFAULT_DB))
+        pass
+    return _MEMORY_DB
 
 
 def save_db(data):
+    global _MEMORY_DB
     try:
         if isinstance(data, dict):
             data["updatedAt"] = int(time.time() * 1000)
-        with open(DB_FILE, "w", encoding="utf-8") as f:
+            _MEMORY_DB = _normalize_db_dict(data)
+        tmp_file = DB_FILE + ".tmp"
+        with open(tmp_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
+        os.replace(tmp_file, DB_FILE)
     except Exception:
-        pass
+        try:
+            with open(DB_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+        except Exception:
+            pass
+    _kv_set_db(data)
 
 
 
@@ -304,7 +386,7 @@ class handler(http.server.BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Token")
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
         self.end_headers()
@@ -1152,3 +1234,13 @@ class handler(http.server.BaseHTTPRequestHandler):
             return
 
         self._send_json({"ok": True})
+
+
+    def do_PUT(self):
+        return self.do_POST()
+
+    def do_PATCH(self):
+        return self.do_POST()
+
+    def do_DELETE(self):
+        return self.do_POST()
