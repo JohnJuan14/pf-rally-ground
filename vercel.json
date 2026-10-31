@@ -16,7 +16,7 @@
     },
     {
       "source": "/my-booking",
-      "destination": "/check-booking.html"
+      "destination": "/check-booking"
     },
     {
       "source": "/admin",
