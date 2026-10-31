@@ -3694,7 +3694,7 @@ function clearFieldError(fieldId) {
         } else if (st && st.status === 'CLOSED') {
           suffix = ' (🔒 Closed)';
         } else if (st && st.status === 'OPEN_PLAY') {
-          suffix = ' (🎾 Open Play)';
+          suffix = ' (🎾 Open Play • Free)';
         } else if (st && st.status === 'EXPIRED') {
           suffix = ' (⏰ Expired / Passed)';
         }
@@ -3978,7 +3978,7 @@ function clearFieldError(fieldId) {
         } else if (st && st.status === 'CLOSED') {
           suffix = ` (🔒 Closed)`;
         } else if (st && st.status === 'OPEN_PLAY') {
-          suffix = ` (🎾 Open Play • ₱${Number((currentSiteConfig && currentSiteConfig.openPlayRate) || 150)}/pax)`;
+          suffix = ' (🎾 Open Play • Free)';
         } else {
           if (!firstAvailableVal) firstAvailableVal = slotStr;
         }
@@ -4203,7 +4203,7 @@ function clearFieldError(fieldId) {
       if (statusVal === 'OPEN') {
         reasonEl.placeholder = 'e.g. Open Court (Available for Booking)';
       } else if (statusVal === 'OPEN_PLAY') {
-        reasonEl.placeholder = 'e.g. Open Play Session (₱150/player)';
+        reasonEl.placeholder = 'e.g. Free Open Play Session (3:00 PM – 6:00 PM)';
       } else {
         reasonEl.placeholder = 'e.g. Closed / Maintenance / Private Event';
       }
@@ -4301,12 +4301,11 @@ function clearFieldError(fieldId) {
 
       // 4. Default Editable Open Play Schedule (3:00 PM – 6:00 PM across all 4 courts unless overridden above)
       if (isAdminOpenPlaySlot(slotStr)) {
-        const opRate = Number((currentSiteConfig && currentSiteConfig.openPlayRate) || 150);
         return {
           status: 'OPEN_PLAY',
           isOverride: false,
           label: 'Open Play',
-          sub: `₱${opRate}/pax • Click to Edit`
+          sub: 'Free • Click to Edit'
         };
       }
 
@@ -4731,10 +4730,9 @@ function clearFieldError(fieldId) {
           }
 
           if (info.status === 'OPEN_PLAY') {
-            const opRate = Number((currentSiteConfig && currentSiteConfig.openPlayRate) || 150);
             return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:scale-[1.01]" title="Click to Edit Slot (Switch to Open Court, Closed, or Open Play)">
               <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] font-black text-[9px] sm:text-[11px] leading-tight shadow-sm">
-                <span class="sm:hidden">🎾 Open Play</span><span class="hidden sm:inline">🎾 Open Play • ₱${opRate}/pax</span>
+                <span class="sm:hidden">🎾 Open Play</span><span class="hidden sm:inline">🎾 Open Play • Free</span>
               </div>
             </td>`;
           }
@@ -7700,7 +7698,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       nightRate: 500,
       includedPlayers: 6,
       extraPlayerFee: 100,
-      openPlayRate: 150,
+      openPlayRate: 0,
       openPlayEnabled: true,
       openPlaySlots: ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
       pricePaddleStd: 50,
@@ -8090,9 +8088,6 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         extraPlayerFee: num('se-price-extra-player', DEFAULT_SITE_CONFIG.extraPlayerFee),
         openPlayRate: num('se-price-open-play', DEFAULT_SITE_CONFIG.openPlayRate),
 
-        openPlayEnabled: (currentSiteConfig && currentSiteConfig.openPlayEnabled !== undefined) ? Boolean(currentSiteConfig.openPlayEnabled) : true,
-
-        openPlaySlots: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySlots)) ? currentSiteConfig.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
         openPlayEnabled: (currentSiteConfig && currentSiteConfig.openPlayEnabled !== undefined) ? Boolean(currentSiteConfig.openPlayEnabled) : true,
         openPlaySlots: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySlots)) ? currentSiteConfig.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
         pricePaddleStd: num('se-price-paddle-std', DEFAULT_SITE_CONFIG.pricePaddleStd),

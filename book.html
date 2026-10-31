@@ -735,7 +735,7 @@
           <div class="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-slate-300 font-mono">
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-lime"></span> Selected</span>
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-card border border-white/25"></span> Available</span>
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#b7f34a]">Open Play</span></span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#b7f34a]">Open Play (Free)</span></span>
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-100 border border-rose-400"></span> <span class="text-rose-400">Booked</span></span>
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-800 border border-slate-600"></span> <span class="text-slate-400">Closed</span></span>
           </div>
@@ -2032,7 +2032,7 @@
           btn.className = isSelected
             ? "time-chip time-chip-active ring-2 ring-[#84cc16]"
             : "py-2.5 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-xs font-mono font-black transition leading-tight";
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • Free</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
             selectedStartSlot = slot;
@@ -2079,10 +2079,15 @@
     // 8. Order Summary
     function updateSummary() {
       // Court cost
-      const hourlyRate = getHourlyRate(selectedStartSlot);
+      const isOpenPlaySelected = (typeof window.pfResolveCourtSlot === 'function')
+        ? (window.pfResolveCourtSlot(selectedDateValue, selectedCourt, selectedStartSlot).status === 'OPEN_PLAY')
+        : isBookOpenPlay(selectedDateValue, selectedStartSlot);
+      const hourlyRate = isOpenPlaySelected ? 0 : getHourlyRate(selectedStartSlot);
       const courtCost = hourlyRate * selectedDuration;
       document.getElementById("summary-court-cost").textContent = `₱${courtCost.toLocaleString()}.00`;
-      document.getElementById("summary-court-row-label").textContent = `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`;
+      document.getElementById("summary-court-row-label").textContent = isOpenPlaySelected
+        ? `Court ${selectedCourt} Open Play (${selectedDuration} hr • FREE)`
+        : `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`;
 
       // Extra players (Synced with Admin Master Price Editor)
       const cfg = window.PF_SITE_CONFIG || {};
@@ -2216,17 +2221,14 @@
         document.getElementById("book-cust-email")?.focus();
         return;
       }
-      if (!ref || ref.length < 4) {
-        alert("Please enter a valid Payment Reference Number.");
-        document.getElementById("book-payment-ref")?.focus();
-        return;
-      }
-
-      const hourlyRate = getHourlyRate(selectedStartSlot);
+      const isOpenPlaySelected = (typeof window.pfResolveCourtSlot === 'function')
+        ? (window.pfResolveCourtSlot(selectedDateValue, selectedCourt, selectedStartSlot).status === 'OPEN_PLAY')
+        : isBookOpenPlay(selectedDateValue, selectedStartSlot);
+      const hourlyRate = isOpenPlaySelected ? 0 : getHourlyRate(selectedStartSlot);
       const courtCost = hourlyRate * selectedDuration;
       const extraCost = Math.max(0, selectedPlayerCount - 6) * 100;
       let gearTotal = 0;
-      const items = [`Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`];
+      const items = [isOpenPlaySelected ? `Court ${selectedCourt} Open Play (${selectedDuration} hr • FREE)` : `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`];
       if (extraCost > 0) items.push(`Extra Players (${Math.max(0, selectedPlayerCount - 6)})`);
       
       GEAR_CATALOG.forEach(g => {
@@ -2238,6 +2240,12 @@
         }
       });
       const grandTotal = courtCost + extraCost + gearTotal;
+      const finalPayRef = (grandTotal === 0 && (!ref || ref.length < 4)) ? 'FREE-OPEN-PLAY' : ref;
+      if (!finalPayRef || finalPayRef.length < 4) {
+        alert("Please enter a valid Payment Reference Number.");
+        document.getElementById("book-payment-ref")?.focus();
+        return;
+      }
 
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       const newRef = `PF-${Date.now().toString().slice(-4)}${randomSuffix}`;
@@ -2256,7 +2264,7 @@
         players: selectedPlayerCount,
         paymentMethod: activePaymentMode.toUpperCase(),
         paymentMode: activePaymentMode.toUpperCase(),
-        transactionRef: ref,
+        transactionRef: finalPayRef,
         total: Number(grandTotal),
         courtCost: courtCost,
         extraCost: extraCost,

@@ -285,14 +285,26 @@ async function syncStateFromServer() {
               localStorage.setItem('booking_' + updated.ref, JSON.stringify(updated));
             }
           }
-          if (typeof renderLiveScheduleMatrix === 'function') {
-            renderLiveScheduleMatrix();
-          }
-          if (typeof renderDrawerSlots === 'function') {
-            try { renderDrawerSlots(); } catch (e) {}
-          }
-          if (typeof renderTimeChips === 'function') {
-            try { renderTimeChips(); } catch (e) {}
+          const newSyncSig = JSON.stringify({
+            b: (data.bookings || []).map(x => `${x.ref}:${x.status}:${x.date}:${x.time}:${x.court}`),
+            bl: (data.blocks || []).map(x => `${x.id}:${x.court}:${x.date}:${x.hours}:${x.statusType}`),
+            opE: data.siteConfig ? data.siteConfig.openPlayEnabled : true,
+            opS: data.siteConfig ? data.siteConfig.openPlaySlots : [],
+            scT: data.siteConfig ? data.siteConfig.updatedAt : 0,
+            hr: (typeof pfGetPhilippineNow === 'function') ? pfGetPhilippineNow().getHours() : new Date().getHours()
+          });
+          const sigChanged = (window.__pfLastPublicSyncSig !== newSyncSig);
+          window.__pfLastPublicSyncSig = newSyncSig;
+          if (sigChanged) {
+            if (typeof renderLiveScheduleMatrix === 'function') {
+              renderLiveScheduleMatrix();
+            }
+            if (typeof renderDrawerSlots === 'function') {
+              try { renderDrawerSlots(); } catch (e) {}
+            }
+            if (typeof renderTimeChips === 'function') {
+              try { renderTimeChips(); } catch (e) {}
+            }
           }
           if (Array.isArray(data.announcements)) {
             sharedServerState.announcements = data.announcements;
@@ -2149,7 +2161,7 @@ const DEFAULT_PF_SITE_CONFIG = {
   nightRate: 500,
   includedPlayers: 6,
   extraPlayerFee: 100,
-  openPlayRate: 150,
+  openPlayRate: 0,
   openPlayEnabled: true,
   openPlaySlots: ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
   pricePaddleStd: 50,
@@ -2429,11 +2441,11 @@ function applySiteConfig(incomingCfg) {
   // 5. Update All Visible Prices via data-site-price attributes across all pages
   document.querySelectorAll('[data-site-price="day-hr"]').forEach(el => { el.textContent = `₱${dayRate} / hr`; });
   document.querySelectorAll('[data-site-price="night-hr"]').forEach(el => { el.textContent = `₱${nightRate} / hr`; });
-  const openPlayRate = Number(cfg.openPlayRate ?? 150);
+  const openPlayRate = Number(cfg.openPlayRate ?? 0);
   document.querySelectorAll('[data-site-price="day-num"]').forEach(el => { el.textContent = `₱${dayRate}`; });
   document.querySelectorAll('[data-site-price="night-num"]').forEach(el => { el.textContent = `₱${nightRate}`; });
-  document.querySelectorAll('[data-site-price="open-play-num"]').forEach(el => { el.textContent = `₱${openPlayRate}`; });
-  document.querySelectorAll('[data-site-price="open-play-pax"]').forEach(el => { el.textContent = `₱${openPlayRate}/pax`; });
+  document.querySelectorAll('[data-site-price="open-play-num"]').forEach(el => { el.textContent = openPlayRate > 0 ? `₱${openPlayRate}` : 'Free'; });
+  document.querySelectorAll('[data-site-price="open-play-pax"]').forEach(el => { el.textContent = openPlayRate > 0 ? `₱${openPlayRate}/pax` : 'Free'; });
   document.querySelectorAll('[data-site-price="day-night-badge"]').forEach(el => { el.textContent = `Day: ₱${dayRate}/hr • Night: ₱${nightRate}/hr`; });
   document.querySelectorAll('[data-site-price="included-players"]').forEach(el => { el.textContent = `Up to ${incPlayers} Players`; });
   document.querySelectorAll('[data-site-price="extra-player-fee"]').forEach(el => { el.textContent = `+₱${extraFee} / player`; });
@@ -2718,10 +2730,11 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
   // 3. Check Admin Calendar Overrides (blocks merged from server + localStorage)
   let storedBlocks = [];
   try { storedBlocks = JSON.parse(localStorage.getItem('pf_court_blocks') || '[]') || []; } catch (e) {}
-  const srvBlocks = (window.sharedServerState && Array.isArray(window.sharedServerState.blocks)) ? window.sharedServerState.blocks : [];
-  const blocksArr = (Array.isArray(liveBlocks) && liveBlocks.length > 0)
+  const hasSrvBlocks = Boolean(window.sharedServerState && Array.isArray(window.sharedServerState.blocks));
+  const srvBlocks = hasSrvBlocks ? window.sharedServerState.blocks : [];
+  const blocksArr = Array.isArray(liveBlocks)
     ? liveBlocks
-    : (srvBlocks.length > 0 ? srvBlocks : storedBlocks);
+    : (hasSrvBlocks ? srvBlocks : storedBlocks);
 
   let matchedBlock = null;
   for (let i = blocksArr.length - 1; i >= 0; i--) {
@@ -3181,13 +3194,7 @@ function pfCheckRescheduleConflict(targetDate, courtNum, startSlot, durationHrs,
       };
     }
 
-    if (st && st.status === 'OPEN_PLAY') {
-      return {
-        ok: false,
-        code: 'OPEN_PLAY',
-        html: `⚠️ <b>Open Play Schedule Error:</b> <b>${courtLabel}</b> at <b>${slotToCheck}</b> on <b>${targetDate}</b> is reserved for Club Open Play. Please choose an available private booking hour.`
-      };
-    }
+    // Open Play (3:00 PM - 6:00 PM) is FREE and allowed
 
     if (st && st.status === 'EXPIRED') {
       return {
@@ -3245,7 +3252,7 @@ function pfRefreshRescheduleTimeOptions(triggerSource = '') {
       } else if (st && st.status === 'CLOSED') {
         suffix = ' (🔒 Closed)';
       } else if (st && st.status === 'OPEN_PLAY') {
-        suffix = ' (🎾 Open Play)';
+        suffix = ' (🎾 Open Play • Free)';
       } else if ((st && st.status === 'EXPIRED') || (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, rawSlot))) {
         suffix = ' (⏰ Expired / Passed)';
       }

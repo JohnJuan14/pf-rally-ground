@@ -81,7 +81,7 @@ DEFAULT_DB = {
         "nightRate": 500,
         "includedPlayers": 6,
         "extraPlayerFee": 100,
-        "openPlayRate": 150,
+        "openPlayRate": 0,
         "openPlayEnabled": True,
         "openPlaySlots": ["03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM"],
         "pricePaddleStd": 50,

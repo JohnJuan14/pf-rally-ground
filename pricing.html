@@ -2040,12 +2040,11 @@
               </span>
             </td>`;
           } else if (slotInfo.status === 'OPEN_PLAY') {
-            const opRate = Number((window.PF_SITE_CONFIG && window.PF_SITE_CONFIG.openPlayRate) || 150);
             return `<td class="p-1 sm:p-1.5 text-center">
-              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-1.5 sm:py-2 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] transition text-[10px] sm:text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm" title="Open Play Session (₱${opRate}/pax) — Click to Book or Join">
-                <span class="sm:hidden">${isSingleCourt ? '🎾 Open Play • ₱' + opRate : '🎾 Open Play'}</span>
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-1.5 sm:py-2 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] transition text-[10px] sm:text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm" title="Free Open Play Session (3:00 PM – 6:00 PM) — Click to Join">
+                <span class="sm:hidden">${isSingleCourt ? '🎾 Open Play • Free' : '🎾 Open Play'}</span>
                 <span class="hidden sm:inline">🎾 Open Play</span>
-                <span class="hidden sm:inline text-[10px] font-mono font-bold opacity-90">₱${opRate}/pax</span>
+                <span class="hidden sm:inline text-[10px] font-mono font-bold opacity-90">Free</span>
               </button>
             </td>`;
           } else if (slotInfo.status === 'EXPIRED') {
@@ -2242,7 +2241,7 @@
           btn.className = isSelected
             ? 'time-chip time-chip-active ring-2 ring-[#84cc16]'
             : 'py-2 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-[11px] font-mono font-black transition leading-tight';
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • Free</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
             DRAWER_STATE.selectedStartSlot = slot;
@@ -2284,7 +2283,10 @@
 
     function recalculateDrawerTotal() {
       const hours = DRAWER_STATE.selectedDuration || 1;
-      const hourlyRate = getHourlyRate(DRAWER_STATE.selectedStartSlot);
+      const isOpenPlaySlotSelected = (typeof window.pfResolveCourtSlot === 'function')
+        ? (window.pfResolveCourtSlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, DRAWER_STATE.selectedStartSlot).status === 'OPEN_PLAY')
+        : isOpenPlaySlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot);
+      const hourlyRate = isOpenPlaySlotSelected ? 0 : getHourlyRate(DRAWER_STATE.selectedStartSlot);
       const courtCost = hours * hourlyRate;
 
       const cfg = window.PF_SITE_CONFIG || {};
@@ -2307,7 +2309,7 @@
       if (meta) meta.textContent = `Court ${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
 
       const courtLbl = document.getElementById('drawer-row-court-label');
-      if (courtLbl) courtLbl.textContent = `Court Hire (${hours} hr @ ₱${hourlyRate}/hr)`;
+      if (courtLbl) courtLbl.textContent = isOpenPlaySlotSelected ? `Open Play (${hours} hr • FREE)` : `Court Hire (${hours} hr @ ₱${hourlyRate}/hr)`;
 
       const courtCostEl = document.getElementById('drawer-cost-court');
       if (courtCostEl) courtCostEl.textContent = `₱${courtCost.toFixed(2)}`;
@@ -2418,7 +2420,10 @@
       }
 
       const hours = DRAWER_STATE.selectedDuration || 1;
-      const hourlyRate = getHourlyRate(DRAWER_STATE.selectedStartSlot);
+      const isOpenPlaySlotSelected = (typeof window.pfResolveCourtSlot === 'function')
+        ? (window.pfResolveCourtSlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, DRAWER_STATE.selectedStartSlot).status === 'OPEN_PLAY')
+        : isOpenPlaySlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot);
+      const hourlyRate = isOpenPlaySlotSelected ? 0 : getHourlyRate(DRAWER_STATE.selectedStartSlot);
       const courtCost = hours * hourlyRate;
       const cfg = window.PF_SITE_CONFIG || {};
       const incPl = Number(cfg.includedPlayers || 6);
@@ -2433,7 +2438,7 @@
       const extraPlayers = Math.max(0, DRAWER_STATE.players - incPl);
       const extraCost = extraPlayers * extFee;
       let gearTotal = 0.0;
-      const orderItems = [`Court ${DRAWER_STATE.selectedCourt} (${hours} hr @ ₱${hourlyRate}/hr)`];
+      const orderItems = [isOpenPlaySlotSelected ? `Court ${DRAWER_STATE.selectedCourt} Open Play (${hours} hr • FREE)` : `Court ${DRAWER_STATE.selectedCourt} (${hours} hr @ ₱${hourlyRate}/hr)`];
       if (extraCost > 0) orderItems.push(`Extra Players (${extraPlayers})`);
 
       if (document.getElementById('rent-paddle-std')?.checked) { gearTotal += pStd; orderItems.push(`Standard paddle (₱${pStd})`); }
@@ -2472,7 +2477,12 @@
 
     function openPaymentModal() {
       const modal = document.getElementById('payment-modal');
-      const total = (pendingOrderData && Number(pendingOrderData.total)) || (typeof calculateCartTotal === 'function' ? calculateCartTotal() : 400) || 400;
+      const hasPendingTotal = Boolean(pendingOrderData && pendingOrderData.total !== undefined && pendingOrderData.total !== null);
+      const total = hasPendingTotal ? Number(pendingOrderData.total) : Number((typeof calculateCartTotal === 'function' ? calculateCartTotal() : 400) ?? 400);
+      if (total === 0) {
+        const refInp = document.getElementById('manual-ref-input');
+        if (refInp && !refInp.value.trim()) refInp.value = 'FREE-OPEN-PLAY';
+      }
       const fmtTotal = '₱' + Number(total).toLocaleString() + '.00';
       ['modal-summary-amount', 'manual-modal-amount', 'manual-modal-maya-amount', 'manual-modal-bank-amount'].forEach(id => {
         const el = document.getElementById(id);
@@ -2553,10 +2563,20 @@
         return submitManualPaymentConfirmation();
       }
 
+      const hasPendingTotal = Boolean(pendingOrderData && pendingOrderData.total !== undefined && pendingOrderData.total !== null);
+      const rawTotal = hasPendingTotal ? pendingOrderData.total : recalculateDrawerTotal();
+      const parsedTotal = Number(String(rawTotal).replace(/[^0-9.]/g, ''));
+      const numericTotal = Number.isFinite(parsedTotal) ? parsedTotal : 0;
+
       const refInput = document.getElementById('manual-ref-input');
-      const refVal = refInput ? refInput.value.trim() : '';
+      let refVal = refInput ? refInput.value.trim() : '';
       const refErr = document.getElementById('manual-ref-input-error');
       if (refErr) refErr.classList.add('hidden');
+
+      if (numericTotal === 0 && (!refVal || refVal.length < 4)) {
+        refVal = 'FREE-OPEN-PLAY';
+        if (refInput) refInput.value = refVal;
+      }
 
       if (!refVal || refVal.length < 4) {
         if (refErr) {
@@ -2570,8 +2590,6 @@
       const name = (pendingOrderData && pendingOrderData.name) || document.getElementById('modal-cust-name')?.value.trim() || document.getElementById('cust-name')?.value.trim() || 'Valued Guest';
       const phone = (pendingOrderData && pendingOrderData.phone) || document.getElementById('modal-cust-phone')?.value.trim() || document.getElementById('cust-phone')?.value.trim() || '09000000000';
       const email = (pendingOrderData && pendingOrderData.email) || document.getElementById('cust-email')?.value.trim() || '';
-      const rawTotal = (pendingOrderData && pendingOrderData.total) || recalculateDrawerTotal();
-      const numericTotal = Number(String(rawTotal).replace(/[^0-9.]/g, '')) || 400;
       const dateStr = (DRAWER_STATE && (DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal)) || 'Today';
       const courtNum = (DRAWER_STATE && DRAWER_STATE.selectedCourt) || 1;
       const startSlot = (DRAWER_STATE && DRAWER_STATE.selectedStartSlot) || '06:00 PM';

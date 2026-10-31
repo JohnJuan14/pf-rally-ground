@@ -93,7 +93,7 @@ DEFAULT_DB = {
         "nightRate": 500,
         "includedPlayers": 6,
         "extraPlayerFee": 100,
-        "openPlayRate": 150,
+        "openPlayRate": 0,
         "pricePaddleStd": 50,
         "pricePaddleCarbon": 100,
         "pricePaddleBranded": 200,
