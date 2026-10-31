@@ -2284,14 +2284,17 @@
           }
         }).join('');
 
-        const rateBadgeClass = rate === 500
-          ? 'bg-amber-100 text-amber-900 border border-amber-300'
-          : 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+        const rateBadgeClass = openPlayActive
+          ? 'bg-[#d9f99d] text-[#365314] border border-[#84cc16]'
+          : (rate === 500
+            ? 'bg-amber-100 text-amber-900 border border-amber-300'
+            : 'bg-emerald-50 text-emerald-800 border border-emerald-200');
+        const rateBadgeLabel = openPlayActive ? 'FREE' : `₱${rate}/HR`;
 
         return `<tr class="hover:bg-slate-50 transition">
-          <td class="py-2 sm:py-2.5 px-2 sm:px-4 text-left font-mono sticky left-0 bg-white border-r border-slate-200 border-l-4 ${rate === 500 ? 'border-l-amber-500' : 'border-l-emerald-500'} z-10 whitespace-nowrap">
+          <td class="py-2 sm:py-2.5 px-2 sm:px-4 text-left font-mono sticky left-0 bg-white border-r border-slate-200 border-l-4 ${openPlayActive ? 'border-l-[#84cc16]' : (rate === 500 ? 'border-l-amber-500' : 'border-l-emerald-500')} z-10 whitespace-nowrap">
             <span class="block text-[11px] sm:text-sm font-black text-slate-900 leading-tight"><span class="sm:hidden">${compactTime}</span><span class="hidden sm:inline">${h.time}</span></span>
-            <span class="inline-block mt-0.5 px-1 sm:px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase ${rateBadgeClass}">₱${rate}/HR</span>
+            <span class="inline-block mt-0.5 px-1 sm:px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase ${rateBadgeClass}">${rateBadgeLabel}</span>
           </td>
           ${cells}
         </tr>`;
