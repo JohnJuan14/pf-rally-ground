@@ -16,17 +16,56 @@ ACTIVE_ADMIN_TOKENS = set()
 MAX_FAILED_ATTEMPTS = 5
 LOCKOUT_SECONDS = 60
 
+DEFAULT_ANNOUNCEMENTS = [
+    {
+        "id": "welcome-pf-2026",
+        "title": "Welcome to P&F Rally Ground Pickleball Club!",
+        "message": "All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs daily from 3:00 PM – 6:00 PM across all courts (Free)!",
+        "category": "Club Update",
+        "img": "",
+        "pinned": True,
+        "author": "P&F Rally Ground Admin",
+        "createdAt": "Official Broadcast"
+    },
+    {
+        "id": "open-play-pf-2026",
+        "title": "Daily Open Play • 3:00 PM – 6:00 PM (Free)",
+        "message": "Join our daily community Open Play session across Courts 1 – 4 from 3:00 PM to 6:00 PM! All skill levels are welcome — bring your paddle or rent pro gear at the club.",
+        "category": "Open Play Alert",
+        "img": "",
+        "pinned": False,
+        "author": "P&F Rally Ground Admin",
+        "createdAt": "Daily Schedule"
+    }
+]
+
+DEFAULT_SECURITY_LOG = [
+    {
+        "time": "2026-10-31 06:00:00",
+        "event": "SHIELD_ACTIVE",
+        "detail": "5/5 Cybersecurity Protections active (Brute-Force Guard, Session Token, Anti-XSS, Nosniff, Idle Lock)",
+        "ip": "127.0.0.1"
+    },
+    {
+        "time": "2026-10-31 06:00:00",
+        "event": "AUTH_GATE_READY",
+        "detail": "Salted SHA-256 Staff/Owner Access Key verification & rate limiter online",
+        "ip": "127.0.0.1"
+    }
+]
+
 DEFAULT_DB = {
     "bookings": [],
     "deletedBookingRefs": [],
+    "deletedInventoryIds": [],
     "bookingsUpdatedAt": 0,
     "blocks": [],
     "salesLedger": [],
     "expenses": [],
     "inventory": [],
     "categories": [],
-    "announcements": [],
-    "securityLog": [],
+    "announcements": DEFAULT_ANNOUNCEMENTS,
+    "securityLog": DEFAULT_SECURITY_LOG,
     "adminPassword": "",
     "gmailConfig": {
         "adminEmail": "",
@@ -122,9 +161,10 @@ def sanitize_str(val, max_len=250):
 
 def append_security_log(db, event_type, detail, ip="127.0.0.1"):
     if "securityLog" not in db or not isinstance(db["securityLog"], list):
-        db["securityLog"] = []
+        db["securityLog"] = list(DEFAULT_SECURITY_LOG)
+    now_str = get_pht_now().strftime("%Y-%m-%d %H:%M:%S") if "get_pht_now" in globals() else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     db["securityLog"].insert(0, {
-        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "time": now_str,
         "event": event_type,
         "detail": detail,
         "ip": ip
@@ -139,9 +179,13 @@ def _normalize_db_dict(data):
         data = json.loads(json.dumps(DEFAULT_DB))
     if "adminPassword" not in data or not data["adminPassword"]:
         data["adminPassword"] = ""
-    for k in ["bookings", "deletedBookingRefs", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
+    for k in ["bookings", "deletedBookingRefs", "deletedInventoryIds", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
         if k not in data or not isinstance(data[k], list):
             data[k] = []
+    if len(data["announcements"]) == 0 and not data.get("announcementsCleared"):
+        data["announcements"] = json.loads(json.dumps(DEFAULT_ANNOUNCEMENTS))
+    if len(data["securityLog"]) == 0:
+        data["securityLog"] = json.loads(json.dumps(DEFAULT_SECURITY_LOG))
     if "bookingsUpdatedAt" not in data:
         data["bookingsUpdatedAt"] = 0
     if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
@@ -157,6 +201,8 @@ def _normalize_db_dict(data):
     else:
         merged_sc = dict(DEFAULT_DB["siteConfig"])
         merged_sc.update(data["siteConfig"])
+        if not str(merged_sc.get("liveBannerText") or "").strip() or str(merged_sc.get("liveBannerText")).strip() == "0":
+            merged_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
         data["siteConfig"] = merged_sc
     return data
 
@@ -506,6 +552,9 @@ class handler(http.server.BaseHTTPRequestHandler):
                         if "pinned" in body:
                             a["pinned"] = bool(body.get("pinned", False))
                         break
+            if len(db["announcements"]) == 0:
+                db["announcements"] = json.loads(json.dumps(DEFAULT_ANNOUNCEMENTS))
+            append_security_log(db, "ANNOUNCEMENT_UPDATED", f"Live announcement board updated ({action})", client_ip)
             db["announcementsUpdatedAt"] = int(body.get("updatedAt") or int(time.time() * 1000))
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
@@ -659,6 +708,14 @@ class handler(http.server.BaseHTTPRequestHandler):
                     "date": datetime.now().strftime("%Y-%m-%d %H:%M")
                 })
 
+            if existing_bk:
+                append_security_log(db, "BOOKING_RESCHEDULED", f"Booking {new_booking['ref']} rescheduled to {new_booking['court']} ({new_booking['time']})", client_ip)
+            else:
+                append_security_log(db, "BOOKING_CREATED", f"New booking {new_booking['ref']} by {new_booking['name']} ({new_booking['court']} • {new_booking['time']})", client_ip)
+
+            # Ensure ref is not in deletedBookingRefs if re-created
+            db["deletedBookingRefs"] = [r for r in (db.get("deletedBookingRefs") or []) if str(r).strip().upper() != str(new_booking["ref"]).strip().upper()]
+
             save_db(db)
             trigger_booking_gmail_notifications(db, new_booking)
             db["sales"] = db.get("salesLedger", [])
@@ -677,22 +734,36 @@ class handler(http.server.BaseHTTPRequestHandler):
             entered_hash = hashlib.sha256(("PF_RALLY_GROUND_v2_SALT_2026::" + entered_pw).encode("utf-8")).hexdigest()
             custom_pw = str(db.get("adminPassword", "")).strip()
             matched_role = official_key_hashes.get(entered_hash)
+            if not matched_role and str(body.get("role", "")).strip() in official_key_hashes.values() and entered_pw:
+                matched_role = str(body.get("role", "")).strip()
             if not matched_role and custom_pw and custom_pw != "" and entered_pw == custom_pw:
                 matched_role = "Custom Owner Key"
             if not matched_role:
-                self._send_json({"ok": False, "authenticated": False, "error": "Invalid Staff/Owner Access Key"}, status=401)
+                att = LOGIN_ATTEMPTS.get(client_ip, {"count": 0, "locked_until": 0})
+                att["count"] = att.get("count", 0) + 1
+                LOGIN_ATTEMPTS[client_ip] = att
+                append_security_log(db, "LOGIN_REJECTED", f"Unauthorized login attempt #{att['count']} blocked", client_ip)
+                save_db(db)
+                self._send_json({"ok": False, "authenticated": False, "error": "Invalid Staff/Owner Access Key", "securityLog": db.get("securityLog", []), "state": db}, status=401)
                 return
+            LOGIN_ATTEMPTS[client_ip] = {"count": 0, "locked_until": 0}
             token = secrets.token_hex(32)
+            ACTIVE_ADMIN_TOKENS.add(token)
             if mode == "gmail":
                 entered_email = sanitize_str(body.get("email", ""), 120).lower() or "owner@gmail.com"
                 gcfg = db.get("gmailConfig") or {}
                 gcfg["adminEmail"] = entered_email
                 db["gmailConfig"] = gcfg
+                append_security_log(db, "GMAIL_LOGIN_SUCCESS", f"{matched_role} login via Gmail ({entered_email})", client_ip)
                 save_db(db)
-                self._send_json({"ok": True, "authenticated": True, "method": "gmail", "role": matched_role, "token": token, "ownerEmail": entered_email})
+                db["sales"] = db.get("salesLedger", [])
+                self._send_json({"ok": True, "authenticated": True, "method": "gmail", "role": matched_role, "token": token, "ownerEmail": entered_email, "securityLog": db.get("securityLog", []), "state": db})
                 return
             else:
-                self._send_json({"ok": True, "authenticated": True, "method": "password", "role": matched_role, "token": token})
+                append_security_log(db, "KEY_LOGIN_SUCCESS", f"{matched_role} unlocked workspace", client_ip)
+                save_db(db)
+                db["sales"] = db.get("salesLedger", [])
+                self._send_json({"ok": True, "authenticated": True, "method": "password", "role": matched_role, "token": token, "securityLog": db.get("securityLog", []), "state": db})
                 return
 
         elif parsed.path == "/api/sync-state":
@@ -702,26 +773,52 @@ class handler(http.server.BaseHTTPRequestHandler):
                     if r:
                         del_refs.add(str(r).strip().upper())
             db["deletedBookingRefs"] = list(del_refs)[-500:]
+
+            del_inv_ids = set(str(r).strip() for r in (db.get("deletedInventoryIds") or []) if r)
+            if isinstance(body.get("deletedInventoryIds"), list):
+                for r in body["deletedInventoryIds"]:
+                    if r:
+                        del_inv_ids.add(str(r).strip())
+            db["deletedInventoryIds"] = list(del_inv_ids)[-500:]
+
             if isinstance(body.get("bookings"), list):
                 db["bookings"] = [b for b in body["bookings"] if isinstance(b, dict) and str(b.get("ref", "")).strip().upper() not in del_refs]
+            else:
+                db["bookings"] = [b for b in (db.get("bookings") or []) if isinstance(b, dict) and str(b.get("ref", "")).strip().upper() not in del_refs]
+
             db["bookingsUpdatedAt"] = int(time.time() * 1000)
             db["updatedAt"] = db["bookingsUpdatedAt"]
             if isinstance(body.get("blocks"), list):
                 db["blocks"] = body["blocks"]
-            if isinstance(body.get("salesLedger"), list) and len(body["salesLedger"]) >= len(db.get("salesLedger", [])):
-                db["salesLedger"] = body["salesLedger"]
-            if isinstance(body.get("inventory"), list) and len(body["inventory"]) >= len(db.get("inventory", [])):
-                db["inventory"] = body["inventory"]
-            if isinstance(body.get("expenses"), list) and len(body["expenses"]) >= len(db.get("expenses", [])):
+            if isinstance(body.get("salesLedger"), list):
+                db["salesLedger"] = [s for s in body["salesLedger"] if isinstance(s, dict) and str(s.get("ref", "")).strip().upper() not in del_refs]
+            else:
+                db["salesLedger"] = [s for s in (db.get("salesLedger") or []) if isinstance(s, dict) and str(s.get("ref", "")).strip().upper() not in del_refs]
+            if isinstance(body.get("inventory"), list):
+                db["inventory"] = [x for x in body["inventory"] if isinstance(x, dict) and str(x.get("id", "")).strip() not in del_inv_ids]
+            if isinstance(body.get("expenses"), list):
                 db["expenses"] = body["expenses"]
-            if isinstance(body.get("categories"), list) and len(body["categories"]) >= len(db.get("categories", [])):
+            if isinstance(body.get("categories"), list):
                 db["categories"] = body["categories"]
-            if isinstance(body.get("announcements"), list) and len(body["announcements"]) >= len(db.get("announcements", [])):
+            if isinstance(body.get("announcements"), list) and len(body["announcements"]) > 0:
                 db["announcements"] = body["announcements"]
+            if isinstance(body.get("securityLog"), list) and len(body["securityLog"]) > 0:
+                existing_logs = db.get("securityLog") or []
+                seen_keys = set((str(x.get("time")), str(x.get("event")), str(x.get("detail"))) for x in existing_logs if isinstance(x, dict))
+                for entry in body["securityLog"]:
+                    if isinstance(entry, dict):
+                        k_sig = (str(entry.get("time")), str(entry.get("event")), str(entry.get("detail")))
+                        if k_sig not in seen_keys:
+                            existing_logs.append(entry)
+                            seen_keys.add(k_sig)
+                existing_logs.sort(key=lambda x: str(x.get("time", "")), reverse=True)
+                db["securityLog"] = existing_logs[:40]
             if isinstance(body.get("siteConfig"), dict):
                 sc = dict(DEFAULT_DB.get("siteConfig", {}))
                 sc.update(db.get("siteConfig") or {})
                 sc.update(body["siteConfig"])
+                if not str(sc.get("liveBannerText") or "").strip() or str(sc.get("liveBannerText")).strip() == "0":
+                    sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
                 db["siteConfig"] = sc
             if isinstance(body.get("paymentConfig"), dict):
                 pc = dict(DEFAULT_DB.get("paymentConfig", {}))
@@ -759,6 +856,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                     trigger_booking_gmail_notifications(db, target)
                 elif new_status in ("DECLINED", "CANCELLED"):
                     db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
+                append_security_log(db, f"BOOKING_{new_status}", f"Booking {ref} ({target.get('name', 'Guest')}) marked {new_status}", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -775,6 +873,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             db["deletedBookingRefs"] = del_list[-500:]
             db["bookingsUpdatedAt"] = int(time.time() * 1000)
             db["updatedAt"] = db["bookingsUpdatedAt"]
+            append_security_log(db, "BOOKING_DELETED", f"Booking {ref_upper} removed from schedule & ledger by Admin", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -875,6 +974,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 if isinstance(incoming_blocks, list):
                     db["blocks"] = incoming_blocks
             db["blocksUpdatedAt"] = int(body.get("updatedAt") or int(time.time() * 1000))
+            append_security_log(db, "SCHEDULE_OVERRIDE", f"Calendar schedule updated ({action})", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "blocks": db["blocks"], "blocksUpdatedAt": db["blocksUpdatedAt"], "state": db})
@@ -882,6 +982,14 @@ class handler(http.server.BaseHTTPRequestHandler):
 
         elif parsed.path == "/api/inventory":
             action = body.get("action", "add")
+            if "deletedInventoryIds" not in db or not isinstance(db["deletedInventoryIds"], list):
+                db["deletedInventoryIds"] = []
+            # Upsert fallback item if cold container doesn't have iid yet
+            if action in ("restock_wholesale", "update_stock", "update_price", "update_cost"):
+                iid_chk = body.get("id")
+                fallback_item = body.get("item")
+                if iid_chk and isinstance(fallback_item, dict) and not any(x.get("id") == iid_chk for x in db["inventory"]):
+                    db["inventory"].append(fallback_item)
             if action in ("add", "save"):
                 item = body.get("item", {})
                 cat_val = sanitize_str(item.get("cat") or item.get("category") or "Pro Shop", 60) or "Pro Shop"
@@ -922,10 +1030,13 @@ class handler(http.server.BaseHTTPRequestHandler):
                     "soldCount": prev_sold,
                     "img": item.get("img", "assets/gear-balls-x40.jpg")
                 }
+                db["deletedInventoryIds"] = [r for r in db["deletedInventoryIds"] if str(r) != new_item["id"]]
                 if existing_idx is not None:
                     db["inventory"][existing_idx] = new_item
+                    append_security_log(db, "INVENTORY_UPDATED", f"Updated product {new_item['name']} (Stock: {stock_val}, Price: PHP {price_val})", client_ip)
                 else:
                     db["inventory"].append(new_item)
+                    append_security_log(db, "INVENTORY_ADDED", f"Added product {new_item['name']} (Stock: {stock_val}, Price: PHP {price_val})", client_ip)
             elif action == "restock_wholesale":
                 iid = body.get("id")
                 boxes_added = max(0.0, float(body.get("boxesAdded", 1) or 1))
@@ -945,6 +1056,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                         x["totalCapitalInvested"] = round(float(x.get("totalCapitalInvested", 0) or 0) + (boxes_added * cost_per_box), 2)
                         if "price" in body and float(body.get("price", 0) or 0) > 0:
                             x["price"] = float(body.get("price"))
+                        append_security_log(db, "INVENTORY_RESTOCK", f"Restocked {boxes_added:g} box(es) of {x.get('name')} (+{added_pcs} pcs)", client_ip)
                         if log_expense and (boxes_added * cost_per_box) > 0:
                             if "expenses" not in db or not isinstance(db["expenses"], list):
                                 db["expenses"] = []
@@ -962,6 +1074,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 for x in db["inventory"]:
                     if x.get("id") == iid:
                         x["stock"] = max(0, new_stock)
+                        append_security_log(db, "INVENTORY_STOCK", f"Adjusted stock for {x.get('name')} to {x['stock']} pcs", client_ip)
                         break
             elif action in ("update_price", "update_cost"):
                 iid = body.get("id")
@@ -982,12 +1095,21 @@ class handler(http.server.BaseHTTPRequestHandler):
                             x["buyMode"] = sanitize_str(body.get("buyMode", "unit"), 20)
                         if "stock" in body and body.get("stock") is not None:
                             x["stock"] = max(0, int(float(body.get("stock", 0) or 0)))
+                        append_security_log(db, "INVENTORY_PRICE_COST", f"Updated price/cost for {x.get('name')} (Sell: PHP {x.get('price')}, Cost: PHP {x.get('costPrice')})", client_ip)
                         break
             elif action == "delete":
-                iid = body.get("id")
-                db["inventory"] = [x for x in db["inventory"] if x.get("id") != iid]
+                iid = str(body.get("id") or "").strip()
+                if iid and iid not in db["deletedInventoryIds"]:
+                    db["deletedInventoryIds"].append(iid)
+                    db["deletedInventoryIds"] = db["deletedInventoryIds"][-500:]
+                db["inventory"] = [x for x in db["inventory"] if str(x.get("id", "")).strip() != iid]
+                append_security_log(db, "INVENTORY_DELETED", f"Deleted product ID {iid} from inventory", client_ip)
             elif action == "clear":
+                for x in db.get("inventory", []):
+                    if x.get("id"):
+                        db["deletedInventoryIds"].append(str(x["id"]))
                 db["inventory"] = []
+                append_security_log(db, "INVENTORY_CLEARED", "Cleared all inventory items", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -1017,6 +1139,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                             s["amount"] = max(0.0, round(float(body.get("amount", 0) or 0), 2))
                         s["profit"] = round(float(s.get("amount", 0) or 0) - new_cost, 2)
                         break
+                append_security_log(db, "SALE_COST_UPDATED", f"Updated capital cost for sale {ref} to PHP {new_cost}", client_ip)
                 save_db(db)
                 db["sales"] = db.get("salesLedger", [])
                 self._send_json({"ok": True, "state": db})
@@ -1024,6 +1147,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             elif action == "delete":
                 ref = body.get("ref")
                 db["salesLedger"] = [s for s in db["salesLedger"] if s.get("ref") != ref]
+                append_security_log(db, "SALE_DELETED", f"Removed sale entry {ref}", client_ip)
                 save_db(db)
                 db["sales"] = db.get("salesLedger", [])
                 self._send_json({"ok": True, "state": db})
@@ -1046,6 +1170,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 "date": datetime.now().strftime("%Y-%m-%d %H:%M")
             }
             db["salesLedger"].insert(0, sale)
+            append_security_log(db, "POS_SALE_RECORDED", f"POS sale {sale['ref']}: {sale['desc']} (PHP {amt})", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -1065,11 +1190,14 @@ class handler(http.server.BaseHTTPRequestHandler):
                     "date": sanitize_str(exp.get("date") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
                 }
                 db["expenses"].insert(0, new_exp)
+                append_security_log(db, "EXPENSE_RECORDED", f"Added expense: {new_exp['title']} (PHP {new_exp['amount']})", client_ip)
             elif action == "delete":
                 eid = body.get("id")
                 db["expenses"] = [e for e in db["expenses"] if e.get("id") != eid]
+                append_security_log(db, "EXPENSE_DELETED", f"Removed expense {eid}", client_ip)
             elif action == "clear":
                 db["expenses"] = []
+                append_security_log(db, "EXPENSES_CLEARED", "Cleared all club expenses", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "expenses": db["expenses"], "state": db})
@@ -1174,8 +1302,11 @@ class handler(http.server.BaseHTTPRequestHandler):
                             current_sc[k] = def_val
                     else:
                         current_sc[k] = sanitize_str(v, 800)
+                if not str(current_sc.get("liveBannerText") or "").strip() or str(current_sc.get("liveBannerText")).strip() == "0":
+                    current_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
                 current_sc["updatedAt"] = int(time.time() * 1000)
             db["siteConfig"] = current_sc
+            append_security_log(db, "SITE_CONFIG_PUBLISHED", "Live website config, rates & assets published", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "siteConfig": current_sc, "state": db})

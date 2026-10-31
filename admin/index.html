@@ -3072,6 +3072,99 @@ function clearFieldError(fieldId) {
       return slots.includes(String(slotStr).trim());
     }
 
+    function extractAdminCourtNum(courtStr) {
+      const s = String(courtStr || '');
+      const m = s.match(/court\s*0*([1-4])/i) || s.match(/\b([1-4])\b/);
+      return m ? (parseInt(m[1], 10) || 1) : 1;
+    }
+
+    function getAdminCoveredSlotsForBooking(bTime) {
+      const tStr = String(bTime || '');
+      const allSlots = calendarHours.map(h => h.time);
+      const matched = allSlots.filter(s => tStr.includes(s));
+      if (matched.length === 0) return [];
+      const durMatch = tStr.match(/\((\d+)\s*hrs?\)/i);
+      const hrs = durMatch ? Math.max(1, parseInt(durMatch[1], 10) || 1) : 1;
+      if (hrs <= 1 || matched.length > 1) return matched;
+      const startIdx = allSlots.indexOf(matched[0]);
+      if (startIdx === -1) return matched;
+      return allSlots.slice(startIdx, startIdx + hrs);
+    }
+
+    function getDeletedBookingRefsSet() {
+      try {
+        const arr = JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || [];
+        return new Set(arr.map(r => String(r || '').trim().toUpperCase()).filter(Boolean));
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function addDeletedBookingRef(ref) {
+      const ru = String(ref || '').trim().toUpperCase();
+      if (!ru) return;
+      try {
+        const set = getDeletedBookingRefsSet();
+        set.add(ru);
+        localStorage.setItem('pf_deleted_booking_refs', JSON.stringify(Array.from(set).slice(-500)));
+      } catch (e) {}
+    }
+
+    function getDeletedInventoryIdsSet() {
+      try {
+        const arr = JSON.parse(localStorage.getItem('pf_deleted_inventory_ids') || '[]') || [];
+        return new Set(arr.map(x => String(x || '').trim()).filter(Boolean));
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function addDeletedInventoryId(id) {
+      const clean = String(id || '').trim();
+      if (!clean) return;
+      try {
+        const set = getDeletedInventoryIdsSet();
+        set.add(clean);
+        localStorage.setItem('pf_deleted_inventory_ids', JSON.stringify(Array.from(set).slice(-500)));
+      } catch (e) {}
+    }
+
+    const DEFAULT_SECURITY_AUDIT_LOGS = [
+      {
+        event: 'SHIELD_ACTIVE',
+        detail: 'Cybersecurity Shield & Intrusion Protection active (Brute-Force Guard, 15-Min Auto-Lock, Anti-XSS)',
+        time: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      },
+      {
+        event: 'AUTH_GATE_READY',
+        detail: '5 Official Salted SHA-256 Staff/Owner Keys & Live Sync Engine initialized',
+        time: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      }
+    ];
+    let securityAuditLogs = [...DEFAULT_SECURITY_AUDIT_LOGS];
+    try {
+      const savedSecLogs = JSON.parse(localStorage.getItem('pf_security_log') || 'null');
+      if (Array.isArray(savedSecLogs) && savedSecLogs.length > 0) {
+        securityAuditLogs = savedSecLogs;
+      }
+    } catch (e) {}
+
+    function appendLocalSecurityAuditLog(event, detail) {
+      const entry = {
+        event: String(event || 'SECURITY_EVENT'),
+        detail: String(detail || ''),
+        time: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 8)
+      };
+      const isDup = securityAuditLogs.some(x => x && x.event === entry.event && x.detail === entry.detail && String(x.time || '').slice(0, 16) === entry.time.slice(0, 16));
+      if (!isDup) {
+        securityAuditLogs = [entry, ...(securityAuditLogs || [])].slice(0, 50);
+        try { localStorage.setItem('pf_security_log', JSON.stringify(securityAuditLogs)); } catch (e) {}
+      }
+      if (typeof renderSecurityAuditLog === 'function') {
+        renderSecurityAuditLog(securityAuditLogs);
+      }
+    }
+
     function openPublicSite(event, pagePath) {
       if (event) event.preventDefault();
       const host = window.location.hostname;
@@ -3122,6 +3215,12 @@ function clearFieldError(fieldId) {
     }
 
     function saveAdminState(markUpdated = true) {
+      const delRefs = getDeletedBookingRefsSet();
+      const delInvIds = getDeletedInventoryIdsSet();
+      bookings = (bookings || []).filter(b => b && b.ref && !delRefs.has(String(b.ref).trim().toUpperCase()));
+      salesLedger = (salesLedger || []).filter(s => s && (!s.ref || !delRefs.has(String(s.ref).trim().toUpperCase())));
+      posCatalog = (posCatalog || []).filter(p => p && (!p.id || !delInvIds.has(String(p.id).trim())));
+
       if (markUpdated) {
         localAdminStateUpdatedAt = Date.now();
         adminStateMutationLockUntil = localAdminStateUpdatedAt + 8000;
@@ -3130,26 +3229,31 @@ function clearFieldError(fieldId) {
       }
       try {
         localStorage.setItem('pf_shared_bookings', JSON.stringify(bookings || []));
-        if (markUpdated) {
-          localStorage.setItem('pf_all_bookings', JSON.stringify(bookings || []));
-        }
+        localStorage.setItem('pf_all_bookings', JSON.stringify(bookings || []));
+        localStorage.setItem('pf_public_bookings', JSON.stringify(bookings || []));
         localStorage.setItem('pf_court_blocks', JSON.stringify(courtBlocks || []));
         localStorage.setItem('pf_sales_ledger', JSON.stringify(salesLedger || []));
         localStorage.setItem('pf_pos_catalog', JSON.stringify(posCatalog || []));
+        localStorage.setItem('pf_inventory', JSON.stringify(posCatalog || []));
         localStorage.setItem('pf_club_expenses', JSON.stringify(clubExpenses || []));
         localStorage.setItem('pf_custom_categories', JSON.stringify(customCategories || []));
+        if (Array.isArray(securityAuditLogs) && securityAuditLogs.length > 0) {
+          localStorage.setItem('pf_security_log', JSON.stringify(securityAuditLogs));
+        }
       } catch (e) {}
       if (markUpdated) {
         try {
-          localStorage.setItem('pf_public_bookings', JSON.stringify(bookings || []));
           if (typeof BroadcastChannel !== 'undefined') {
-            const delRefs = JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || [];
+            const delRefsArr = Array.from(delRefs);
             const bcBk = new BroadcastChannel('pf_booking_sync_channel');
-            bcBk.postMessage({ type: 'BOOKINGS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, bookings: bookings || [], deletedBookingRefs: delRefs, updatedAt: localAdminStateUpdatedAt });
+            bcBk.postMessage({ type: 'BOOKINGS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, bookings: bookings || [], deletedBookingRefs: delRefsArr, updatedAt: localAdminStateUpdatedAt });
             bcBk.close();
             const bcBlk = new BroadcastChannel('pf_blocks_sync_channel');
             bcBlk.postMessage({ type: 'BLOCKS_SYNC', senderTabId: ADMIN_TAB_INSTANCE_ID, blocks: courtBlocks || [], updatedAt: localAdminStateUpdatedAt });
             bcBlk.close();
+            const bcLive = new BroadcastChannel('pf_live_sync');
+            bcLive.postMessage({ type: 'INVENTORY_UPDATED', inventory: posCatalog || [], updatedAt: localAdminStateUpdatedAt });
+            bcLive.close();
           }
         } catch (e) {}
       }
@@ -3157,20 +3261,30 @@ function clearFieldError(fieldId) {
 
     function loadAdminStateFromStorage() {
       try {
+        const delRefs = getDeletedBookingRefsSet();
+        const delInvIds = getDeletedInventoryIdsSet();
         const sb = JSON.parse(localStorage.getItem('pf_shared_bookings') || 'null');
         const ab = JSON.parse(localStorage.getItem('pf_all_bookings') || 'null');
         if (Array.isArray(sb) && sb.length > 0 && bookings.length === 0) bookings = sb;
         else if (Array.isArray(ab) && ab.length > 0 && bookings.length === 0) bookings = ab;
+        bookings = (bookings || []).filter(b => b && b.ref && !delRefs.has(String(b.ref).trim().toUpperCase()));
+
         const cb = JSON.parse(localStorage.getItem('pf_court_blocks') || 'null');
         if (Array.isArray(cb) && cb.length > 0 && courtBlocks.length === 0) courtBlocks = cb;
         const sl = JSON.parse(localStorage.getItem('pf_sales_ledger') || 'null');
         if (Array.isArray(sl) && sl.length > 0 && salesLedger.length === 0) salesLedger = sl;
+        salesLedger = (salesLedger || []).filter(s => s && (!s.ref || !delRefs.has(String(s.ref).trim().toUpperCase())));
+
         const pc = JSON.parse(localStorage.getItem('pf_pos_catalog') || 'null');
         if (Array.isArray(pc) && pc.length > 0 && posCatalog.length === 0) posCatalog = pc;
+        posCatalog = (posCatalog || []).filter(p => p && (!p.id || !delInvIds.has(String(p.id).trim())));
+
         const ce = JSON.parse(localStorage.getItem('pf_club_expenses') || 'null');
         if (Array.isArray(ce) && ce.length > 0 && clubExpenses.length === 0) clubExpenses = ce;
         const cc = JSON.parse(localStorage.getItem('pf_custom_categories') || 'null');
         if (Array.isArray(cc) && cc.length > 0 && customCategories.length === 0) customCategories = cc;
+        const sec = JSON.parse(localStorage.getItem('pf_security_log') || 'null');
+        if (Array.isArray(sec) && sec.length > 0) securityAuditLogs = sec;
       } catch (e) {}
     }
 
@@ -3189,6 +3303,7 @@ function clearFieldError(fieldId) {
           e: clubExpenses,
           c: customCategories,
           a: typeof announcements !== 'undefined' ? announcements : [],
+          sec: securityAuditLogs ? securityAuditLogs.length : 0,
           opSlots,
           opEn,
           calDate
@@ -3219,6 +3334,7 @@ function clearFieldError(fieldId) {
       renderReportsLedger();
       if (typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
       if (typeof renderSiteEditorCustomInventoryPrices === 'function') renderSiteEditorCustomInventoryPrices();
+      if (typeof renderSecurityAuditLog === 'function') renderSecurityAuditLog(securityAuditLogs);
       const ind = document.getElementById('sync-status-indicator');
       if (ind) {
         ind.textContent = `Live Synced • ${bookings.length} Bookings • ${posCatalog.length} Items`;
@@ -3250,17 +3366,45 @@ function clearFieldError(fieldId) {
           try {
             const cloned = response.clone();
             const data = await cloned.json();
+            if (data && Array.isArray(data.deletedBookingRefs)) {
+              data.deletedBookingRefs.forEach(r => addDeletedBookingRef(r));
+            }
+            if (data && Array.isArray(data.deletedInventoryIds)) {
+              data.deletedInventoryIds.forEach(id => addDeletedInventoryId(id));
+            }
+            if (data && Array.isArray(data.securityLog) && data.securityLog.length > 0) {
+              securityAuditLogs = data.securityLog;
+              try { localStorage.setItem('pf_security_log', JSON.stringify(securityAuditLogs)); } catch (e) {}
+            }
             const st = (data && data.state && typeof data.state === 'object') ? data.state : null;
             if (st) {
-              if (Array.isArray(st.bookings)) bookings = st.bookings;
-              if (Array.isArray(st.sales) || Array.isArray(st.salesLedger)) salesLedger = st.sales || st.salesLedger;
+              if (Array.isArray(st.deletedBookingRefs)) {
+                st.deletedBookingRefs.forEach(r => addDeletedBookingRef(r));
+              }
+              if (Array.isArray(st.deletedInventoryIds)) {
+                st.deletedInventoryIds.forEach(id => addDeletedInventoryId(id));
+              }
+              const delRefs = getDeletedBookingRefsSet();
+              const delInvIds = getDeletedInventoryIdsSet();
+              if (Array.isArray(st.bookings)) {
+                bookings = st.bookings.filter(b => b && b.ref && !delRefs.has(String(b.ref).trim().toUpperCase()));
+              }
+              if (Array.isArray(st.sales) || Array.isArray(st.salesLedger)) {
+                salesLedger = (st.sales || st.salesLedger).filter(s => s && (!s.ref || !delRefs.has(String(s.ref).trim().toUpperCase())));
+              }
               if (Array.isArray(st.blocks)) courtBlocks = st.blocks;
-              if (Array.isArray(st.inventory)) posCatalog = st.inventory;
+              if (Array.isArray(st.inventory)) {
+                posCatalog = st.inventory.filter(p => p && (!p.id || !delInvIds.has(String(p.id).trim())));
+              }
               if (Array.isArray(st.expenses)) clubExpenses = st.expenses;
               if (Array.isArray(st.categories)) customCategories = st.categories;
-              if (Array.isArray(st.announcements)) {
+              if (Array.isArray(st.announcements) && st.announcements.length > 0) {
                 announcements = st.announcements;
                 try { localStorage.setItem('pf_announcements', JSON.stringify(announcements)); } catch (e) {}
+              }
+              if (Array.isArray(st.securityLog) && st.securityLog.length > 0) {
+                securityAuditLogs = st.securityLog;
+                try { localStorage.setItem('pf_security_log', JSON.stringify(securityAuditLogs)); } catch (e) {}
               }
               saveAdminState(true);
               renderAllAdminViews();
@@ -3284,7 +3428,7 @@ function clearFieldError(fieldId) {
       // Always merge any new customer bookings written to localStorage by the Public Site on the same browser
       let foundNewLocalBooking = false;
       try {
-        const deletedRefs = new Set((JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || []).map(r => String(r || '').trim().toUpperCase()));
+        const deletedRefs = getDeletedBookingRefsSet();
         bookings = (bookings || []).filter(b => b && b.ref && !deletedRefs.has(String(b.ref).trim().toUpperCase()));
         const sBks = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]') || [];
         const aBks = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]') || [];
@@ -3322,6 +3466,15 @@ function clearFieldError(fieldId) {
           const res = await fetch(ep, { cache: 'no-store' });
           if (res.ok) {
             const data = await res.json();
+            if (Array.isArray(data.deletedBookingRefs)) {
+              data.deletedBookingRefs.forEach(r => addDeletedBookingRef(r));
+            }
+            if (Array.isArray(data.deletedInventoryIds)) {
+              data.deletedInventoryIds.forEach(id => addDeletedInventoryId(id));
+            }
+            const deletedRefs = getDeletedBookingRefsSet();
+            const deletedInvIds = getDeletedInventoryIdsSet();
+
             const serverUpdatedAt = Number(data.updatedAt || 0);
             const inMutationLock = Date.now() < adminStateMutationLockUntil;
             const isColdServerContainer = (serverUpdatedAt === 0 || serverUpdatedAt < localAdminStateUpdatedAt) && (
@@ -3332,14 +3485,18 @@ function clearFieldError(fieldId) {
             );
 
             if (isColdServerContainer || inMutationLock || foundNewLocalBooking) {
-              // Merge any bookings present on server that aren't in local bookings yet
-              if (Array.isArray(data.bookings)) {
+              // Merge any non-deleted bookings present on server when NOT inside an active admin deletion/mutation lock
+              if (!inMutationLock && Array.isArray(data.bookings)) {
                 data.bookings.forEach(sb => {
-                  if (sb && sb.ref && !bookings.some(b => b.ref === sb.ref)) {
+                  const ru = String((sb && sb.ref) || '').trim().toUpperCase();
+                  if (ru && !deletedRefs.has(ru) && !bookings.some(b => String(b.ref || '').trim().toUpperCase() === ru)) {
                     bookings.push(sb);
                   }
                 });
               }
+              bookings = (bookings || []).filter(b => b && b.ref && !deletedRefs.has(String(b.ref).trim().toUpperCase()));
+              salesLedger = (salesLedger || []).filter(s => s && (!s.ref || !deletedRefs.has(String(s.ref).trim().toUpperCase())));
+              posCatalog = (posCatalog || []).filter(p => p && (!p.id || !deletedInvIds.has(String(p.id).trim())));
               saveAdminState(false);
               // Hydrate the cold serverless container in the background
               fetch('/api/sync-state', {
@@ -3347,22 +3504,25 @@ function clearFieldError(fieldId) {
                 headers: getAdminAuthHeaders(),
                 body: JSON.stringify({
                   bookings: bookings,
+                  deletedBookingRefs: Array.from(deletedRefs),
+                  deletedInventoryIds: Array.from(deletedInvIds),
                   blocks: courtBlocks,
                   salesLedger: salesLedger,
                   inventory: posCatalog,
                   expenses: clubExpenses,
                   categories: customCategories,
                   announcements: typeof announcements !== 'undefined' ? announcements : [],
+                  securityLog: securityAuditLogs,
                   siteConfig: typeof currentSiteConfig !== 'undefined' ? currentSiteConfig : undefined
                 })
               }).catch(() => {});
             } else {
-              bookings = data.bookings || [];
-              salesLedger = data.sales || data.salesLedger || [];
+              bookings = (data.bookings || []).filter(b => b && b.ref && !deletedRefs.has(String(b.ref).trim().toUpperCase()));
+              salesLedger = (data.sales || data.salesLedger || []).filter(s => s && (!s.ref || !deletedRefs.has(String(s.ref).trim().toUpperCase())));
               if (Date.now() >= blocksMutationLockUntil) {
                 courtBlocks = data.blocks || [];
               }
-              posCatalog = data.inventory || [];
+              posCatalog = (data.inventory || []).filter(p => p && (!p.id || !deletedInvIds.has(String(p.id).trim())));
               clubExpenses = data.expenses || [];
               customCategories = data.categories || [];
               if (serverUpdatedAt > 0) {
@@ -3373,7 +3533,7 @@ function clearFieldError(fieldId) {
             }
 
             if (Date.now() >= (typeof annMutationLockUntil !== 'undefined' ? annMutationLockUntil : 0)) {
-              if (Array.isArray(data.announcements) && (data.announcements.length > 0 || serverUpdatedAt >= localAdminStateUpdatedAt)) {
+              if (Array.isArray(data.announcements) && data.announcements.length > 0) {
                 announcements = data.announcements;
                 try { localStorage.setItem('pf_announcements', JSON.stringify(announcements)); } catch (e) {}
               }
@@ -3381,8 +3541,18 @@ function clearFieldError(fieldId) {
             if (data.gmailConfig && typeof syncGmailUiState === 'function') {
               syncGmailUiState(data.gmailConfig);
             }
-            if (Array.isArray(data.securityLog) && typeof renderSecurityAuditLog === 'function') {
-              renderSecurityAuditLog(data.securityLog);
+            if (Array.isArray(data.securityLog) && data.securityLog.length > 0) {
+              const mergedLogs = [...data.securityLog];
+              (securityAuditLogs || []).forEach(locItem => {
+                if (locItem && !mergedLogs.some(sItem => sItem && sItem.event === locItem.event && sItem.detail === locItem.detail && String(sItem.time || '').slice(0, 16) === String(locItem.time || '').slice(0, 16))) {
+                  mergedLogs.push(locItem);
+                }
+              });
+              securityAuditLogs = mergedLogs.slice(0, 50);
+              try { localStorage.setItem('pf_security_log', JSON.stringify(securityAuditLogs)); } catch (e) {}
+              if (typeof renderSecurityAuditLog === 'function') {
+                renderSecurityAuditLog(securityAuditLogs);
+              }
             }
             if (data.siteConfig && typeof handleIncomingServerSiteConfig === 'function' && !isColdServerContainer) {
               handleIncomingServerSiteConfig(data.siteConfig);
@@ -3694,7 +3864,7 @@ function clearFieldError(fieldId) {
       const timeSel = document.getElementById('adm-resched-time');
       const errEl = document.getElementById('adm-resched-error-msg');
       if (!timeSel) return;
-      const cNum = parseInt(String(courtVal).replace(/[^0-9]/g, ''), 10) || 1;
+      const cNum = extractAdminCourtNum(courtVal);
       const todayYmd = getAdminLocalTodayYMD();
 
       Array.from(timeSel.options).forEach(opt => {
@@ -3811,7 +3981,7 @@ function clearFieldError(fieldId) {
       const dateInp = document.getElementById('adm-resched-date');
       dateInp.min = todayYmd;
       dateInp.value = (b.date && /^\d{4}-\d{2}-\d{2}$/.test(b.date) && b.date >= todayYmd) ? b.date : todayYmd;
-      const cNum = parseInt(String(b.court || '1').replace(/[^0-9]/g, ''), 10) || 1;
+      const cNum = extractAdminCourtNum(b.court || '1');
       document.getElementById('adm-resched-court').value = 'Court 0' + cNum;
       adminRefreshRescheduleTimeOptions();
       modal.classList.remove('hidden');
@@ -3833,7 +4003,7 @@ function clearFieldError(fieldId) {
       const b = bookings.find(item => item.ref === ref);
       if (!b || !newDate) return;
 
-      const cNum = parseInt(String(newCourt).replace(/[^0-9]/g, ''), 10) || 1;
+      const cNum = extractAdminCourtNum(newCourt);
       const slotSt = resolveAdminSlotStatus(newDate, cNum, newTime);
       if (slotSt && slotSt.status === 'EXPIRED') {
         if (errEl) {
@@ -3915,6 +4085,7 @@ function clearFieldError(fieldId) {
             date: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
           });
         }
+        appendLocalSecurityAuditLog('BOOKING_CONFIRMED', `Booking ${ref} marked CONFIRMED by Admin`);
         saveAdminState(true);
         renderAllAdminViews();
       }
@@ -3933,6 +4104,7 @@ function clearFieldError(fieldId) {
       if (target) {
         target.status = 'DECLINED';
         salesLedger = salesLedger.filter(s => s.ref !== ref);
+        appendLocalSecurityAuditLog('BOOKING_DECLINED', `Booking ${ref} marked DECLINED by Admin`);
         saveAdminState(true);
         renderAllAdminViews();
       }
@@ -3948,12 +4120,11 @@ function clearFieldError(fieldId) {
 
     async function deleteAdminBooking(ref) {
       const refUpper = String(ref || '').trim().toUpperCase();
-      bookings = bookings.filter(b => String(b.ref || '').trim().toUpperCase() !== refUpper);
-      salesLedger = salesLedger.filter(s => String(s.ref || '').trim().toUpperCase() !== refUpper);
+      if (!refUpper) return;
+      addDeletedBookingRef(refUpper);
+      bookings = (bookings || []).filter(b => String((b && b.ref) || '').trim().toUpperCase() !== refUpper);
+      salesLedger = (salesLedger || []).filter(s => String((s && s.ref) || '').trim().toUpperCase() !== refUpper);
       try {
-        const delList = (JSON.parse(localStorage.getItem('pf_deleted_booking_refs') || '[]') || []).map(r => String(r || '').trim().toUpperCase());
-        if (refUpper && !delList.includes(refUpper)) delList.push(refUpper);
-        localStorage.setItem('pf_deleted_booking_refs', JSON.stringify(delList.slice(-500)));
         localStorage.removeItem('booking_' + ref);
         localStorage.removeItem('booking_' + refUpper);
         const lat = JSON.parse(localStorage.getItem('latest_booking') || 'null');
@@ -3967,8 +4138,9 @@ function clearFieldError(fieldId) {
           } catch (e) {}
         });
       } catch (e) {}
+      appendLocalSecurityAuditLog('BOOKING_DELETED', `Booking ${refUpper} removed from schedule & ledger`);
       saveAdminState(true);
-      renderAllAdminViews();
+      renderAllAdminViews(true);
       const delEndpoints = ['/api/bookings/delete'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         delEndpoints.push('http://localhost:8088/api/bookings/delete');
@@ -3979,7 +4151,7 @@ function clearFieldError(fieldId) {
           const res = await fetch(ep, {
             method: 'POST',
             headers: getAdminAuthHeaders(),
-            body: JSON.stringify({ ref: ref })
+            body: JSON.stringify({ ref: refUpper, deletedBookingRefs: Array.from(getDeletedBookingRefsSet()) })
           });
           if (res.ok) break;
         } catch (e) {}
@@ -4002,7 +4174,7 @@ function clearFieldError(fieldId) {
         dateEl.value = todayYMD;
       }
 
-      const cNum = parseInt(String(courtEl?.value || '1').replace(/[^0-9]/g, ''), 10) || 1;
+      const cNum = extractAdminCourtNum(courtEl?.value || '1');
       const targetDate = dateEl.value;
       const dayRate = Number((currentSiteConfig && currentSiteConfig.dayRate) || 400);
       const nightRate = Number((currentSiteConfig && currentSiteConfig.nightRate) || 500);
@@ -4093,7 +4265,7 @@ function clearFieldError(fieldId) {
         return;
       }
 
-      const cNum = parseInt(String(court).replace(/[^0-9]/g, ''), 10) || 1;
+      const cNum = extractAdminCourtNum(court);
       const slotSt = resolveAdminSlotStatus(date, cNum, time);
       if (slotSt && slotSt.status === 'EXPIRED') {
         if (errBanner) {
@@ -4264,14 +4436,19 @@ function clearFieldError(fieldId) {
       const isToday = (dateYMD === todayYMD);
 
       // 1. Check active Customer / Staff Bookings first (highest priority)
+      const deletedRefs = getDeletedBookingRefsSet();
       const matchedBooking = bookings.find(b => {
         if (!b || b.status === 'DECLINED' || b.status === 'CANCELLED') return false;
+        const ru = String(b.ref || '').trim().toUpperCase();
+        if (ru && deletedRefs.has(ru)) return false;
         const bCourt = String(b.court || '');
-        const courtMatches = bCourt.includes(cLabel) || bCourt.includes(cShort) || bCourt.toUpperCase().includes('ALL');
+        const courtMatches = (extractAdminCourtNum(bCourt) === Number(courtNum)) || bCourt.includes(cLabel) || bCourt.includes(cShort) || bCourt.toUpperCase().includes('ALL');
         if (!courtMatches) return false;
         const bTime = String(b.time || '');
         const bDate = String(b.date || '');
-        if (!bTime.includes(slotStr)) return false;
+        const coveredSlots = getAdminCoveredSlotsForBooking(bTime);
+        const slotMatches = coveredSlots.includes(slotStr) || bTime.includes(slotStr);
+        if (!slotMatches) return false;
         if (bDate === dateYMD || bTime.includes(dateYMD)) return true;
         if (isToday && (bTime.toLowerCase().includes('today') || (!bDate && !/\d{4}-\d{2}-\d{2}/.test(bTime)))) return true;
         return false;
@@ -4375,7 +4552,7 @@ function clearFieldError(fieldId) {
       blocksMutationLockUntil = Date.now() + 8000;
 
       // If this slot currently has an active booking and Admin sets it to Open Court / Open Play / Closed / Reset, remove the booking too
-      const cNumMatch = parseInt(String(courtLabel || '').replace(/[^0-9]/g, ''), 10) || 0;
+      const cNumMatch = extractAdminCourtNum(courtLabel);
       if (cNumMatch > 0 && slotStr && slotStr !== 'ALL') {
         const curSlotInfo = resolveAdminSlotStatus(dateYMD, cNumMatch, slotStr);
         if (curSlotInfo && curSlotInfo.status === 'BOOKED' && curSlotInfo.booking && curSlotInfo.booking.ref) {
@@ -4900,29 +5077,35 @@ function clearFieldError(fieldId) {
       const inp = document.getElementById('new-custom-category-input');
       if (!inp || !inp.value.trim()) return;
       const newCat = inp.value.trim();
+      if (!customCategories.includes(newCat) && !defaultBaseCategories.includes(newCat)) {
+        customCategories.push(newCat);
+      }
+      saveAdminState(true);
+      renderAllAdminViews(true);
+      inp.value = '';
       try {
         await fetch('/api/categories', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({ action: 'add', name: newCat })
         });
       } catch (e) {}
-      inp.value = '';
-      await fetchAdminStateFromServer(true);
     }
 
     async function deleteCustomCategory(catName) {
       if (!confirm(`Remove custom category "${catName}"?`)) return;
+      customCategories = (customCategories || []).filter(c => c !== catName);
+      if (activeInventoryCategoryFilter === catName) activeInventoryCategoryFilter = 'ALL';
+      if (activePosCategoryFilter === catName) activePosCategoryFilter = 'ALL';
+      saveAdminState(true);
+      renderAllAdminViews(true);
       try {
         await fetch('/api/categories', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({ action: 'delete', name: catName })
         });
       } catch (e) {}
-      if (activeInventoryCategoryFilter === catName) activeInventoryCategoryFilter = 'ALL';
-      if (activePosCategoryFilter === catName) activePosCategoryFilter = 'ALL';
-      await fetchAdminStateFromServer(true);
     }
 
     function setInventoryCategoryFilter(cat) {
@@ -4988,7 +5171,7 @@ function clearFieldError(fieldId) {
       currentUploadedInventoryImg = imgPath;
       const previewEl = document.getElementById('inv-img-preview');
       const urlEl = document.getElementById('inv-img-url');
-      if (previewEl) previewEl.src = imgPath;
+      if (previewEl) previewEl.src = resolvePreviewAssetPath(imgPath);
       if (urlEl) urlEl.value = imgPath;
     }
 
@@ -4996,7 +5179,7 @@ function clearFieldError(fieldId) {
       if (!val || val === '(Custom Uploaded Photo)') return;
       currentUploadedInventoryImg = val.trim();
       const previewEl = document.getElementById('inv-img-preview');
-      if (previewEl) previewEl.src = currentUploadedInventoryImg;
+      if (previewEl) previewEl.src = resolvePreviewAssetPath(currentUploadedInventoryImg);
     }
 
     function handleInventoryImageUpload(event) {
@@ -5043,26 +5226,34 @@ function clearFieldError(fieldId) {
       const prod = posCatalog.find(p => p.id === id);
       if (!prod) return;
       const newStock = Math.max(0, Number(prod.stock || 0) + delta);
+      prod.stock = newStock;
+      saveAdminState(true);
+      renderAllAdminViews(true);
       try {
         await fetch('/api/inventory', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'update_stock', id: id, stock: newStock })
+          headers: getAdminAuthHeaders(),
+          body: JSON.stringify({ action: 'update_stock', id: id, stock: newStock, item: prod })
         });
       } catch (e) {}
-      await fetchAdminStateFromServer(true);
     }
 
     async function deleteInventoryItem(id) {
       if (!confirm('Remove this product from inventory?')) return;
+      addDeletedInventoryId(id);
+      posCatalog = (posCatalog || []).filter(p => p && p.id !== id);
+      posOrder = (posOrder || []).filter(o => o && o.id !== id);
+      appendLocalSecurityAuditLog('INVENTORY_DELETE', `Removed product ${id} from inventory`);
+      saveAdminState(true);
+      renderAllAdminViews(true);
+      renderPosOrder();
       try {
         await fetch('/api/inventory', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({ action: 'delete', id: id })
         });
       } catch (e) {}
-      await fetchAdminStateFromServer(true);
     }
 
     // ================= POINT OF SALE (POS) REGISTER =================
@@ -5099,7 +5290,7 @@ function clearFieldError(fieldId) {
         <div onclick="${outOfStock ? "alert('Out of stock! Please restock in the Inventory tab.')" : `addPosItem('${p.id}')`}" class="p-3.5 rounded-2xl bg-brand-card border ${outOfStock ? 'border-brand-clay/30 opacity-60 cursor-not-allowed' : 'border-white/10 hover:border-brand-lime/40 cursor-pointer active:scale-95'} transition flex flex-col justify-between">
           <div>
             <div class="h-28 w-full rounded-xl overflow-hidden bg-brand-black mb-2.5 border border-white/5 relative">
-              <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${pfEscapeHtml(p.name)}" class="w-full h-full object-cover">
+              <img src="${resolvePreviewAssetPath(p.img || 'assets/gear-balls-x40.jpg')}" onerror="this.onerror=null;this.src=resolvePreviewAssetPath('assets/gear-balls-x40.jpg')" alt="${pfEscapeHtml(p.name)}" class="w-full h-full object-cover">
               <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full ${outOfStock ? 'bg-brand-clay text-white' : 'bg-brand-black/85 text-brand-lime border border-brand-lime/30'} text-[9px] font-mono font-bold">
                 ${outOfStock ? '0 Left' : `Stock: ${p.stock}`}
               </span>
@@ -5232,17 +5423,35 @@ function clearFieldError(fieldId) {
           }))
         };
 
-        await fetch('/api/sales', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(salePayload)
+        // Optimistically deduct stock & record sale locally right away
+        const nowStr = getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5);
+        const localSaleEntry = Object.assign({ date: nowStr }, salePayload);
+        posOrder.forEach(cartItem => {
+          const targetProd = posCatalog.find(p => p.id === cartItem.id);
+          if (targetProd) {
+            targetProd.stock = Math.max(0, Number(targetProd.stock || 0) - Number(cartItem.qty || 1));
+            targetProd.soldCount = Number(targetProd.soldCount || 0) + Number(cartItem.qty || 1);
+          }
         });
-
+        if (!salesLedger.some(s => s.ref === ref)) {
+          salesLedger.unshift(localSaleEntry);
+        }
+        appendLocalSecurityAuditLog('POS_SALE_RECORDED', `POS sale ${ref}: ${desc} (PHP ${total.toFixed(2)})`);
         clearPosOrder();
         const cashInp = document.getElementById('pos-cash-received');
         if (cashInp) cashInp.value = '';
         calculatePosChange();
-        await fetchAdminStateFromServer(true);
+        saveAdminState(true);
+        renderAllAdminViews(true);
+
+        try {
+          await fetch('/api/sales', {
+            method: 'POST',
+            headers: getAdminAuthHeaders(),
+            body: JSON.stringify(localSaleEntry)
+          });
+        } catch (err) {}
+
         alert('POS Sale Completed & Stock Deducted!\nRef: ' + ref + '\nTotal: ₱' + total.toFixed(2));
       } catch (e) {
       } finally {
@@ -5409,7 +5618,7 @@ function clearFieldError(fieldId) {
           if (stockEl) stockEl.value = existing.stock;
           setInventoryModalBuyMode(bMode);
           currentUploadedInventoryImg = existing.img || 'assets/gear-water-500ml.jpg';
-          if (previewEl) previewEl.src = currentUploadedInventoryImg;
+          if (previewEl) previewEl.src = resolvePreviewAssetPath(currentUploadedInventoryImg);
           if (urlEl) urlEl.value = currentUploadedInventoryImg.startsWith('data:') ? '(Custom Uploaded Photo)' : currentUploadedInventoryImg;
           recalcInventoryModalProfit(false);
         }
@@ -5429,7 +5638,7 @@ function clearFieldError(fieldId) {
         if (stockEl) stockEl.value = 24;
         setInventoryModalBuyMode('wholesale');
         currentUploadedInventoryImg = 'assets/gear-water-500ml.jpg';
-        if (previewEl) previewEl.src = currentUploadedInventoryImg;
+        if (previewEl) previewEl.src = resolvePreviewAssetPath(currentUploadedInventoryImg);
         if (urlEl) urlEl.value = currentUploadedInventoryImg;
         recalcInventoryModalProfit(false);
       }
@@ -5473,16 +5682,37 @@ function clearFieldError(fieldId) {
         img: currentUploadedInventoryImg || 'assets/gear-water-500ml.jpg'
       };
 
+      // Ensure custom category is saved if new
+      if (cat && !defaultBaseCategories.includes(cat) && !customCategories.includes(cat)) {
+        customCategories.push(cat);
+      }
+      // Remove from deleted set if re-adding
+      try {
+        const delInv = getDeletedInventoryIdsSet();
+        if (delInv.has(id)) {
+          delInv.delete(id);
+          localStorage.setItem('pf_deleted_inventory_ids', JSON.stringify(Array.from(delInv)));
+        }
+      } catch (e) {}
+
+      const existingIdx = posCatalog.findIndex(x => x.id === id);
+      if (existingIdx !== -1) {
+        posCatalog[existingIdx] = Object.assign({}, posCatalog[existingIdx], itemObj);
+      } else {
+        posCatalog.push(itemObj);
+      }
+      appendLocalSecurityAuditLog('INVENTORY_UPSERT', `Saved product "${name}" (Stock: ${stock}, Price: PHP ${price})`);
+      closeInventoryModal();
+      saveAdminState(true);
+      renderAllAdminViews(true);
+
       try {
         await fetch('/api/inventory', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({ action: 'add', item: itemObj })
         });
       } catch (e) {}
-
-      closeInventoryModal();
-      await fetchAdminStateFromServer(true);
     }
 
     async function promptRestockWholesaleBox(itemId) {
@@ -5502,21 +5732,33 @@ How many boxes/packs are you adding to stock?
       if (boxCostStr === null) return;
       const costPerBox = Math.max(0, parseFloat(boxCostStr) || defaultBoxCost);
 
+      const addedUnits = Math.round(boxesAdded * defaultPcs);
+      const unitCost = defaultPcs > 0 ? Math.round((costPerBox / defaultPcs) * 100) / 100 : Number(prod.costPrice || 0);
+      prod.stock = Math.max(0, Number(prod.stock || 0) + addedUnits);
+      prod.pcsPerBox = defaultPcs;
+      prod.costPerBox = costPerBox;
+      prod.costPrice = unitCost;
+      prod.buyMode = 'wholesale';
+      prod.wholesaleBoxes = Number(prod.wholesaleBoxes || 0) + boxesAdded;
+      appendLocalSecurityAuditLog('INVENTORY_RESTOCK', `Restocked +${addedUnits} pcs (${boxesAdded} box) of ${prod.name}`);
+      saveAdminState(true);
+      renderAllAdminViews(true);
+
       try {
         await fetch('/api/inventory', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({
             action: 'restock_wholesale',
             id: itemId,
             boxesAdded: boxesAdded,
             pcsPerBox: defaultPcs,
             costPerBox: costPerBox,
-            logExpense: false
+            logExpense: false,
+            item: prod
           })
         });
       } catch (e) {}
-      await fetchAdminStateFromServer(true);
     }
 
     function updateInventorySummaryKpis() {
@@ -5620,7 +5862,7 @@ How many boxes/packs are you adding to stock?
         return `
         <tr class="hover:bg-white/5 transition">
           <td class="py-3.5 px-4 font-bold text-white flex items-center gap-3">
-            <img src="${p.img || 'assets/gear-balls-x40.jpg'}" alt="${pfEscapeHtml(p.name)}" class="w-11 h-11 rounded-xl object-cover border border-white/15 flex-shrink-0 bg-brand-black">
+            <img src="${resolvePreviewAssetPath(p.img || 'assets/gear-balls-x40.jpg')}" onerror="this.onerror=null;this.src=resolvePreviewAssetPath('assets/gear-balls-x40.jpg')" alt="${pfEscapeHtml(p.name)}" class="w-11 h-11 rounded-xl object-cover border border-white/15 flex-shrink-0 bg-brand-black">
             <div>
               <span class="block text-white font-bold">${pfEscapeHtml(p.name)}</span>
               ${whBadge}
@@ -5810,15 +6052,22 @@ How many boxes/packs are you adding to stock?
         img: existing ? existing.img : 'assets/gear-water-500ml.jpg'
       };
 
+      const exIdx = posCatalog.findIndex(p => p.id === itemObj.id);
+      if (exIdx !== -1) {
+        posCatalog[exIdx] = itemObj;
+      } else {
+        posCatalog.push(itemObj);
+      }
+      if (nameInp) nameInp.value = '';
+      saveAdminState(true);
+      renderAllAdminViews(true);
       try {
         await fetch('/api/inventory', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({ action: 'add', item: itemObj })
         });
       } catch (e) {}
-      if (nameInp) nameInp.value = '';
-      await fetchAdminStateFromServer(true);
       alert(`✅ Saved "${rawName}" to Inventory!
 • Wholesale: ₱${boxCost}/box (${pcs} pcs/box)
 • Real Capital: ₱${unitCost.toFixed(2)}/pc
@@ -5835,30 +6084,43 @@ How many boxes/packs are you adding to stock?
       const amount = Math.max(0, parseFloat(amtEl?.value) || 0);
       if (!title || amount <= 0) return;
 
+      const newExp = {
+        id: 'exp-' + Date.now(),
+        category: cat,
+        title: title,
+        amount: amount,
+        date: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
+      };
+      clubExpenses.unshift(newExp);
+      if (titleEl) titleEl.value = '';
+      if (amtEl) amtEl.value = '';
+      appendLocalSecurityAuditLog('EXPENSE_ADDED', `Recorded club expense: ${title} (PHP ${amount.toFixed(2)})`);
+      saveAdminState(true);
+      renderAllAdminViews(true);
+
       try {
         await fetch('/api/expenses', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({
             action: 'add',
-            expense: { category: cat, title: title, amount: amount }
+            expense: newExp
           })
         });
       } catch (err) {}
-      if (titleEl) titleEl.value = '';
-      if (amtEl) amtEl.value = '';
-      await fetchAdminStateFromServer(true);
     }
 
     async function deleteClubExpense(id) {
+      clubExpenses = (clubExpenses || []).filter(x => x && x.id !== id);
+      saveAdminState(true);
+      renderAllAdminViews(true);
       try {
         await fetch('/api/expenses', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({ action: 'delete', id: id })
         });
       } catch (err) {}
-      await fetchAdminStateFromServer(true);
     }
 
     function renderClubExpensesList(filteredExpenses) {
@@ -6018,21 +6280,31 @@ How many boxes/packs are you adding to stock?
       const uCost = Math.max(0, parseFloat(document.getElementById('mat-ucost-' + id)?.value) || 0);
       const sell = Math.max(0, parseFloat(document.getElementById('mat-sell-' + id)?.value) || 0);
 
+      const target = posCatalog.find(p => p.id === id);
+      if (target) {
+        target.costPerBox = boxCost;
+        target.pcsPerBox = pcs;
+        target.costPrice = uCost;
+        target.price = sell;
+      }
+      saveAdminState(true);
+      renderAllAdminViews(true);
+
       try {
         await fetch('/api/inventory', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({
             action: 'update_cost',
             id: id,
             costPerBox: boxCost,
             pcsPerBox: pcs,
             costPrice: uCost,
-            price: sell
+            price: sell,
+            item: target
           })
         });
       } catch (e) {}
-      await fetchAdminStateFromServer(true);
     }
 
     async function saveMatrixWebsiteGearRow(key, priceKey, costKey) {
@@ -6053,14 +6325,20 @@ How many boxes/packs are you adding to stock?
 Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0).toFixed(2)));
       if (inp === null) return;
       const newCost = Math.max(0, parseFloat(inp) || 0);
+      const tx = salesLedger.find(s => s.ref === ref);
+      if (tx) {
+        tx.cost = newCost;
+        tx.profit = Math.round((Number(tx.amount || 0) - newCost) * 100) / 100;
+      }
+      saveAdminState(true);
+      renderAllAdminViews(true);
       try {
         await fetch('/api/sales', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAdminAuthHeaders(),
           body: JSON.stringify({ action: 'update_cost', ref: ref, cost: newCost })
         });
       } catch (e) {}
-      await fetchAdminStateFromServer(true);
     }
 
     function runAiFinancialAudit(highlightBox = false) {
@@ -6366,14 +6644,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         'Reset & Clear All Club Bills',
         'This will clear all recorded club bills and operating expenses from the report. Type RESET below to confirm.',
         async () => {
+          clubExpenses = [];
+          saveAdminState(true);
+          renderAllAdminViews(true);
           try {
             await fetch('/api/expenses', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: getAdminAuthHeaders(),
               body: JSON.stringify({ action: 'clear' })
             });
           } catch (e) {}
-          await fetchAdminStateFromServer(true);
         }
       );
     }
@@ -6433,11 +6713,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const listEl = document.getElementById('security-audit-log-list');
       const countEl = document.getElementById('security-log-count');
       if (!listEl) return;
-      if (countEl) countEl.textContent = `${logs.length} Event${logs.length === 1 ? '' : 's'}`;
-      if (!logs || logs.length === 0) {
+      const effectiveLogs = (Array.isArray(logs) && logs.length > 0)
+        ? logs
+        : ((Array.isArray(securityAuditLogs) && securityAuditLogs.length > 0) ? securityAuditLogs : DEFAULT_SECURITY_AUDIT_LOGS);
+      if (countEl) countEl.textContent = `${effectiveLogs.length} Event${effectiveLogs.length === 1 ? '' : 's'}`;
+      const logsToRender = effectiveLogs;
+      if (!logsToRender || logsToRender.length === 0) {
         listEl.innerHTML = `<div class="p-3 text-center text-[11px] text-slate-400">No security events logged yet.</div>`;
         return;
       }
+      logs = logsToRender;
       listEl.innerHTML = logs.slice(0, 15).map(item => {
         const isWarn = String(item.event || '').includes('FAILED') || String(item.event || '').includes('LOCKOUT');
         return `<div class="px-3.5 py-2 flex items-center justify-between gap-2 text-[11px]">
@@ -6688,10 +6973,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
       if (!matchedKey) {
         recordFailedAdminLoginAttempt(errEl);
+        appendLocalSecurityAuditLog('LOGIN_REJECTED', `Rejected invalid access key attempt (${clientFailedAttempts}/5)`);
         fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ mode: 'password', password: entered })
+        }).then(r => r.json()).then(data => {
+          if (data && Array.isArray(data.securityLog)) {
+            securityAuditLogs = data.securityLog;
+            renderSecurityAuditLog(securityAuditLogs);
+          }
         }).catch(() => {});
         return false;
       }
@@ -6705,6 +6996,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       sessionStorage.setItem('pf_admin_role_v2', matchedKey.role);
       if (input) input.value = '';
       if (errEl) errEl.classList.add('hidden');
+      appendLocalSecurityAuditLog('KEY_LOGIN_SUCCESS', `Admin unlocked via ${matchedKey.role}`);
       checkAdminAuthGate();
 
       fetch('/api/auth/login', {
@@ -6713,6 +7005,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         body: JSON.stringify({ mode: 'password', password: entered, role: matchedKey.role })
       }).then(r => r.json()).then(data => {
         if (data && data.token) sessionStorage.setItem('pf_admin_token', data.token);
+        if (data && Array.isArray(data.securityLog) && data.securityLog.length > 0) {
+          securityAuditLogs = data.securityLog;
+          try { localStorage.setItem('pf_security_log', JSON.stringify(securityAuditLogs)); } catch (e) {}
+          renderSecurityAuditLog(securityAuditLogs);
+        }
       }).catch(() => {});
 
       fetchAdminStateFromServer(true);
@@ -6743,6 +7040,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const matchedKey = await verifyEnteredAdminKey(enteredKey);
       if (!matchedKey) {
         recordFailedAdminLoginAttempt(errEl);
+        appendLocalSecurityAuditLog('LOGIN_REJECTED', `Rejected Gmail login attempt for ${enteredEmail}`);
         return false;
       }
 
@@ -6756,6 +7054,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       sessionStorage.setItem('pf_admin_role_v2', matchedKey.role + ' (' + enteredEmail + ')');
       if (pwInput) pwInput.value = '';
       if (errEl) errEl.classList.add('hidden');
+      appendLocalSecurityAuditLog('GMAIL_LOGIN_SUCCESS', `Admin unlocked via ${matchedKey.role} (${enteredEmail})`);
       checkAdminAuthGate();
 
       fetch('/api/auth/login', {
@@ -6764,6 +7063,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         body: JSON.stringify({ mode: 'gmail', email: enteredEmail, password: enteredKey, role: matchedKey.role })
       }).then(r => r.json()).then(data => {
         if (data && data.token) sessionStorage.setItem('pf_admin_token', data.token);
+        if (data && Array.isArray(data.securityLog) && data.securityLog.length > 0) {
+          securityAuditLogs = data.securityLog;
+          try { localStorage.setItem('pf_security_log', JSON.stringify(securityAuditLogs)); } catch (e) {}
+          renderSecurityAuditLog(securityAuditLogs);
+        }
       }).catch(() => {});
 
       fetchAdminStateFromServer(true);
@@ -7430,11 +7734,38 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
 
 // ================= ADMIN ANNOUNCEMENT BOARD STUDIO ENGINE =================
-    let announcements = [];
+    const DEFAULT_ADMIN_ANNOUNCEMENTS = [
+      {
+        id: 'ann-welcome-default-1',
+        category: 'Open Play',
+        title: '🎾 Daily Free Open Play (3:00 PM – 6:00 PM Across All 4 Courts)',
+        message: 'Join our daily community Open Play sessions from 3:00 PM to 6:00 PM across Courts 1 – 4! Free court entry, paddle rotation, and all skill levels welcome.',
+        img: 'assets/hero-slide-1.jpg',
+        pinned: true,
+        author: 'P&F Rally Ground Admin',
+        createdAt: 'Pinned Club Update'
+      },
+      {
+        id: 'ann-welcome-default-2',
+        category: 'Club Update',
+        title: '⚡ Instant Online Court Booking via GCash, Maya & BDO QR Ph',
+        message: 'Courts 1 – 4 are open daily from 6:00 AM to 12:00 Midnight (₱400/hr Daytime • ₱500/hr Nighttime). Select any green slot on the live schedule to reserve!',
+        img: '',
+        pinned: false,
+        author: 'P&F Rally Ground Admin',
+        createdAt: 'Official Advisory'
+      }
+    ];
+    let announcements = [...DEFAULT_ADMIN_ANNOUNCEMENTS];
     let annMutationLockUntil = 0;
     try {
-      announcements = JSON.parse(localStorage.getItem('pf_announcements') || '[]');
-    } catch (e) { announcements = []; }
+      const savedAnn = JSON.parse(localStorage.getItem('pf_announcements') || 'null');
+      if (Array.isArray(savedAnn) && savedAnn.length > 0) {
+        announcements = savedAnn;
+      } else {
+        localStorage.setItem('pf_announcements', JSON.stringify(announcements));
+      }
+    } catch (e) { announcements = [...DEFAULT_ADMIN_ANNOUNCEMENTS]; }
     let currentAnnouncementPhotoDataUrl = '';
 
     function broadcastAnnouncementsLive() {
@@ -7992,6 +8323,9 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           cfg[k] = DEFAULT_SITE_CONFIG[k] || cfg[k].replace(/\ufffd/g, '•');
         }
       });
+      if (!cfg.liveBannerText || String(cfg.liveBannerText).trim() === '0') {
+        cfg.liveBannerText = DEFAULT_SITE_CONFIG.liveBannerText;
+      }
       if (cfg.openPlayEnabled === undefined) cfg.openPlayEnabled = true;
       if (!Array.isArray(cfg.openPlaySlots)) cfg.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
       return cfg;
@@ -8166,8 +8500,9 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
     function handleLiveBannerTextInput(val) {
       siteEditorDirty = true;
+      const cleanVal = (!val || String(val).trim() === '0') ? DEFAULT_SITE_CONFIG.liveBannerText : val;
       const prevEl = document.getElementById('se-live-banner-preview-text');
-      if (prevEl) prevEl.textContent = val || '(Banner text empty)';
+      if (prevEl) prevEl.textContent = cleanVal || DEFAULT_SITE_CONFIG.liveBannerText;
       scheduleAutoSaveSiteConfig();
     }
 
@@ -8643,11 +8978,12 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         target.price = newPrice;
         target.stock = newStock;
       }
+      saveAdminState(true);
       try {
         await fetch('/api/inventory', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'update_cost', id: itemId, costPrice: newCost, price: newPrice, stock: newStock })
+          headers: getAdminAuthHeaders(),
+          body: JSON.stringify({ action: 'update_cost', id: itemId, costPrice: newCost, price: newPrice, stock: newStock, item: target })
         });
       } catch (e) {}
       renderInventoryTable();

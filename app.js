@@ -331,9 +331,18 @@ async function syncStateFromServer() {
               try { renderTimeChips(); } catch (e) {}
             }
           }
-          if (Array.isArray(data.announcements)) {
+          if (Array.isArray(data.announcements) && data.announcements.length > 0) {
             sharedServerState.announcements = data.announcements;
             localStorage.setItem('pf_announcements', JSON.stringify(data.announcements));
+          } else if (!Array.isArray(sharedServerState.announcements) || sharedServerState.announcements.length === 0) {
+            sharedServerState.announcements = getDefaultWelcomeAnnouncements();
+          }
+          if (Array.isArray(data.inventory)) {
+            sharedServerState.inventory = data.inventory;
+            try {
+              localStorage.setItem('pf_inventory', JSON.stringify(data.inventory));
+              localStorage.setItem('pf_pos_catalog', JSON.stringify(data.inventory));
+            } catch (e) {}
           }
           if (typeof renderPublicInventoryCatalog === 'function') {
             renderPublicInventoryCatalog();
@@ -1999,23 +2008,33 @@ function getDefaultWelcomeAnnouncements() {
     {
       id: 'welcome-pf-2026',
       title: 'Welcome to P&F Rally Ground Pickleball Club!',
-      message: 'All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Check here anytime for official Open Play alerts, tournament posters, and club advisories from Admin!',
+      message: 'All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs daily from 3:00 PM – 6:00 PM across all courts (Free)!',
       category: 'Club Update',
       img: '',
       pinned: true,
       author: 'P&F Rally Ground Admin',
       createdAt: 'Official Broadcast'
+    },
+    {
+      id: 'open-play-pf-2026',
+      title: 'Daily Open Play • 3:00 PM – 6:00 PM (Free)',
+      message: 'Join our daily community Open Play session across Courts 1 – 4 from 3:00 PM to 6:00 PM! All skill levels are welcome — bring your paddle or rent pro gear at the club.',
+      category: 'Open Play Alert',
+      img: '',
+      pinned: false,
+      author: 'P&F Rally Ground Admin',
+      createdAt: 'Daily Schedule'
     }
   ];
 }
 
 function getLiveAnnouncementsList() {
   try {
-    if (sharedServerState && Array.isArray(sharedServerState.announcements)) {
+    if (sharedServerState && Array.isArray(sharedServerState.announcements) && sharedServerState.announcements.length > 0) {
       return sharedServerState.announcements;
     }
     const cached = JSON.parse(localStorage.getItem('pf_announcements') || 'null');
-    if (Array.isArray(cached)) return cached;
+    if (Array.isArray(cached) && cached.length > 0) return cached;
   } catch (e) {}
   return getDefaultWelcomeAnnouncements();
 }
@@ -2048,6 +2067,11 @@ try {
       if (ev.data && Array.isArray(ev.data.announcements)) {
         if (sharedServerState) sharedServerState.announcements = ev.data.announcements;
         renderPublicAnnouncementBoard();
+      }
+      if (ev.data && Array.isArray(ev.data.inventory)) {
+        if (sharedServerState) sharedServerState.inventory = ev.data.inventory;
+        if (typeof renderPublicInventoryCatalog === 'function') renderPublicInventoryCatalog();
+        if (typeof renderCartLiveAddons === 'function') renderCartLiveAddons();
       }
       if (ev.data && ev.data.paymentConfig && typeof applyPaymentConfigToPublicDom === 'function') {
         applyPaymentConfigToPublicDom(ev.data.paymentConfig);
@@ -2230,6 +2254,9 @@ function getSiteConfig() {
   if (merged.openPlayEnabled === undefined) merged.openPlayEnabled = true;
   if (!Array.isArray(merged.openPlaySlots)) {
     merged.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+  }
+  if (!merged.liveBannerText || String(merged.liveBannerText).trim() === '' || String(merged.liveBannerText).trim() === '0') {
+    merged.liveBannerText = DEFAULT_PF_SITE_CONFIG.liveBannerText;
   }
   window.PF_SITE_CONFIG = merged;
   return merged;
