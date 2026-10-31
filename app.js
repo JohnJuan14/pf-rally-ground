@@ -191,7 +191,7 @@ let cartItems = JSON.parse(localStorage.getItem('pf_cart_items') || '[]');
 // Live Shared State Cache (synced from /api/state)
 let sharedServerState = {
   bookings: JSON.parse(localStorage.getItem('pf_all_bookings') || '[]'),
-  blocks: [],
+  blocks: JSON.parse(localStorage.getItem('pf_court_blocks') || '[]'),
   announcements: JSON.parse(localStorage.getItem('pf_announcements') || '[]')
 };
 window.sharedServerState = sharedServerState;
@@ -213,6 +213,16 @@ async function syncStateFromServer() {
       if (res.ok) {
         const data = await res.json();
         if (data && Array.isArray(data.bookings)) {
+          let localBlocks = [];
+          try { localBlocks = JSON.parse(localStorage.getItem('pf_court_blocks') || '[]') || []; } catch (e) {}
+          const localBlocksTs = Number(localStorage.getItem('pf_court_blocks_updated_at') || 0);
+          const srvBlocksTs = Number(data.blocksUpdatedAt || 0);
+          if (srvBlocksTs >= localBlocksTs && Array.isArray(data.blocks) && (data.blocks.length > 0 || srvBlocksTs > 0)) {
+            localStorage.setItem('pf_court_blocks', JSON.stringify(data.blocks));
+            if (srvBlocksTs > 0) localStorage.setItem('pf_court_blocks_updated_at', String(srvBlocksTs));
+          } else if (localBlocks.length > 0 && (!Array.isArray(data.blocks) || data.blocks.length === 0)) {
+            data.blocks = localBlocks;
+          }
           sharedServerState = data;
           window.sharedServerState = sharedServerState;
           localStorage.setItem('pf_all_bookings', JSON.stringify(data.bookings));
@@ -2610,10 +2620,16 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return { status: 'BOOKED', booking: bookedMatch, reason: bookedMatch.name || 'Booked' };
   }
 
-  // 2. Check Admin Calendar Overrides (blocks)
-  const blocksArr = Array.isArray(liveBlocks)
+  // 2. Check if date or time slot is already EXPIRED (Past dates/hours cannot be booked even if marked Open)
+  const isExpiredSlot = (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, slotStr));
+
+  // 3. Check Admin Calendar Overrides (blocks merged from server + localStorage)
+  let storedBlocks = [];
+  try { storedBlocks = JSON.parse(localStorage.getItem('pf_court_blocks') || '[]') || []; } catch (e) {}
+  const srvBlocks = (window.sharedServerState && Array.isArray(window.sharedServerState.blocks)) ? window.sharedServerState.blocks : [];
+  const blocksArr = (Array.isArray(liveBlocks) && liveBlocks.length > 0)
     ? liveBlocks
-    : ((window.sharedServerState && Array.isArray(window.sharedServerState.blocks)) ? window.sharedServerState.blocks : []);
+    : (srvBlocks.length > 0 ? srvBlocks : storedBlocks);
 
   let matchedBlock = null;
   for (let i = blocksArr.length - 1; i >= 0; i--) {
@@ -2644,6 +2660,12 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
 
   if (matchedBlock) {
     const st = String(matchedBlock.statusType || 'CLOSED').toUpperCase();
+    if (st === 'CLOSED') {
+      return { status: 'CLOSED', override: matchedBlock, reason: matchedBlock.reason || 'Closed' };
+    }
+    if (isExpiredSlot) {
+      return { status: 'EXPIRED', override: matchedBlock, reason: 'Time Passed' };
+    }
     if (st === 'OPEN' || st === 'AVAILABLE') {
       return { status: 'AVAILABLE', override: matchedBlock, reason: matchedBlock.reason || 'Open Court' };
     }
@@ -2653,9 +2675,8 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return { status: 'CLOSED', override: matchedBlock, reason: matchedBlock.reason || 'Closed' };
   }
 
-  // 3. Default schedule fallback: All courts available unless booked or explicitly overridden by Admin
-
-  if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(targetDate, slotStr)) {
+  // 4. Default schedule fallback: Expired check first, otherwise Available
+  if (isExpiredSlot) {
     return { status: 'EXPIRED', override: null, reason: 'Time Passed' };
   }
   return { status: 'AVAILABLE', override: null, reason: 'Available' };
@@ -3500,3 +3521,35 @@ window.pfNavigateToSchedule = pfNavigateToSchedule;
 window.pfNavigateToHome = pfNavigateToHome;
 window.pfSetScheduleNavActive = pfSetScheduleNavActive;
 window.pfScrollToScheduleSection = pfScrollToScheduleSection;
+
+
+try {
+  const pfBlocksChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('pf_court_blocks_sync') : null;
+  if (pfBlocksChannel) {
+    pfBlocksChannel.onmessage = (ev) => {
+      if (ev && ev.data && Array.isArray(ev.data.blocks)) {
+        if (window.sharedServerState) window.sharedServerState.blocks = ev.data.blocks;
+        try {
+          localStorage.setItem('pf_court_blocks', JSON.stringify(ev.data.blocks));
+          if (ev.data.updatedAt) localStorage.setItem('pf_court_blocks_updated_at', String(ev.data.updatedAt));
+        } catch (e) {}
+        if (typeof renderLiveScheduleMatrix === 'function') try { renderLiveScheduleMatrix(); } catch (e) {}
+        if (typeof renderDrawerSlots === 'function') try { renderDrawerSlots(); } catch (e) {}
+        if (typeof renderTimeChips === 'function') try { renderTimeChips(); } catch (e) {}
+      }
+    };
+  }
+  window.addEventListener('storage', (ev) => {
+    if (ev.key === 'pf_court_blocks' && ev.newValue) {
+      try {
+        const parsedBlocks = JSON.parse(ev.newValue);
+        if (Array.isArray(parsedBlocks)) {
+          if (window.sharedServerState) window.sharedServerState.blocks = parsedBlocks;
+          if (typeof renderLiveScheduleMatrix === 'function') try { renderLiveScheduleMatrix(); } catch (e) {}
+          if (typeof renderDrawerSlots === 'function') try { renderDrawerSlots(); } catch (e) {}
+          if (typeof renderTimeChips === 'function') try { renderTimeChips(); } catch (e) {}
+        }
+      } catch (e) {}
+    }
+  });
+} catch (e) {}

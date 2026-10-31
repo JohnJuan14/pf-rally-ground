@@ -13,7 +13,7 @@ import time
 import html as html_lib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 SCRATCH_DIR = r"C:\Users\Acer\.gemini\antigravity\scratch"
 PUBLIC_DIR = os.path.join(SCRATCH_DIR, "pf-rally-ground-mockup")
@@ -179,6 +179,10 @@ def save_db(data):
 
 
 
+
+def get_pht_now():
+    return datetime.now(timezone(timedelta(hours=8)))
+
 ALL_18_SLOTS = [
     "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
     "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM",
@@ -205,7 +209,7 @@ def extract_covered_slots(time_str):
     return ALL_18_SLOTS[idx:idx + dur]
 
 def extract_date_ymd(date_str, time_str):
-    today_ymd = datetime.now().strftime("%Y-%m-%d")
+    today_ymd = get_pht_now().strftime("%Y-%m-%d")
     d = str(date_str or "").strip()
     if re.match(r"^\d{4}-\d{2}-\d{2}$", d):
         return d
@@ -518,7 +522,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             target_cnum = normalize_court_num(new_booking["court"])
             target_ymd = extract_date_ymd(new_booking["date"], new_booking["time"])
             target_slots = extract_covered_slots(new_booking["time"])
-            now_dt = datetime.now()
+            now_dt = get_pht_now()
             today_ymd_str = now_dt.strftime("%Y-%m-%d")
             if re.match(r"^\d{4}-\d{2}-\d{2}$", target_ymd):
                 if target_ymd < today_ymd_str:
@@ -745,6 +749,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
         elif parsed.path == "/api/bookings/delete":
             ref = body.get("ref")
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != ref]
+            db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -840,9 +845,14 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             elif action == "remove":
                 bid = body.get("id")
                 db["blocks"] = [b for b in db["blocks"] if b.get("id") != bid]
+            elif action == "sync":
+                incoming_blocks = body.get("blocks")
+                if isinstance(incoming_blocks, list):
+                    db["blocks"] = incoming_blocks
+            db["blocksUpdatedAt"] = int(body.get("updatedAt") or int(time.time() * 1000))
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
-            self._send_json({"ok": True, "state": db})
+            self._send_json({"ok": True, "blocks": db["blocks"], "blocksUpdatedAt": db["blocksUpdatedAt"], "state": db})
             return
 
         elif parsed.path == "/api/announcements":

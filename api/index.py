@@ -7,7 +7,7 @@ import urllib.parse
 import re
 import secrets
 import time
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 DB_FILE = "/tmp/pf_shared_db.json"
 
@@ -159,12 +159,18 @@ def load_db():
 
 def save_db(data):
     try:
+        if isinstance(data, dict):
+            data["updatedAt"] = int(time.time() * 1000)
         with open(DB_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
     except Exception:
         pass
 
 
+
+
+def get_pht_now():
+    return datetime.now(timezone(timedelta(hours=8)))
 
 ALL_18_SLOTS = [
     "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
@@ -192,7 +198,7 @@ def extract_covered_slots(time_str):
     return ALL_18_SLOTS[idx:idx + dur]
 
 def extract_date_ymd(date_str, time_str):
-    today_ymd = datetime.now().strftime("%Y-%m-%d")
+    today_ymd = get_pht_now().strftime("%Y-%m-%d")
     d = str(date_str or "").strip()
     if re.match(r"^\d{4}-\d{2}-\d{2}$", d):
         return d
@@ -473,7 +479,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             target_cnum = normalize_court_num(new_booking["court"])
             target_ymd = extract_date_ymd(new_booking["date"], new_booking["time"])
             target_slots = extract_covered_slots(new_booking["time"])
-            now_dt = datetime.now()
+            now_dt = get_pht_now()
             today_ymd_str = now_dt.strftime("%Y-%m-%d")
             if re.match(r"^\d{4}-\d{2}-\d{2}$", target_ymd):
                 if target_ymd < today_ymd_str:
@@ -587,12 +593,61 @@ class handler(http.server.BaseHTTPRequestHandler):
                 self._send_json({"ok": True, "authenticated": True, "method": "password", "role": matched_role, "token": token})
                 return
 
+        elif parsed.path == "/api/sync-state":
+            # Hydrate cold serverless instance with client's latest verified state
+            if isinstance(body.get("bookings"), list) and len(body["bookings"]) >= len(db.get("bookings", [])):
+                db["bookings"] = body["bookings"]
+            if isinstance(body.get("blocks"), list):
+                db["blocks"] = body["blocks"]
+            if isinstance(body.get("salesLedger"), list) and len(body["salesLedger"]) >= len(db.get("salesLedger", [])):
+                db["salesLedger"] = body["salesLedger"]
+            if isinstance(body.get("inventory"), list) and len(body["inventory"]) >= len(db.get("inventory", [])):
+                db["inventory"] = body["inventory"]
+            if isinstance(body.get("expenses"), list) and len(body["expenses"]) >= len(db.get("expenses", [])):
+                db["expenses"] = body["expenses"]
+            if isinstance(body.get("categories"), list) and len(body["categories"]) >= len(db.get("categories", [])):
+                db["categories"] = body["categories"]
+            if isinstance(body.get("announcements"), list) and len(body["announcements"]) >= len(db.get("announcements", [])):
+                db["announcements"] = body["announcements"]
+            if isinstance(body.get("siteConfig"), dict):
+                sc = dict(DEFAULT_DB.get("siteConfig", {}))
+                sc.update(db.get("siteConfig") or {})
+                sc.update(body["siteConfig"])
+                db["siteConfig"] = sc
+            if isinstance(body.get("paymentConfig"), dict):
+                pc = dict(DEFAULT_DB.get("paymentConfig", {}))
+                pc.update(db.get("paymentConfig") or {})
+                pc.update(body["paymentConfig"])
+                db["paymentConfig"] = pc
+            save_db(db)
+            db["sales"] = db.get("salesLedger", [])
+            self._send_json({"ok": True, "state": db})
+            return
+
         elif parsed.path == "/api/bookings/status":
             ref = body.get("ref")
-            new_status = sanitize_str(body.get("status", "CONFIRMED"), 40)
+            new_status = sanitize_str(body.get("status", "CONFIRMED"), 40).upper()
             target = next((b for b in db["bookings"] if b.get("ref") == ref), None)
             if target:
                 target["status"] = new_status
+                if new_status == "CONFIRMED":
+                    if not any(s.get("ref") == ref for s in db.get("salesLedger", [])):
+                        bk_cost = compute_and_deduct_inventory_for_items(db, target.get("items", []), deduct_stock=False)
+                        if bk_cost <= 0:
+                            bk_cost = float((db.get("siteConfig") or {}).get("costCourtPerHour", 0) or 0)
+                        amt = float(parse_amount(target.get("total", 400), 400.0))
+                        db["salesLedger"].insert(0, {
+                            "ref": target["ref"],
+                            "type": "Court Rental",
+                            "desc": f"{target.get('court', 'Court 01')} ({target.get('name', 'Guest')}) - Ref: {target.get('transactionRef', 'N/A')}",
+                            "method": target.get("paymentMethod") or target.get("paymentMode") or "GCash",
+                            "amount": amt,
+                            "cost": round(bk_cost, 2),
+                            "profit": round(amt - bk_cost, 2),
+                            "date": get_pht_now().strftime("%Y-%m-%d %H:%M")
+                        })
+                elif new_status in ("DECLINED", "CANCELLED"):
+                    db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -601,6 +656,7 @@ class handler(http.server.BaseHTTPRequestHandler):
         elif parsed.path == "/api/bookings/delete":
             ref = body.get("ref")
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != ref]
+            db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -696,9 +752,14 @@ class handler(http.server.BaseHTTPRequestHandler):
             elif action == "remove":
                 bid = body.get("id")
                 db["blocks"] = [b for b in db["blocks"] if b.get("id") != bid]
+            elif action == "sync":
+                incoming_blocks = body.get("blocks")
+                if isinstance(incoming_blocks, list):
+                    db["blocks"] = incoming_blocks
+            db["blocksUpdatedAt"] = int(body.get("updatedAt") or int(time.time() * 1000))
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
-            self._send_json({"ok": True, "state": db})
+            self._send_json({"ok": True, "blocks": db["blocks"], "blocksUpdatedAt": db["blocksUpdatedAt"], "state": db})
             return
 
         elif parsed.path == "/api/inventory":
