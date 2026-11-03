@@ -2271,6 +2271,9 @@ function getSiteConfig() {
 }
 
 window.PF_SITE_CONFIG = getSiteConfig();
+if (typeof document !== 'undefined' && document.body) {
+  try { applySiteConfig(); } catch (e) {}
+}
 
 function applySiteConfig(incomingCfg) {
   if (incomingCfg && typeof incomingCfg === 'object') {
@@ -2378,13 +2381,22 @@ function applySiteConfig(incomingCfg) {
   const applyHeroSlideAsset = (idx, rawUrl) => {
     if (!rawUrl) return;
     const urlStr = String(rawUrl).trim();
+    const resolvedUrl = urlStr.startsWith('assets/') ? ('/' + urlStr) : urlStr;
     const slideDiv = document.getElementById('slide-' + idx);
     const slideImg = document.getElementById('slide-img-' + idx);
     if (slideDiv) {
-      slideDiv.style.backgroundImage = 'url("' + urlStr.replace(/"/g, '\"') + '")';
+      slideDiv.style.backgroundImage = 'url("' + resolvedUrl.replace(/"/g, '\"') + '")';
     }
-    if (slideImg && slideImg.getAttribute('src') !== urlStr) {
-      slideImg.setAttribute('src', urlStr);
+    if (slideImg && slideImg.getAttribute('src') !== resolvedUrl) {
+      slideImg.setAttribute('src', resolvedUrl);
+    }
+    const dynStyle = document.getElementById('pf-instant-hero-style');
+    if (dynStyle) {
+      let css = dynStyle.textContent || '';
+      const re = new RegExp('#slide-' + idx + '\\s*\\{[^}]*\\}', 'g');
+      css = css.replace(re, '');
+      css += ' #slide-' + idx + ' { background-image: url("' + resolvedUrl.replace(/"/g, '\\"') + '") !important; }';
+      dynStyle.textContent = css;
     }
   };
   applyHeroSlideAsset(0, cfg.heroSlide1);

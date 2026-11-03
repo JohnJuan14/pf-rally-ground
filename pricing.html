@@ -4,6 +4,36 @@
   <meta charset="UTF-8">
   <title>Court Rates, Regulars & Pro Shop Gear | P&F Rally Ground Pickleball</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <!-- Instant Zero-Flicker Pre-Paint Hydration (Prevents 1s photo flash on refresh) -->
+  <script>
+    (function() {
+      try {
+        var raw = localStorage.getItem('pf_site_config');
+        if (!raw) return;
+        var sc = JSON.parse(raw);
+        if (!sc || typeof sc !== 'object') return;
+        window.PF_SITE_CONFIG = sc;
+        var normalizeUrl = function(u) {
+          if (!u) return '';
+          var s = String(u).trim();
+          if (s.startsWith('assets/')) return '/' + s;
+          return s;
+        };
+        var css = '';
+        if (sc.heroSlide1) css += '#slide-0 { background-image: url("' + normalizeUrl(sc.heroSlide1).replace(/"/g, '\\"') + '") !important; } ';
+        if (sc.heroSlide2) css += '#slide-1 { background-image: url("' + normalizeUrl(sc.heroSlide2).replace(/"/g, '\\"') + '") !important; } ';
+        if (sc.heroSlide3) css += '#slide-2 { background-image: url("' + normalizeUrl(sc.heroSlide3).replace(/"/g, '\\"') + '") !important; } ';
+        if (sc.clubLogo) css += '[data-site-logo] { content: url("' + normalizeUrl(sc.clubLogo).replace(/"/g, '\\"') + '") !important; } ';
+        if (css) {
+          var st = document.createElement('style');
+          st.id = 'pf-instant-hero-style';
+          st.textContent = css;
+          document.head.appendChild(st);
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- === SEO & GEO (GENERATIVE ENGINE OPTIMIZATION) === -->
   <meta name="description" content="Transparent pickleball court rates in Daraga, Albay: Regular Hours (6AM–6PM) ₱400/hr, Regulars (6PM–12AM) ₱400/hr,  Carbon Fiber Paddle Rentals ₱100, and Franklin X-40 Balls.">
   <meta name="keywords" content="pickleball court rental price Albay, pickleball paddle rental Daraga, Franklin X-40 pickleball balls Bicol">
