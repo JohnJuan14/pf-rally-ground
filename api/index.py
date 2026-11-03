@@ -7,9 +7,10 @@ import urllib.parse
 import re
 import secrets
 import time
+import tempfile
 from datetime import datetime, timezone, timedelta
 
-DB_FILE = "/tmp/pf_shared_db.json"
+DB_FILE = os.path.join(tempfile.gettempdir(), "pf_shared_db.json")
 
 LOGIN_ATTEMPTS = {}
 ACTIVE_ADMIN_TOKENS = set()

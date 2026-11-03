@@ -2524,7 +2524,7 @@
         © 2026 P&amp;F Rally Ground • Staff Admin &amp; POS Workspace (Daraga, Albay)
       </div>
       <div class="flex items-center gap-4">
-        <a href="/" onclick="return openPublicSite(event, 'index.html')" class="text-brand-lime font-bold hover:underline">Open Public Booking Website (Port 8088) →</a>
+        <a href="/" onclick="return openPublicSite(event, 'index.html')" class="text-brand-lime font-bold hover:underline">Open Public Booking Website →</a>
         <span>•</span>
         <a href="/pricing.html" onclick="return openPublicSite(event, 'pricing.html')" class="hover:text-white transition">View Public Pro-Shop</a>
       </div>
@@ -3179,9 +3179,10 @@ function clearFieldError(fieldId) {
       const host = window.location.hostname;
       const port = window.location.port;
       if ((host === 'localhost' || host === '127.0.0.1') && port === '8089') {
-        window.location.href = 'http://' + host + ':8088/' + (pagePath || 'index.html');
+        window.location.href = 'http://' + host + ':8088/' + (pagePath || '');
       } else {
-        window.location.href = '/' + (pagePath || 'index.html');
+        const target = pagePath && pagePath !== 'index.html' ? '/' + pagePath.replace(/^\//, '') : '/';
+        window.location.href = target;
       }
       return false;
     }
@@ -8303,7 +8304,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (s.startsWith('data:') || s.startsWith('http://') || s.startsWith('https://') || s.startsWith('/')) {
         return s;
       }
-      if (window.location.pathname.includes('/admin/') && s.startsWith('assets/')) {
+      if (s.startsWith('assets/')) {
         return '/' + s;
       }
       return s;
@@ -8349,7 +8350,10 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         try {
           const res = await fetch(ep, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...(typeof getAdminAuthHeaders === 'function' ? getAdminAuthHeaders() : {})
+            },
             body: JSON.stringify({ slot: slotKey, dataUrl: dataUrl })
           });
           if (res.ok) {
@@ -8756,7 +8760,10 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         try {
           const res = await fetch(ep, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...(typeof getAdminAuthHeaders === 'function' ? getAdminAuthHeaders() : {})
+            },
             body: JSON.stringify({ siteConfig: cfgPayload })
           });
           if (res.ok) {
