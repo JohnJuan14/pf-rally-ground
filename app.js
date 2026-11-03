@@ -1919,10 +1919,18 @@ function setPublicInventoryCategory(cat) {
 function renderPublicInventoryCatalog() {
   const grid = document.getElementById('live-admin-inventory-grid');
   const filterBar = document.getElementById('public-inventory-category-filters');
+  const card = document.getElementById('live-admin-inventory-card');
   if (!grid) return;
 
-  const invList = (sharedServerState && Array.isArray(sharedServerState.inventory)) ? sharedServerState.inventory : [];
+  const purgedIds = new Set(['inv-1793729388813', 'inv-1793729578611']);
+  const invList = (sharedServerState && Array.isArray(sharedServerState.inventory))
+    ? sharedServerState.inventory.filter(i => i && i.id && !purgedIds.has(String(i.id).trim()))
+    : [];
   const customCats = (sharedServerState && Array.isArray(sharedServerState.categories)) ? sharedServerState.categories : [];
+
+  if (card) {
+    card.style.display = invList.length > 0 ? 'block' : 'none';
+  }
 
   const catSet = new Set(customCats);
   invList.forEach(item => { if (item && item.cat) catSet.add(item.cat); });

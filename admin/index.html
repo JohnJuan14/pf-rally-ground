@@ -230,6 +230,11 @@
 
       <!-- Navigation Tabs -->
       <nav class="p-3 space-y-1 text-xs font-bold uppercase tracking-wider">
+        <!-- 1. SALES & REPORTS (TOP OF NAVIGATION) -->
+        <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span>Sales &amp; Reports</span>
+        </button>
         <button onclick="switchTab('site-editor')" id="nav-site-editor" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-left">
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
           <span>Site &amp; Price Editor</span>
@@ -269,10 +274,7 @@
           <span id="inventory-count-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-white/10 text-slate-300 text-[9px] font-mono">0</span>
         </button>
 
-        <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          <span>Sales &amp; Reports</span>
-        </button>
+        
 
         <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -336,6 +338,7 @@
 
     <!-- Mobile Horizontal Quick-Tab Strip (All 7 Tabs Included & Auto-Centered) -->
     <div id="admin-mobile-pill-strip" class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-2.5 py-2 bg-slate-100 border-b-2 border-slate-200 scrollbar-none text-[11px] font-black uppercase tracking-wider shadow-sm sticky top-14 sm:top-16 z-20">
+      <button type="button" onclick="switchTab('reports')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="reports">Reports</button>
       <button type="button" onclick="switchTab('site-editor')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition" data-tab="site-editor">🎨 Site &amp; Prices</button>
       <button type="button" onclick="switchTab('overview')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="overview">Overview</button>
       <button type="button" onclick="switchTab('bookings')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="bookings">Bookings</button>
@@ -343,7 +346,7 @@
       <button type="button" onclick="switchTab('announcements')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="announcements">📢 Announcements</button>
       <button type="button" onclick="switchTab('pos')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="pos">POS Register</button>
       <button type="button" onclick="switchTab('inventory')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition" data-tab="inventory">Inventory</button>
-      <button type="button" onclick="switchTab('reports')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="reports">Reports</button>
+      
       <button type="button" onclick="switchTab('settings')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="settings">Settings &amp; Security</button>
     </div>
 
@@ -2528,30 +2531,34 @@
     </footer>
 
     <!-- Mobile Fixed Bottom App Navigation Bar (Thumb-Friendly 6-Tab Bar on < 1024px) -->
-    <nav id="admin-mobile-bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050E1D]/95 backdrop-blur-xl border-t border-brand-lime/30 px-1.5 py-1.5 grid grid-cols-6 gap-1 shadow-2xl" style="padding-bottom: max(0.375rem, env(safe-area-inset-bottom));">
+    <nav id="admin-mobile-bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050E1D]/95 backdrop-blur-xl border-t border-brand-lime/30 px-1 py-1.5 grid grid-cols-7 gap-0.5 shadow-2xl" style="padding-bottom: max(0.375rem, env(safe-area-inset-bottom));">
+      <button type="button" onclick="switchTab('reports')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="reports">
+        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span class="text-[8.5px] font-black uppercase tracking-tight">Reports</span>
+      </button>
       <button type="button" onclick="switchTab('overview')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="overview">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-        <span class="text-[9px] font-bold uppercase tracking-tight">Home</span>
+        <span class="text-[8.5px] font-bold uppercase tracking-tight">Home</span>
       </button>
       <button type="button" onclick="switchTab('bookings')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="bookings">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-        <span class="text-[9px] font-bold uppercase tracking-tight">Bookings</span>
+        <span class="text-[8.5px] font-bold uppercase tracking-tight">Bookings</span>
       </button>
       <button type="button" onclick="switchTab('schedule')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="schedule">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-        <span class="text-[9px] font-bold uppercase tracking-tight">Courts</span>
+        <span class="text-[8.5px] font-bold uppercase tracking-tight">Courts</span>
       </button>
       <button type="button" onclick="switchTab('pos')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="pos">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-        <span class="text-[9px] font-bold uppercase tracking-tight">POS</span>
+        <span class="text-[8.5px] font-bold uppercase tracking-tight">POS</span>
       </button>
-      <button type="button" onclick="switchTab('inventory')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl bg-brand-lime/15 text-brand-lime border border-brand-lime/30 transition" data-tab="inventory">
+      <button type="button" onclick="switchTab('inventory')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="inventory">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-        <span class="text-[9px] font-black uppercase tracking-tight">Stock</span>
+        <span class="text-[8.5px] font-black uppercase tracking-tight">Stock</span>
       </button>
       <button type="button" onclick="switchTab('settings')" class="mob-btm-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-slate-400 transition" data-tab="settings">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-        <span class="text-[9px] font-bold uppercase tracking-tight">Security</span>
+        <span class="text-[8.5px] font-bold uppercase tracking-tight">Security</span>
       </button>
     </nav>
 
@@ -3113,9 +3120,11 @@ function clearFieldError(fieldId) {
     function getDeletedInventoryIdsSet() {
       try {
         const arr = JSON.parse(localStorage.getItem('pf_deleted_inventory_ids') || '[]') || [];
-        return new Set(arr.map(x => String(x || '').trim()).filter(Boolean));
+        const set = new Set(arr.map(x => String(x || '').trim()).filter(Boolean));
+        ['inv-1793729388813', 'inv-1793729578611'].forEach(id => set.add(id));
+        return set;
       } catch (e) {
-        return new Set();
+        return new Set(['inv-1793729388813', 'inv-1793729578611']);
       }
     }
 
@@ -3846,7 +3855,7 @@ function clearFieldError(fieldId) {
             ${!isConfirmed ? `<button onclick="approveBooking('${b.ref}')" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black text-[10px] font-black uppercase hover:bg-brand-limeHover transition shadow-sm">✓ Approve</button>` : ''}
             ${!isDeclined ? `<button onclick="declineBooking('${b.ref}')" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-brand-clay text-amber-300 hover:text-white border border-amber-400/40 text-[10px] font-black uppercase transition">✕ Decline</button>` : ''}
             <button onclick="adminOpenRescheduleModal('${b.ref}')" class="px-2.5 py-1.5 rounded-lg bg-brand-lime/15 hover:bg-brand-lime border border-brand-lime/40 text-brand-lime hover:text-brand-black text-[10px] font-black uppercase transition" title="Reschedule Booking Date, Court, or Time">↻ Reschedule</button>
-            <button onclick="deleteAdminBooking('${b.ref}')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Delete</button>
+            <button onclick="promptDeleteBooking('${b.ref}')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Delete</button>
           </td>
         </tr>
       `}).join('');
@@ -5093,7 +5102,7 @@ function clearFieldError(fieldId) {
     }
 
     async function deleteCustomCategory(catName) {
-      if (!confirm(`Remove custom category "${catName}"?`)) return;
+      
       customCategories = (customCategories || []).filter(c => c !== catName);
       if (activeInventoryCategoryFilter === catName) activeInventoryCategoryFilter = 'ALL';
       if (activePosCategoryFilter === catName) activePosCategoryFilter = 'ALL';
@@ -5139,7 +5148,7 @@ function clearFieldError(fieldId) {
               isActive ? 'bg-brand-lime text-brand-black border-brand-lime' : 'bg-brand-black text-slate-300 border-white/10 hover:border-brand-lime/40'
             } overflow-hidden">
               <button type="button" onclick="setInventoryCategoryFilter('${safeC}')" class="px-3 py-1.5 text-[11px] font-bold uppercase transition">${c} (${count})</button>
-              ${isCustom ? `<button type="button" onclick="deleteCustomCategory('${safeC}')" class="pr-2.5 pl-1 py-1.5 text-[10px] ${isActive ? 'text-brand-black hover:opacity-70' : 'text-brand-clay hover:text-white'} font-black" title="Remove Custom Category">×</button>` : ''}
+              ${isCustom ? `<button type="button" onclick="promptDeleteCategory('${safeC}')" class="pr-2.5 pl-1 py-1.5 text-[10px] ${isActive ? 'text-brand-black hover:opacity-70' : 'text-brand-clay hover:text-white'} font-black" title="Remove Custom Category">×</button>` : ''}
             </div>`;
           })
         ].join('');
@@ -5239,7 +5248,7 @@ function clearFieldError(fieldId) {
     }
 
     async function deleteInventoryItem(id) {
-      if (!confirm('Remove this product from inventory?')) return;
+      
       addDeletedInventoryId(id);
       posCatalog = (posCatalog || []).filter(p => p && p.id !== id);
       posOrder = (posOrder || []).filter(o => o && o.id !== id);
@@ -5892,7 +5901,7 @@ How many boxes/packs are you adding to stock?
           <td class="py-3.5 px-4 text-right whitespace-nowrap space-x-1.5">
             <button onclick="promptRestockWholesaleBox('${p.id}')" class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500 hover:text-brand-black text-sky-300 border border-sky-500/30 text-[10px] font-black uppercase transition" title="Add Wholesale Box">+📦 Box</button>
             <button onclick="openAddInventoryModal('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-brand-lime text-[10px] font-bold uppercase transition">Edit Cost/Price</button>
-            <button onclick="deleteInventoryItem('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Delete</button>
+            <button onclick="promptDeleteInventoryItem('${p.id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-brand-clay/20 text-brand-clay text-[10px] font-bold uppercase transition">Delete</button>
           </td>
         </tr>
       `}).join('');
@@ -6140,7 +6149,7 @@ How many boxes/packs are you adding to stock?
           </div>
           <div class="flex items-center gap-3 flex-shrink-0">
             <span class="font-mono font-black text-rose-600 text-sm">-₱${Number(exp.amount || 0).toFixed(2)}</span>
-            <button type="button" onclick="deleteClubExpense('${exp.id}')" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white text-[10px] font-bold uppercase transition">Delete</button>
+            <button type="button" onclick="promptDeleteClubExpense('${exp.id}')" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white text-[10px] font-bold uppercase transition">Delete</button>
           </div>
         </div>
       `).join('');
@@ -6616,6 +6625,159 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (modal) modal.classList.add('hidden');
       pendingTypeResetCallback = null;
     }
+
+    // ================= UNIVERSAL SAFETY DELETE CONFIRMATION ENGINE =================
+    let pendingDeleteCallback = null;
+    let deleteStepConfirmPending = false;
+    let deleteResetTimer = null;
+
+    function openDeleteConfirmModal(opts) {
+      const { title, itemName, extraInfo, onConfirm } = opts || {};
+      pendingDeleteCallback = onConfirm;
+      deleteStepConfirmPending = false;
+      if (deleteResetTimer) {
+        clearTimeout(deleteResetTimer);
+        deleteResetTimer = null;
+      }
+
+      const modal = document.getElementById('admin-delete-confirm-modal');
+      const titleEl = document.getElementById('delete-modal-title');
+      const nameEl = document.getElementById('delete-modal-item-name');
+      const extraEl = document.getElementById('delete-modal-extra');
+      const btnEl = document.getElementById('delete-modal-confirm-btn');
+
+      if (titleEl) titleEl.textContent = title || 'Confirm Deletion';
+      if (nameEl) nameEl.textContent = itemName || 'Selected Record';
+      if (extraEl) {
+        if (extraInfo) {
+          extraEl.textContent = extraInfo;
+          extraEl.classList.remove('hidden');
+        } else {
+          extraEl.classList.add('hidden');
+        }
+      }
+      if (btnEl) {
+        btnEl.className = 'py-2.5 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black uppercase text-xs transition shadow-lg cursor-pointer flex items-center gap-1.5';
+        btnEl.innerHTML = '<span>🗑️ Confirm Delete</span>';
+      }
+
+      if (modal) {
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeDeleteConfirmModal() {
+      const modal = document.getElementById('admin-delete-confirm-modal');
+      if (modal) modal.classList.add('hidden');
+      pendingDeleteCallback = null;
+      deleteStepConfirmPending = false;
+      if (deleteResetTimer) {
+        clearTimeout(deleteResetTimer);
+        deleteResetTimer = null;
+      }
+    }
+
+    async function executePendingDeleteAction() {
+      const btnEl = document.getElementById('delete-modal-confirm-btn');
+      // Two-step confirmation for absolute safety:
+      if (!deleteStepConfirmPending) {
+        deleteStepConfirmPending = true;
+        if (btnEl) {
+          btnEl.className = 'py-2.5 px-5 rounded-xl bg-rose-800 hover:bg-rose-900 text-white font-black uppercase text-xs transition shadow-2xl flex items-center gap-1.5 ring-2 ring-rose-400 animate-pulse cursor-pointer';
+          btnEl.innerHTML = '<span>⚠️ Click Again to Permanently Delete</span>';
+        }
+        deleteResetTimer = setTimeout(() => {
+          if (deleteStepConfirmPending && btnEl) {
+            deleteStepConfirmPending = false;
+            btnEl.className = 'py-2.5 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black uppercase text-xs transition shadow-lg cursor-pointer flex items-center gap-1.5';
+            btnEl.innerHTML = '<span>🗑️ Confirm Delete</span>';
+          }
+        }, 6000);
+        return;
+      }
+
+      if (deleteResetTimer) {
+        clearTimeout(deleteResetTimer);
+        deleteResetTimer = null;
+      }
+      const fn = pendingDeleteCallback;
+      closeDeleteConfirmModal();
+      if (typeof fn === 'function') {
+        await fn();
+      }
+    }
+
+    // High-level safe delete trigger wrappers:
+    function promptDeleteInventoryItem(id) {
+      const prod = (posCatalog || []).find(p => p && String(p.id) === String(id));
+      const name = prod ? (prod.name || 'Product') : `Product #${id}`;
+      const extra = prod
+        ? `Category: ${prod.cat || 'Pro Shop'} • Price: ₱${Number(prod.price || 0).toFixed(2)} • Stock: ${prod.stock || 0} pcs`
+        : '';
+      openDeleteConfirmModal({
+        title: 'Delete Product from Inventory?',
+        itemName: name,
+        extraInfo: extra,
+        onConfirm: async () => {
+          await deleteInventoryItem(id);
+        }
+      });
+    }
+
+    function promptDeleteBooking(ref) {
+      const ru = String(ref || '').trim().toUpperCase();
+      const b = (bookings || []).find(x => x && String(x.ref || '').trim().toUpperCase() === ru);
+      const name = b ? `${b.ref} — ${b.guestName || 'Guest Booking'}` : `Booking #${ru}`;
+      const extra = b
+        ? `Court: ${b.court || 'Court 1'} • Date: ${b.date || 'Today'} • Time: ${b.time || 'Schedule'} • Amount: ₱${Number(b.amount || 0).toFixed(2)}`
+        : '';
+      openDeleteConfirmModal({
+        title: 'Delete Court Booking?',
+        itemName: name,
+        extraInfo: extra,
+        onConfirm: async () => {
+          await deleteAdminBooking(ru);
+        }
+      });
+    }
+
+    function promptDeleteAnnouncement(id) {
+      const ann = (announcements || []).find(a => a && a.id === id);
+      const title = ann ? (ann.title || 'Announcement') : `Post #${id}`;
+      openDeleteConfirmModal({
+        title: 'Delete Broadcast Announcement?',
+        itemName: title,
+        extraInfo: 'This post will be permanently deleted from the live announcement board on the website.',
+        onConfirm: async () => {
+          await deleteAnnouncement(id);
+        }
+      });
+    }
+
+    function promptDeleteClubExpense(id) {
+      const exp = (clubExpenses || []).find(x => x && x.id === id);
+      const title = exp ? `${exp.title || exp.category || 'Expense'} (₱${Number(exp.amount || 0).toFixed(2)})` : `Bill #${id}`;
+      openDeleteConfirmModal({
+        title: 'Delete Expense / Bill Record?',
+        itemName: title,
+        extraInfo: 'This spending record will be permanently deleted from your club profit calculations.',
+        onConfirm: async () => {
+          await deleteClubExpense(id);
+        }
+      });
+    }
+
+    function promptDeleteCategory(catName) {
+      openDeleteConfirmModal({
+        title: 'Remove Custom Category?',
+        itemName: `Category: "${catName}"`,
+        extraInfo: 'Products in this category will remain in inventory, but the category tab filter will be removed.',
+        onConfirm: async () => {
+          await deleteCustomCategory(catName);
+        }
+      });
+    }
+
 
     function setReportSubSection(sec) {
       const sections = ['CALC', 'PRICES', 'BILLS', 'SALES'];
@@ -7965,7 +8127,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     }
 
     async function deleteAnnouncement(id) {
-      if (!confirm('Delete this announcement from the public board?')) return;
+      
       announcements = announcements.filter(a => a.id !== id);
       broadcastAnnouncementsLive();
       renderAdminAnnouncements();
@@ -8026,7 +8188,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                 <button type="button" onclick="togglePinAnnouncement('${ann.id}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#9BE600] text-slate-800 border border-slate-300 text-[10px] font-bold uppercase transition shadow-sm">
                   ${ann.pinned ? 'Unpin' : '📌 Pin'}
                 </button>
-                <button type="button" onclick="deleteAnnouncement('${ann.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 text-[10px] font-bold uppercase transition shadow-sm">
+                <button type="button" onclick="promptDeleteAnnouncement('${ann.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 text-[10px] font-bold uppercase transition shadow-sm">
                   Delete
                 </button>
               </div>
@@ -9042,6 +9204,50 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         </button>
         <button type="button" id="type-reset-confirm-btn" onclick="confirmTypeResetModalAction()" class="py-2.5 px-5 rounded-xl bg-slate-300 text-slate-500 font-black uppercase text-xs transition cursor-not-allowed">
           🗑️ Confirm Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= UNIVERSAL SAFETY DELETE CONFIRMATION POP-UP MODAL ================= -->
+  <div id="admin-delete-confirm-modal" class="fixed inset-0 z-[96] hidden flex items-center justify-center p-4">
+    <div onclick="closeDeleteConfirmModal()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    <div class="relative z-10 w-full max-w-md rounded-2xl bg-white text-[#050E1D] border-2 border-rose-600 p-6 shadow-2xl space-y-4" style="border-radius:12px;">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 flex items-center justify-center font-black text-lg flex-shrink-0">
+            🗑️
+          </div>
+          <div>
+            <span class="text-[10px] font-mono font-black uppercase tracking-widest text-rose-700 block">SAFETY CONFIRMATION</span>
+            <h3 id="delete-modal-title" class="text-base font-black uppercase text-[#050E1D]">Confirm Deletion</h3>
+          </div>
+        </div>
+        <button type="button" onclick="closeDeleteConfirmModal()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs flex items-center justify-center transition" aria-label="Cancel and Close">✕</button>
+      </div>
+
+      <!-- Item Details Card -->
+      <div class="bg-rose-50/70 border border-rose-200 p-4 rounded-xl space-y-2">
+        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">You are about to delete:</p>
+        <div id="delete-modal-item-name" class="font-black text-rose-950 text-sm sm:text-base leading-snug break-words">
+          Product / Booking Item
+        </div>
+        <div id="delete-modal-extra" class="text-xs text-slate-600 bg-white/70 rounded-lg p-2.5 border border-rose-200/50"></div>
+        <p class="text-xs font-bold text-rose-700 pt-1 flex items-center gap-1.5">
+          <span>⚠️</span>
+          <span>This will permanently delete the record. This action cannot be undone.</span>
+        </p>
+      </div>
+
+      <!-- Two-Stage Confirmation Actions -->
+      <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200">
+        <button type="button" onclick="closeDeleteConfirmModal()" class="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-black uppercase text-xs transition">
+          Cancel (Keep Record)
+        </button>
+        <button type="button" id="delete-modal-confirm-btn" onclick="executePendingDeleteAction()" class="py-2.5 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black uppercase text-xs transition shadow-lg cursor-pointer flex items-center gap-1.5">
+          <span>🗑️ Confirm Delete</span>
         </button>
       </div>
     </div>

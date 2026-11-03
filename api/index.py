@@ -57,7 +57,7 @@ DEFAULT_SECURITY_LOG = [
 DEFAULT_DB = {
     "bookings": [],
     "deletedBookingRefs": [],
-    "deletedInventoryIds": [],
+    "deletedInventoryIds": ["inv-1793729388813", "inv-1793729578611"],
     "bookingsUpdatedAt": 0,
     "blocks": [],
     "salesLedger": [],
@@ -182,6 +182,12 @@ def _normalize_db_dict(data):
     for k in ["bookings", "deletedBookingRefs", "deletedInventoryIds", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
         if k not in data or not isinstance(data[k], list):
             data[k] = []
+    # Guarantee purged dummy test inventory IDs remain purged
+    purged_test_inv_ids = {"inv-1793729388813", "inv-1793729578611"}
+    for tid in purged_test_inv_ids:
+        if tid not in data["deletedInventoryIds"]:
+            data["deletedInventoryIds"].append(tid)
+    data["inventory"] = [x for x in data["inventory"] if isinstance(x, dict) and str(x.get("id", "")).strip() not in purged_test_inv_ids]
     if len(data["announcements"]) == 0 and not data.get("announcementsCleared"):
         data["announcements"] = json.loads(json.dumps(DEFAULT_ANNOUNCEMENTS))
     if len(data["securityLog"]) == 0:
