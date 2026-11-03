@@ -208,7 +208,7 @@ def _normalize_db_dict(data):
     else:
         merged_sc = dict(DEFAULT_DB["siteConfig"])
         merged_sc.update(data["siteConfig"])
-        if not str(merged_sc.get("liveBannerText") or "").strip() or str(merged_sc.get("liveBannerText")).strip() == "0":
+        if merged_sc.get("liveBannerText") is None or str(merged_sc.get("liveBannerText")).strip() == "0":
             merged_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
         data["siteConfig"] = merged_sc
     return data
@@ -824,7 +824,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 sc = dict(DEFAULT_DB.get("siteConfig", {}))
                 sc.update(db.get("siteConfig") or {})
                 sc.update(body["siteConfig"])
-                if not str(sc.get("liveBannerText") or "").strip() or str(sc.get("liveBannerText")).strip() == "0":
+                if sc.get("liveBannerText") is None or str(sc.get("liveBannerText")).strip() == "0":
                     sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
                 db["siteConfig"] = sc
             if isinstance(body.get("paymentConfig"), dict):
@@ -1309,7 +1309,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                             current_sc[k] = def_val
                     else:
                         current_sc[k] = sanitize_str(v, 800)
-                if not str(current_sc.get("liveBannerText") or "").strip() or str(current_sc.get("liveBannerText")).strip() == "0":
+                if current_sc.get("liveBannerText") is None or str(current_sc.get("liveBannerText")).strip() == "0":
                     current_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
                 current_sc["updatedAt"] = int(time.time() * 1000)
             db["siteConfig"] = current_sc

@@ -8489,7 +8489,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           cfg[k] = DEFAULT_SITE_CONFIG[k] || cfg[k].replace(/\ufffd/g, '•');
         }
       });
-      if (!cfg.liveBannerText || String(cfg.liveBannerText).trim() === '0') {
+      if (cfg.liveBannerText === undefined || cfg.liveBannerText === null || String(cfg.liveBannerText).trim() === '0') {
         cfg.liveBannerText = DEFAULT_SITE_CONFIG.liveBannerText;
       }
       if (cfg.openPlayEnabled === undefined) cfg.openPlayEnabled = true;
@@ -8666,9 +8666,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
     function handleLiveBannerTextInput(val) {
       siteEditorDirty = true;
-      const cleanVal = (!val || String(val).trim() === '0') ? DEFAULT_SITE_CONFIG.liveBannerText : val;
       const prevEl = document.getElementById('se-live-banner-preview-text');
-      if (prevEl) prevEl.textContent = cleanVal || DEFAULT_SITE_CONFIG.liveBannerText;
+      if (prevEl) prevEl.textContent = val || '(Banner text empty)';
       scheduleAutoSaveSiteConfig();
     }
 

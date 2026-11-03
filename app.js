@@ -2263,7 +2263,7 @@ function getSiteConfig() {
   if (!Array.isArray(merged.openPlaySlots)) {
     merged.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
   }
-  if (!merged.liveBannerText || String(merged.liveBannerText).trim() === '' || String(merged.liveBannerText).trim() === '0') {
+  if (merged.liveBannerText === undefined || merged.liveBannerText === null || String(merged.liveBannerText).trim() === '0') {
     merged.liveBannerText = DEFAULT_PF_SITE_CONFIG.liveBannerText;
   }
   window.PF_SITE_CONFIG = merged;
