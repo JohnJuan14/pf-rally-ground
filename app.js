@@ -2112,7 +2112,7 @@ function getDefaultWelcomeAnnouncements() {
     {
       id: 'welcome-pf-2026',
       title: 'Welcome to P&F Rally Ground Pickleball Club!',
-      message: 'All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs daily from 3:00 PM – 6:00 PM across all courts (Free)!',
+      message: 'All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs daily from 3:00 PM – 6:00 PM across all courts (₱150/player)!',
       category: 'Club Update',
       img: '',
       pinned: true,
@@ -2121,7 +2121,7 @@ function getDefaultWelcomeAnnouncements() {
     },
     {
       id: 'open-play-pf-2026',
-      title: 'Daily Open Play • 3:00 PM – 6:00 PM (Free)',
+      title: 'Daily Open Play • 3:00 PM – 6:00 PM (₱150)',
       message: 'Join our daily community Open Play session across Courts 1 – 4 from 3:00 PM to 6:00 PM! All skill levels are welcome — bring your paddle or rent pro gear at the club.',
       category: 'Open Play Alert',
       img: '',
@@ -2323,7 +2323,12 @@ const DEFAULT_PF_SITE_CONFIG = {
   nightRate: 500,
   includedPlayers: 6,
   extraPlayerFee: 100,
-  openPlayRate: 0,
+  openPlayRate: 150,
+  openPlayRateCustomized: false,
+  openPlayMaxPlayers: 24,
+  openPlayCourtsCount: 4,
+  openPlaySlotMinutes: 30,
+  maxAdvanceBookingDays: 30,
   openPlayEnabled: true,
   openPlaySlots: ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
   pricePaddleStd: 50,
@@ -2336,7 +2341,10 @@ const DEFAULT_PF_SITE_CONFIG = {
   court2Name: 'Court 2',
   court3Name: 'Court 3',
   court4Name: 'Court 4',
-  clubAddress: 'Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay',
+  clubAddress: 'Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Philippines, 4501',
+  clubLat: 13.15543,
+  clubLng: 123.72471,
+  clubMapPinUrl: 'https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&name=Velasco+St.%2C+Phase+4%2C+Do%C3%B1a+Maria+Subd.%2C+Tagas%2C+Daraga%2C+Philippines%2C+4501&mkt=en-US&fbclid=IwY2xjawVYnBdleHRuA2FlbQIxMABwZG9mBWJyaWQRMTRoaU1vSGFYU01lQlhDQWlzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEfV6cDEdlnoTrV2XY-9GoSklW3i8iwAD-QR-A4aVHbv5si-SDftGv3wAWAItU_aem_ddmZG_qe15MZb6RjEsu8yA&FORM=FBKPL1&q=13.15543%2C+123.72471&cp=13.155430%7E123.724709&lvl=16&style=r',
   clubPhone: '0999 883 2346',
   clubHours: '6:00 AM – 12:00 AM',
   updatedAt: 0
@@ -2361,6 +2369,15 @@ function getSiteConfig() {
   }
   if (merged.liveBannerText === undefined || merged.liveBannerText === null || String(merged.liveBannerText).trim() === '0') {
     merged.liveBannerText = DEFAULT_PF_SITE_CONFIG.liveBannerText;
+  }
+  if (!merged.openPlayRateCustomized && (merged.openPlayRate === undefined || merged.openPlayRate === null || Number(merged.openPlayRate) === 0)) {
+    merged.openPlayRate = 150;
+  }
+  if (!merged.openPlayMaxPlayers) merged.openPlayMaxPlayers = 24;
+  if (!merged.openPlayCourtsCount) merged.openPlayCourtsCount = 4;
+  if (!merged.maxAdvanceBookingDays) merged.maxAdvanceBookingDays = 30;
+  if (!Array.isArray(merged.tournaments) || merged.tournaments.length === 0) {
+    merged.tournaments = (typeof window.pfGetDefaultTournaments === 'function') ? window.pfGetDefaultTournaments() : [];
   }
   window.PF_SITE_CONFIG = merged;
   return merged;
@@ -2618,7 +2635,7 @@ function applySiteConfig(incomingCfg) {
   // 5. Update All Visible Prices via data-site-price attributes across all pages
   document.querySelectorAll('[data-site-price="day-hr"]').forEach(el => { el.textContent = `₱${dayRate} / hr`; });
   document.querySelectorAll('[data-site-price="night-hr"]').forEach(el => { el.textContent = `₱${nightRate} / hr`; });
-  const openPlayRate = Number(cfg.openPlayRate ?? 0);
+  const openPlayRate = Number(cfg.openPlayRate ?? 150);
   document.querySelectorAll('[data-site-price="day-num"]').forEach(el => { el.textContent = `₱${dayRate}`; });
   document.querySelectorAll('[data-site-price="night-num"]').forEach(el => { el.textContent = `₱${nightRate}`; });
   document.querySelectorAll('[data-site-price="open-play-num"]').forEach(el => { el.textContent = openPlayRate > 0 ? `₱${openPlayRate}` : 'Free'; });
@@ -2695,6 +2712,15 @@ function applySiteConfig(incomingCfg) {
   }
   if (typeof updateSummary === 'function') {
     try { updateSummary(); } catch (e) {}
+  }
+  if (typeof pfRenderOpenPlay24Board === 'function') {
+    try { pfRenderOpenPlay24Board(); } catch (e) {}
+  }
+  if (typeof pfRenderPublicTournaments === 'function') {
+    try { pfRenderPublicTournaments(); } catch (e) {}
+  }
+  if (typeof pfApply30DayCalendarLimits === 'function') {
+    try { pfApply30DayCalendarLimits(); } catch (e) {}
   }
 }
 
@@ -4035,7 +4061,16 @@ function pfOpenPolicyModal(policyKey, ev) {
   if (bodyEl) bodyEl.innerHTML = data.bodyHtml;
   if (noteEl) noteEl.textContent = data.confirmNote;
   if (acceptBtn) {
+    acceptBtn.textContent = 'I Accept & Have Finished Reading';
     acceptBtn.onclick = () => {
+      if (Array.isArray(data.checkboxIds)) {
+        data.checkboxIds.forEach(cid => {
+          const cb = document.getElementById(cid);
+          if (cb) cb.checked = true;
+        });
+      }
+      if (typeof pfSyncDrawerPolicyConsent === 'function') pfSyncDrawerPolicyConsent();
+      if (typeof checkPoliciesConsent === 'function') checkPoliciesConsent();
       pfClosePolicyModal();
     };
   }
@@ -4059,11 +4094,11 @@ function pfSyncDrawerPolicyConsent() {
     const card = inp.closest('.pf-policy-consent-card');
     if (card) {
       if (inp.checked) {
-        card.classList.add('border-brand-lime/60', 'bg-brand-lime/10');
-        card.classList.remove('border-white/10', 'bg-brand-black/70');
+        card.classList.add('border-emerald-500', 'bg-emerald-50/70', 'ring-1', 'ring-emerald-500/30');
+        card.classList.remove('border-slate-200', 'bg-white');
       } else {
-        card.classList.remove('border-brand-lime/60', 'bg-brand-lime/10');
-        card.classList.add('border-white/10', 'bg-brand-black/70');
+        card.classList.remove('border-emerald-500', 'bg-emerald-50/70', 'ring-1', 'ring-emerald-500/30');
+        card.classList.add('border-slate-200', 'bg-white');
       }
     }
   });
@@ -4072,11 +4107,19 @@ function pfSyncDrawerPolicyConsent() {
   const gateNotice = document.getElementById('drawer-policy-gate-notice');
   if (gateNotice) {
     if (allChecked) {
-      gateNotice.textContent = '✓ All 3 policy confirmations accepted. Ready to proceed to payment.';
-      gateNotice.className = 'text-[11px] font-bold text-brand-lime mt-1';
+      gateNotice.textContent = '✓ All 3 policy confirmations accepted. Payment options are now enabled.';
+      gateNotice.className = 'text-xs font-bold text-emerald-700 mt-1';
     } else {
       gateNotice.textContent = 'Review and accept each item before payment options are enabled.';
-      gateNotice.className = 'text-[11px] text-slate-300 mt-1';
+      gateNotice.className = 'text-xs text-slate-500 mt-1';
+    }
+  }
+  const proceedBtn = document.getElementById('drawer-proceed-btn');
+  if (proceedBtn) {
+    if (allChecked) {
+      proceedBtn.classList.remove('opacity-60');
+    } else {
+      proceedBtn.classList.add('opacity-60');
     }
   }
 }
@@ -4116,3 +4159,681 @@ try {
     }
   });
 } catch (e) {}
+
+
+
+// ================= 30-DAY ADVANCE CALENDAR LIMIT ENGINE (TODAY TO +30 DAYS ONLY) =================
+function pfGetPhilippineMaxBookingYMD(maxDays) {
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const limitDays = Number(maxDays || cfg.maxAdvanceBookingDays || 30);
+  const now = pfGetPhilippineNow();
+  now.setHours(12, 0, 0, 0);
+  now.setDate(now.getDate() + limitDays);
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+function pfIsDateBeyondAdvanceWindow(dateYMD, maxDays) {
+  if (!dateYMD || dateYMD === 'Today') return false;
+  const clean = String(dateYMD).trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(clean)) return false;
+  return clean > pfGetPhilippineMaxBookingYMD(maxDays);
+}
+
+function pfApply30DayCalendarLimits() {
+  const todayYMD = pfGetPhilippineTodayYMD();
+  const maxYMD = pfGetPhilippineMaxBookingYMD(30);
+  ['sched-native-date-picker', 'drawer-native-date-picker', 'book-native-date-picker', 'resched-date-input', 'check-resched-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.min = todayYMD;
+      el.max = maxYMD;
+      if (el.value && el.value > maxYMD) el.value = maxYMD;
+      if (el.value && el.value < todayYMD) el.value = todayYMD;
+    }
+  });
+}
+
+window.pfGetPhilippineMaxBookingYMD = pfGetPhilippineMaxBookingYMD;
+window.pfIsDateBeyondAdvanceWindow = pfIsDateBeyondAdvanceWindow;
+window.pfApply30DayCalendarLimits = pfApply30DayCalendarLimits;
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(pfApply30DayCalendarLimits, 50);
+});
+
+
+// ================= OPEN PLAY 24-PLAYER RANDOM DISTRIBUTION & DEDICATED TIME SLOT ENGINE =================
+const DEFAULT_OPEN_PLAY_SAMPLE_PLAYERS = [
+  'Player 01 (Spot #1)', 'Player 02 (Spot #2)', 'Player 03 (Spot #3)', 'Player 04 (Spot #4)',
+  'Player 05 (Spot #5)', 'Player 06 (Spot #6)', 'Player 07 (Spot #7)', 'Player 08 (Spot #8)',
+  'Player 09 (Spot #9)', 'Player 10 (Spot #10)', 'Player 11 (Spot #11)', 'Player 12 (Spot #12)',
+  'Player 13 (Spot #13)', 'Player 14 (Spot #14)', 'Player 15 (Spot #15)', 'Player 16 (Spot #16)',
+  'Player 17 (Spot #17)', 'Player 18 (Spot #18)', 'Player 19 (Spot #19)', 'Player 20 (Spot #20)',
+  'Player 21 (Spot #21)', 'Player 22 (Spot #22)', 'Player 23 (Spot #23)', 'Player 24 (Spot #24)'
+];
+
+window.PF_OPEN_PLAY_STATE = {
+  courtsCount: 4,
+  maxPlayers: 24,
+  shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+  lastShuffleTime: 'Live Seeded',
+  customNames: {}
+};
+
+function pfGetOpenPlay24PlayersList(targetDateYMD) {
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const todayYMD = pfGetPhilippineTodayYMD();
+  const activeDate = targetDateYMD || (typeof selectedScheduleDateYMD !== 'undefined' && selectedScheduleDateYMD ? selectedScheduleDateYMD : todayYMD);
+
+  // Check if siteConfig has saved openPlayRoster names
+  const savedRoster = Array.isArray(cfg.openPlayRoster) ? cfg.openPlayRoster : [];
+
+  // Pull real Open Play bookings for activeDate
+  const allBookings = (typeof pfGetAllMergedBookings === 'function') ? pfGetAllMergedBookings() : [];
+  const openPlayBookings = allBookings.filter(b => {
+    if (!b || b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
+    const isOp = /open play/i.test(String(b.court || '')) || (Array.isArray(b.items) && b.items.some(it => /open play/i.test(String(it))));
+    if (!isOp) return false;
+    return (typeof pfBookingMatchesTargetDate === 'function') ? pfBookingMatchesTargetDate(b, activeDate, todayYMD) : true;
+  });
+
+  const basePlayers = [];
+  openPlayBookings.forEach((bk) => {
+    const pCount = Math.max(1, Math.min(6, Number(bk.players || 1)));
+    for (let k = 0; k < pCount && basePlayers.length < 24; k++) {
+      const label = k === 0 ? `${bk.name || 'Booked Player'} (Ref: ${bk.ref})` : `${bk.name || 'Booked Player'} +Guest #${k}`;
+      basePlayers.push({
+        name: label,
+        isBooked: true,
+        ref: bk.ref || ''
+      });
+    }
+  });
+
+  for (let i = basePlayers.length; i < 24; i++) {
+    const customName = window.PF_OPEN_PLAY_STATE.customNames[i] || (savedRoster[i] && savedRoster[i].name) || DEFAULT_OPEN_PLAY_SAMPLE_PLAYERS[i] || `Player #${i + 1}`;
+    basePlayers.push({
+      name: customName,
+      isBooked: Boolean(savedRoster[i] && savedRoster[i].isBooked),
+      ref: (savedRoster[i] && savedRoster[i].ref) || ''
+    });
+  }
+
+  // Apply current random permutation
+  const order = (Array.isArray(window.PF_OPEN_PLAY_STATE.shuffledOrder) && window.PF_OPEN_PLAY_STATE.shuffledOrder.length === 24)
+    ? window.PF_OPEN_PLAY_STATE.shuffledOrder
+    : Array.from({ length: 24 }, (_, idx) => idx);
+
+  return order.map((origIdx, slotPos) => {
+    const p = basePlayers[origIdx] || { name: `Player #${origIdx + 1}`, isBooked: false };
+    return {
+      seedNumber: slotPos + 1,
+      origIndex: origIdx,
+      name: p.name,
+      isBooked: p.isBooked,
+      ref: p.ref
+    };
+  });
+}
+
+function pfBuildOpenPlay24Schedule(courtsCountInput) {
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const courtsCount = Math.max(1, Math.min(4, Number(courtsCountInput || window.PF_OPEN_PLAY_STATE.courtsCount || cfg.openPlayCourtsCount || 4)));
+  window.PF_OPEN_PLAY_STATE.courtsCount = courtsCount;
+
+  const players = pfGetOpenPlay24PlayersList();
+  // 24 players = 6 doubles pods of 4 players each (Pod 1..Pod 6)
+  const pods = [];
+  for (let p = 0; p < 6; p++) {
+    const group = players.slice(p * 4, p * 4 + 4);
+    pods.push({
+      podIndex: p + 1,
+      teamA: [group[0], group[1]],
+      teamB: [group[2], group[3]],
+      players: group
+    });
+  }
+
+  // Dedicated Time Slots between 3:00 PM and 6:00 PM (180 mins total) depending on how many courts (1, 2, 3, or 4) are active:
+  // Each pod of 4 players gets a dedicated court (Court 1..courtsCount) and dedicated time slot!
+  const slotScheduleByCourtCount = {
+    1: [
+      { pod: 1, court: 1, timeSlot: '03:00 PM – 03:30 PM', roundLabel: 'Slot 1 of 6 (30 mins)' },
+      { pod: 2, court: 1, timeSlot: '03:30 PM – 04:00 PM', roundLabel: 'Slot 2 of 6 (30 mins)' },
+      { pod: 3, court: 1, timeSlot: '04:00 PM – 04:30 PM', roundLabel: 'Slot 3 of 6 (30 mins)' },
+      { pod: 4, court: 1, timeSlot: '04:30 PM – 05:00 PM', roundLabel: 'Slot 4 of 6 (30 mins)' },
+      { pod: 5, court: 1, timeSlot: '05:00 PM – 05:30 PM', roundLabel: 'Slot 5 of 6 (30 mins)' },
+      { pod: 6, court: 1, timeSlot: '05:30 PM – 06:00 PM', roundLabel: 'Slot 6 of 6 (30 mins)' }
+    ],
+    2: [
+      { pod: 1, court: 1, timeSlot: '03:00 PM – 04:00 PM', roundLabel: 'Wave 1 • Court 1 (60 mins)' },
+      { pod: 2, court: 2, timeSlot: '03:00 PM – 04:00 PM', roundLabel: 'Wave 1 • Court 2 (60 mins)' },
+      { pod: 3, court: 1, timeSlot: '04:00 PM – 05:00 PM', roundLabel: 'Wave 2 • Court 1 (60 mins)' },
+      { pod: 4, court: 2, timeSlot: '04:00 PM – 05:00 PM', roundLabel: 'Wave 2 • Court 2 (60 mins)' },
+      { pod: 5, court: 1, timeSlot: '05:00 PM – 06:00 PM', roundLabel: 'Wave 3 • Court 1 (60 mins)' },
+      { pod: 6, court: 2, timeSlot: '05:00 PM – 06:00 PM', roundLabel: 'Wave 3 • Court 2 (60 mins)' }
+    ],
+    3: [
+      { pod: 1, court: 1, timeSlot: '03:00 PM – 04:30 PM', roundLabel: 'Session A • Court 1 (90 mins)' },
+      { pod: 2, court: 2, timeSlot: '03:00 PM – 04:30 PM', roundLabel: 'Session A • Court 2 (90 mins)' },
+      { pod: 3, court: 3, timeSlot: '03:00 PM – 04:30 PM', roundLabel: 'Session A • Court 3 (90 mins)' },
+      { pod: 4, court: 1, timeSlot: '04:30 PM – 06:00 PM', roundLabel: 'Session B • Court 1 (90 mins)' },
+      { pod: 5, court: 2, timeSlot: '04:30 PM – 06:00 PM', roundLabel: 'Session B • Court 2 (90 mins)' },
+      { pod: 6, court: 3, timeSlot: '04:30 PM – 06:00 PM', roundLabel: 'Session B • Court 3 (90 mins)' }
+    ],
+    4: [
+      { pod: 1, court: 1, timeSlot: '03:00 PM – 04:00 PM ( + 05:00 PM Rotation )', roundLabel: 'Court 1 • Primary Slot' },
+      { pod: 2, court: 2, timeSlot: '03:00 PM – 04:00 PM ( + 05:00 PM Rotation )', roundLabel: 'Court 2 • Primary Slot' },
+      { pod: 3, court: 3, timeSlot: '03:00 PM – 04:00 PM ( + 05:30 PM Rotation )', roundLabel: 'Court 3 • Primary Slot' },
+      { pod: 4, court: 4, timeSlot: '03:00 PM – 04:00 PM ( + 05:30 PM Rotation )', roundLabel: 'Court 4 • Primary Slot' },
+      { pod: 5, court: 1, timeSlot: '04:00 PM – 05:00 PM ( + 05:00 PM Court 3 )', roundLabel: 'Court 1 & 3 • Dedicated Slot' },
+      { pod: 6, court: 2, timeSlot: '04:00 PM – 05:00 PM ( + 05:00 PM Court 4 )', roundLabel: 'Court 2 & 4 • Dedicated Slot' }
+    ]
+  };
+
+  const assignments = slotScheduleByCourtCount[courtsCount] || slotScheduleByCourtCount[4];
+  const enrichedPods = pods.map((pod, idx) => {
+    const asgn = assignments[idx] || assignments[0];
+    return Object.assign({}, pod, {
+      courtNumber: asgn.court,
+      courtLabel: `Court ${asgn.court}`,
+      dedicatedTimeSlot: asgn.timeSlot,
+      roundLabel: asgn.roundLabel
+    });
+  });
+
+  const flatRoster = [];
+  enrichedPods.forEach(ep => {
+    ep.players.forEach((pl, pIdx) => {
+      const teamLabel = pIdx < 2 ? 'Team A' : 'Team B';
+      const partner = pIdx === 0 ? ep.players[1] : (pIdx === 1 ? ep.players[0] : (pIdx === 2 ? ep.players[3] : ep.players[2]));
+      flatRoster.push({
+        playerSpot: pl.seedNumber,
+        name: pl.name,
+        isBooked: pl.isBooked,
+        ref: pl.ref,
+        podNumber: ep.podIndex,
+        courtNumber: ep.courtNumber,
+        courtLabel: ep.courtLabel,
+        teamLabel: teamLabel,
+        partnerName: partner ? partner.name : 'TBD',
+        dedicatedTimeSlot: ep.dedicatedTimeSlot,
+        roundLabel: ep.roundLabel
+      });
+    });
+  });
+
+  return {
+    courtsCount,
+    maxPlayers: 24,
+    openPlayRate: Number(cfg.openPlayRate ?? 150),
+    pods: enrichedPods,
+    roster: flatRoster
+  };
+}
+
+function pfShuffleOpenPlay24Players() {
+  const arr = Array.from({ length: 24 }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  window.PF_OPEN_PLAY_STATE.shuffledOrder = arr;
+  window.PF_OPEN_PLAY_STATE.lastShuffleTime = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  pfRenderOpenPlay24Board();
+}
+
+function pfSetOpenPlayCourtCount(numCourts) {
+  const c = Math.max(1, Math.min(4, Number(numCourts) || 4));
+  window.PF_OPEN_PLAY_STATE.courtsCount = c;
+  pfRenderOpenPlay24Board();
+}
+
+function pfRenderOpenPlay24Board() {
+  const container = document.getElementById('open-play-24-board-container');
+  if (!container) return;
+
+  const schedule = pfBuildOpenPlay24Schedule(window.PF_OPEN_PLAY_STATE.courtsCount);
+  const priceVal = schedule.openPlayRate;
+  const priceText = priceVal > 0 ? `₱${priceVal}` : 'Free';
+
+  const courtButtonsHtml = [1, 2, 3, 4].map(c => {
+    const active = c === schedule.courtsCount;
+    return `<button type="button" onclick="pfSetOpenPlayCourtCount(${c})" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase transition ${active ? 'bg-[#050E1D] text-[#9BE600] shadow-md border-2 border-[#050E1D]' : 'bg-white text-slate-700 border border-slate-300 hover:border-[#050E1D]'}">${c} ${c === 1 ? 'Court' : 'Courts'}</button>`;
+  }).join('');
+
+  const podsHtml = schedule.pods.map(pod => `
+    <div class="p-4 rounded-2xl bg-white border-2 border-slate-200 shadow-sm hover:border-[#84cc16] transition space-y-2.5">
+      <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] font-mono text-[11px] font-black uppercase">${pod.courtLabel}</span>
+          <span class="text-xs font-black uppercase text-slate-900">Match Pod #${pod.podIndex}</span>
+        </div>
+        <span class="px-2 py-0.5 rounded bg-[#d9f99d] text-[#365314] border border-[#84cc16] font-mono text-[10px] font-black">${pod.roundLabel}</span>
+      </div>
+      <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+        <span class="text-[10px] font-mono font-bold uppercase text-emerald-700 block">⏰ Dedicated Time Slot:</span>
+        <b class="text-slate-900 font-mono text-xs sm:text-sm">${pod.dedicatedTimeSlot}</b>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+        <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
+          <span class="text-[10px] font-mono font-black uppercase text-emerald-800 block mb-1">🟢 Team A (Doubles)</span>
+          ${pod.teamA.map(p => `<div class="font-bold text-slate-900 truncate">• #${p.seedNumber} ${pfEscapeHtml(p.name)}</div>`).join('')}
+        </div>
+        <div class="p-2.5 rounded-xl bg-lime-50/70 border border-lime-300">
+          <span class="text-[10px] font-mono font-black uppercase text-[#365314] block mb-1">🎾 Team B (Doubles)</span>
+          ${pod.teamB.map(p => `<div class="font-bold text-slate-900 truncate">• #${p.seedNumber} ${pfEscapeHtml(p.name)}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const rosterRowsHtml = schedule.roster.map(r => `
+    <tr class="hover:bg-slate-50 transition">
+      <td class="py-2 px-3 font-mono font-black text-slate-900">#${String(r.playerSpot).padStart(2, '0')}</td>
+      <td class="py-2 px-3 font-bold text-slate-900">
+        ${pfEscapeHtml(r.name)}
+        ${r.isBooked ? `<span class="ml-1.5 px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-black uppercase">Booked</span>` : ''}
+      </td>
+      <td class="py-2 px-3 font-mono font-black text-emerald-800">${r.courtLabel}</td>
+      <td class="py-2 px-3 text-slate-700 font-semibold">Pod #${r.podNumber} (${r.teamLabel})</td>
+      <td class="py-2 px-3 font-mono text-xs font-bold text-slate-900 bg-lime-50/60">${r.dedicatedTimeSlot}</td>
+    </tr>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="p-4 sm:p-6 rounded-3xl bg-[#f7fee7] text-slate-900 border-2 border-[#84cc16] shadow-xl space-y-5">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#84cc16]/40 pb-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 rounded-full bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase tracking-wider">🎾 24-PLAYER OPEN PLAY RANDOMIZER</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-[#d9f99d] text-[#365314] border border-[#84cc16] font-mono text-xs font-black">Entry Fee: <b data-site-price="open-play-num">${priceText}</b> / player</span>
+            <span class="text-[11px] font-mono font-bold text-slate-600">Capacity: 24 Players • 3:00 PM – 6:00 PM</span>
+          </div>
+          <h3 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Open Play 24-Player Random Distribution &amp; Dedicated Time Slots</h3>
+          <p class="text-xs text-slate-600 font-medium mt-0.5">All 24 Open Play players are randomly distributed into balanced 4-player Doubles Pods with a dedicated court and time slot. Select how many courts to allocate below:</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-1 bg-white/80 p-1 rounded-2xl border border-slate-300">
+            <span class="text-[10px] font-mono font-bold uppercase text-slate-600 px-2">Courts:</span>
+            ${courtButtonsHtml}
+          </div>
+          <button type="button" onclick="pfShuffleOpenPlay24Players()" class="px-4 py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 active:scale-95">
+            <span>🎲 Randomly Distribute 24 Players</span>
+          </button>
+          <button type="button" onclick="openBookingDrawer(1, '03:00 PM')" class="px-4 py-2.5 rounded-xl bg-[#9BE600] hover:bg-[#84cc16] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-md active:scale-95">
+            <span>Join Open Play (${priceText}) →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 6 Match Pods Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        ${podsHtml}
+      </div>
+
+      <!-- Expandable Full 24-Player Dedicated Time Slot Table -->
+      <details class="group rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm">
+        <summary class="px-4 py-3 cursor-pointer flex items-center justify-between text-xs font-black uppercase text-slate-900 bg-slate-100 hover:bg-slate-200 transition">
+          <span>📋 View Complete 24-Player Dedicated Time Slot &amp; Court Roster (${schedule.courtsCount} ${schedule.courtsCount === 1 ? 'Court' : 'Courts'} Active)</span>
+          <span class="font-mono text-[11px] text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+        </summary>
+        <div class="overflow-x-auto max-h-80 overflow-y-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-[#050E1D] text-white uppercase font-mono text-[10px]">
+                <th class="py-2.5 px-3">Spot #</th>
+                <th class="py-2.5 px-3">Player Name</th>
+                <th class="py-2.5 px-3">Assigned Court</th>
+                <th class="py-2.5 px-3">Match Pod &amp; Team</th>
+                <th class="py-2.5 px-3">Dedicated Time Slot</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              ${rosterRowsHtml}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  `;
+}
+
+window.pfBuildOpenPlay24Schedule = pfBuildOpenPlay24Schedule;
+window.pfShuffleOpenPlay24Players = pfShuffleOpenPlay24Players;
+window.pfSetOpenPlayCourtCount = pfSetOpenPlayCourtCount;
+window.pfRenderOpenPlay24Board = pfRenderOpenPlay24Board;
+
+
+// ================= PICKLEBALL TOURNAMENT HUB & REGISTRATION ENGINE =================
+const DEFAULT_PF_TOURNAMENTS = [
+  {
+    id: 'trn-bicol-dupr-open',
+    title: 'Bicol Open DUPR Pickleball Cup',
+    format: 'Round Robin + Medal Playoffs',
+    formatKey: 'ROUND_ROBIN',
+    division: 'Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)',
+    category: "Men's, Women's & Mixed Doubles",
+    date: '2026-11-21',
+    time: '08:00 AM – 05:00 PM',
+    courts: 'All 4 Courts (Courts 1 – 4)',
+    entryFee: 850,
+    prizePool: '₱25,000 + Trophies & Official DUPR Submission',
+    maxTeams: 24,
+    registeredCount: 14,
+    status: 'OPEN FOR REGISTRATION',
+    description: 'Guaranteed 4 Round-Robin pool matches (1 game to 11 pts) per team. Top 4 teams in each division advance to Single-Elimination Semifinals and Gold/Bronze Medal Matches (to 15 pts, win by 2).'
+  },
+  {
+    id: 'trn-mayon-king-court',
+    title: 'Mayon Smash: King & Queen of the Court',
+    format: 'Ladder Split Rotation (Individual Points)',
+    formatKey: 'KING_COURT',
+    division: 'All-Levels Social & Competitive (3.0–3.8)',
+    category: 'Individual Entry (Rotating Doubles Partners)',
+    date: '2026-11-14',
+    time: '05:00 PM – 09:00 PM',
+    courts: '4 Courts (Challenger to Crown Court)',
+    entryFee: 350,
+    prizePool: '₱6,000 Cash + Carbon Pro Paddle & Medals',
+    maxTeams: 24,
+    registeredCount: 18,
+    status: 'OPEN FOR REGISTRATION',
+    description: '24 players randomly seeded across 4 courts. Play 12-minute timed rounds: winners move UP a court and split partners; losers move DOWN a court and split. Most cumulative points after 6 rounds wins!'
+  },
+  {
+    id: 'trn-daraga-mlp-rally',
+    title: 'Daraga MLP-Style Team Rally Showdown',
+    format: 'MLP 4-Player Co-Ed Squad Format (Rally Scoring)',
+    formatKey: 'MLP_TEAM',
+    division: 'Club Squads (2 Men + 2 Women per Squad)',
+    category: 'Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)',
+    date: '2026-11-28',
+    time: '09:00 AM – 06:00 PM',
+    courts: 'All 4 Courts (Courts 1 – 4)',
+    entryFee: 2000,
+    prizePool: '₱18,000 Cash + Club Championship Banner',
+    maxTeams: 12,
+    registeredCount: 8,
+    status: 'OPEN FOR REGISTRATION',
+    description: "Major League Pickleball format! Each squad clash features 4 games to 21 (rally scoring): Women's Doubles, Men's Doubles, and 2 Mixed Doubles sets. Tied 2–2 matches go to a 1v1 Dreambreaker Singles tiebreak!"
+  },
+  {
+    id: 'trn-albay-double-elim',
+    title: 'Albay Double-Elimination Knockout Classic',
+    format: 'USA Pickleball Double Elimination Bracket',
+    formatKey: 'DOUBLE_ELIM',
+    division: 'Intermediate (3.5) & Advanced (4.0+)',
+    category: "Men's Singles & Mixed Doubles",
+    date: '2026-12-03',
+    time: '08:00 AM – 04:00 PM',
+    courts: 'All 4 Courts (Courts 1 – 4)',
+    entryFee: 600,
+    prizePool: '₱15,000 Cash + Official Championship Medals',
+    maxTeams: 24,
+    registeredCount: 10,
+    status: 'OPEN FOR REGISTRATION',
+    description: 'Full Double-Elimination Championship Bracket (Winners Bracket best 2-of-3 to 11; Consolation Bracket 1 game to 15). Every player/team is guaranteed at least 2 bracket matches before elimination.'
+  }
+];
+
+function pfGetDefaultTournaments() {
+  return JSON.parse(JSON.stringify(DEFAULT_PF_TOURNAMENTS));
+}
+
+let activePublicTournamentFilter = 'ALL';
+
+function pfGetTournamentsList() {
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  if (Array.isArray(cfg.tournaments) && cfg.tournaments.length > 0) {
+    return cfg.tournaments;
+  }
+  return pfGetDefaultTournaments();
+}
+
+function pfSetTournamentFilter(filterKey) {
+  activePublicTournamentFilter = filterKey || 'ALL';
+  document.querySelectorAll('.pf-trn-filter-btn').forEach(btn => {
+    if (btn.dataset.filter === activePublicTournamentFilter) {
+      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider transition shadow-md';
+    } else {
+      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-brand-card text-slate-300 hover:text-white border border-white/15 font-bold text-xs uppercase tracking-wider transition';
+    }
+  });
+  pfRenderPublicTournaments();
+}
+
+function pfRenderPublicTournaments() {
+  const grid = document.getElementById('public-tournaments-grid');
+  if (!grid) return;
+
+  const list = pfGetTournamentsList();
+  const filtered = list.filter(t => {
+    if (!activePublicTournamentFilter || activePublicTournamentFilter === 'ALL') return true;
+    const fk = String(t.formatKey || t.format || '').toUpperCase();
+    if (activePublicTournamentFilter === 'ROUND_ROBIN') return fk.includes('ROUND') || fk.includes('ROBIN');
+    if (activePublicTournamentFilter === 'KING_COURT') return fk.includes('KING') || fk.includes('LADDER');
+    if (activePublicTournamentFilter === 'MLP_TEAM') return fk.includes('MLP') || fk.includes('SQUAD') || fk.includes('TEAM');
+    if (activePublicTournamentFilter === 'DOUBLE_ELIM') return fk.includes('DOUBLE') || fk.includes('ELIM');
+    return true;
+  });
+
+  grid.innerHTML = filtered.map(t => {
+    const fee = Number(t.entryFee || 0);
+    const maxT = Math.max(1, Number(t.maxTeams || 24));
+    const regT = Math.min(maxT, Math.max(0, Number(t.registeredCount || 0)));
+    const spotsLeft = Math.max(0, maxT - regT);
+    const pct = Math.min(100, Math.round((regT / maxT) * 100));
+
+    return `
+      <div class="rounded-3xl bg-brand-card border-2 border-white/15 hover:border-brand-lime transition-all p-5 sm:p-6 shadow-2xl flex flex-col justify-between space-y-4">
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="px-2.5 py-1 rounded-full bg-brand-lime/20 text-brand-lime border border-brand-lime/40 font-mono text-[10px] font-black uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono text-[10px] font-black uppercase">${spotsLeft} Spots Left</span>
+          </div>
+
+          <h3 class="text-xl sm:text-2xl font-black uppercase tracking-tight text-white font-display leading-tight">${pfEscapeHtml(t.title)}</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">${pfEscapeHtml(t.description || '')}</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 text-xs">
+            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
+              <span class="text-[10px] font-mono uppercase text-slate-400 block">📅 Date &amp; Time</span>
+              <b class="text-white font-mono">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)}</b>
+            </div>
+            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
+              <span class="text-[10px] font-mono uppercase text-slate-400 block">🎾 Division / Skill</span>
+              <b class="text-brand-lime">${pfEscapeHtml(t.division)}</b>
+            </div>
+            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
+              <span class="text-[10px] font-mono uppercase text-slate-400 block">🏅 Prize Pool &amp; Perks</span>
+              <b class="text-amber-300">${pfEscapeHtml(t.prizePool)}</b>
+            </div>
+            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
+              <span class="text-[10px] font-mono uppercase text-slate-400 block">💵 Registration Fee</span>
+              <b class="text-brand-lime font-mono text-base">${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-white/10 space-y-3">
+          <div>
+            <div class="flex justify-between text-[11px] font-mono mb-1">
+              <span class="text-slate-300">Registered Entries: <b class="text-white">${regT} / ${maxT}</b></span>
+              <span class="text-brand-lime font-bold">${pct}% Full</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-brand-black overflow-hidden border border-white/10">
+              <div class="h-full bg-brand-lime rounded-full" style="width:${pct}%"></div>
+            </div>
+          </div>
+
+          <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="w-full py-3.5 px-5 rounded-2xl bg-brand-lime hover:bg-brand-limeHover text-brand-black font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
+            <span>🏆 Register for Tournament (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'})</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function pfRegisterForTournament(tournamentId) {
+  const list = pfGetTournamentsList();
+  const trn = list.find(t => String(t.id) === String(tournamentId)) || list[0];
+  if (!trn) return;
+
+  // Open tournament registration modal
+  let modal = document.getElementById('pf-tournament-reg-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pf-tournament-reg-modal';
+    modal.className = 'fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4';
+    modal.innerHTML = `
+      <div onclick="pfCloseTournamentRegModal()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+      <div class="relative z-10 w-full max-w-xl max-h-[92dvh] overflow-y-auto rounded-3xl bg-white text-slate-900 border-2 border-[#9BE600] p-5 sm:p-7 shadow-2xl space-y-4 touch-scroll">
+        <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+          <div>
+            <span class="px-2.5 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase">🏆 OFFICIAL PICKLEBALL TOURNAMENT ENTRY</span>
+            <h3 id="trn-reg-modal-title" class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1">Tournament Registration</h3>
+            <p id="trn-reg-modal-meta" class="text-xs font-mono text-emerald-700 font-bold"></p>
+          </div>
+          <button type="button" onclick="pfCloseTournamentRegModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white font-black text-xs">✕</button>
+        </div>
+
+        <input type="hidden" id="trn-reg-id" value="">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Primary Player Full Name *</label>
+            <input type="text" id="trn-reg-name" placeholder="e.g. Juan Dela Cruz" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold">
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Mobile Number (11 Digits) *</label>
+            <input type="tel" id="trn-reg-phone" placeholder="0917 123 4567" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-mono font-bold">
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Doubles Partner / Squad Name</label>
+            <input type="text" id="trn-reg-partner" placeholder="Partner Name or N/A (Solo)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-semibold">
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Select Skill Division *</label>
+            <select id="trn-reg-division" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold">
+              <option value="Novice / Beginner (2.5–3.0)">Novice / Beginner (2.5–3.0)</option>
+              <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
+              <option value="Advanced / Open (4.0+)">Advanced / Open (4.0+)</option>
+              <option value="Mixed Doubles / Co-Ed Squad">Mixed Doubles / Co-Ed Squad</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+          <div class="font-black text-slate-900 uppercase text-xs">Policies and guest consent</div>
+          <label class="flex items-start gap-2.5 cursor-pointer">
+            <input type="checkbox" id="trn-consent-all" checked class="mt-0.5 w-4 h-4 rounded accent-[#050E1D]">
+            <span class="text-slate-600 text-[11px] leading-snug">I accept the facility waiver, court conduct rules, tournament bracket rules, and non-refundable registration terms.</span>
+          </label>
+        </div>
+
+        <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#050E1D] text-white">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-slate-400 block">Tournament Entry Fee</span>
+            <b id="trn-reg-fee-display" class="text-xl font-mono font-black text-[#9BE600]">₱850.00</b>
+          </div>
+          <button type="button" onclick="pfProceedTournamentToPayment()" class="px-5 py-3 rounded-xl bg-[#9BE600] hover:bg-[#b4ff00] text-[#050E1D] font-black uppercase text-xs tracking-wider transition shadow-lg">
+            Proceed to QR Payment →
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  document.getElementById('trn-reg-id').value = trn.id;
+  document.getElementById('trn-reg-modal-title').textContent = trn.title;
+  document.getElementById('trn-reg-modal-meta').textContent = `${trn.format} • ${trn.date} (${trn.time})`;
+  document.getElementById('trn-reg-fee-display').textContent = `₱${Number(trn.entryFee || 0).toLocaleString()}.00`;
+  modal.classList.remove('hidden');
+}
+
+function pfCloseTournamentRegModal() {
+  const modal = document.getElementById('pf-tournament-reg-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function pfProceedTournamentToPayment() {
+  const id = document.getElementById('trn-reg-id')?.value;
+  const list = pfGetTournamentsList();
+  const trn = list.find(t => String(t.id) === String(id)) || list[0];
+  if (!trn) return;
+
+  const name = (document.getElementById('trn-reg-name')?.value || '').trim();
+  const phone = (document.getElementById('trn-reg-phone')?.value || '').trim();
+  const partner = (document.getElementById('trn-reg-partner')?.value || '').trim();
+  const division = (document.getElementById('trn-reg-division')?.value || 'Intermediate (3.5)').trim();
+  const consent = document.getElementById('trn-consent-all')?.checked;
+
+  if (!name || name.length < 3) {
+    alert('Please enter the Primary Player Full Name.');
+    document.getElementById('trn-reg-name')?.focus();
+    return;
+  }
+  if (phone.replace(/[^0-9]/g, '').length < 10) {
+    alert('Please enter a valid 11-digit Philippine mobile number.');
+    document.getElementById('trn-reg-phone')?.focus();
+    return;
+  }
+  if (!consent) {
+    alert('Please accept the tournament waiver & registration consent checkbox.');
+    return;
+  }
+
+  const fee = Number(trn.entryFee || 0);
+  const fullLabel = partner ? `${name} & ${partner}` : name;
+
+  if (typeof pendingOrderData !== 'undefined') {
+    pendingOrderData = {
+      name: fullLabel,
+      phone: phone,
+      email: 'tournament@pfrally.ph',
+      court: `Tournament • ${trn.title}`,
+      time: `${trn.time}`,
+      date: trn.date,
+      total: fee,
+      courtCost: fee,
+      isTournament: true,
+      tournamentId: trn.id,
+      items: [`🏆 Tournament Entry: ${trn.title} (${division}) — ₱${fee}`]
+    };
+  }
+
+  const summaryCourt = document.getElementById('modal-summary-court');
+  if (summaryCourt) {
+    summaryCourt.textContent = `🏆 ${trn.title} • ${division}`;
+  }
+  const modalName = document.getElementById('modal-cust-name');
+  const modalPhone = document.getElementById('modal-cust-phone');
+  if (modalName) modalName.value = fullLabel;
+  if (modalPhone) modalPhone.value = phone;
+
+  pfCloseTournamentRegModal();
+  if (typeof openPaymentModal === 'function') {
+    openPaymentModal();
+  }
+}
+
+window.pfGetDefaultTournaments = pfGetDefaultTournaments;
+window.pfGetTournamentsList = pfGetTournamentsList;
+window.pfSetTournamentFilter = pfSetTournamentFilter;
+window.pfRenderPublicTournaments = pfRenderPublicTournaments;
+window.pfRegisterForTournament = pfRegisterForTournament;
+window.pfCloseTournamentRegModal = pfCloseTournamentRegModal;
+window.pfProceedTournamentToPayment = pfProceedTournamentToPayment;
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    try { pfRenderOpenPlay24Board(); } catch (e) {}
+    try { pfRenderPublicTournaments(); } catch (e) {}
+  }, 80);
+});

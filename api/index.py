@@ -21,7 +21,7 @@ DEFAULT_ANNOUNCEMENTS = [
     {
         "id": "welcome-pf-2026",
         "title": "Welcome to P&F Rally Ground Pickleball Club!",
-        "message": "All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs daily from 3:00 PM – 6:00 PM across all courts (Free)!",
+        "message": "All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs daily from 3:00 PM – 6:00 PM across all courts (₱150/player)!",
         "category": "Club Update",
         "img": "",
         "pinned": True,
@@ -30,13 +30,80 @@ DEFAULT_ANNOUNCEMENTS = [
     },
     {
         "id": "open-play-pf-2026",
-        "title": "Daily Open Play • 3:00 PM – 6:00 PM (Free)",
+        "title": "Daily Open Play • 3:00 PM – 6:00 PM (₱150)",
         "message": "Join our daily community Open Play session across Courts 1 – 4 from 3:00 PM to 6:00 PM! All skill levels are welcome — bring your paddle or rent pro gear at the club.",
         "category": "Open Play Alert",
         "img": "",
         "pinned": False,
         "author": "P&F Rally Ground Admin",
         "createdAt": "Daily Schedule"
+    }
+]
+
+DEFAULT_TOURNAMENTS = [
+    {
+        "id": "trn-bicol-dupr-open",
+        "title": "Bicol Open DUPR Pickleball Cup",
+        "format": "Round Robin + Medal Playoffs",
+        "division": "Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)",
+        "category": "Men's, Women's & Mixed Doubles",
+        "date": "2026-11-21",
+        "time": "08:00 AM – 05:00 PM",
+        "courts": "All 4 Courts (Courts 1 – 4)",
+        "entryFee": 850,
+        "prizePool": "₱25,000 + Trophies & Official DUPR Submission",
+        "maxTeams": 24,
+        "registeredCount": 14,
+        "status": "OPEN FOR REGISTRATION",
+        "description": "Guaranteed 4 Round-Robin pool matches (1 game to 11 pts) per team. Top 4 teams in each division advance to Single-Elimination Semifinals and Gold/Bronze Medal Matches (to 15 pts, win by 2)."
+    },
+    {
+        "id": "trn-mayon-king-court",
+        "title": "Mayon Smash: King & Queen of the Court",
+        "format": "Ladder Split Rotation (Individual Points)",
+        "division": "All-Levels Social & Competitive (3.0–3.8)",
+        "category": "Individual Entry (Rotating Doubles Partners)",
+        "date": "2026-11-14",
+        "time": "05:00 PM – 09:00 PM",
+        "courts": "4 Courts (Challenger to Crown Court)",
+        "entryFee": 350,
+        "prizePool": "₱6,000 Cash + Carbon Pro Paddle & Medals",
+        "maxTeams": 24,
+        "registeredCount": 18,
+        "status": "OPEN FOR REGISTRATION",
+        "description": "24 players randomly seeded across 4 courts. Play 12-minute timed rounds: winners move UP a court and split partners; losers move DOWN a court and split. Most cumulative points after 6 rounds wins!"
+    },
+    {
+        "id": "trn-daraga-mlp-rally",
+        "title": "Daraga MLP-Style Team Rally Showdown",
+        "format": "MLP 4-Player Co-Ed Squad Format (Rally Scoring)",
+        "division": "Club Squads (2 Men + 2 Women per Squad)",
+        "category": "Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)",
+        "date": "2026-11-28",
+        "time": "09:00 AM – 06:00 PM",
+        "courts": "All 4 Courts (Courts 1 – 4)",
+        "entryFee": 2000,
+        "prizePool": "₱18,000 Cash + Club Championship Banner",
+        "maxTeams": 12,
+        "registeredCount": 8,
+        "status": "OPEN FOR REGISTRATION",
+        "description": "Major League Pickleball format! Each squad clash features 4 games to 21 (rally scoring): Women's Doubles, Men's Doubles, and 2 Mixed Doubles sets. Tied 2–2 matches go to a 1v1 Dreambreaker Singles tiebreak!"
+    },
+    {
+        "id": "trn-albay-double-elim",
+        "title": "Albay Double-Elimination Knockout Classic",
+        "format": "USA Pickleball Double Elimination Bracket",
+        "division": "Intermediate (3.5) & Advanced (4.0+)",
+        "category": "Men's Singles & Mixed Doubles",
+        "date": "2026-12-03",
+        "time": "08:00 AM – 04:00 PM",
+        "courts": "All 4 Courts (Courts 1 – 4)",
+        "entryFee": 600,
+        "prizePool": "₱15,000 Cash + Official Championship Medals",
+        "maxTeams": 24,
+        "registeredCount": 10,
+        "status": "OPEN FOR REGISTRATION",
+        "description": "Full Double-Elimination Championship Bracket (Winners Bracket best 2-of-3 to 11; Consolation Bracket 1 game to 15). Every player/team is guaranteed at least 2 bracket matches before elimination."
     }
 ]
 
@@ -123,7 +190,15 @@ DEFAULT_DB = {
         "nightRate": 500,
         "includedPlayers": 6,
         "extraPlayerFee": 100,
-        "openPlayRate": 0,
+        "openPlayRate": 150,
+        "openPlayMaxPlayers": 24,
+        "openPlayCourtsCount": 4,
+        "openPlaySlotMinutes": 30,
+        "maxAdvanceBookingDays": 30,
+        "clubLat": 13.15543,
+        "clubLng": 123.72471,
+        "clubMapPinUrl": "https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&name=Velasco+St.%2C+Phase+4%2C+Do%C3%B1a+Maria+Subd.%2C+Tagas%2C+Daraga%2C+Philippines%2C+4501&mkt=en-US&fbclid=IwY2xjawVYnBdleHRuA2FlbQIxMABwZG9mBWJyaWQRMTRoaU1vSGFYU01lQlhDQWlzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEfV6cDEdlnoTrV2XY-9GoSklW3i8iwAD-QR-A4aVHbv5si-SDftGv3wAWAItU_aem_ddmZG_qe15MZb6RjEsu8yA&FORM=FBKPL1&q=13.15543%2C+123.72471&cp=13.155430%7E123.724709&lvl=16&style=r",
+        "tournaments": DEFAULT_TOURNAMENTS,
         "openPlayEnabled": True,
         "openPlaySlots": ["03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM"],
         "pricePaddleStd": 50,
@@ -143,7 +218,7 @@ DEFAULT_DB = {
         "court2Name": "Court 2",
         "court3Name": "Court 3",
         "court4Name": "Court 4",
-        "clubAddress": "Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay",
+        "clubAddress": "Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Philippines, 4501",
         "clubPhone": "0999 883 2346",
         "clubHours": "6:00 AM – 12:00 AM",
         "updatedAt": 0
@@ -174,6 +249,12 @@ def append_security_log(db, event_type, detail, ip="127.0.0.1"):
 
 
 _MEMORY_DB = None
+
+def Number_or_zero(v):
+    try:
+        return float(v or 0)
+    except Exception:
+        return 0
 
 def _normalize_db_dict(data):
     if not isinstance(data, dict):
@@ -210,6 +291,14 @@ def _normalize_db_dict(data):
         merged_sc.update(data["siteConfig"])
         if merged_sc.get("liveBannerText") is None or str(merged_sc.get("liveBannerText")).strip() == "0":
             merged_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
+        if not merged_sc.get("openPlayRateCustomized") and (merged_sc.get("openPlayRate") is None or Number_or_zero(merged_sc.get("openPlayRate")) == 0):
+            merged_sc["openPlayRate"] = 150
+        if not isinstance(merged_sc.get("tournaments"), list) or len(merged_sc.get("tournaments")) == 0:
+            merged_sc["tournaments"] = json.loads(json.dumps(DEFAULT_TOURNAMENTS))
+        if not merged_sc.get("openPlayMaxPlayers"):
+            merged_sc["openPlayMaxPlayers"] = 24
+        if not merged_sc.get("openPlayCourtsCount"):
+            merged_sc["openPlayCourtsCount"] = 4
         data["siteConfig"] = merged_sc
     return data
 
@@ -647,11 +736,21 @@ class handler(http.server.BaseHTTPRequestHandler):
             target_slots = extract_covered_slots(new_booking["time"])
             now_dt = get_pht_now()
             today_ymd_str = now_dt.strftime("%Y-%m-%d")
+            is_tournament_booking = ("tournament" in str(raw_court_str).lower() or any("tournament" in str(it).lower() for it in items) or bool(body.get("isTournament")))
+            is_open_play_booking = ("open play" in str(raw_court_str).lower() or any("open play" in str(it).lower() for it in items) or bool(body.get("isOpenPlay")))
+            max_adv_days = int((db.get("siteConfig") or {}).get("maxAdvanceBookingDays", 30) or 30)
+            max_ymd_str = (now_dt + timedelta(days=max_adv_days)).strftime("%Y-%m-%d")
             if re.match(r"^\d{4}-\d{2}-\d{2}$", target_ymd):
                 if target_ymd < today_ymd_str:
                     self._send_json({
                         "ok": False,
                         "error": f"Expired Schedule Error: The selected date ({target_ymd}) has already passed. Please choose today or a future date."
+                    }, status=409)
+                    return
+                elif not is_tournament_booking and not bool(body.get("adminOverride")) and target_ymd > max_ymd_str:
+                    self._send_json({
+                        "ok": False,
+                        "error": f"Advance Booking Limit Error: Bookings are restricted to 30 days in advance ({today_ymd_str} to {max_ymd_str}). Selected date {target_ymd} is beyond the 30-day window."
                     }, status=409)
                     return
                 elif target_ymd == today_ymd_str and target_slots:
@@ -667,7 +766,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                                     "error": f"Expired Time Slot Error: {s_lbl} Today ({target_ymd}) has already passed. Please choose a future time slot."
                                 }, status=409)
                                 return
-            if target_slots:
+            if target_slots and not is_tournament_booking and not is_open_play_booking:
                 for b in db.get("bookings", []):
                     if b.get("status") in ("CANCELLED", "DECLINED"):
                         continue
@@ -1295,8 +1394,12 @@ class handler(http.server.BaseHTTPRequestHandler):
                         current_sc[k] = bool(v)
                     elif k == "openPlaySlots" and isinstance(v, list):
                         current_sc[k] = [sanitize_str(x, 30) for x in v if str(x).strip()]
+                    elif k in ("tournaments", "openPlayRoster", "openPlaySchedule") and isinstance(v, (list, dict)):
+                        current_sc[k] = v
+                    elif k == "openPlayRateCustomized":
+                        current_sc[k] = bool(v)
                     elif isinstance(def_val, (int, float)) or k in (
-                        "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate",
+                        "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate", "openPlayMaxPlayers", "openPlayCourtsCount", "openPlaySlotMinutes", "maxAdvanceBookingDays", "clubLat", "clubLng",
                         "pricePaddleStd", "pricePaddleCarbon", "pricePaddleBranded",
                         "priceBallSingle", "priceBallsBucket", "priceMachine", "costCourtPerHour", "costPaddleStd", "costPaddleCarbon", "costPaddleBranded", "costBallSingle", "costBallsBucket", "costMachine"
                     ):
@@ -1317,6 +1420,8 @@ class handler(http.server.BaseHTTPRequestHandler):
                             current_sc[k] = def_val
                     else:
                         current_sc[k] = sanitize_str(v, 800)
+                if "openPlayRate" in incoming:
+                    current_sc["openPlayRateCustomized"] = True
                 if current_sc.get("liveBannerText") is None or str(current_sc.get("liveBannerText")).strip() == "0":
                     current_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
                 current_sc["updatedAt"] = int(time.time() * 1000)

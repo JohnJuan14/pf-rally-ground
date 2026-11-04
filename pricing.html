@@ -872,7 +872,7 @@
               <span class="px-3 py-1 rounded-full bg-brand-lime/15 border border-brand-lime/30 text-brand-lime text-xs font-mono font-black">6:00 AM – 12:00 MIDNIGHT</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-5">
               <div class="p-4 rounded-2xl bg-brand-black border border-emerald-500/30">
                 <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 block">Daytime (6:00 AM – 6:00 PM)</span>
                 <div class="mt-1 flex items-baseline gap-1">
@@ -889,6 +889,15 @@
                   <span class="text-xs text-slate-400 font-mono">/ hour</span>
                 </div>
                 <p class="text-[11px] text-slate-400 mt-1.5">Add ₱100 per player above 6 players.</p>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-[#d9f99d]/15 border-2 border-[#84cc16]">
+                <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-brand-lime block">🎾 Open Play (3:00 PM – 6:00 PM)</span>
+                <div class="mt-1 flex items-baseline gap-1">
+                  <span data-site-price="open-play-num" class="text-3xl font-black text-brand-lime font-mono">₱150</span>
+                  <span class="text-xs text-slate-300 font-mono">/ player</span>
+                </div>
+                <p class="text-[11px] text-slate-300 mt-1.5">24-player random pod rotation &amp; dedicated time slots across Courts 1–4.</p>
               </div>
             </div>
 
@@ -1116,7 +1125,7 @@
             </a>
           </div>
           <p class="text-slate-300 text-xs leading-relaxed">
-            Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay. Open daily 6:00 AM – 12:00 midnight for court reservations, Open Play, and equipment rentals.
+            Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Philippines, 4501. Open daily 6:00 AM – 12:00 midnight for court reservations, Open Play, and equipment rentals.
           </p>
           <div class="flex flex-wrap gap-2 text-[11px] font-mono pt-1">
             <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-lime/15 px-3 py-1 font-bold text-brand-lime border border-brand-lime/30">
@@ -1440,34 +1449,34 @@
           </div>
         </div>
 
-        <!-- STEP 7: Exact 3 Policies Checkboxes -->
-        <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
+        <!-- STEP 7: Exact 3 Policies Checkboxes (Crisp White Consent Card) -->
+        <div class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border border-slate-200 shadow-xl space-y-3.5" style="border-radius: 16px !important;">
           <div>
-            <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">7. Policies and guest consent *</span>
-            <p id="drawer-policy-gate-notice" class="text-[11px] text-slate-300 mt-1">Review and accept each item before payment options are enabled.</p>
+            <h4 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900">Policies and guest consent</h4>
+            <p id="drawer-policy-gate-notice" class="text-xs text-slate-600 mt-0.5 font-medium">Review and accept each item before payment options are enabled.</p>
           </div>
-          <div class="space-y-2.5 text-xs text-slate-300">
-            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
-              <input type="checkbox" id="policy-waiver" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+          <div class="space-y-3 text-xs text-slate-700">
+            <label class="pf-policy-consent-card flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
+              <input type="checkbox" id="policy-waiver" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
               <span class="text-xs leading-relaxed block">
-                <b class="text-white font-bold block">I accept the facility waiver and court conduct rules.</b>
-                <span class="text-slate-300 text-[11px] block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
-                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-1.5 font-bold text-brand-lime hover:text-white underline text-[11px] inline-block transition">Read waiver and court rules</button>
+                <b class="text-slate-900 font-bold text-[13px] block">I accept the facility waiver and court conduct rules.</b>
+                <span class="text-slate-600 text-xs block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
+                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-1.5 font-bold text-[#1d4ed8] hover:text-blue-900 underline text-xs inline-block transition">Read waiver and court rules</button>
               </span>
             </label>
-            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
-              <input type="checkbox" id="policy-cancellation" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
+              <input type="checkbox" id="policy-cancellation" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
               <span class="text-xs leading-relaxed block">
-                <b class="text-white font-bold block">I accept the cancellation and rescheduling terms.</b>
-                <span class="text-slate-300 text-[11px] block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
-                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-1.5 font-bold text-brand-lime hover:text-white underline text-[11px] inline-block transition">Read booking-change policy</button>
+                <b class="text-slate-900 font-bold text-[13px] block">I accept the cancellation and rescheduling terms.</b>
+                <span class="text-slate-600 text-xs block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
+                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-1.5 font-bold text-[#1d4ed8] hover:text-blue-900 underline text-xs inline-block transition">Read booking-change policy</button>
               </span>
             </label>
-            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
-              <input type="checkbox" id="policy-nonrefundable" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
+              <input type="checkbox" id="policy-nonrefundable" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
               <span class="text-xs leading-relaxed block">
-                <b class="text-white font-bold block">I understand that processing and convenience charges are non-refundable.</b>
-                <span class="text-slate-300 text-[11px] block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
+                <b class="text-slate-900 font-bold text-[13px] block">I understand that processing and convenience charges are non-refundable.</b>
+                <span class="text-slate-600 text-xs block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
               </span>
             </label>
           </div>
@@ -1874,7 +1883,8 @@
       const pad2 = n => String(n).padStart(2, '0');
       const toYMD = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
-      for (let i = 0; i < 31; i++) {
+      const maxDays = Math.max(1, Number((window.PF_SITE_CONFIG || {}).maxAdvanceBookingDays || 30));
+      for (let i = 0; i < maxDays; i++) {
         const d = new Date(today);
         d.setHours(12, 0, 0, 0);
         d.setDate(today.getDate() + i);
@@ -1949,6 +1959,14 @@
 
     function jumpScheduleToDate(ymd) {
       if (!ymd) return;
+      const maxYMD = (typeof window.pfGetPhilippineMaxBookingYMD === 'function') ? window.pfGetPhilippineMaxBookingYMD() : '';
+      const todayYMD = (typeof window.pfGetPhilippineTodayYMD === 'function') ? window.pfGetPhilippineTodayYMD() : '';
+      if (maxYMD && ymd > maxYMD) {
+        alert('📅 30-Day Advance Booking Window: Reservations are open from Today (' + todayYMD + ') up to ' + maxYMD + ' (30 days ahead).');
+        ymd = maxYMD;
+        const np = document.getElementById('sched-native-date-picker');
+        if (np) np.value = ymd;
+      }
       const found = ensureDynamicScheduleDateExists(ymd);
       selectedScheduleDateYMD = ymd;
       DRAWER_STATE.selectedDateVal = ymd;
@@ -1961,6 +1979,14 @@
 
     function jumpDrawerToDate(ymd) {
       if (!ymd) return;
+      const maxYMD = (typeof window.pfGetPhilippineMaxBookingYMD === 'function') ? window.pfGetPhilippineMaxBookingYMD() : '';
+      const todayYMDCheck = (typeof window.pfGetPhilippineTodayYMD === 'function') ? window.pfGetPhilippineTodayYMD() : '';
+      if (maxYMD && ymd > maxYMD) {
+        alert('📅 30-Day Advance Booking Window: Reservations are open from Today (' + todayYMDCheck + ') up to ' + maxYMD + ' (30 days ahead).');
+        ymd = maxYMD;
+        const np = document.getElementById('drawer-native-date-picker');
+        if (np) np.value = ymd;
+      }
       const found = ensureDynamicScheduleDateExists(ymd);
       selectedScheduleDateYMD = ymd;
       DRAWER_STATE.selectedDateVal = ymd;
@@ -2323,7 +2349,8 @@
           btn.className = isSelected
             ? 'time-chip time-chip-active ring-2 ring-[#84cc16]'
             : 'py-2 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-[11px] font-mono font-black transition leading-tight';
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • Free</span>`;
+          const opRateChip = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • ${opRateChip > 0 ? '₱' + opRateChip : 'Free'}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
             DRAWER_STATE.selectedStartSlot = slot;
@@ -2365,16 +2392,17 @@
 
     function recalculateDrawerTotal() {
       const hours = DRAWER_STATE.selectedDuration || 1;
+      const cfg = window.PF_SITE_CONFIG || {};
+      const openPlayRateVal = Number(cfg.openPlayRate ?? 150);
       const isOpenPlaySlotSelected = (typeof window.pfResolveCourtSlot === 'function')
         ? (window.pfResolveCourtSlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, DRAWER_STATE.selectedStartSlot).status === 'OPEN_PLAY')
         : isOpenPlaySlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot);
-      const hourlyRate = isOpenPlaySlotSelected ? 0 : getHourlyRate(DRAWER_STATE.selectedStartSlot);
-      const courtCost = hours * hourlyRate;
+      const hourlyRate = isOpenPlaySlotSelected ? openPlayRateVal : getHourlyRate(DRAWER_STATE.selectedStartSlot);
+      const courtCost = isOpenPlaySlotSelected ? (openPlayRateVal * Math.max(1, DRAWER_STATE.players || 1)) : (hours * hourlyRate);
 
-      const cfg = window.PF_SITE_CONFIG || {};
       const incPl = Number(cfg.includedPlayers || 6);
       const extFee = Number(cfg.extraPlayerFee || 100);
-      const extraPlayers = Math.max(0, DRAWER_STATE.players - incPl);
+      const extraPlayers = isOpenPlaySlotSelected ? 0 : Math.max(0, DRAWER_STATE.players - incPl);
       const playersCost = extraPlayers * extFee;
 
       const getQty = (id) => (typeof window.pfGetDrawerGearQty === 'function')
@@ -2396,7 +2424,9 @@
       if (meta) meta.textContent = `Court ${DRAWER_STATE.selectedCourt} • ${DRAWER_STATE.selectedStartSlot} (${hours} hr)`;
 
       const courtLbl = document.getElementById('drawer-row-court-label');
-      if (courtLbl) courtLbl.textContent = isOpenPlaySlotSelected ? `Open Play (${hours} hr • FREE)` : `Court Hire (${hours} hr @ ₱${hourlyRate}/hr)`;
+      if (courtLbl) courtLbl.textContent = isOpenPlaySlotSelected
+        ? `Open Play (${DRAWER_STATE.players || 1} player${(DRAWER_STATE.players || 1) > 1 ? 's' : ''} @ ₱${openPlayRateVal}/player)`
+        : `Court Hire (${hours} hr @ ₱${hourlyRate}/hr)`;
 
       const courtCostEl = document.getElementById('drawer-cost-court');
       if (courtCostEl) courtCostEl.textContent = `₱${courtCost.toFixed(2)}`;
@@ -2512,12 +2542,13 @@
       }
 
       const hours = DRAWER_STATE.selectedDuration || 1;
+      const cfg = window.PF_SITE_CONFIG || {};
+      const openPlayRateVal = Number(cfg.openPlayRate ?? 150);
       const isOpenPlaySlotSelected = (typeof window.pfResolveCourtSlot === 'function')
         ? (window.pfResolveCourtSlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, DRAWER_STATE.selectedStartSlot).status === 'OPEN_PLAY')
         : isOpenPlaySlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot);
-      const hourlyRate = isOpenPlaySlotSelected ? 0 : getHourlyRate(DRAWER_STATE.selectedStartSlot);
-      const courtCost = hours * hourlyRate;
-      const cfg = window.PF_SITE_CONFIG || {};
+      const hourlyRate = isOpenPlaySlotSelected ? openPlayRateVal : getHourlyRate(DRAWER_STATE.selectedStartSlot);
+      const courtCost = isOpenPlaySlotSelected ? (openPlayRateVal * Math.max(1, DRAWER_STATE.players || 1)) : (hours * hourlyRate);
       const incPl = Number(cfg.includedPlayers || 6);
       const extFee = Number(cfg.extraPlayerFee || 100);
       const pStd = Number(cfg.pricePaddleStd || 50);
@@ -2527,12 +2558,12 @@
       const pBucket = Number(cfg.priceBallsBucket || 100);
       const pMach = Number(cfg.priceMachine || 100);
 
-      const extraPlayers = Math.max(0, DRAWER_STATE.players - incPl);
+      const extraPlayers = isOpenPlaySlotSelected ? 0 : Math.max(0, DRAWER_STATE.players - incPl);
       const extraCost = extraPlayers * extFee;
       let gearTotal = 0.0;
       const activeCourtNum = Number(DRAWER_STATE.selectedCourt) || 1;
       DRAWER_STATE.selectedCourt = activeCourtNum;
-      const orderItems = [isOpenPlaySlotSelected ? `Court ${activeCourtNum} Open Play (${hours} hr • FREE)` : `Court ${activeCourtNum} (${hours} hr @ ₱${hourlyRate}/hr)`];
+      const orderItems = [isOpenPlaySlotSelected ? `Court ${activeCourtNum} Open Play (${DRAWER_STATE.players || 1} player${(DRAWER_STATE.players || 1) > 1 ? 's' : ''} @ ₱${openPlayRateVal}/player = ₱${courtCost})` : `Court ${activeCourtNum} (${hours} hr @ ₱${hourlyRate}/hr)`];
       if (extraCost > 0) orderItems.push(`${extraPlayers}× Extra Player (+₱${extraCost})`);
 
       const getQty = (id) => (typeof window.pfGetDrawerGearQty === 'function')
@@ -2572,6 +2603,8 @@
         date: DRAWER_STATE.selectedDateVal,
         total: total,
         courtCost: courtCost,
+        isOpenPlay: Boolean(isOpenPlaySlotSelected),
+        bookingType: isOpenPlaySlotSelected ? 'OPEN_PLAY' : 'COURT_HIRE',
         items: orderItems
       };
 
@@ -2731,6 +2764,10 @@
         status: 'PENDING',
         transactionRef: refVal,
         receiptDataUrl: (typeof uploadedReceiptDataUrl !== 'undefined' && uploadedReceiptDataUrl) ? uploadedReceiptDataUrl : '',
+        isOpenPlay: Boolean(pendingOrderData && pendingOrderData.isOpenPlay),
+        isTournament: Boolean(pendingOrderData && pendingOrderData.isTournament),
+        tournamentId: (pendingOrderData && pendingOrderData.tournamentId) || '',
+        bookingType: (pendingOrderData && pendingOrderData.bookingType) || 'COURT_HIRE',
         items: orderItems,
         createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
       };

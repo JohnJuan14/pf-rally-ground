@@ -765,7 +765,7 @@
           <div class="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-slate-300 font-mono">
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-lime"></span> Selected</span>
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-card border border-white/25"></span> Available</span>
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#b7f34a]">Open Play (Free)</span></span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#b7f34a]">Open Play (<b data-site-price="open-play-badge">₱150</b>)</span></span>
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-100 border border-rose-400"></span> <span class="text-rose-400">Booked</span></span>
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-800 border border-slate-600"></span> <span class="text-slate-400">Closed</span></span>
           </div>
@@ -904,40 +904,39 @@
         </section>
 
         <!-- STEP 7: POLICIES AND GUEST CONSENT (3 EXACT POLICIES SCRAPED) -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4">
+        <section class="p-6 sm:p-7 rounded-3xl bg-white text-slate-900 border border-slate-200 shadow-2xl space-y-4" style="border-radius: 18px !important;">
           <div>
-            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 7 &bull; Required Consent</span>
-            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Policies and guest consent</h2>
-            <p class="text-xs text-slate-300 mt-1">Review and accept each item before payment options are enabled.</p>
+            <h2 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 font-sans">Policies and guest consent</h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1 font-medium">Review and accept each item before payment options are enabled.</p>
           </div>
 
-          <div class="space-y-3 pt-2">
+          <div class="space-y-3 pt-1">
             <!-- Policy 1 -->
-            <label class="pf-policy-consent-card p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3.5 cursor-pointer transition">
-              <input type="checkbox" id="consent-waiver" onchange="checkPoliciesConsent()" class="w-5 h-5 mt-0.5 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3.5 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
+              <input type="checkbox" id="consent-waiver" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
               <div class="text-xs">
-                <span class="text-white font-bold text-sm block">I accept the facility waiver and court conduct rules.</span>
-                <span class="text-slate-300 text-xs leading-relaxed block mt-1">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
-                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-2 font-bold text-brand-lime hover:text-white underline text-xs inline-block transition">Read waiver and court rules</button>
+                <span class="text-slate-900 font-bold text-sm block">I accept the facility waiver and court conduct rules.</span>
+                <span class="text-slate-600 text-xs leading-relaxed block mt-1">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
+                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-2 font-bold text-[#1d4ed8] hover:text-blue-900 underline text-xs inline-block transition">Read waiver and court rules</button>
               </div>
             </label>
 
             <!-- Policy 2 -->
-            <label class="pf-policy-consent-card p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3.5 cursor-pointer transition">
-              <input type="checkbox" id="consent-cancel" onchange="checkPoliciesConsent()" class="w-5 h-5 mt-0.5 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3.5 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
+              <input type="checkbox" id="consent-cancel" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
               <div class="text-xs">
-                <span class="text-white font-bold text-sm block">I accept the cancellation and rescheduling terms.</span>
-                <span class="text-slate-300 text-xs leading-relaxed block mt-1">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
-                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-2 font-bold text-brand-lime hover:text-white underline text-xs inline-block transition">Read booking-change policy</button>
+                <span class="text-slate-900 font-bold text-sm block">I accept the cancellation and rescheduling terms.</span>
+                <span class="text-slate-600 text-xs leading-relaxed block mt-1">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
+                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-2 font-bold text-[#1d4ed8] hover:text-blue-900 underline text-xs inline-block transition">Read booking-change policy</button>
               </div>
             </label>
 
             <!-- Policy 3 -->
-            <label class="pf-policy-consent-card p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 flex items-start gap-3.5 cursor-pointer transition">
-              <input type="checkbox" id="consent-charges" onchange="checkPoliciesConsent()" class="w-5 h-5 mt-0.5 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3.5 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
+              <input type="checkbox" id="consent-charges" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
               <div class="text-xs">
-                <span class="text-white font-bold text-sm block">I understand that processing and convenience charges are non-refundable.</span>
-                <span class="text-slate-300 text-xs leading-relaxed block mt-1">These service charges cannot be returned after the transaction is processed.</span>
+                <span class="text-slate-900 font-bold text-sm block">I understand that processing and convenience charges are non-refundable.</span>
+                <span class="text-slate-600 text-xs leading-relaxed block mt-1">These service charges cannot be returned after the transaction is processed.</span>
               </div>
             </label>
           </div>
@@ -1189,7 +1188,7 @@
             </a>
           </div>
           <p class="text-slate-300 text-xs leading-relaxed">
-            Phase IV, Doña Maria Subdivision, Velasco St., Tagas, Daraga, 4501 Albay. Open daily 6:00 AM – 12:00 midnight for court reservations, Open Play, and equipment rentals.
+            Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Philippines, 4501. Open daily 6:00 AM – 12:00 midnight for court reservations, Open Play, and equipment rentals.
           </p>
           <div class="flex flex-wrap gap-2 text-[11px] font-mono pt-1">
             <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-lime/15 px-3 py-1 font-bold text-brand-lime border border-brand-lime/30">
@@ -1914,7 +1913,8 @@
     function generateDays() {
       daysList = [];
       const today = (typeof window.pfGetPhilippineNow === "function") ? window.pfGetPhilippineNow() : new Date();
-      for (let i = 0; i < 31; i++) {
+      const maxDays = Math.max(1, Number((window.PF_SITE_CONFIG || {}).maxAdvanceBookingDays || 30));
+      for (let i = 0; i < maxDays; i++) {
         const d = new Date(today);
         d.setHours(12, 0, 0, 0);
         d.setDate(today.getDate() + i);
@@ -1939,6 +1939,13 @@
       if (!ymd || !/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return;
       if (daysList.length === 0) generateDays();
       const todayYMD = (typeof window.pfGetPhilippineTodayYMD === "function") ? window.pfGetPhilippineTodayYMD() : "";
+      const maxYMD = (typeof window.pfGetPhilippineMaxBookingYMD === "function") ? window.pfGetPhilippineMaxBookingYMD() : "";
+      if (maxYMD && ymd > maxYMD) {
+        alert("📅 30-Day Advance Booking Window: Reservations are open from Today (" + todayYMD + ") up to " + maxYMD + " (30 days ahead).");
+        ymd = maxYMD;
+        const picker = document.getElementById("book-native-date-picker");
+        if (picker) picker.value = ymd;
+      }
       const isPast = Boolean(todayYMD && ymd < todayYMD);
       let found = daysList.find(d => d.value === ymd);
       if (!found) {
@@ -2112,7 +2119,8 @@
           btn.className = isSelected
             ? "time-chip time-chip-active ring-2 ring-[#84cc16]"
             : "py-2.5 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-xs font-mono font-black transition leading-tight";
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • Free</span>`;
+          const opRateChip = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • ${opRateChip > 0 ? '₱' + opRateChip : 'Free'}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
             selectedStartSlot = slot;
@@ -2184,19 +2192,20 @@
     // 8. Order Summary
     function updateSummary() {
       // Court cost
+      const cfg = window.PF_SITE_CONFIG || {};
+      const openPlayRateVal = Number(cfg.openPlayRate ?? 150);
       const isOpenPlaySelected = (typeof window.pfResolveCourtSlot === 'function')
         ? (window.pfResolveCourtSlot(selectedDateValue, selectedCourt, selectedStartSlot).status === 'OPEN_PLAY')
         : isBookOpenPlay(selectedDateValue, selectedStartSlot);
-      const hourlyRate = isOpenPlaySelected ? 0 : getHourlyRate(selectedStartSlot);
-      const courtCost = hourlyRate * selectedDuration;
+      const hourlyRate = isOpenPlaySelected ? openPlayRateVal : getHourlyRate(selectedStartSlot);
+      const courtCost = isOpenPlaySelected ? (openPlayRateVal * Math.max(1, selectedPlayerCount || 1)) : (hourlyRate * selectedDuration);
       document.getElementById("summary-court-cost").textContent = `₱${courtCost.toLocaleString()}.00`;
       document.getElementById("summary-court-row-label").textContent = isOpenPlaySelected
-        ? `Court ${selectedCourt} Open Play (${selectedDuration} hr • FREE)`
+        ? `Court ${selectedCourt} Open Play (${selectedPlayerCount} player${selectedPlayerCount > 1 ? 's' : ''} @ ₱${openPlayRateVal}/player)`
         : `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`;
 
       // Extra players (Synced with Admin Master Price Editor)
-      const cfg = window.PF_SITE_CONFIG || {};
-      const extraPlayers = Math.max(0, selectedPlayerCount - Number(cfg.includedPlayers || 6));
+      const extraPlayers = isOpenPlaySelected ? 0 : Math.max(0, selectedPlayerCount - Number(cfg.includedPlayers || 6));
       const extraCost = extraPlayers * Number(cfg.extraPlayerFee || 100);
       document.getElementById("summary-extra-players-label").textContent = `Extra players (${extraPlayers})`;
       document.getElementById("summary-extra-cost").textContent = `₱${extraCost.toLocaleString()}.00`;
@@ -2235,11 +2244,11 @@
         const card = inp.closest('.pf-policy-consent-card');
         if (card) {
           if (inp.checked) {
-            card.classList.add('border-brand-lime/60', 'bg-brand-lime/10');
-            card.classList.remove('border-white/10', 'bg-brand-black/70');
+            card.classList.add('border-blue-600', 'bg-blue-50/50');
+            card.classList.remove('border-slate-200', 'bg-white');
           } else {
-            card.classList.remove('border-brand-lime/60', 'bg-brand-lime/10');
-            card.classList.add('border-white/10', 'bg-brand-black/70');
+            card.classList.remove('border-blue-600', 'bg-blue-50/50');
+            card.classList.add('border-slate-200', 'bg-white');
           }
         }
       });
@@ -2342,14 +2351,16 @@
         document.getElementById("book-cust-email")?.focus();
         return;
       }
+      const cfgSubmit = window.PF_SITE_CONFIG || {};
+      const openPlayRateVal = Number(cfgSubmit.openPlayRate ?? 150);
       const isOpenPlaySelected = (typeof window.pfResolveCourtSlot === 'function')
         ? (window.pfResolveCourtSlot(selectedDateValue, selectedCourt, selectedStartSlot).status === 'OPEN_PLAY')
         : isBookOpenPlay(selectedDateValue, selectedStartSlot);
-      const hourlyRate = isOpenPlaySelected ? 0 : getHourlyRate(selectedStartSlot);
-      const courtCost = hourlyRate * selectedDuration;
-      const extraCost = Math.max(0, selectedPlayerCount - 6) * 100;
+      const hourlyRate = isOpenPlaySelected ? openPlayRateVal : getHourlyRate(selectedStartSlot);
+      const courtCost = isOpenPlaySelected ? (openPlayRateVal * Math.max(1, selectedPlayerCount || 1)) : (hourlyRate * selectedDuration);
+      const extraCost = isOpenPlaySelected ? 0 : (Math.max(0, selectedPlayerCount - Number(cfgSubmit.includedPlayers || 6)) * Number(cfgSubmit.extraPlayerFee || 100));
       let gearTotal = 0;
-      const items = [isOpenPlaySelected ? `Court ${selectedCourt} Open Play (${selectedDuration} hr • FREE)` : `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`];
+      const items = [isOpenPlaySelected ? `Court ${selectedCourt} Open Play (${selectedPlayerCount} player${selectedPlayerCount > 1 ? 's' : ''} @ ₱${openPlayRateVal}/player = ₱${courtCost})` : `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`];
       if (extraCost > 0) items.push(`Extra Players (${Math.max(0, selectedPlayerCount - 6)})`);
       
       GEAR_CATALOG.forEach(g => {
@@ -2390,6 +2401,8 @@
         courtCost: courtCost,
         extraCost: extraCost,
         gearCost: gearTotal,
+        isOpenPlay: Boolean(isOpenPlaySelected),
+        bookingType: isOpenPlaySelected ? "OPEN_PLAY" : "COURT_HIRE",
         items: items,
         status: "PENDING",
         createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
