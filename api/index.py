@@ -396,13 +396,19 @@ def compute_and_deduct_inventory_for_items(db, items, deduct_stock=True):
     for cart_item in items:
         if isinstance(cart_item, str):
             s_low = cart_item.lower()
+            m_qty = re.search(r"(?:^|\b)(\d+)\s*[x×]", s_low) or re.search(r"[x×]\s*(\d+)\b", s_low)
+            s_qty = max(1, int(m_qty.group(1))) if m_qty else 1
             for inv in inventory:
                 inv_name = str(inv.get("name", "")).strip().lower()
                 if inv_name and inv_name in s_low:
+                    if deduct_stock:
+                        cur_st = int(inv.get("stock", 0) or 0)
+                        inv["stock"] = max(0, cur_st - s_qty)
+                        inv["soldCount"] = int(inv.get("soldCount", 0) or 0) + s_qty
                     unit_cost = float(inv.get("costPrice", 0) or 0)
                     if unit_cost <= 0 and float(inv.get("pcsPerBox", 0) or 0) > 0:
                         unit_cost = round(float(inv.get("costPerBox", 0) or 0) / float(inv.get("pcsPerBox", 1)), 2)
-                    total_cogs += unit_cost
+                    total_cogs += unit_cost * s_qty
                     break
             continue
         if not isinstance(cart_item, dict):
@@ -583,7 +589,9 @@ class handler(http.server.BaseHTTPRequestHandler):
                 items = [str(items)]
 
             booking_ref = sanitize_str(body.get("ref") or body.get("refCode") or body.get("id") or ("PF-" + str(int(datetime.now().timestamp() * 1000))[-6:]), 30)
-            court_val = sanitize_str(body.get("court", "Court 01"), 250)
+            raw_court_str = sanitize_str(body.get("court", "Court 1"), 250)
+            court_cnum = normalize_court_num(raw_court_str)
+            court_val = f"Court {court_cnum}"
             date_val = sanitize_str(body.get("date") or body.get("dateYMD") or "", 40)
             time_val = sanitize_str(body.get("time", "Today • 06:00 PM"), 100)
             if date_val and date_val not in time_val:

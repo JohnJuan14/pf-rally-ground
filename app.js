@@ -626,22 +626,118 @@ function formatCartItemsBulletHtml(items) {
   return `<div class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1.5">Order / Official Receipt Breakdown:</div><ul class="space-y-1">${rows}</ul>`;
 }
 
+function pfExtractCleanCourtLabel(booking) {
+  if (!booking) return 'Court 1';
+  const rawCourt = String(booking.court || '').trim();
+  const mCourt = rawCourt.match(/court\s*0*([1-4])/i);
+  if (mCourt) return 'Court ' + mCourt[1];
+  if (Array.isArray(booking.items)) {
+    for (const it of booking.items) {
+      const s = typeof it === 'string' ? it : String((it && (it.name || it.court)) || '');
+      const m = s.match(/court\s*0*([1-4])/i);
+      if (m) return 'Court ' + m[1];
+    }
+  }
+  return rawCourt || 'Court 1';
+}
+window.pfExtractCleanCourtLabel = pfExtractCleanCourtLabel;
+
 function formatBookingItemsBulletHtml(booking) {
   if (!booking) return '—';
+  const cleanCourt = pfExtractCleanCourtLabel(booking);
+  const validRows = [];
+  let hasCourtLine = false;
+
   if (Array.isArray(booking.items) && booking.items.length > 0) {
-    return `<ul class="space-y-1 text-left">${booking.items.map(i => {
-      const qty = Number(i.qty || 1);
-      const sub = Number(i.price || 0) * qty;
-      return `<li class="flex items-start justify-between gap-2 text-xs">
-        <span class="flex items-start gap-1.5"><span class="text-brand-lime font-black">•</span><span class="text-white font-bold">${qty}× ${i.name}</span></span>
-        ${sub > 0 ? `<span class="font-mono text-brand-lime text-[11px] flex-shrink-0">₱${sub.toLocaleString()}</span>` : ''}
-      </li>`;
-    }).join('')}</ul>`;
+    booking.items.forEach(i => {
+      if (typeof i === 'string') {
+        const trimmed = i.trim();
+        if (!trimmed || /undefined/i.test(trimmed)) return;
+        if (/court\s*0*[1-4]/i.test(trimmed)) hasCourtLine = true;
+        validRows.push(`<li class="flex items-start justify-between gap-2 text-xs">
+          <span class="flex items-start gap-1.5"><span class="text-brand-lime font-black">•</span><span class="text-white font-bold">${pfEscapeHtml(trimmed)}</span></span>
+        </li>`);
+      } else if (i && typeof i === 'object') {
+        const rawName = String(i.name || i.court || i.title || '').trim();
+        if (!rawName || /undefined/i.test(rawName)) return;
+        if (/court\s*0*[1-4]/i.test(rawName) || i.isCourt) hasCourtLine = true;
+        const qty = Math.max(1, Number(i.qty || 1));
+        const sub = Number(i.price || 0) * qty;
+        const subInfo = i.subtitle ? ` <span class="text-slate-400 font-normal">(${pfEscapeHtml(i.subtitle)})</span>` : '';
+        const prefix = (/^\d+\s*[x×]/i.test(rawName) || i.isCourt) ? '' : `${qty}× `;
+        validRows.push(`<li class="flex items-start justify-between gap-2 text-xs">
+          <span class="flex items-start gap-1.5"><span class="text-brand-lime font-black">•</span><span class="text-white font-bold">${prefix}${pfEscapeHtml(rawName)}${subInfo}</span></span>
+          ${sub > 0 ? `<span class="font-mono text-brand-lime text-[11px] flex-shrink-0">₱${sub.toLocaleString()}</span>` : ''}
+        </li>`);
+      }
+    });
   }
-  const raw = String(booking.court || '—');
+
+  if (!hasCourtLine && cleanCourt) {
+    const durMatch = String(booking.time || '').match(/\((\d+)\s*hr/i);
+    const durLabel = durMatch ? ` (${durMatch[1]} hr)` : '';
+    validRows.unshift(`<li class="flex items-start justify-between gap-2 text-xs">
+      <span class="flex items-start gap-1.5"><span class="text-brand-lime font-black">•</span><span class="text-white font-bold">${pfEscapeHtml(cleanCourt + durLabel)}</span></span>
+    </li>`);
+  }
+
+  if (validRows.length > 0) {
+    return `<ul class="space-y-1 text-left">${validRows.join('')}</ul>`;
+  }
+
+  const raw = String(booking.court || 'Court 1');
   const parts = raw.includes(' + ') ? raw.split(' + ') : (raw.includes(' • ') ? [raw] : raw.split(', '));
-  return `<ul class="space-y-1 text-left">${parts.map(p => `<li class="flex items-start gap-1.5 text-xs"><span class="text-brand-lime font-black">•</span><span class="text-white font-bold">${p.trim()}</span></li>`).join('')}</ul>`;
+  return `<ul class="space-y-1 text-left">${parts.map(p => `<li class="flex items-start gap-1.5 text-xs"><span class="text-brand-lime font-black">•</span><span class="text-white font-bold">${pfEscapeHtml(p.trim())}</span></li>`).join('')}</ul>`;
 }
+
+function pfGetDrawerGearQty(inputId) {
+  const el = document.getElementById(inputId);
+  if (!el) return 0;
+  if (el.type === 'checkbox') return el.checked ? 1 : 0;
+  const val = parseInt(el.value || '0', 10);
+  return (Number.isFinite(val) && val > 0) ? Math.min(20, val) : 0;
+}
+
+function pfSyncDrawerGearCardStyle(inputId) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const qty = pfGetDrawerGearQty(inputId);
+  if (el.type !== 'checkbox') el.value = String(qty);
+  const card = el.closest('.pf-gear-qty-card');
+  if (card) {
+    if (qty > 0) {
+      card.classList.remove('border-white/10');
+      card.classList.add('border-brand-lime', 'bg-brand-lime/10');
+    } else {
+      card.classList.remove('border-brand-lime', 'bg-brand-lime/10');
+      card.classList.add('border-white/10');
+    }
+  }
+}
+
+function pfChangeDrawerGear(inputId, delta) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const cur = pfGetDrawerGearQty(inputId);
+  const next = Math.max(0, Math.min(20, cur + delta));
+  if (el.type === 'checkbox') {
+    el.checked = next > 0;
+  } else {
+    el.value = String(next);
+  }
+  pfSyncDrawerGearCardStyle(inputId);
+  if (typeof recalculateDrawerTotal === 'function') recalculateDrawerTotal();
+}
+
+function pfOnDrawerGearInput(inputId) {
+  pfSyncDrawerGearCardStyle(inputId);
+  if (typeof recalculateDrawerTotal === 'function') recalculateDrawerTotal();
+}
+
+window.pfGetDrawerGearQty = pfGetDrawerGearQty;
+window.pfSyncDrawerGearCardStyle = pfSyncDrawerGearCardStyle;
+window.pfChangeDrawerGear = pfChangeDrawerGear;
+window.pfOnDrawerGearInput = pfOnDrawerGearInput;
 
 function updatePaymentModalModeUI() {
   const qrBox = document.getElementById('modal-qr-section');
@@ -3656,6 +3752,10 @@ async function pfSubmitBookingReschedule() {
     if (!foundSrv) window.sharedServerState.bookings.unshift(updatedBooking);
   }
 
+  const resCourtNumEl = document.getElementById('res-court-number');
+  if (resCourtNumEl) {
+    resCourtNumEl.textContent = cleanCourtLabel;
+  }
   const resCourtEl = document.getElementById('res-court');
   if (resCourtEl) {
     resCourtEl.innerHTML = typeof formatBookingItemsBulletHtml === 'function'

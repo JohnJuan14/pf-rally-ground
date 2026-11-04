@@ -1323,61 +1323,94 @@
           </div>
         </div>
 
-        <!-- STEP 5: Exact Scraped Equipment Rentals -->
+                <!-- STEP 5: Exact Scraped Equipment Rentals (With Quantity Selectors) -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-black uppercase tracking-wider text-brand-lime">5. Optional Equipment Rentals</span>
-            <span class="text-[10px] font-mono text-slate-400">Official Club Rates</span>
+            <div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Optional</span>
+              <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-white">5. Equipment Rentals</span>
+            </div>
+            <span id="drawer-gear-subtotal-badge" class="px-2.5 py-1 rounded-full bg-brand-lime/15 border border-brand-lime/30 text-xs font-mono font-black text-brand-lime">₱0.00</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <div>
+            <!-- 1. Standard paddle -->
+            <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
+              <div class="pr-2">
                 <span class="text-xs font-bold text-white block">Standard paddle</span>
-                <span data-site-price="paddle-std-dec" class="text-[10px] font-mono text-brand-lime font-bold">₱50.00</span>
+                <span data-site-price="paddle-std-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
-              <input type="checkbox" id="rent-paddle-std" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
-            </label>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-std', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <input type="number" id="rent-paddle-std" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-paddle-std')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-std', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+              </div>
+            </div>
 
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <div>
+            <!-- 2. Carbon paddle -->
+            <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
+              <div class="pr-2">
                 <span class="text-xs font-bold text-white block">Carbon paddle</span>
-                <span data-site-price="paddle-carbon-dec" class="text-[10px] font-mono text-brand-lime font-bold">₱100.00</span>
+                <span data-site-price="paddle-carbon-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
-              <input type="checkbox" id="rent-paddle-carbon" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
-            </label>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-carbon', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <input type="number" id="rent-paddle-carbon" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-paddle-carbon')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-carbon', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+              </div>
+            </div>
 
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <div>
+            <!-- 3. Branded carbon paddle -->
+            <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
+              <div class="pr-2">
                 <span class="text-xs font-bold text-white block">Branded carbon paddle</span>
-                <span data-site-price="paddle-branded-dec" class="text-[10px] font-mono text-brand-lime font-bold">₱200.00</span>
+                <span data-site-price="paddle-branded-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱200.00</span>
               </div>
-              <input type="checkbox" id="rent-paddle-branded" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
-            </label>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-branded', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <input type="number" id="rent-paddle-branded" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-paddle-branded')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-branded', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+              </div>
+            </div>
 
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <div>
+            <!-- 4. Pickleball ball -->
+            <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
+              <div class="pr-2">
                 <span class="text-xs font-bold text-white block">Pickleball ball</span>
-                <span data-site-price="ball-single-dec" class="text-[10px] font-mono text-brand-lime font-bold">₱50.00</span>
+                <span data-site-price="ball-single-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
-              <input type="checkbox" id="rent-ball-single" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
-            </label>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="pfChangeDrawerGear('rent-ball-single', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <input type="number" id="rent-ball-single" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-ball-single')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
+                <button type="button" onclick="pfChangeDrawerGear('rent-ball-single', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+              </div>
+            </div>
 
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <div>
+            <!-- 5. Training balls (50 pcs) -->
+            <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
+              <div class="pr-2">
                 <span class="text-xs font-bold text-white block">Training balls (50 pcs)</span>
-                <span data-site-price="balls-bucket-dec" class="text-[10px] font-mono text-brand-lime font-bold">₱100.00</span>
+                <span data-site-price="balls-bucket-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
-              <input type="checkbox" id="rent-balls-bucket" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
-            </label>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="pfChangeDrawerGear('rent-balls-bucket', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <input type="number" id="rent-balls-bucket" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-balls-bucket')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
+                <button type="button" onclick="pfChangeDrawerGear('rent-balls-bucket', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+              </div>
+            </div>
 
-            <label class="flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 cursor-pointer hover:border-brand-lime/40 transition">
-              <div>
-                <span class="text-xs font-bold text-white block">Training machine (per hr)</span>
-                <span data-site-price="machine-dec" class="text-[10px] font-mono text-brand-lime font-bold">₱100.00 / hr</span>
+            <!-- 6. Training machine (per hour) -->
+            <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
+              <div class="pr-2">
+                <span class="text-xs font-bold text-white block">Training machine (per hour)</span>
+                <span data-site-price="machine-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00 / hr</span>
               </div>
-              <input type="checkbox" id="rent-machine" onchange="recalculateDrawerTotal()" class="w-4 h-4 rounded accent-brand-lime">
-            </label>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="pfChangeDrawerGear('rent-machine', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <input type="number" id="rent-machine" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-machine')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
+                <button type="button" onclick="pfChangeDrawerGear('rent-machine', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1773,7 +1806,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261031v2"></script>
+  <script src="app.js?v=20261104v2"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -2207,11 +2240,13 @@
     }
 
     function drawerSetCourt(courtNum) {
-      DRAWER_STATE.selectedCourt = courtNum;
+      const normalized = Math.max(1, Math.min(4, Number(courtNum) || 1));
+      DRAWER_STATE.selectedCourt = normalized;
+      if (typeof currentSelectedCourt !== 'undefined') currentSelectedCourt = normalized;
       document.querySelectorAll('#drawer-court-buttons button').forEach((btn, idx) => {
         const c = Number(btn.getAttribute('data-court')) || (idx + 1);
         const spans = btn.querySelectorAll('span');
-        if (c === courtNum) {
+        if (c === normalized) {
           btn.className = 'drawer-court active py-3 px-3.5 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-center transition flex items-center justify-between';
           if (spans[0]) spans[0].className = 'text-xs sm:text-sm font-black text-brand-lime block';
           if (spans[1]) spans[1].className = 'text-brand-lime font-mono text-xs';
@@ -2328,13 +2363,18 @@
       const extraPlayers = Math.max(0, DRAWER_STATE.players - incPl);
       const playersCost = extraPlayers * extFee;
 
+      const getQty = (id) => (typeof window.pfGetDrawerGearQty === 'function')
+        ? window.pfGetDrawerGearQty(id)
+        : (parseInt(document.getElementById(id)?.value || '0', 10) || 0);
       let gearCost = 0.0;
-      if (document.getElementById('rent-paddle-std')?.checked) gearCost += Number(cfg.pricePaddleStd || 50);
-      if (document.getElementById('rent-paddle-carbon')?.checked) gearCost += Number(cfg.pricePaddleCarbon || 100);
-      if (document.getElementById('rent-paddle-branded')?.checked) gearCost += Number(cfg.pricePaddleBranded || 200);
-      if (document.getElementById('rent-ball-single')?.checked) gearCost += Number(cfg.priceBallSingle || 50);
-      if (document.getElementById('rent-balls-bucket')?.checked) gearCost += Number(cfg.priceBallsBucket || 100);
-      if (document.getElementById('rent-machine')?.checked) gearCost += (Number(cfg.priceMachine || 100) * hours);
+      gearCost += getQty('rent-paddle-std') * Number(cfg.pricePaddleStd || 50);
+      gearCost += getQty('rent-paddle-carbon') * Number(cfg.pricePaddleCarbon || 100);
+      gearCost += getQty('rent-paddle-branded') * Number(cfg.pricePaddleBranded || 200);
+      gearCost += getQty('rent-ball-single') * Number(cfg.priceBallSingle || 50);
+      gearCost += getQty('rent-balls-bucket') * Number(cfg.priceBallsBucket || 100);
+      gearCost += getQty('rent-machine') * (Number(cfg.priceMachine || 100) * hours);
+      const gearBadgeEl = document.getElementById('drawer-gear-subtotal-badge');
+      if (gearBadgeEl) gearBadgeEl.textContent = `₱${gearCost.toFixed(2)}`;
 
       const total = courtCost + playersCost + gearCost;
 
@@ -2369,7 +2409,12 @@
         const found = DRAWER_STATE.daysList.find(d => d.value === selectedScheduleDateYMD);
         if (found) DRAWER_STATE.selectedDateLabel = found.label;
       }
-      if (courtNum) drawerSetCourt(courtNum);
+      const resolvedCourt = courtNum
+        ? Number(courtNum)
+        : ((typeof currentScheduleFilter !== 'undefined' && currentScheduleFilter !== 'ALL' && Number(currentScheduleFilter) >= 1 && Number(currentScheduleFilter) <= 4)
+            ? Number(currentScheduleFilter)
+            : (Number(DRAWER_STATE.selectedCourt) || 1));
+      drawerSetCourt(resolvedCourt);
       if (slotTime) {
         DRAWER_STATE.selectedStartSlot = slotTime;
       } else if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot)) {
@@ -2471,15 +2516,27 @@
       const extraPlayers = Math.max(0, DRAWER_STATE.players - incPl);
       const extraCost = extraPlayers * extFee;
       let gearTotal = 0.0;
-      const orderItems = [isOpenPlaySlotSelected ? `Court ${DRAWER_STATE.selectedCourt} Open Play (${hours} hr • FREE)` : `Court ${DRAWER_STATE.selectedCourt} (${hours} hr @ ₱${hourlyRate}/hr)`];
-      if (extraCost > 0) orderItems.push(`Extra Players (${extraPlayers})`);
+      const activeCourtNum = Number(DRAWER_STATE.selectedCourt) || 1;
+      DRAWER_STATE.selectedCourt = activeCourtNum;
+      const orderItems = [isOpenPlaySlotSelected ? `Court ${activeCourtNum} Open Play (${hours} hr • FREE)` : `Court ${activeCourtNum} (${hours} hr @ ₱${hourlyRate}/hr)`];
+      if (extraCost > 0) orderItems.push(`${extraPlayers}× Extra Player (+₱${extraCost})`);
 
-      if (document.getElementById('rent-paddle-std')?.checked) { gearTotal += pStd; orderItems.push(`Standard paddle (₱${pStd})`); }
-      if (document.getElementById('rent-paddle-carbon')?.checked) { gearTotal += pCarb; orderItems.push(`Carbon paddle (₱${pCarb})`); }
-      if (document.getElementById('rent-paddle-branded')?.checked) { gearTotal += pBrand; orderItems.push(`Branded carbon paddle (₱${pBrand})`); }
-      if (document.getElementById('rent-ball-single')?.checked) { gearTotal += pBall; orderItems.push(`Pickleball ball (₱${pBall})`); }
-      if (document.getElementById('rent-balls-bucket')?.checked) { gearTotal += pBucket; orderItems.push(`Training balls 50 pcs (₱${pBucket})`); }
-      if (document.getElementById('rent-machine')?.checked) { gearTotal += (pMach * hours); orderItems.push(`Training machine (${hours} hr @ ₱${pMach}/hr)`); }
+      const getQty = (id) => (typeof window.pfGetDrawerGearQty === 'function')
+        ? window.pfGetDrawerGearQty(id)
+        : (parseInt(document.getElementById(id)?.value || '0', 10) || 0);
+      const qStd = getQty('rent-paddle-std');
+      const qCarb = getQty('rent-paddle-carbon');
+      const qBrand = getQty('rent-paddle-branded');
+      const qBall = getQty('rent-ball-single');
+      const qBucket = getQty('rent-balls-bucket');
+      const qMach = getQty('rent-machine');
+
+      if (qStd > 0) { const c = qStd * pStd; gearTotal += c; orderItems.push(`${qStd}× Standard paddle (₱${c})`); }
+      if (qCarb > 0) { const c = qCarb * pCarb; gearTotal += c; orderItems.push(`${qCarb}× Carbon paddle (₱${c})`); }
+      if (qBrand > 0) { const c = qBrand * pBrand; gearTotal += c; orderItems.push(`${qBrand}× Branded carbon paddle (₱${c})`); }
+      if (qBall > 0) { const c = qBall * pBall; gearTotal += c; orderItems.push(`${qBall}× Pickleball ball (₱${c})`); }
+      if (qBucket > 0) { const c = qBucket * pBucket; gearTotal += c; orderItems.push(`${qBucket}× Training balls (50 pcs) (₱${c})`); }
+      if (qMach > 0) { const c = qMach * pMach * hours; gearTotal += c; orderItems.push(`${qMach}× Training machine (${hours} hr @ ₱${pMach}/hr = ₱${c})`); }
 
       const total = courtCost + extraCost + gearTotal;
 
@@ -2623,8 +2680,9 @@
       const name = (pendingOrderData && pendingOrderData.name) || document.getElementById('modal-cust-name')?.value.trim() || document.getElementById('cust-name')?.value.trim() || 'Valued Guest';
       const phone = (pendingOrderData && pendingOrderData.phone) || document.getElementById('modal-cust-phone')?.value.trim() || document.getElementById('cust-phone')?.value.trim() || '09000000000';
       const email = (pendingOrderData && pendingOrderData.email) || document.getElementById('cust-email')?.value.trim() || '';
-      const dateStr = (DRAWER_STATE && (DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal)) || 'Today';
-      const courtNum = (DRAWER_STATE && DRAWER_STATE.selectedCourt) || 1;
+      const dateStr = (pendingOrderData && pendingOrderData.date) || (DRAWER_STATE && (DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal)) || 'Today';
+      const pendingCourtMatch = (pendingOrderData && pendingOrderData.court) ? String(pendingOrderData.court).match(/([1-4])/) : null;
+      const courtNum = (pendingCourtMatch ? Number(pendingCourtMatch[1]) : 0) || (DRAWER_STATE && Number(DRAWER_STATE.selectedCourt)) || 1;
       const startSlot = (DRAWER_STATE && DRAWER_STATE.selectedStartSlot) || '06:00 PM';
       const durationHrs = (DRAWER_STATE && DRAWER_STATE.selectedDuration) || 1;
       const generatedRef = 'PF-' + Math.floor(100000 + Math.random() * 900000);

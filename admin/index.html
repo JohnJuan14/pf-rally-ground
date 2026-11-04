@@ -3738,20 +3738,31 @@ function clearFieldError(fieldId) {
     // ================= BOOKINGS TABLE, ITEMS FORMATTER & APPROVE/DECLINE =================
     function formatAdminItemsBullets(b) {
       if (!b) return '<span class="text-slate-400">Court Reservation</span>';
-      const rawItems = Array.isArray(b.items) && b.items.length > 0 ? b.items : [b.court || 'Court 01'];
-      const bullets = rawItems.map(item => {
+      const cNum = extractAdminCourtNum(b.court || '1');
+      const cleanCourt = `Court ${cNum}`;
+      const rawItems = Array.isArray(b.items) && b.items.length > 0 ? b.items : [cleanCourt];
+      let hasCourt = false;
+      const lines = [];
+      rawItems.forEach(item => {
         if (typeof item === 'string') {
-          return `<div class="text-[11px] text-slate-200 flex items-center gap-1.5"><span class="text-brand-lime font-black">•</span><span>${pfEscapeHtml(item)}</span></div>`;
-        }
-        if (item && typeof item === 'object') {
-          const qty = Number(item.qty || 1);
-          const name = item.name || item.court || 'Item';
+          const s = item.trim();
+          if (!s || /undefined/i.test(s)) return;
+          if (/court\s*0*[1-4]/i.test(s)) hasCourt = true;
+          lines.push(`<div class="text-[11px] text-slate-200 flex items-center gap-1.5"><span class="text-brand-lime font-black">•</span><span>${pfEscapeHtml(s)}</span></div>`);
+        } else if (item && typeof item === 'object') {
+          const rawName = String(item.name || item.court || '').trim();
+          if (!rawName || /undefined/i.test(rawName)) return;
+          if (/court\s*0*[1-4]/i.test(rawName) || item.isCourt) hasCourt = true;
+          const qty = Math.max(1, Number(item.qty || 1));
           const sub = item.subtitle ? ` <span class="text-slate-400 text-[10px]">(${pfEscapeHtml(item.subtitle)})</span>` : '';
-          return `<div class="text-[11px] text-slate-200 flex items-center gap-1.5"><span class="text-brand-lime font-black">•</span><span>${qty}× ${pfEscapeHtml(name)}${sub}</span></div>`;
+          const prefix = (/^\d+\s*[x×]/i.test(rawName) || item.isCourt) ? '' : `${qty}× `;
+          lines.push(`<div class="text-[11px] text-slate-200 flex items-center gap-1.5"><span class="text-brand-lime font-black">•</span><span>${prefix}${pfEscapeHtml(rawName)}${sub}</span></div>`);
         }
-        return '';
-      }).join('');
-      return bullets || `<span class="font-bold text-white">${pfEscapeHtml(b.court || 'Court 01')}</span>`;
+      });
+      if (!hasCourt) {
+        lines.unshift(`<div class="text-[11px] text-brand-lime font-bold flex items-center gap-1.5"><span class="text-brand-lime font-black">•</span><span>${pfEscapeHtml(cleanCourt)}</span></div>`);
+      }
+      return lines.join('') || `<span class="font-bold text-white">${pfEscapeHtml(cleanCourt)}</span>`;
     }
 
     function filterBookings() {
@@ -4033,10 +4044,23 @@ function clearFieldError(fieldId) {
         return;
       }
 
+      const cleanCourtLabel = `Court ${cNum}`;
+      const newTimeSchedule = `${newDate} • ${newTime}`;
+      let updatedItems = Array.isArray(b.items) ? [...b.items] : [`${cleanCourtLabel} (${newTimeSchedule})`];
+      updatedItems = updatedItems.map(it => {
+        if (typeof it === 'string' && /court\s*0*[1-4]/i.test(it)) {
+          return it.replace(/court\s*0*[1-4]/i, cleanCourtLabel);
+        }
+        if (it && typeof it === 'object' && (it.isCourt || /court\s*0*[1-4]/i.test(String(it.name || '')))) {
+          return Object.assign({}, it, { name: cleanCourtLabel, subtitle: newTimeSchedule });
+        }
+        return it;
+      });
       const updated = Object.assign({}, b, {
         date: newDate,
-        court: newCourt,
-        time: `${newDate} • ${newTime}`,
+        court: cleanCourtLabel,
+        time: newTimeSchedule,
+        items: updatedItems,
         rescheduledAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
         isReschedule: true
       });
