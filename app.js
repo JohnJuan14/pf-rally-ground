@@ -3930,6 +3930,161 @@ window.pfNavigateToHome = pfNavigateToHome;
 window.pfSetScheduleNavActive = pfSetScheduleNavActive;
 window.pfScrollToScheduleSection = pfScrollToScheduleSection;
 
+// ================= OFFICIAL POLICIES & GUEST CONSENT MODAL (WAIVER & CANCELLATION) =================
+const PF_POLICIES_MODAL_DATA = {
+  waiver: {
+    title: 'Waiver, safety, and court conduct',
+    checkboxIds: ['consent-waiver', 'policy-waiver'],
+    confirmNote: 'Checking the waiver box confirms that I reviewed these terms, understood them, and accepted them voluntarily.',
+    bodyHtml: `
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-brand-lime uppercase tracking-tight">Court conduct</h3>
+          <ul class="mt-2 list-disc space-y-2 pl-5 text-slate-200 text-xs sm:text-sm leading-relaxed">
+            <li>Use only the time reserved for your group and leave the court promptly when the session ends.</li>
+            <li>Keep voices, music, and general activity at a considerate level for nearby residents and other guests.</li>
+            <li>Wear suitable athletic clothing and footwear that will not mark or damage the playing surface.</li>
+            <li>Place rubbish in the proper bins and leave the court ready for the next players.</li>
+            <li>Smoking, vaping, and alcoholic drinks are not allowed within the playing area.</li>
+            <li>Handle nets, paddles, machines, and other facility property carefully. Repair or replacement costs may be charged for misuse.</li>
+            <li>Return every rented or borrowed item immediately after the session.</li>
+            <li>Keep personal items secure; each guest remains responsible for their own belongings.</li>
+            <li>Play safely, show good sportsmanship, and treat staff and fellow players respectfully.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-brand-lime uppercase tracking-tight">Participation and personal responsibility</h3>
+          <p class="mt-1 text-slate-200 text-xs sm:text-sm leading-relaxed">Activities such as pickleball and other racket sports involve movement, contact, falls, collisions, and equipment-related hazards. By participating, I knowingly choose to accept these ordinary risks and agree to play within my own ability.</p>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-brand-lime uppercase tracking-tight">Fitness and health</h3>
+          <p class="mt-1 text-slate-200 text-xs sm:text-sm leading-relaxed">I believe I am fit enough to participate safely. I will stop playing and notify staff if I feel pain, dizziness, breathing difficulty, or another health concern.</p>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-brand-lime uppercase tracking-tight">Liability and instructions</h3>
+          <p class="mt-1 text-slate-200 text-xs sm:text-sm leading-relaxed">To the extent permitted by law, I will not hold the facility, its owners, staff, or representatives responsible for ordinary injuries or losses connected with my voluntary participation. I agree to follow posted notices and reasonable staff directions; serious or repeated violations may end my session without reimbursement.</p>
+        </div>
+        <div>
+          <h3 class="text-base sm:text-lg font-black text-brand-lime uppercase tracking-tight">Belongings and media</h3>
+          <p class="mt-1 text-slate-200 text-xs sm:text-sm leading-relaxed">I remain responsible for valuables brought to the venue. Event photographs or video may be used for facility promotion, but I may tell staff that I do not wish to appear.</p>
+        </div>
+      </div>
+    `
+  },
+  cancellation: {
+    title: 'Cancellation, refund, and rescheduling terms',
+    checkboxIds: ['consent-cancel', 'policy-cancellation'],
+    confirmNote: 'Checking the cancellation box confirms that I understand the final-sale and rescheduling conditions.',
+    bodyHtml: `
+      <div class="space-y-4 text-slate-200 text-xs sm:text-sm leading-relaxed">
+        <p>Once a reservation has been confirmed and payment has been completed, the booking price is final and is not eligible for a cash refund.</p>
+        <p>A request to move a booking may be considered when it reaches management at least 48 hours before the reserved start time. Approval depends on available courts and time slots, and a reservation may normally be moved only once.</p>
+        <p>Missing a session without approved notice is treated as a no-show. The reserved time and amount paid will be forfeited.</p>
+        <p>Requests received inside the 48-hour window cannot normally be accommodated. This includes personal emergencies, illness, heavy traffic, vehicle or transport problems, flooding, travel disruption, and weather that affects the customer’s journey.</p>
+        <p>If the venue determines that playing conditions are unsafe, maintenance is required, or another event outside management’s reasonable control affects operations, management may transfer the reservation to another suitable schedule.</p>
+      </div>
+    `
+  }
+};
+
+function pfEnsurePolicyModalMounted() {
+  let modal = document.getElementById('pf-policy-viewer-modal');
+  if (modal) return modal;
+
+  modal = document.createElement('div');
+  modal.id = 'pf-policy-viewer-modal';
+  modal.className = 'fixed inset-0 z-[120] hidden flex items-center justify-center bg-black/80 p-3 sm:p-4 backdrop-blur-md';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.innerHTML = `
+    <div onclick="pfClosePolicyModal()" class="absolute inset-0"></div>
+    <div class="relative z-10 max-h-[88dvh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-brand-card border-2 border-brand-lime/40 p-5 sm:p-8 shadow-2xl text-left touch-scroll">
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Official Facility Policy</span>
+          <h2 id="pf-policy-modal-title" class="text-lg sm:text-2xl font-black text-white font-display tracking-tight mt-0.5">Policy Details</h2>
+        </div>
+        <button type="button" onclick="pfClosePolicyModal()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold text-slate-200 hover:text-white transition flex-shrink-0" aria-label="Close policy">Close ✕</button>
+      </div>
+      <div id="pf-policy-modal-body" class="mt-5 space-y-4"></div>
+      <div id="pf-policy-modal-note" class="mt-5 rounded-2xl bg-brand-lime/15 border border-brand-lime/40 p-4 text-xs sm:text-sm font-bold text-brand-lime"></div>
+      <div class="mt-6 flex flex-col sm:flex-row gap-2.5">
+        <button type="button" id="pf-policy-modal-accept-btn" class="w-full py-3.5 px-5 rounded-2xl bg-brand-lime hover:bg-brand-limeHover text-brand-black font-black uppercase text-xs tracking-wider transition shadow-lg shadow-brand-lime/20">I have finished reading</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function pfOpenPolicyModal(policyKey, ev) {
+  if (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+  const data = PF_POLICIES_MODAL_DATA[policyKey];
+  if (!data) return;
+
+  const modal = pfEnsurePolicyModalMounted();
+  const titleEl = document.getElementById('pf-policy-modal-title');
+  const bodyEl = document.getElementById('pf-policy-modal-body');
+  const noteEl = document.getElementById('pf-policy-modal-note');
+  const acceptBtn = document.getElementById('pf-policy-modal-accept-btn');
+
+  if (titleEl) titleEl.textContent = data.title;
+  if (bodyEl) bodyEl.innerHTML = data.bodyHtml;
+  if (noteEl) noteEl.textContent = data.confirmNote;
+  if (acceptBtn) {
+    acceptBtn.onclick = () => {
+      pfClosePolicyModal();
+    };
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function pfClosePolicyModal() {
+  const modal = document.getElementById('pf-policy-viewer-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function pfSyncDrawerPolicyConsent() {
+  const p1El = document.getElementById('policy-waiver');
+  const p2El = document.getElementById('policy-cancellation');
+  const p3El = document.getElementById('policy-nonrefundable');
+  if (!p1El && !p2El && !p3El) return;
+
+  [p1El, p2El, p3El].forEach(inp => {
+    if (!inp) return;
+    const card = inp.closest('.pf-policy-consent-card');
+    if (card) {
+      if (inp.checked) {
+        card.classList.add('border-brand-lime/60', 'bg-brand-lime/10');
+        card.classList.remove('border-white/10', 'bg-brand-black/70');
+      } else {
+        card.classList.remove('border-brand-lime/60', 'bg-brand-lime/10');
+        card.classList.add('border-white/10', 'bg-brand-black/70');
+      }
+    }
+  });
+
+  const allChecked = Boolean(p1El?.checked && p2El?.checked && p3El?.checked);
+  const gateNotice = document.getElementById('drawer-policy-gate-notice');
+  if (gateNotice) {
+    if (allChecked) {
+      gateNotice.textContent = '✓ All 3 policy confirmations accepted. Ready to proceed to payment.';
+      gateNotice.className = 'text-[11px] font-bold text-brand-lime mt-1';
+    } else {
+      gateNotice.textContent = 'Review and accept each item before payment options are enabled.';
+      gateNotice.className = 'text-[11px] text-slate-300 mt-1';
+    }
+  }
+}
+
+window.pfOpenPolicyModal = pfOpenPolicyModal;
+window.pfClosePolicyModal = pfClosePolicyModal;
+window.pfSyncDrawerPolicyConsent = pfSyncDrawerPolicyConsent;
+
 
 try {
   const pfBlocksChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('pf_court_blocks_sync') : null;

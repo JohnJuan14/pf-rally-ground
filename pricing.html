@@ -1442,19 +1442,33 @@
 
         <!-- STEP 7: Exact 3 Policies Checkboxes -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
-          <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">7. Policies and GuestConsent *</span>
+          <div>
+            <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">7. Policies and guest consent *</span>
+            <p id="drawer-policy-gate-notice" class="text-[11px] text-slate-300 mt-1">Review and accept each item before payment options are enabled.</p>
+          </div>
           <div class="space-y-2.5 text-xs text-slate-300">
-            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
-              <input type="checkbox" id="policy-waiver" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
-              <span class="text-[11px] leading-tight"><b>Liability Waiver:</b> I accept the facility waiver, playing rules, and safety responsibilities.</span>
+            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
+              <input type="checkbox" id="policy-waiver" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+              <span class="text-xs leading-relaxed block">
+                <b class="text-white font-bold block">I accept the facility waiver and court conduct rules.</b>
+                <span class="text-slate-300 text-[11px] block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
+                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-1.5 font-bold text-brand-lime hover:text-white underline text-[11px] inline-block transition">Read waiver and court rules</button>
+              </span>
             </label>
-            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
-              <input type="checkbox" id="policy-cancellation" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
-              <span class="text-[11px] leading-tight"><b>Cancellation &amp; Reschedule:</b> Confirmed reservations are final; advance rescheduling permitted up to 24h prior.</span>
+            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
+              <input type="checkbox" id="policy-cancellation" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+              <span class="text-xs leading-relaxed block">
+                <b class="text-white font-bold block">I accept the cancellation and rescheduling terms.</b>
+                <span class="text-slate-300 text-[11px] block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
+                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-1.5 font-bold text-brand-lime hover:text-white underline text-[11px] inline-block transition">Read booking-change policy</button>
+              </span>
             </label>
-            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-black/70 border border-white/10 cursor-pointer">
-              <input type="checkbox" id="policy-nonrefundable" required class="mt-0.5 w-4 h-4 rounded accent-brand-lime">
-              <span class="text-[11px] leading-tight"><b>Non-Refundable Fee:</b> Service charges and court reservation fees cannot be returned after booking.</span>
+            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
+              <input type="checkbox" id="policy-nonrefundable" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+              <span class="text-xs leading-relaxed block">
+                <b class="text-white font-bold block">I understand that processing and convenience charges are non-refundable.</b>
+                <span class="text-slate-300 text-[11px] block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
+              </span>
             </label>
           </div>
         </div>
