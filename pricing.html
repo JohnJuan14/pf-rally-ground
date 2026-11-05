@@ -803,6 +803,42 @@
       color: #FFFFFF;
     }
 
+
+    /* === 9-CATEGORY CALENDAR LEGEND & TRANSLUCENT PAST SLOTS === */
+    .cal-cat-pill {
+      border-radius: 9999px !important;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .cal-cat-dot {
+      border-radius: 9999px !important;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .pf-cal-slot-past {
+      background-color: rgba(209, 250, 229, 0.38) !important;
+      border: 1px solid rgba(110, 231, 183, 0.38) !important;
+      color: rgba(6, 95, 70, 0.42) !important;
+      opacity: 0.52;
+      cursor: not-allowed !important;
+      user-select: none;
+    }
+    .pf-cal-current-hour-row {
+      position: relative;
+    }
+    .pf-cal-current-hour-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1.5px;
+      background: #EF4444;
+      pointer-events: none;
+      z-index: 15;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.45);
+    }
+
   </style>
   <!-- Comprehensive Favicon Suite -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -2258,8 +2294,8 @@
             expBanner.id = 'public-schedule-expired-date-banner';
             schedTableEl.parentElement.insertBefore(expBanner, schedTableEl);
           }
-          expBanner.className = 'mb-3 p-3.5 rounded-2xl bg-rose-600 text-white border-2 border-rose-900 shadow-lg flex flex-wrap items-center justify-between gap-2 text-xs font-black';
-          expBanner.innerHTML = `<span>⏰ EXPIRED DATE VIEW (${selectedScheduleDateYMD}): All time slots on this past date have already passed and cannot be booked.</span><button type="button" onclick="jumpScheduleToDate('${todayPhtYMD}')" class="px-3 py-1.5 rounded-xl bg-[#9BE600] text-[#050E1D] font-mono font-black uppercase text-[11px] shadow">Jump to Today (${todayPhtYMD}) →</button>`;
+          expBanner.className = 'mb-3 p-3.5 rounded-2xl bg-slate-100 text-slate-700 border border-slate-300 shadow-sm flex flex-wrap items-center justify-between gap-2 text-xs font-bold';
+          expBanner.innerHTML = `<span>Viewing past date (<b>${selectedScheduleDateYMD}</b>) — past slots are shown translucent.</span><button type="button" onclick="jumpScheduleToDate('${todayPhtYMD}')" class="px-3 py-1.5 rounded-xl bg-[#050E1D] text-[#9BE600] font-mono font-black uppercase text-[11px] shadow">Jump to Today (${todayPhtYMD}) →</button>`;
         } else if (expBanner) {
           expBanner.className = 'hidden';
           expBanner.innerHTML = '';
@@ -2270,10 +2306,10 @@
       const courtsToShow = isSingleCourt ? [Number(currentScheduleFilter)] : [1, 2, 3, 4];
 
       thead.innerHTML = `
-        <th class="py-2.5 sm:py-3.5 px-2 sm:px-4 text-left sticky left-0 bg-[#050E1D] z-20 w-[72px] sm:w-[125px] text-white font-black">Time</th>
+        <th class="py-2.5 sm:py-3.5 px-2 sm:px-4 text-left sticky left-0 bg-[#050E1D] z-20 w-[76px] sm:w-[125px] text-white font-black">Time</th>
         ${courtsToShow.map(c => `
           <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center text-white font-black">
-            <span class="sm:hidden">${isSingleCourt ? 'Court 0' + c : 'C' + c}</span>
+            <span class="sm:hidden">${isSingleCourt ? 'Court ' + c : 'C' + c}</span>
             <span class="hidden sm:inline">Court ${c}</span>
           </th>
         `).join('')}
@@ -2293,65 +2329,96 @@
         const rate = getHourlyRate(h.time);
         const openPlayActive = isOpenPlaySlot(selectedScheduleDateYMD, h.time);
         const compactTime = h.time.replace(':00 ', ' ');
+        const isCurrentHourRow = (typeof window.pfIsCurrentPhilippineHourSlot === 'function')
+          ? window.pfIsCurrentPhilippineHourSlot(selectedScheduleDateYMD, h.time)
+          : false;
 
         const cells = courtsToShow.map(cNum => {
           const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
             ? window.pfResolveCourtSlot(selectedScheduleDateYMD, cNum, h.time, liveBlocks, liveBookings)
-            : { status: openPlayActive ? 'OPEN_PLAY' : 'AVAILABLE', reason: '' };
+            : { status: openPlayActive ? 'OPEN_PLAY' : 'AVAILABLE', category: openPlayActive ? 'OPEN_PLAY' : 'AVAILABLE', reason: '' };
+          const cat = slotInfo.category || slotInfo.status || 'AVAILABLE';
+          const isDrawerSelected = Boolean(
+            typeof DRAWER_STATE !== 'undefined' &&
+            DRAWER_STATE.selectedDateVal === selectedScheduleDateYMD &&
+            Number(DRAWER_STATE.selectedCourt) === Number(cNum) &&
+            DRAWER_STATE.selectedStartSlot === h.time &&
+            slotInfo.status !== 'EXPIRED' &&
+            slotInfo.status !== 'BOOKED' &&
+            slotInfo.status !== 'CLOSED'
+          );
 
-          if (slotInfo.status === 'CLOSED') {
-            const cReason = (slotInfo.reason && slotInfo.reason !== 'Closed') ? `Closed • ${pfEscapeHtml(slotInfo.reason)}` : 'Closed';
-            return `<td class="p-1 sm:p-1.5 text-center">
-              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-800 text-white border border-slate-900 text-[10px] sm:text-xs font-black shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'Closed')}">
-                <span class="sm:hidden">Closed</span>
-                <span class="hidden sm:inline">${cReason}</span>
+          if (cat === 'PRIVATE') {
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[10px] sm:text-xs font-extrabold shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'Private')}">
+                Private
+              </span>
+            </td>`;
+          } else if (cat === 'HOLD') {
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] text-[10px] sm:text-xs font-extrabold shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'On Hold')}">
+                Hold
+              </span>
+            </td>`;
+          } else if (slotInfo.status === 'CLOSED' || cat === 'BLOCKED') {
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[10px] sm:text-xs font-extrabold shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'Blocked')}">
+                Blocked
               </span>
             </td>`;
           } else if (slotInfo.status === 'BOOKED') {
-            return `<td class="p-1 sm:p-1.5 text-center">
-              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-rose-100/95 text-rose-700 border border-rose-300 text-[10px] sm:text-xs font-black shadow-sm truncate">
-                Booked
+            if (cat === 'PENDING') {
+              return `<td class="p-1 sm:p-1.5 text-center relative">
+                <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-[10px] sm:text-xs font-extrabold shadow-sm truncate">
+                  Pending
+                </span>
+              </td>`;
+            }
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[10px] sm:text-xs font-extrabold shadow-sm truncate">
+                Confirmed
               </span>
             </td>`;
-          } else if (slotInfo.status === 'OPEN_PLAY') {
-            return `<td class="p-1 sm:p-1.5 text-center">
-              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-1.5 sm:py-2 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] transition text-[10px] sm:text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm" title="Free Open Play Session (3:00 PM – 6:00 PM) — Click to Join">
-                <span class="sm:hidden">${isSingleCourt ? '🎾 Open Play • Free' : '🎾 Open Play'}</span>
-                <span class="hidden sm:inline">🎾 Open Play</span>
-                <span class="hidden sm:inline text-[10px] font-mono font-bold opacity-90">Free</span>
+          } else if (slotInfo.status === 'EXPIRED' || cat === 'PAST') {
+            const opRatePast = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
+            const pastLabel = openPlayActive ? `₱${opRatePast}` : `₱${rate}`;
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <div class="pf-cal-slot-past w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold flex items-center justify-center leading-tight truncate" title="Past time slot (${h.time})">
+                <span>${pastLabel}</span>
+              </div>
+            </td>`;
+          } else if (isDrawerSelected) {
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#EFECE6] hover:bg-[#E5E0D5] text-[#5C2D0C] border-2 border-[#78350F] transition text-[10px] sm:text-xs font-black flex items-center justify-center gap-1 leading-tight shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-[#78350F]"></span>
+                <span>Selected • ₱${rate}</span>
               </button>
             </td>`;
-          } else if (slotInfo.status === 'EXPIRED') {
-            return `<td class="p-1 sm:p-1.5 text-center">
-              <button type="button" onclick="alert('⚠️ Expired Time Slot: ${h.time} on ' + (selectedScheduleDateYMD || 'Today') + ' has already passed. Please choose an upcoming time slot.')" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-slate-200 text-slate-500 border border-slate-300 text-[10px] sm:text-xs font-bold cursor-not-allowed truncate" title="This time slot has already passed">
-                <span class="sm:hidden">Passed</span>
-                <span class="hidden sm:inline">Expired • Passed</span>
+          } else if (slotInfo.status === 'OPEN_PLAY' || cat === 'OPEN_PLAY') {
+            const opRate = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
+            const opPriceTag = opRate > 0 ? `₱${opRate}` : 'Free';
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] transition text-[10px] sm:text-xs font-extrabold flex items-center justify-center gap-1 leading-tight shadow-sm" title="Open Play Session (${opPriceTag}/player) — Click to Join">
+                <span class="sm:hidden">Open Play • ${opPriceTag}</span>
+                <span class="hidden sm:inline">Open Play • ${opPriceTag}</span>
               </button>
             </td>`;
           } else {
-            return `<td class="p-1 sm:p-1.5 text-center">
-              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-1.5 sm:py-2 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-emerald-100/90 hover:bg-[#9BE600] active:bg-[#9BE600] text-emerald-800 hover:text-[#050E1D] border border-emerald-300 hover:border-[#65a30d] transition text-[10px] sm:text-xs font-black flex flex-col items-center justify-center leading-tight shadow-sm">
-                <span class="sm:hidden">${isSingleCourt ? 'Available • ₱' + rate : '₱' + rate}</span>
-                <span class="hidden sm:inline">Available</span>
-                <span class="hidden sm:inline text-[10px] font-mono font-bold opacity-85">Book ₱${rate}</span>
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] transition text-[10px] sm:text-xs font-extrabold flex items-center justify-center leading-tight shadow-sm">
+                <span>₱${rate}</span>
               </button>
             </td>`;
           }
         }).join('');
 
-        const rateBadgeClass = openPlayActive
-          ? 'bg-[#d9f99d] text-[#365314] border border-[#84cc16]'
-          : (rate === 500
-            ? 'bg-amber-100 text-amber-900 border border-amber-300'
-            : 'bg-emerald-50 text-emerald-800 border border-emerald-200');
-        const rateBadgeLabel = openPlayActive ? 'FREE' : `₱${rate}/HR`;
-
-        return `<tr class="hover:bg-slate-50 transition">
-          <td class="py-2 sm:py-2.5 px-2 sm:px-4 text-left font-mono sticky left-0 bg-white border-r border-slate-200 border-l-4 ${openPlayActive ? 'border-l-[#84cc16]' : (rate === 500 ? 'border-l-amber-500' : 'border-l-emerald-500')} z-10 whitespace-nowrap">
-            <span class="block text-[11px] sm:text-sm font-black text-slate-900 leading-tight"><span class="sm:hidden">${compactTime}</span><span class="hidden sm:inline">${h.time}</span></span>
-            <span class="inline-block mt-0.5 px-1 sm:px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase ${rateBadgeClass}">${rateBadgeLabel}</span>
+        return `<tr class="hover:bg-slate-50/70 transition relative ${isCurrentHourRow ? 'pf-cal-current-hour-row bg-emerald-50/30' : ''}">
+          <td class="py-2 sm:py-2.5 px-2 sm:px-4 text-left font-mono sticky left-0 bg-[#F8FAFC] border-r border-slate-200 z-10 whitespace-nowrap">
+            <span class="block text-[11px] sm:text-xs font-black ${isCurrentHourRow ? 'text-[#4F46E5]' : 'text-slate-700'} leading-tight"><span class="sm:hidden">${compactTime}</span><span class="hidden sm:inline">${h.time}</span></span>
+            ${isCurrentHourRow ? '<span class="inline-block text-[8px] font-black uppercase text-rose-600">● NOW</span>' : ''}
           </td>
           ${cells}
+          ${isCurrentHourRow ? '<td colspan="5" class="p-0 border-0 pointer-events-none" style="position:absolute;left:0;right:0;top:50%;height:1.5px;background:#EF4444;z-index:15;"></td>' : ''}
         </tr>`;
       }).join('');
     }
@@ -2506,47 +2573,66 @@
         const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
           ? window.pfResolveCourtSlot(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedCourt, slot, liveBlocks, liveBookings)
           : { status: isOpenPlaySlot(DRAWER_STATE.selectedDateVal, slot) ? 'OPEN_PLAY' : 'AVAILABLE' };
+        const cat = slotInfo.category || slotInfo.status || 'AVAILABLE';
         const isSelected = (slot === DRAWER_STATE.selectedStartSlot);
+        const rate = getHourlyRate(slot);
 
-        if (slotInfo.status === 'CLOSED') {
+        if (cat === 'PRIVATE') {
           btn.disabled = true;
-          btn.className = 'py-2.5 px-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-mono font-bold cursor-not-allowed';
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-slate-400">Closed</span>`;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#64748B] font-black">Private</span>`;
+        } else if (cat === 'HOLD') {
+          btn.disabled = true;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#9A3412] font-black">Hold</span>`;
+        } else if (slotInfo.status === 'CLOSED' || cat === 'BLOCKED') {
+          btn.disabled = true;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#991B1B] font-black">Blocked</span>`;
         } else if (slotInfo.status === 'BOOKED') {
           btn.disabled = true;
-          btn.className = 'py-2.5 px-2 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 text-[11px] font-mono font-bold cursor-not-allowed';
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-700 font-black">Booked</span>`;
-        } else if (slotInfo.status === 'OPEN_PLAY') {
+          if (cat === 'PENDING') {
+            btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-[11px] font-mono font-bold cursor-not-allowed';
+            btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#92400E] font-black">Pending</span>`;
+          } else {
+            btn.className = 'py-2.5 px-2 rounded-xl bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[11px] font-mono font-bold cursor-not-allowed';
+            btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#1E40AF] font-black">Confirmed</span>`;
+          }
+        } else if (slotInfo.status === 'OPEN_PLAY' || cat === 'OPEN_PLAY') {
           btn.className = isSelected
-            ? 'time-chip time-chip-active ring-2 ring-[#84cc16]'
-            : 'py-2 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-[11px] font-mono font-black transition leading-tight';
+            ? 'py-2 px-2 rounded-xl bg-[#EFECE6] text-[#5C2D0C] border-2 border-[#78350F] text-[11px] font-mono font-black transition leading-tight shadow-md'
+            : 'py-2 px-2 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-mono font-black transition leading-tight';
           const opRateChip = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • ${opRateChip > 0 ? '₱' + opRateChip : 'Free'}</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#5C2D0C]' : 'text-[#5B21B6]'} font-black">${isSelected ? '● Selected' : 'Open Play • ₱' + opRateChip}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
             DRAWER_STATE.selectedStartSlot = slot;
             const badge = document.getElementById('drawer-selected-slot-badge');
             if (badge) badge.textContent = slot;
             renderDrawerSlots();
+            if (typeof renderLiveScheduleMatrix === 'function') renderLiveScheduleMatrix();
             recalculateDrawerTotal();
           };
-        } else if (slotInfo.status === 'EXPIRED') {
-          btn.className = 'py-2.5 px-2 rounded-xl bg-slate-900/90 text-slate-500 border border-slate-700/80 text-[11px] font-mono font-bold opacity-60 hover:border-rose-500/60 transition';
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-400 font-black">Expired</span>`;
+        } else if (slotInfo.status === 'EXPIRED' || cat === 'PAST') {
+          btn.className = 'pf-cal-slot-past py-2.5 px-2 rounded-xl text-[11px] font-mono font-bold transition leading-tight';
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-mono opacity-80">₱${rate}</span>`;
           btn.onclick = () => {
             if (typeof pfShowExpiredSlotBanner === 'function') {
               pfShowExpiredSlotBanner('drawer-expired-time-error', slot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
             }
           };
         } else {
-          btn.className = `time-chip ${isSelected ? 'time-chip-active' : ''}`;
-          btn.textContent = slot;
+          btn.className = isSelected
+            ? 'py-2.5 px-2 rounded-xl bg-[#EFECE6] text-[#5C2D0C] border-2 border-[#78350F] text-[11px] font-mono font-black transition leading-tight shadow-md'
+            : 'py-2.5 px-2 rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] text-[11px] font-mono font-extrabold transition leading-tight';
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-mono ${isSelected ? 'text-[#5C2D0C] font-black' : 'text-[#065F46]/80'}">${isSelected ? '● Selected' : '₱' + rate}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
             DRAWER_STATE.selectedStartSlot = slot;
             const badge = document.getElementById('drawer-selected-slot-badge');
             if (badge) badge.textContent = slot;
             renderDrawerSlots();
+            if (typeof renderLiveScheduleMatrix === 'function') renderLiveScheduleMatrix();
             recalculateDrawerTotal();
           };
         }

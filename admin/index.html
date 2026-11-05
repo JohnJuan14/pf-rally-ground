@@ -241,6 +241,42 @@
       color: #FFFFFF;
     }
 
+
+    /* === 9-CATEGORY CALENDAR LEGEND & TRANSLUCENT PAST SLOTS === */
+    .cal-cat-pill {
+      border-radius: 9999px !important;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .cal-cat-dot {
+      border-radius: 9999px !important;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .pf-cal-slot-past {
+      background-color: rgba(209, 250, 229, 0.38) !important;
+      border: 1px solid rgba(110, 231, 183, 0.38) !important;
+      color: rgba(6, 95, 70, 0.42) !important;
+      opacity: 0.52;
+      cursor: not-allowed !important;
+      user-select: none;
+    }
+    .pf-cal-current-hour-row {
+      position: relative;
+    }
+    .pf-cal-current-hour-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1.5px;
+      background: #EF4444;
+      pointer-events: none;
+      z-index: 15;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.45);
+    }
+
   </style>
   <!-- Comprehensive Favicon Suite -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -1587,9 +1623,11 @@
               <div>
                 <label class="block text-[10px] text-slate-300 font-bold uppercase mb-1">1. Court Status Decision</label>
                 <select id="adm-block-status" onchange="handleAdminStatusSelectChange(this.value)" class="w-full bg-brand-card border-2 border-brand-lime/60 rounded-xl px-3 py-2.5 text-white font-black">
-                  <option value="OPEN">🟢 Open Court (Available to Book)</option>
-                  <option value="CLOSED" selected>🔴 Closed / Blocked / Private</option>
-                  <option value="OPEN_PLAY">🎾 Open Play Session</option>
+                  <option value="OPEN">🟢 Available (Open Court)</option>
+                  <option value="OPEN_PLAY">🟣 Open Play Session</option>
+                  <option value="HOLD">🟠 Hold (Reserved / Temp Hold)</option>
+                  <option value="CLOSED" selected>🔴 Blocked (Closed Court)</option>
+                  <option value="PRIVATE">⚪ Private (Exclusive / Coaching)</option>
                 </select>
               </div>
               <div>
@@ -1761,21 +1799,67 @@
               </div>
               <div class="flex flex-wrap items-center gap-1.5" id="admin-cal-mode-buttons">
                 <button type="button" onclick="setAdminCalendarClickMode('ASK')" data-mode="ASK" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#050E1D] text-[#9BE600] border-2 border-[#050E1D] text-[11px] font-black uppercase transition shadow-sm">
-                  🎯 Ask / Choose Popup
+                  🎯 Ask Popup
                 </button>
-                <button type="button" onclick="setAdminCalendarClickMode('OPEN')" data-mode="OPEN" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-white text-emerald-900 border border-emerald-400 hover:bg-emerald-100 text-[11px] font-black uppercase transition">
-                  🟢 1-Click: Open Court
+                <button type="button" onclick="setAdminCalendarClickMode('OPEN')" data-mode="OPEN" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[11px] font-black uppercase transition">
+                  Available
                 </button>
-                <button type="button" onclick="setAdminCalendarClickMode('CLOSED')" data-mode="CLOSED" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-white text-slate-900 border border-slate-400 hover:bg-slate-200 text-[11px] font-black uppercase transition">
-                  🔴 1-Click: Closed
+                <button type="button" onclick="setAdminCalendarClickMode('OPEN_PLAY')" data-mode="OPEN_PLAY" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-black uppercase transition">
+                  Open Play
                 </button>
-                <button type="button" onclick="setAdminCalendarClickMode('OPEN_PLAY')" data-mode="OPEN_PLAY" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-white text-[#365314] border border-[#84cc16] hover:bg-[#d9f99d] text-[11px] font-black uppercase transition">
-                  🎾 1-Click: Open Play
+                <button type="button" onclick="setAdminCalendarClickMode('HOLD')" data-mode="HOLD" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] text-[11px] font-black uppercase transition">
+                  Hold
+                </button>
+                <button type="button" onclick="setAdminCalendarClickMode('CLOSED')" data-mode="CLOSED" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[11px] font-black uppercase transition">
+                  Blocked
+                </button>
+                <button type="button" onclick="setAdminCalendarClickMode('PRIVATE')" data-mode="PRIVATE" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[11px] font-black uppercase transition">
+                  Private
                 </button>
                 <button type="button" onclick="setAdminCalendarClickMode('RESET')" data-mode="RESET" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-white text-slate-600 border border-slate-300 hover:bg-slate-200 text-[11px] font-bold uppercase transition">
-                  🔄 1-Click: Default
+                  🔄 Default
                 </button>
               </div>
+            </div>
+        <div class="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs font-bold bg-[#F8F9F4] px-4 py-3 rounded-2xl border border-slate-200 shadow-lg">
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#D1FAE5] border border-[#6EE7B7] text-[#065F46]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#10B981]"></span>
+            <span>Available</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFECE6] border border-[#C8BCA8] text-[#5C2D0C]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#78350F]"></span>
+            <span>Selected</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#DBEAFE] border border-[#93C5FD] text-[#1E40AF]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#3B82F6]"></span>
+            <span>Confirmed</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F59E0B]"></span>
+            <span>Pending</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FFEDD5] border border-[#FDBA74] text-[#9A3412]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F97316]"></span>
+            <span>Hold</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#EF4444]"></span>
+            <span>Blocked</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9] border border-[#CBD5E1] text-[#334155]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#64748B]"></span>
+            <span>Private</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EDE9FE] border border-[#C4B5FD] text-[#5B21B6]">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#8B5CF6]"></span>
+            <span>Open Play</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9]/80 border border-[#E2E8F0] text-[#64748B] opacity-80">
+            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#CBD5E1]"></span>
+            <span>Past</span>
+          </span>
+        </div>
+            <div class="hidden">
             </div>
 
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -1815,17 +1899,25 @@
 
             <div class="space-y-2 pt-1">
               <span class="block text-[10px] font-mono font-bold uppercase text-slate-500">Choose Status for This Slot:</span>
-              <button type="button" onclick="confirmAdminSlotDecision('OPEN')" class="w-full py-3 px-4 rounded-xl bg-emerald-100 hover:bg-[#9BE600] text-emerald-950 border-2 border-emerald-500 font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
-                <span>🟢 Set as Open Court (Available to Book)</span>
-                <span class="font-mono text-[11px]">OPEN →</span>
+              <button type="button" onclick="confirmAdminSlotDecision('OPEN')" class="w-full py-2.5 px-4 rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
+                <span>🟢 Available (Open Court)</span>
+                <span class="font-mono text-[11px]">AVAILABLE →</span>
               </button>
-              <button type="button" onclick="confirmAdminSlotDecision('OPEN_PLAY')" class="w-full py-3 px-4 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
-                <span>🎾 Set as Open Play Session</span>
+              <button type="button" onclick="confirmAdminSlotDecision('OPEN_PLAY')" class="w-full py-2.5 px-4 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
+                <span>🟣 Open Play Session</span>
                 <span class="font-mono text-[11px]">OPEN PLAY →</span>
               </button>
-              <button type="button" onclick="confirmAdminSlotDecision('CLOSED')" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white border-2 border-slate-950 font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
-                <span>🔴 Set as Closed / Blocked</span>
-                <span class="font-mono text-[11px] text-rose-300">CLOSE →</span>
+              <button type="button" onclick="confirmAdminSlotDecision('HOLD')" class="w-full py-2.5 px-4 rounded-xl bg-[#FFEDD5] hover:bg-[#FED7AA] text-[#9A3412] border border-[#FDBA74] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
+                <span>🟠 Hold (Temporary Slot Hold)</span>
+                <span class="font-mono text-[11px]">HOLD →</span>
+              </button>
+              <button type="button" onclick="confirmAdminSlotDecision('CLOSED')" class="w-full py-2.5 px-4 rounded-xl bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B] border border-[#FCA5A5] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
+                <span>🔴 Blocked (Closed Court)</span>
+                <span class="font-mono text-[11px]">BLOCKED →</span>
+              </button>
+              <button type="button" onclick="confirmAdminSlotDecision('PRIVATE')" class="w-full py-2.5 px-4 rounded-xl bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#334155] border border-[#CBD5E1] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
+                <span>⚪ Private (Private Event / Coaching)</span>
+                <span class="font-mono text-[11px]">PRIVATE →</span>
               </button>
               <button type="button" onclick="confirmAdminSlotDecision('RESET')" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-bold text-xs uppercase flex items-center justify-center transition">
                 🔄 Reset Slot to Default Schedule
@@ -5059,29 +5151,53 @@ function clearFieldError(fieldId) {
 
       if (matchedBlock) {
         const st = String(matchedBlock.statusType || 'CLOSED').toUpperCase();
+        const rLow = String(matchedBlock.reason || '').toLowerCase();
         if (st === 'OPEN' || st === 'AVAILABLE') {
           return {
             status: 'OPEN_COURT',
+            category: 'AVAILABLE',
             isOverride: true,
-            label: 'Open Court',
-            sub: matchedBlock.reason || 'Open Court Override',
+            label: 'Available',
+            sub: matchedBlock.reason || 'Open Court',
             block: matchedBlock
           };
         }
         if (st === 'OPEN_PLAY') {
           return {
             status: 'OPEN_PLAY',
+            category: 'OPEN_PLAY',
             isOverride: true,
             label: 'Open Play',
-            sub: matchedBlock.reason || 'Open Play Override',
+            sub: matchedBlock.reason || 'Open Play',
+            block: matchedBlock
+          };
+        }
+        if (st === 'PRIVATE' || rLow.includes('private')) {
+          return {
+            status: 'CLOSED',
+            category: 'PRIVATE',
+            isOverride: true,
+            label: 'Private',
+            sub: matchedBlock.reason || 'Private Session',
+            block: matchedBlock
+          };
+        }
+        if (st === 'HOLD' || rLow.includes('hold')) {
+          return {
+            status: 'CLOSED',
+            category: 'HOLD',
+            isOverride: true,
+            label: 'Hold',
+            sub: matchedBlock.reason || 'On Hold',
             block: matchedBlock
           };
         }
         return {
           status: 'CLOSED',
+          category: 'BLOCKED',
           isOverride: true,
-          label: 'Closed',
-          sub: matchedBlock.reason || 'Closed by Admin',
+          label: 'Blocked',
+          sub: matchedBlock.reason || 'Blocked',
           block: matchedBlock
         };
       }
@@ -5822,65 +5938,88 @@ function clearFieldError(fieldId) {
       const dayPrice = Number((currentSiteConfig && currentSiteConfig.dayRate) || 400);
       const nightPrice = Number((currentSiteConfig && currentSiteConfig.nightRate) || 500);
 
+      const nowPht = getAdminPhilippineNow();
+      const isTodayView = (dateYMD === todayYMD);
+
       matrixTbody.innerHTML = calendarHours.map(h => {
         const rate = h.peak ? nightPrice : dayPrice;
+        const slotHr24 = parseAdminSlotHour24(h.time);
+        const isCurrentHourRow = isTodayView && slotHr24 !== null && slotHr24 === nowPht.getHours();
+
         const cells = [1, 2, 3, 4].map(cNum => {
           const info = resolveAdminSlotStatus(dateYMD, cNum, h.time);
+          const cat = info.category || info.status;
 
           if (info.status === 'BOOKED') {
+            if (info.isPending) {
+              return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:opacity-90">
+                <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-extrabold text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                  <span class="sm:hidden">Pending</span><span class="hidden sm:inline">Pending • ${pfEscapeHtml(info.sub)}</span>
+                </div>
+              </td>`;
+            }
             return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:opacity-90">
-              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#e11d48] text-white border-2 border-[#881337] font-black text-[9px] sm:text-[11px] leading-tight shadow-sm">
-                <span class="sm:hidden">Booked</span><span class="hidden sm:inline">🔴 ${pfEscapeHtml(info.label)} • ${pfEscapeHtml(info.sub)}</span>
+              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-extrabold text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                <span class="sm:hidden">Confirmed</span><span class="hidden sm:inline">Confirmed • ${pfEscapeHtml(info.sub)}</span>
               </div>
             </td>`;
           }
 
           if (info.status === 'EXPIRED') {
-            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-not-allowed opacity-75">
-              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-slate-200 text-slate-500 border border-slate-300 font-bold text-[9px] sm:text-[11px] leading-tight">
-                <span class="sm:hidden">⏰ Exp</span><span class="hidden sm:inline">⏰ Expired • Passed</span>
+            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-not-allowed">
+              <div class="pf-cal-slot-past px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl font-bold text-[9px] sm:text-[11px] leading-tight">
+                <span>₱${rate}</span>
               </div>
             </td>`;
           }
 
-          if (info.status === 'CLOSED') {
+          if (cat === 'PRIVATE') {
             return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:opacity-90">
-              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#1e293b] text-white border-2 border-[#0f172a] font-black text-[9px] sm:text-[11px] leading-tight shadow-sm">
-                <span class="sm:hidden">Closed</span><span class="hidden sm:inline">🔒 Closed • ${pfEscapeHtml(info.sub)}</span>
+              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] font-extrabold text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                <span class="sm:hidden">Private</span><span class="hidden sm:inline">Private • ${pfEscapeHtml(info.sub)}</span>
+              </div>
+            </td>`;
+          }
+
+          if (cat === 'HOLD') {
+            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:opacity-90">
+              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] font-extrabold text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                <span class="sm:hidden">Hold</span><span class="hidden sm:inline">Hold • ${pfEscapeHtml(info.sub)}</span>
+              </div>
+            </td>`;
+          }
+
+          if (info.status === 'CLOSED' || cat === 'BLOCKED') {
+            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:opacity-90">
+              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] font-extrabold text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                <span class="sm:hidden">Blocked</span><span class="hidden sm:inline">Blocked • ${pfEscapeHtml(info.sub)}</span>
               </div>
             </td>`;
           }
 
           if (info.status === 'OPEN_PLAY') {
             const opRateCell = Number((currentSiteConfig && currentSiteConfig.openPlayRate) ?? 150);
-            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:scale-[1.01]" title="Click to Edit Slot (Switch to Open Court, Closed, or Open Play)">
-              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] font-black text-[9px] sm:text-[11px] leading-tight shadow-sm">
-                <span class="sm:hidden">🎾 ₱${opRateCell}</span><span class="hidden sm:inline">🎾 Open Play • ${opRateCell > 0 ? '₱' + opRateCell : 'Free'}</span>
-              </div>
-            </td>`;
-          }
-
-          if (info.status === 'OPEN_COURT') {
-            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:scale-[1.01]">
-              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#bbf7d0] hover:bg-[#86efac] text-[#064e3b] border-2 border-[#059669] font-black text-[9px] sm:text-[11px] leading-tight shadow-sm">
-                <span class="sm:hidden">🟢 Open</span><span class="hidden sm:inline">🟢 Open Court • ₱${rate}</span>
+            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:scale-[1.01]" title="Click to Edit Slot">
+              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                <span class="sm:hidden">Open Play ₱${opRateCell}</span><span class="hidden sm:inline">Open Play • ${opRateCell > 0 ? '₱' + opRateCell : 'Free'}</span>
               </div>
             </td>`;
           }
 
           return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:scale-[1.01]">
-            <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#dcfce7] hover:bg-[#bbf7d0] text-[#14532d] border border-[#16a34a] font-extrabold text-[9px] sm:text-[11px] leading-tight">
-              <span class="sm:hidden">₱${rate}</span><span class="hidden sm:inline">🟢 Available • ₱${rate}</span>
+            <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] font-extrabold text-[9px] sm:text-[11px] leading-tight">
+              <span>₱${rate}</span>
             </div>
           </td>`;
         }).join('');
 
-        return `<tr class="hover:bg-slate-50 transition">
-          <td class="py-2 sm:py-2.5 px-2 sm:px-4 font-mono font-black text-slate-900 sticky left-0 bg-white z-10 border-r border-slate-200 whitespace-nowrap text-[10px] sm:text-xs">
+        return `<tr class="hover:bg-slate-50 transition relative ${isCurrentHourRow ? 'pf-cal-current-hour-row bg-emerald-50/30' : ''}">
+          <td class="py-2 sm:py-2.5 px-2 sm:px-4 font-mono font-black ${isCurrentHourRow ? 'text-[#4F46E5]' : 'text-slate-900'} sticky left-0 bg-[#F8FAFC] z-10 border-r border-slate-200 whitespace-nowrap text-[10px] sm:text-xs">
             ${h.time}
-            <span class="hidden sm:inline ml-1 text-[9px] px-1.5 py-0.5 rounded font-sans font-bold ${h.peak ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-100 text-slate-700 border border-slate-300'}">${h.peak ? 'NIGHT' : 'DAY'}</span>
+            ${isCurrentHourRow ? '<span class="ml-1 text-[8px] font-black uppercase text-rose-600">● NOW</span>' : ''}
           </td>
           ${cells}
+          ${isCurrentHourRow ? '<td colspan="5" class="p-0 border-0 pointer-events-none" style="position:absolute;left:0;right:0;top:50%;height:1.5px;background:#EF4444;z-index:15;"></td>' : ''}
         </tr>`;
       }).join('');
     }

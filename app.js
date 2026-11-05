@@ -2933,7 +2933,9 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return pfBookingMatchesTargetDate(b, targetDate, todayYMD);
   });
   if (bookedMatch) {
-    return { status: 'BOOKED', booking: bookedMatch, reason: bookedMatch.name || 'Booked' };
+    const bSt = String(bookedMatch.status || 'CONFIRMED').toUpperCase();
+    const cat = bSt.includes('PENDING') ? 'PENDING' : ((bSt.includes('RESERVE') || bSt.includes('HOLD')) ? 'HOLD' : 'CONFIRMED');
+    return { status: 'BOOKED', category: cat, booking: bookedMatch, reason: bookedMatch.name || 'Booked' };
   }
 
   // 2. Check if date or time slot is already EXPIRED in Philippine Standard Time (UTC+8)
@@ -2977,29 +2979,36 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
 
   if (matchedBlock) {
     const st = String(matchedBlock.statusType || 'CLOSED').toUpperCase();
-    if (st === 'CLOSED') {
-      return { status: 'CLOSED', override: matchedBlock, reason: matchedBlock.reason || 'Closed' };
+    const rLower = String(matchedBlock.reason || '').toLowerCase();
+    if (st === 'PRIVATE' || rLower.includes('private')) {
+      return { status: 'CLOSED', category: 'PRIVATE', override: matchedBlock, reason: matchedBlock.reason || 'Private' };
+    }
+    if (st === 'HOLD' || rLower.includes('hold')) {
+      return { status: 'CLOSED', category: 'HOLD', override: matchedBlock, reason: matchedBlock.reason || 'Hold' };
+    }
+    if (st === 'CLOSED' || st === 'BLOCKED') {
+      return { status: 'CLOSED', category: 'BLOCKED', override: matchedBlock, reason: matchedBlock.reason || 'Blocked' };
     }
     if (isExpiredSlot) {
-      return { status: 'EXPIRED', override: matchedBlock, reason: 'Time Passed' };
+      return { status: 'EXPIRED', category: 'PAST', override: matchedBlock, reason: 'Past' };
     }
     if (st === 'OPEN' || st === 'AVAILABLE') {
-      return { status: 'AVAILABLE', override: matchedBlock, reason: matchedBlock.reason || 'Open Court' };
+      return { status: 'AVAILABLE', category: 'AVAILABLE', override: matchedBlock, reason: matchedBlock.reason || 'Available' };
     }
     if (st === 'OPEN_PLAY') {
-      return { status: 'OPEN_PLAY', override: matchedBlock, reason: matchedBlock.reason || 'Open Play' };
+      return { status: 'OPEN_PLAY', category: 'OPEN_PLAY', override: matchedBlock, reason: matchedBlock.reason || 'Open Play' };
     }
-    return { status: 'CLOSED', override: matchedBlock, reason: matchedBlock.reason || 'Closed' };
+    return { status: 'CLOSED', category: 'BLOCKED', override: matchedBlock, reason: matchedBlock.reason || 'Blocked' };
   }
 
   // 4. Default schedule fallback: Expired check first, then Editable Open Play (default 3:00 PM – 6:00 PM across all courts), otherwise Available
   if (isExpiredSlot) {
-    return { status: 'EXPIRED', override: null, reason: 'Time Passed' };
+    return { status: 'EXPIRED', category: 'PAST', override: null, reason: 'Past' };
   }
   if (pfIsDefaultOpenPlaySlot(targetDate, slotStr)) {
-    return { status: 'OPEN_PLAY', override: null, reason: 'Open Play (3:00 PM – 6:00 PM)' };
+    return { status: 'OPEN_PLAY', category: 'OPEN_PLAY', override: null, reason: 'Open Play (3:00 PM – 6:00 PM)' };
   }
-  return { status: 'AVAILABLE', override: null, reason: 'Available' };
+  return { status: 'AVAILABLE', category: 'AVAILABLE', override: null, reason: 'Available' };
 }
 
 function pfIsDefaultOpenPlaySlot(dateYMD, slotStr) {
@@ -4948,3 +4957,14 @@ document.addEventListener('click', (e) => {
 });
 window.pfToggleNavDropdown = pfToggleNavDropdown;
 window.pfCloseAllNavDropdowns = pfCloseAllNavDropdowns;
+
+
+function pfIsCurrentPhilippineHourSlot(dateYMD, slotStr) {
+  const todayYMD = pfGetPhilippineTodayYMD();
+  const target = (!dateYMD || dateYMD === 'Today') ? todayYMD : String(dateYMD).trim();
+  if (target !== todayYMD) return false;
+  const now = pfGetPhilippineNow();
+  const slotHr = pfParseSlotHour24(slotStr);
+  return slotHr !== null && slotHr === now.getHours();
+}
+window.pfIsCurrentPhilippineHourSlot = pfIsCurrentPhilippineHourSlot;

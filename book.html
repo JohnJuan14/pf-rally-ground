@@ -604,6 +604,42 @@
       color: #FFFFFF;
     }
 
+
+    /* === 9-CATEGORY CALENDAR LEGEND & TRANSLUCENT PAST SLOTS === */
+    .cal-cat-pill {
+      border-radius: 9999px !important;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .cal-cat-dot {
+      border-radius: 9999px !important;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .pf-cal-slot-past {
+      background-color: rgba(209, 250, 229, 0.38) !important;
+      border: 1px solid rgba(110, 231, 183, 0.38) !important;
+      color: rgba(6, 95, 70, 0.42) !important;
+      opacity: 0.52;
+      cursor: not-allowed !important;
+      user-select: none;
+    }
+    .pf-cal-current-hour-row {
+      position: relative;
+    }
+    .pf-cal-current-hour-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1.5px;
+      background: #EF4444;
+      pointer-events: none;
+      z-index: 15;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.45);
+    }
+
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#050E1D] text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
@@ -2273,42 +2309,59 @@
         const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
           ? window.pfResolveCourtSlot(selectedDateValue, selectedCourt, slot, liveBlocks, allBookings)
           : { status: isBookOpenPlay(selectedDateValue, slot) ? 'OPEN_PLAY' : 'AVAILABLE' };
+        const cat = slotInfo.category || slotInfo.status || 'AVAILABLE';
+        const rate = getBookSlotRate(slot);
 
         const btn = document.createElement("button");
         btn.type = "button";
         const isSelected = (slot === selectedStartSlot);
 
-        if (slotInfo.status === 'CLOSED') {
-          btn.className = "py-2.5 px-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 text-xs font-mono font-bold cursor-not-allowed leading-tight";
+        if (cat === 'PRIVATE') {
+          btn.className = "py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-xs font-mono font-bold cursor-not-allowed leading-tight";
           btn.disabled = true;
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-slate-400">Closed</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#64748B] font-black">Private</span>`;
+        } else if (cat === 'HOLD') {
+          btn.className = "py-2.5 px-2 rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] text-xs font-mono font-bold cursor-not-allowed leading-tight";
+          btn.disabled = true;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#9A3412] font-black">Hold</span>`;
+        } else if (slotInfo.status === 'CLOSED' || cat === 'BLOCKED') {
+          btn.className = "py-2.5 px-2 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-xs font-mono font-bold cursor-not-allowed leading-tight";
+          btn.disabled = true;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#991B1B] font-black">Blocked</span>`;
         } else if (slotInfo.status === 'BOOKED') {
-          btn.className = "py-2.5 px-2 rounded-xl bg-rose-100 text-rose-700 border border-rose-300 text-xs font-mono font-bold cursor-not-allowed leading-tight";
           btn.disabled = true;
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-700 font-black">Booked</span>`;
-        } else if (slotInfo.status === 'OPEN_PLAY') {
+          if (cat === 'PENDING') {
+            btn.className = "py-2.5 px-2 rounded-xl bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-xs font-mono font-bold cursor-not-allowed leading-tight";
+            btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#92400E] font-black">Pending</span>`;
+          } else {
+            btn.className = "py-2.5 px-2 rounded-xl bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-xs font-mono font-bold cursor-not-allowed leading-tight";
+            btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#1E40AF] font-black">Confirmed</span>`;
+          }
+        } else if (slotInfo.status === 'OPEN_PLAY' || cat === 'OPEN_PLAY') {
           btn.className = isSelected
-            ? "time-chip time-chip-active ring-2 ring-[#84cc16]"
-            : "py-2.5 px-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] text-xs font-mono font-black transition leading-tight";
+            ? "py-2.5 px-2 rounded-xl bg-[#EFECE6] text-[#5C2D0C] border-2 border-[#78350F] text-xs font-mono font-black transition leading-tight shadow-md"
+            : "py-2.5 px-2 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] text-xs font-mono font-black transition leading-tight";
           const opRateChip = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#050E1D]' : 'text-[#365314]'} font-black">🎾 Open Play • ${opRateChip > 0 ? '₱' + opRateChip : 'Free'}</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#5C2D0C]' : 'text-[#5B21B6]'} font-black">${isSelected ? '● Selected' : 'Open Play • ₱' + opRateChip}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
             selectedStartSlot = slot;
             renderTimeChips();
             updateSummary();
           };
-        } else if (slotInfo.status === 'EXPIRED') {
-          btn.className = "py-2.5 px-2 rounded-xl bg-slate-900/90 text-slate-500 border border-slate-700/80 text-xs font-mono font-bold opacity-60 hover:border-rose-500/60 leading-tight transition";
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-rose-400 font-black">Expired</span>`;
+        } else if (slotInfo.status === 'EXPIRED' || cat === 'PAST') {
+          btn.className = "pf-cal-slot-past py-2.5 px-2 rounded-xl text-xs font-mono font-bold leading-tight transition";
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-mono opacity-80">₱${rate}</span>`;
           btn.onclick = () => {
             if (typeof pfShowExpiredSlotBanner === 'function') {
               pfShowExpiredSlotBanner('book-expired-time-error', slot, selectedDateLabel || selectedDateValue);
             }
           };
         } else {
-          btn.className = `time-chip ${isSelected ? 'time-chip-active' : ''}`;
-          btn.textContent = slot;
+          btn.className = isSelected
+            ? "py-2.5 px-2 rounded-xl bg-[#EFECE6] text-[#5C2D0C] border-2 border-[#78350F] text-xs font-mono font-black transition leading-tight shadow-md"
+            : "py-2.5 px-2 rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] text-xs font-mono font-extrabold transition leading-tight";
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-mono ${isSelected ? 'text-[#5C2D0C] font-black' : 'text-[#065F46]/80'}">${isSelected ? '● Selected' : '₱' + rate}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
             selectedStartSlot = slot;
