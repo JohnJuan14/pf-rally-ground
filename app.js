@@ -4923,3 +4923,28 @@ window.addEventListener('DOMContentLoaded', () => {
     try { pfRenderPublicTournaments(); } catch (e) {}
   }, 80);
 });
+
+
+// === CLEAN DROPDOWN NAVIGATION CONTROLLER ===
+function pfToggleNavDropdown(event, btnEl) {
+  if (event) event.stopPropagation();
+  const wrapper = btnEl ? btnEl.closest('.pf-nav-dropdown') : null;
+  if (!wrapper) return;
+  const wasOpen = wrapper.classList.contains('open');
+  pfCloseAllNavDropdowns();
+  if (!wasOpen) {
+    wrapper.classList.add('open');
+  }
+}
+
+function pfCloseAllNavDropdowns() {
+  document.querySelectorAll('.pf-nav-dropdown.open').forEach(el => el.classList.remove('open'));
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.pf-nav-dropdown')) {
+    pfCloseAllNavDropdowns();
+  }
+});
+window.pfToggleNavDropdown = pfToggleNavDropdown;
+window.pfCloseAllNavDropdowns = pfCloseAllNavDropdowns;

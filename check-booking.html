@@ -721,6 +721,94 @@
     }
     /* === END 2026 CLEAN ARCHITECTURAL 5PX UI === */
 
+
+    /* === CLEAN DROPDOWN NAVIGATION SYSTEM === */
+    .pf-nav-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .pf-nav-dropdown-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #E2E8F0;
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .pf-nav-dropdown:hover .pf-nav-dropdown-btn,
+    .pf-nav-dropdown.open .pf-nav-dropdown-btn,
+    .pf-nav-dropdown-btn.active {
+      background: #0066FF;
+      color: #FFFFFF;
+      border-color: #3B82F6;
+      box-shadow: 0 4px 14px rgba(0, 102, 255, 0.35);
+    }
+    .pf-nav-chevron {
+      width: 13px;
+      height: 13px;
+      transition: transform 0.2s ease;
+    }
+    .pf-nav-dropdown:hover .pf-nav-chevron,
+    .pf-nav-dropdown.open .pf-nav-chevron {
+      transform: rotate(180deg);
+    }
+    .pf-nav-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 195px;
+      background: #FFFFFF;
+      color: #050E1D;
+      border: 1.5px solid #050E1D;
+      border-radius: 6px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: all 0.16s ease;
+      z-index: 90;
+    }
+    .pf-nav-dropdown:hover .pf-nav-dropdown-menu,
+    .pf-nav-dropdown.open .pf-nav-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .pf-nav-dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0.01em;
+      color: #050E1D;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      transition: background 0.14s ease, color 0.14s ease;
+      text-align: left;
+    }
+    .pf-nav-dropdown-item:last-child {
+      border-bottom: none;
+    }
+    .pf-nav-dropdown-item:hover,
+    .pf-nav-dropdown-item.active {
+      background: #050E1D;
+      color: #FFFFFF;
+    }
+
   </style>
   <!-- Comprehensive Favicon Suite -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -777,14 +865,64 @@
         </a>
       </div>
 
-      <!-- Desktop Navigation Links -->
-      <nav class="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 text-[11px] xl:text-xs uppercase tracking-wider flex-shrink-0">
-        <a href="index.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Home</a>
-        <a href="index.html#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">Schedule</a>
-        <a href="pricing.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Rates &amp; Gear</a>
-        <span class="h-3.5 w-px bg-white/15 mx-1"></span>
-        <a href="check-booking.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-brand-black bg-brand-lime font-black shadow-md shadow-brand-lime/20">
-          <svg class="w-3.5 h-3.5 text-brand-black flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+            <!-- Desktop Navigation Links (Clean Dropdown Menu Architecture) -->
+      <nav class="hidden lg:flex items-center justify-center gap-2 text-xs uppercase tracking-wider flex-shrink-0" aria-label="Main Navigation">
+        <a href="index.html" id="nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="whitespace-nowrap px-3.5 py-2 rounded-md transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Home</a>
+
+        <!-- Dropdown 1: Courts & Play -->
+        <div class="pf-nav-dropdown" data-dropdown="courts">
+          <button type="button" onclick="pfToggleNavDropdown(event, this)" class="pf-nav-dropdown-btn">
+            <span>Courts &amp; Play</span>
+            <svg class="pf-nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="pf-nav-dropdown-menu">
+            <a href="index.html#schedule" id="nav-link-schedule" onclick="pfCloseAllNavDropdowns(); return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="pf-nav-dropdown-item">
+              <span>Live Schedule</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">6AM–12AM</span>
+            </a>
+            <a href="index.html#open-play-24-board-container" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Open Play</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold" data-site-price="open-play-badge">₱150</span>
+            </a>
+            <a href="pricing.html" class="pf-nav-dropdown-item ">
+              <span>Rates &amp; Gear</span>
+              <span class="text-[10px] font-mono opacity-75">₱400/hr</span>
+            </a>
+            <a href="book.html" class="pf-nav-dropdown-item ">
+              <span>Reserve a Court</span>
+              <span class="text-[10px] font-mono opacity-75">→</span>
+            </a>
+            <a href="index.html#tournaments" id="nav-link-tournaments" onclick="pfCloseAllNavDropdowns();" class="hidden pf-nav-dropdown-item">
+              <span>Tournaments</span>
+              <span class="text-[10px] font-mono text-amber-600 font-bold">🏆</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Dropdown 2: About (Matches User Reference Design) -->
+        <div class="pf-nav-dropdown" data-dropdown="about">
+          <button type="button" onclick="pfToggleNavDropdown(event, this)" class="pf-nav-dropdown-btn">
+            <span>About</span>
+            <svg class="pf-nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="pf-nav-dropdown-menu">
+            <a href="index.html#courts" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Our 4 Courts</span>
+            </a>
+            <a href="index.html#location" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Location &amp; Map</span>
+            </a>
+            <button type="button" onclick="pfCloseAllNavDropdowns(); toggleAnnouncementBoard();" class="pf-nav-dropdown-item">
+              <span>Club Updates</span>
+              <span id="dropdown-ann-badge" class="px-1.5 py-0.5 rounded bg-[#9BE600] text-[#050E1D] text-[10px] font-mono font-black">Live</span>
+            </button>
+            <a href="#footer-contact" onclick="pfCloseAllNavDropdowns(); const f=document.querySelector('footer'); if(f){event.preventDefault(); f.scrollIntoView({behavior:'smooth'});}" class="pf-nav-dropdown-item">
+              <span>Contact</span>
+            </a>
+          </div>
+        </div>
+
+        <a href="check-booking.html" class="whitespace-nowrap px-3.5 py-2 rounded-md transition-all duration-200 flex items-center gap-1.5 text-brand-black bg-brand-lime font-black shadow-md shadow-brand-lime/20">
           <span>My Booking</span>
         </a>
       </nav>
@@ -805,45 +943,63 @@
           <svg class="hidden sm:inline-block w-3.5 h-3.5 arrow-nudge flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
 
-        <!-- Mobile & Tablet Menu Toggle -->
-        <button type="button" onclick="toggleMobileMenu()" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] border border-[#050E1D] flex items-center justify-center transition active:scale-95 shadow-md flex-shrink-0" aria-label="Toggle navigation menu">
-          <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <!-- Mobile & Tablet Clean Dropdown Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-4 py-3.5 space-y-2 text-xs font-bold max-h-[calc(100dvh-5.5rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
+      <a href="index.html" id="mob-nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-[#050E1D] text-[#9BE600] font-black transition">
+        <span>Home</span> <span id="mob-nav-badge-home" class="text-[#9BE600] font-mono text-[10px]">●</span>
+      </a>
+
+      <!-- Mobile Dropdown 1: Courts & Play -->
+      <div class="rounded-lg border border-slate-200 overflow-hidden">
+        <button type="button" onclick="const el=this.nextElementSibling; const ch=this.querySelector('svg'); el.classList.toggle('hidden'); ch.classList.toggle('rotate-180');" class="w-full flex items-center justify-between py-2.5 px-3.5 bg-slate-100 text-[#050E1D] font-black uppercase tracking-wider">
+          <span>Courts &amp; Play</span>
+          <svg class="w-4 h-4 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
         </button>
+        <div class="divide-y divide-slate-100 bg-white">
+          <a href="index.html#schedule" id="mob-nav-link-schedule" onclick="if(window.pfNavigateToSchedule) window.pfNavigateToSchedule(event); toggleMobileMenu();" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Live Schedule</span> <span id="mob-nav-badge-schedule" class="font-mono text-[10px] text-emerald-700">6AM–12AM</span>
+          </a>
+          <a href="index.html#open-play-24-board-container" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Open Play (3–6 PM)</span> <span class="font-mono text-[10px] text-emerald-700" data-site-price="open-play-badge">₱150</span>
+          </a>
+          <a href="pricing.html" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Rates &amp; Gear</span> <span>→</span>
+          </a>
+          <a href="book.html" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Reserve a Court</span> <span>→</span>
+          </a>
+          <a href="index.html#tournaments" id="mob-nav-link-tournaments" onclick="toggleMobileMenu()" class="hidden flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Tournaments</span> <span>🏆</span>
+          </a>
+        </div>
       </div>
 
-    </div>
-
-    <!-- Mobile & Tablet Crisp White Navigation Drawer -->
-    <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-3.5 sm:px-6 py-3.5 space-y-2.5 text-xs font-black uppercase tracking-wider max-h-[calc(100dvh-5.5rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
-      <div class="space-y-1.5">
-        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">COURTS &amp; SCHEDULE</span>
-        <a href="index.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
-          <span>Home Overview</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
-        </a>
-        <a href="index.html#schedule" onclick="if(window.pfNavigateToSchedule) window.pfNavigateToSchedule(event); toggleMobileMenu();" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
-          <span>Live Court Schedule</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
-        </a>
+      <!-- Mobile Dropdown 2: About -->
+      <div class="rounded-lg border border-slate-200 overflow-hidden">
+        <button type="button" onclick="const el=this.nextElementSibling; const ch=this.querySelector('svg'); el.classList.toggle('hidden'); ch.classList.toggle('rotate-180');" class="w-full flex items-center justify-between py-2.5 px-3.5 bg-slate-100 text-[#050E1D] font-black uppercase tracking-wider">
+          <span>About</span>
+          <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="hidden divide-y divide-slate-100 bg-white">
+          <a href="index.html#courts" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Our 4 Courts</span> <span>→</span>
+          </a>
+          <a href="index.html#location" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Location &amp; Map</span> <span>📍</span>
+          </a>
+          <button type="button" onclick="toggleMobileMenu(); toggleAnnouncementBoard();" class="w-full flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition text-left">
+            <span>Club Updates</span> <span class="text-emerald-700 font-mono text-[10px]">LIVE</span>
+          </button>
+          <a href="#footer-contact" onclick="toggleMobileMenu(); const f=document.querySelector('footer'); if(f){event.preventDefault(); f.scrollIntoView({behavior:'smooth'});}" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Contact</span> <span>→</span>
+          </a>
+        </div>
       </div>
 
-      <div class="space-y-1.5 pt-3 border-t border-slate-200">
-        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">RATES &amp; GEAR</span>
-        <a href="pricing.html" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
-          <span>Rates &amp; Equipment Inventory</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
-        </a>
-      </div>
-
-      <div class="space-y-1.5 pt-3 border-t border-slate-200">
-        <span class="text-[10px] font-mono font-black text-[#0072CE] uppercase tracking-widest px-1 block">MY BOOKING &amp; PASS LOOKUP</span>
-        <a href="check-booking.html" class="flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#050E1D] text-[#9BE600] font-black shadow-md transition">
-          <span>My Booking Pass &amp; Lookup</span>
-          <span class="text-[#9BE600] font-mono font-black">● ACTIVE</span>
-        </a>
-      </div>
-      
-      <div class="p-3.5 rounded-2xl bg-slate-100 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[10px] text-[#050E1D] font-extrabold">
-        <span>Doña Maria Subd., Daraga, Albay</span>
-        <span class="text-[#0E8A2D] font-mono font-black">Open Daily 6AM – 12AM</span>
-      </div>
+      <a href="check-booking.html" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-900 hover:text-white text-[#050E1D] font-black transition">
+        <span>My Booking</span>
+        <span>→</span>
+      </a>
     </div>
   </header>
 

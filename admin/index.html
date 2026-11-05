@@ -45,6 +45,33 @@
         }
       }
     }
+
+    function toggleAdminDropdown(event, btnEl) {
+      if (event) event.stopPropagation();
+      const wrap = btnEl ? btnEl.closest('.adm-dropdown') : null;
+      if (!wrap) return;
+      const isOpen = wrap.classList.contains('open');
+      closeAllAdminDropdowns();
+      if (!isOpen) wrap.classList.add('open');
+    }
+
+    function closeAllAdminDropdowns() {
+      document.querySelectorAll('.adm-dropdown.open').forEach(el => el.classList.remove('open'));
+    }
+
+    function toggleSidebarGroup(groupId, btnEl) {
+      const grp = document.getElementById(groupId);
+      if (!grp) return;
+      grp.classList.toggle('hidden');
+      const svg = btnEl ? btnEl.querySelector('svg') : null;
+      if (svg) svg.classList.toggle('rotate-180');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.adm-dropdown')) {
+        closeAllAdminDropdowns();
+      }
+    });
   </script>
   <style>
     html { -webkit-tap-highlight-color: transparent; }
@@ -114,6 +141,105 @@
     }
     /* === END ANTI-CUTOFF & FIXED SIDEBAR DESKTOP SHELL === */
 
+
+
+    /* === CLEAN DROPDOWN MENU UI SYSTEM === */
+    .adm-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .adm-dropdown-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: #0066FF;
+      color: #FFFFFF;
+      border: 1px solid #3B82F6;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+    .adm-dropdown-btn.secondary {
+      background: #1E293B;
+      color: #F8FAFC;
+      border: 1px solid #334155;
+    }
+    .adm-dropdown-btn.danger {
+      background: #FEF2F2;
+      color: #B91C1C;
+      border: 1px solid #FECACA;
+    }
+    .adm-dropdown:hover .adm-dropdown-btn,
+    .adm-dropdown.open .adm-dropdown-btn {
+      background: #0052CC;
+      color: #FFFFFF;
+      border-color: #60A5FA;
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+    .adm-dropdown-chevron {
+      width: 13px;
+      height: 13px;
+      transition: transform 0.18s ease;
+    }
+    .adm-dropdown:hover .adm-dropdown-chevron,
+    .adm-dropdown.open .adm-dropdown-chevron {
+      transform: rotate(180deg);
+    }
+    .adm-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 190px;
+      background: #FFFFFF;
+      color: #050E1D;
+      border: 1.5px solid #050E1D;
+      border-radius: 6px;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(5px);
+      transition: all 0.15s ease;
+      z-index: 95;
+    }
+    .adm-dropdown-menu.right-align {
+      left: auto;
+      right: 0;
+    }
+    .adm-dropdown:hover .adm-dropdown-menu,
+    .adm-dropdown.open .adm-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .adm-dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #050E1D;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      text-align: left;
+      transition: background 0.14s ease, color 0.14s ease;
+      cursor: pointer;
+    }
+    .adm-dropdown-item:last-child {
+      border-bottom: none;
+    }
+    .adm-dropdown-item:hover {
+      background: #050E1D;
+      color: #FFFFFF;
+    }
 
   </style>
   <!-- Comprehensive Favicon Suite -->
@@ -230,64 +356,71 @@
         </button>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="p-3 space-y-1 text-xs font-bold uppercase tracking-wider">
-        <!-- 1. SALES & REPORTS (TOP OF NAVIGATION) -->
-        <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          <span>Sales &amp; Reports</span>
-        </button>
-        <button onclick="switchTab('site-editor')" id="nav-site-editor" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-          <span>Site &amp; Price Editor</span>
-          <span class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[8px] font-black">LIVE</span>
-        </button>
+      <!-- Navigation Tabs (Clean Grouped Dropdown Architecture) -->
+      <nav class="p-3 space-y-2 text-xs font-bold">
+        <!-- Group 1: Bookings & Courts -->
+        <div class="rounded-xl bg-white/[0.03] border border-white/10 overflow-hidden">
+          <button type="button" onclick="toggleSidebarGroup('grp-courts', this)" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-white/5 text-slate-200 hover:text-white font-black uppercase tracking-wider text-[11px]">
+            <span>Courts &amp; Bookings</span>
+            <svg class="w-3.5 h-3.5 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div id="grp-courts" class="p-1.5 space-y-1">
+            <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Overview</span>
+            </button>
+            <button onclick="switchTab('bookings')" id="nav-bookings" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Bookings</span>
+              <span id="pending-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[9px] font-black">0</span>
+            </button>
+            <button onclick="switchTab('schedule')" id="nav-schedule" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Calendar</span>
+            </button>
+          </div>
+        </div>
 
-        <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-          <span>Overview</span>
-        </button>
+        <!-- Group 2: POS & Sales -->
+        <div class="rounded-xl bg-white/[0.03] border border-white/10 overflow-hidden">
+          <button type="button" onclick="toggleSidebarGroup('grp-pos', this)" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-white/5 text-slate-200 hover:text-white font-black uppercase tracking-wider text-[11px]">
+            <span>POS &amp; Sales</span>
+            <svg class="w-3.5 h-3.5 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div id="grp-pos" class="p-1.5 space-y-1">
+            <button onclick="switchTab('pos')" id="nav-pos" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>POS &amp; Analytics</span>
+            </button>
+            <button onclick="switchTab('inventory')" id="nav-inventory" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Inventory</span>
+              <span id="inventory-count-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-white/10 text-slate-300 text-[9px] font-mono">0</span>
+            </button>
+            <button onclick="switchTab('reports')" id="nav-reports" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Sales &amp; Profit</span>
+            </button>
+          </div>
+        </div>
 
-        <button onclick="switchTab('bookings')" id="nav-bookings" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-          <span>Bookings</span>
-          <span id="pending-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[9px] font-black">0</span>
-        </button>
-
-        <button onclick="switchTab('schedule')" id="nav-schedule" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          <span>Court Calendar</span>
-        </button>
-
-        <button onclick="switchTab('announcements')" id="nav-announcements" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-          <span>Announcements</span>
-          <span id="admin-ann-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[9px] font-black">0</span>
-        </button>
-
-        <button onclick="switchTab('pos')" id="nav-pos" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span>Court POS &amp; Analytics</span>
-        </button>
-
-        <button onclick="switchTab('tournament')" id="nav-tournament" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-          <span>Host Tournament</span>
-          <span class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[8px] font-black">ADMIN</span>
-        </button>
-
-        <button onclick="switchTab('inventory')" id="nav-inventory" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-          <span>Inventory</span>
-          <span id="inventory-count-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-white/10 text-slate-300 text-[9px] font-mono">0</span>
-        </button>
-
-        
-
-        <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
-          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <span>Settings &amp; QR</span>
-        </button>
+        <!-- Group 3: Website & Club -->
+        <div class="rounded-xl bg-white/[0.03] border border-white/10 overflow-hidden">
+          <button type="button" onclick="toggleSidebarGroup('grp-site', this)" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-white/5 text-slate-200 hover:text-white font-black uppercase tracking-wider text-[11px]">
+            <span>Website &amp; Club</span>
+            <svg class="w-3.5 h-3.5 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div id="grp-site" class="p-1.5 space-y-1">
+            <button onclick="switchTab('site-editor')" id="nav-site-editor" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-left">
+              <span>Site Editor</span>
+              <span class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[8px] font-black">LIVE</span>
+            </button>
+            <button onclick="switchTab('announcements')" id="nav-announcements" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Updates Feed</span>
+              <span id="admin-ann-badge" class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[9px] font-black">0</span>
+            </button>
+            <button onclick="switchTab('tournament')" id="nav-tournament" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Tournaments</span>
+            </button>
+            <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Settings &amp; QR</span>
+            </button>
+          </div>
+        </div>
       </nav>
     </div>
 
@@ -328,35 +461,43 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-        <button type="button" onclick="openAddInventoryModal()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-[#050E1D] lg:bg-white/5 hover:bg-[#0E2240] lg:hover:bg-white/10 border border-[#050E1D] lg:border-brand-lime/30 text-[#9BE600] font-black uppercase text-[10px] sm:text-xs tracking-wider transition whitespace-nowrap shadow-sm active:scale-95">
-          <span class="sm:hidden">+ Item</span>
-          <span class="hidden sm:inline">+ Add Inventory</span>
-        </button>
-        <button type="button" onclick="openNewBookingModal()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-[10px] sm:text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow flex items-center gap-1 whitespace-nowrap">
-          <span>+ Staff Booking</span>
-        </button>
-        
-        <button type="button" onclick="lockAdminPortal()" title="Lock Admin Workspace" class="px-2 sm:px-3 py-2 rounded-xl bg-slate-100 lg:bg-white/5 hover:bg-brand-clay/20 border border-slate-300 lg:border-white/10 hover:border-brand-clay/40 text-[#050E1D] lg:text-slate-300 hover:text-brand-clay font-bold uppercase text-[10px] sm:text-xs tracking-wider transition flex items-center gap-1 whitespace-nowrap">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span class="hidden sm:inline">Lock</span>
-        </button>
+      <!-- Clean Top Dropdown Navigation & Actions -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- Dropdown 1: Navigate -->
+        <div class="adm-dropdown">
+          <button type="button" onclick="toggleAdminDropdown(event, this)" class="adm-dropdown-btn">
+            <span>Menu</span>
+            <svg class="adm-dropdown-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="adm-dropdown-menu right-align">
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('overview');" class="adm-dropdown-item"><span>Overview</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('bookings');" class="adm-dropdown-item"><span>Bookings</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('schedule');" class="adm-dropdown-item"><span>Court Calendar</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('pos');" class="adm-dropdown-item"><span>POS &amp; Analytics</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('inventory');" class="adm-dropdown-item"><span>Inventory</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('reports');" class="adm-dropdown-item"><span>Sales &amp; Profit</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('site-editor');" class="adm-dropdown-item"><span>Site Editor</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('announcements');" class="adm-dropdown-item"><span>Updates Feed</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('tournament');" class="adm-dropdown-item"><span>Tournaments</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('settings');" class="adm-dropdown-item"><span>Settings &amp; QR</span></button>
+          </div>
+        </div>
+
+        <!-- Dropdown 2: Quick Actions -->
+        <div class="adm-dropdown">
+          <button type="button" onclick="toggleAdminDropdown(event, this)" class="adm-dropdown-btn secondary">
+            <span>Actions</span>
+            <svg class="adm-dropdown-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="adm-dropdown-menu right-align">
+            <button type="button" onclick="closeAllAdminDropdowns(); openNewBookingModal();" class="adm-dropdown-item"><span>+ New Booking</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); openAddInventoryModal();" class="adm-dropdown-item"><span>+ Add Product</span></button>
+            <a href="/index.html" onclick="closeAllAdminDropdowns(); return openPublicSite(event, 'index.html');" class="adm-dropdown-item"><span>View Live Site ↗</span></a>
+            <button type="button" onclick="closeAllAdminDropdowns(); lockAdminPortal();" class="adm-dropdown-item text-rose-600"><span>Lock Portal</span></button>
+          </div>
+        </div>
       </div>
     </header>
-
-    <!-- Mobile Horizontal Quick-Tab Strip (All 7 Tabs Included & Auto-Centered) -->
-    <div id="admin-mobile-pill-strip" class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-2.5 py-2 bg-slate-100 border-b-2 border-slate-200 scrollbar-none text-[11px] font-black uppercase tracking-wider shadow-sm sticky top-14 sm:top-16 z-20">
-      <button type="button" onclick="switchTab('reports')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="reports">Reports</button>
-      <button type="button" onclick="switchTab('site-editor')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition" data-tab="site-editor">🎨 Site &amp; Prices</button>
-      <button type="button" onclick="switchTab('overview')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="overview">Overview</button>
-      <button type="button" onclick="switchTab('bookings')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="bookings">Bookings</button>
-      <button type="button" onclick="switchTab('schedule')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="schedule">Calendar</button>
-      <button type="button" onclick="switchTab('announcements')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="announcements">📢 Announcements</button>
-      <button type="button" onclick="switchTab('pos')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="pos">POS Register</button>
-      <button type="button" onclick="switchTab('inventory')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition" data-tab="inventory">Inventory</button>
-      
-      <button type="button" onclick="switchTab('settings')" class="mob-tab-pill px-3 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition" data-tab="settings">Settings &amp; Security</button>
-    </div>
 
     <!-- Main Workspace Body -->
     <main class="flex-1 min-w-0 w-full max-w-full p-3 sm:p-5 lg:p-6 pb-28 lg:pb-16">
@@ -374,46 +515,51 @@
             <h2 class="text-lg sm:text-2xl font-black uppercase text-slate-900 tracking-tight leading-snug">Edit Website Text, Hero &amp; Court Pictures, Live Updates &amp; All Prices</h2>
             <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-4xl leading-relaxed">Upload new Hero photos, Court 01–04 photos, Equipment photos, Club Logo, Live Top Banner text, or edit any price and headline across the public website.</p>
           </div>
-          <div class="flex flex-wrap items-center gap-2.5 pt-3 border-t border-slate-200 w-full">
-            <button type="button" onclick="resetAllWebsitePicturesOnly()" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md cursor-pointer">
-              🖼️ Reset Website Pictures Only
-            </button>
-            <button type="button" onclick="restoreMainWebsiteDefaultDesign()" class="px-4 py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border-2 border-[#9BE600] text-xs font-black uppercase tracking-wider transition shadow-md cursor-pointer">
-              ⭐ Reset Entire Website
-            </button>
-            <button type="button" onclick="saveSiteConfigToServer(false)" id="se-save-all-btn" class="px-5 py-2.5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-lg cursor-pointer">
-              💾 Save &amp; Publish All Changes Live →
-            </button>
-            <a href="/index.html" onclick="return openPublicSite(event, 'index.html')" class="px-4 py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5 shadow-md">
-              <span>View Live Site</span>
-              <span>↗</span>
-            </a>
+          <div class="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-slate-200 w-full">
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Dropdown 1: Jump to Section -->
+              <div class="adm-dropdown">
+                <button type="button" onclick="toggleAdminDropdown(event, this)" class="adm-dropdown-btn">
+                  <span>Section</span>
+                  <svg class="adm-dropdown-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="adm-dropdown-menu">
+                  <a href="#se-panel-hero" onclick="closeAllAdminDropdowns()" class="adm-dropdown-item"><span>Hero &amp; Banner</span></a>
+                  <a href="#se-panel-courts-assets" onclick="closeAllAdminDropdowns()" class="adm-dropdown-item"><span>Court Photos</span></a>
+                  <a href="#se-panel-prices" onclick="closeAllAdminDropdowns()" class="adm-dropdown-item"><span>Prices &amp; Gear</span></a>
+                  <a href="#se-panel-text" onclick="closeAllAdminDropdowns()" class="adm-dropdown-item"><span>Text &amp; Logo</span></a>
+                  <a href="#se-panel-qr" onclick="closeAllAdminDropdowns()" class="adm-dropdown-item"><span>Payment QRs</span></a>
+                </div>
+              </div>
+
+              <!-- Dropdown 2: Reset Options -->
+              <div class="adm-dropdown">
+                <button type="button" onclick="toggleAdminDropdown(event, this)" class="adm-dropdown-btn danger">
+                  <span>Reset</span>
+                  <svg class="adm-dropdown-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="adm-dropdown-menu">
+                  <button type="button" onclick="closeAllAdminDropdowns(); resetHeroPicturesOnly();" class="adm-dropdown-item"><span>Hero Photos Only</span></button>
+                  <button type="button" onclick="closeAllAdminDropdowns(); resetCourtPicturesOnly();" class="adm-dropdown-item"><span>Court Photos Only</span></button>
+                  <button type="button" onclick="closeAllAdminDropdowns(); resetAllWebsitePicturesOnly();" class="adm-dropdown-item"><span>All Website Pictures</span></button>
+                  <button type="button" onclick="closeAllAdminDropdowns(); restoreMainWebsiteDefaultDesign();" class="adm-dropdown-item text-rose-600"><span>Entire Website</span></button>
+                </div>
+              </div>
+              <span class="hidden" id="se-bookings-count-pill">0</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="saveSiteConfigToServer(false)" id="se-save-all-btn" class="px-5 py-2 rounded-md bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow cursor-pointer">
+                Save Changes
+              </button>
+              <a href="/index.html" onclick="return openPublicSite(event, 'index.html')" class="px-4 py-2 rounded-md bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5 shadow">
+                <span>Live Site ↗</span>
+              </a>
+            </div>
           </div>
         </div>
 
-        <p id="se-save-feedback"  class="hidden p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950 text-xs font-black text-center shadow-md"></p>
-
-        <!-- Quick Jump & Booking Manager Strip (White Cards) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2.5 text-xs w-full max-w-full">
-          <a href="#se-panel-hero" class="p-3 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-[#050E1D] text-slate-900 font-black uppercase flex items-center justify-between transition shadow-sm">
-            <span>🖼️ Hero Photos</span> <span class="text-emerald-600 font-black">↓</span>
-          </a>
-          <a href="#se-panel-courts-assets" class="p-3 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-[#050E1D] text-slate-900 font-black uppercase flex items-center justify-between transition shadow-sm">
-            <span>🏟️ Court Photos</span> <span class="text-emerald-600 font-black">↓</span>
-          </a>
-          <a href="#se-panel-prices" class="p-3 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-[#050E1D] text-slate-900 font-black uppercase flex items-center justify-between transition shadow-sm">
-            <span>💰 Prices &amp; Gear</span> <span class="text-emerald-600 font-black">↓</span>
-          </a>
-          <a href="#se-panel-text" class="p-3 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-[#050E1D] text-slate-900 font-black uppercase flex items-center justify-between transition shadow-sm">
-            <span>✏️ Text &amp; Logo</span> <span class="text-emerald-600 font-black">↓</span>
-          </a>
-          <button type="button" onclick="switchTab('bookings')" class="p-3 rounded-2xl bg-white hover:bg-[#9BE600] border-2 border-slate-200 hover:border-[#050E1D] text-slate-900 font-black uppercase flex items-center justify-between transition shadow-sm">
-            <span>📅 Bookings</span> <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-black" id="se-bookings-count-pill">0</span>
-          </button>
-          <button type="button" onclick="switchTab('announcements')" class="p-3 rounded-2xl bg-white hover:bg-[#9BE600] border-2 border-slate-200 hover:border-[#050E1D] text-slate-900 font-black uppercase flex items-center justify-between transition shadow-sm">
-            <span>📢 Live Feed</span> <span class="text-emerald-600 font-black">→</span>
-          </button>
-        </div>
+        <p id="se-save-feedback" class="hidden p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950 text-xs font-black text-center shadow-md"></p>
 
         <!-- ================= PANEL 1: HERO SECTION PICTURES, COURT PHOTOS & LIVE UPDATE BANNER (WHITE CARD) ================= -->
         <div id="se-panel-hero" class="p-5 sm:p-7 rounded-3xl bg-white border-2 border-slate-200 space-y-6 shadow-lg">
@@ -424,17 +570,8 @@
               <p class="text-xs text-slate-600 font-medium">Upload any photo from your device (automatically optimized &amp; saved to the website server) or pick a preset below.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="resetHeroPicturesOnly()" class="py-2.5 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
-                🔄 Reset 3 Hero Pictures Only
-              </button>
-              <button type="button" onclick="resetCourtPicturesOnly()" class="py-2.5 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
-                🔄 Reset Court 1–4 Pictures Only
-              </button>
-              <button type="button" onclick="resetAllWebsitePicturesOnly()" class="py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white border border-rose-800 font-black uppercase text-xs transition shadow">
-                🖼️ Reset All Website Pictures Only
-              </button>
-              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
-                💾 Save Photos &amp; Banner →
+              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2 px-4 rounded-md bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border border-[#050E1D] font-black uppercase text-xs transition shadow">
+                Save Photos &amp; Banner
               </button>
             </div>
           </div>
@@ -2384,15 +2521,21 @@
           </div>
         </div>
 
-        <!-- ================= SIMPLE REPORT SECTION SWITCHER (SO IT IS NEVER CROWDED) ================= -->
-        <div class="p-3 rounded-2xl bg-white border-2 border-slate-200 flex flex-wrap items-center justify-between gap-2 shadow-sm">
-          <span class="text-xs font-black uppercase text-slate-700 px-2">📌 Choose What You Want to View or Edit:</span>
-          <div class="flex flex-wrap gap-1.5">
-            <button type="button" onclick="setReportSubSection('ALL')" id="rep-sub-btn-ALL" class="px-3.5 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] text-xs font-black uppercase transition">📋 Show All Sections</button>
-            <button type="button" onclick="setReportSubSection('CALC')" id="rep-sub-btn-CALC" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">1️⃣ Box-to-Piece Calculator &amp; AI</button>
-            <button type="button" onclick="setReportSubSection('PRICES')" id="rep-sub-btn-PRICES" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">2️⃣ Product Buying &amp; Selling Prices</button>
-            <button type="button" onclick="setReportSubSection('BILLS')" id="rep-sub-btn-BILLS" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">3️⃣ Club Bills &amp; Expenses</button>
-            <button type="button" onclick="setReportSubSection('SALES')" id="rep-sub-btn-SALES" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition">4️⃣ Sales List</button>
+        <!-- ================= CLEAN DROPDOWN REPORT SECTION SWITCHER ================= -->
+        <div class="p-3.5 rounded-2xl bg-white border-2 border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+          <span class="text-xs font-black uppercase text-slate-800 px-1">Report View: <span id="rep-current-view-label" class="text-blue-600">All Sections</span></span>
+          <div class="adm-dropdown">
+            <button type="button" onclick="toggleAdminDropdown(event, this)" class="adm-dropdown-btn">
+              <span>View Section</span>
+              <svg class="adm-dropdown-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="adm-dropdown-menu right-align">
+              <button type="button" id="rep-sub-btn-ALL" onclick="closeAllAdminDropdowns(); setReportSubSection('ALL');" class="adm-dropdown-item"><span>All Sections</span></button>
+              <button type="button" id="rep-sub-btn-CALC" onclick="closeAllAdminDropdowns(); setReportSubSection('CALC');" class="adm-dropdown-item"><span>Wholesale Calculator</span></button>
+              <button type="button" id="rep-sub-btn-PRICES" onclick="closeAllAdminDropdowns(); setReportSubSection('PRICES');" class="adm-dropdown-item"><span>Product Prices</span></button>
+              <button type="button" id="rep-sub-btn-BILLS" onclick="closeAllAdminDropdowns(); setReportSubSection('BILLS');" class="adm-dropdown-item"><span>Bills &amp; Expenses</span></button>
+              <button type="button" id="rep-sub-btn-SALES" onclick="closeAllAdminDropdowns(); setReportSubSection('SALES');" class="adm-dropdown-item"><span>Sales Ledger</span></button>
+            </div>
           </div>
         </div>
 
@@ -7611,12 +7754,21 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           }
         }
       });
+      const labels = {
+        'ALL': 'All Sections',
+        'CALC': 'Wholesale Calculator',
+        'PRICES': 'Product Prices',
+        'BILLS': 'Bills & Expenses',
+        'SALES': 'Sales Ledger'
+      };
+      const lblEl = document.getElementById('rep-current-view-label');
+      if (lblEl && labels[sec]) lblEl.textContent = labels[sec];
       ['ALL', 'CALC', 'PRICES', 'BILLS', 'SALES'].forEach(k => {
         const btn = document.getElementById('rep-sub-btn-' + k);
         if (btn) {
           btn.className = (k === sec)
-            ? 'px-3.5 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] text-xs font-black uppercase transition shadow-sm'
-            : 'px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase transition';
+            ? 'adm-dropdown-item active-item'
+            : 'adm-dropdown-item';
         }
       });
     }
