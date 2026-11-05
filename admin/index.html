@@ -3300,13 +3300,19 @@ button.pf-trn-btn-danger:hover,
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <button type="button" id="btn-toggle-home-tournaments-master" onclick="toggleMasterHomeTournamentVisibility()" class="pf-trn-btn-emerald px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
-                ✅ Homepage Tournaments: PUBLISHED
+                ✅ Homepage Section: ON
+              </button>
+              <button type="button" onclick="adminSetPublishedTournamentCount(1)" class="pf-trn-btn-violet px-3.5 py-2.5 rounded-xl text-xs uppercase transition" title="Publish only the active tournament on the website">
+                1️⃣ Show Only 1 Event
+              </button>
+              <button type="button" onclick="adminSetPublishedTournamentCount(4)" class="pf-trn-btn-secondary px-3.5 py-2.5 rounded-xl text-xs uppercase transition" title="Publish all tournaments on the website">
+                👁️ Show All Events
               </button>
               <button type="button" onclick="adminResetDefaultTournaments()" class="pf-trn-btn-secondary px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
-                ↺ Restore 4 Default Formats
+                ↺ Restore Defaults
               </button>
               <button type="button" onclick="adminOpenTournamentEditorModal()" class="pf-trn-btn-primary px-4 py-2.5 rounded-xl text-xs uppercase transition">
-                + Add New Tournament
+                + Add Tournament
               </button>
             </div>
           </div>
@@ -7532,59 +7538,79 @@ function clearFieldError(fieldId) {
 
     function renderAdminTournamentsManager() {
       const grid = document.getElementById('admin-tournaments-manager-grid');
-      const masterBtn = document.getElementById('btn-toggle-home-tournaments-master');
-      const list = getAdminTournamentsList();
-      const pubOn = currentSiteConfig.tournamentsPublishedOnHome !== false;
-
-      if (masterBtn) {
-        masterBtn.textContent = pubOn ? '✅ Homepage Tournaments: PUBLISHED' : '🔒 Homepage Tournaments: HIDDEN (EMPTY STATE)';
-        masterBtn.className = pubOn
-          ? 'px-3.5 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider transition shadow-sm'
-          : 'px-3.5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs uppercase tracking-wider transition shadow-sm';
-      }
-
       if (!grid) return;
-      grid.innerHTML = list.map(t => {
+      const list = getAdminTournamentsList();
+      if (!adminActiveBracketTrnId || !list.some(t => t.id === adminActiveBracketTrnId)) {
+        adminActiveBracketTrnId = list[0] ? list[0].id : 'trn-bicol-dupr-open';
+      }
+      const pubCount = list.filter(t => t.published !== false).length;
+
+      grid.innerHTML = list.map((t, idx) => {
+        const fee = Number(t.entryFee || 0);
         const players = Array.isArray(t.players) ? t.players : [];
-        const maxCount = Number(t.maxTeams || 24);
         const regCount = Math.max(players.length, Number(t.registeredCount || players.length));
-        const isSelected = t.id === adminActiveBracketTrnId;
-        const isApp = t.approved !== false && pubOn;
+        const maxCount = Math.max(regCount, Number(t.maxTeams || 24));
+        const isSelectedForBracket = t.id === adminActiveBracketTrnId;
+        const isPub = t.published !== false;
+        const dcList = Array.isArray(t.designatedCourts) && t.designatedCourts.length
+          ? t.designatedCourts
+          : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+
+        const courtTogglePills = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
+          const isOn = dcList.includes(cName);
+          return `
+            <button type="button" onclick="adminToggleTournamentDesignatedCourt('${pfEscapeHtml(t.id)}', '${cName}')" class="${isOn ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-2.5 py-1 rounded-lg font-mono text-[10px] uppercase transition">
+              ${isOn ? '✓ ' : '+ '}${cName}
+            </button>
+          `;
+        }).join('');
 
         return `
-        <div class="p-5 rounded-2xl bg-slate-50 border-2 ${isSelected ? 'border-[#8B5CF6] bg-[#EDE9FE]/20' : 'border-slate-200'} hover:border-emerald-500 transition flex flex-col justify-between space-y-4 shadow-xs text-slate-900">
+        <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 ${isSelectedForBracket ? 'border-[#8B5CF6] ring-2 ring-[#8B5CF6]/20' : (isPub ? 'border-slate-200' : 'border-dashed border-slate-300 opacity-75')} flex flex-col justify-between space-y-4 transition shadow-xs">
           <div class="space-y-3">
+            <!-- Top Row: Format Badge + Show/Hide Website Toggle + High-Contrast Price Pill -->
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <span class="cal-cat-pill px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">${pfEscapeHtml(t.format)}</span>
-              <div class="flex items-center gap-1.5">
-                <button type="button" onclick="toggleSingleTournamentApproval('${pfEscapeHtml(t.id)}')" class="cal-cat-pill px-2.5 py-1 rounded-full text-[10px] font-mono font-extrabold uppercase transition ${isApp ? 'bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7]' : 'bg-slate-200 text-slate-700 border border-slate-300'}">
-                  ${isApp ? '✅ Live on Site' : '🔒 Draft'}
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">${pfEscapeHtml(t.format || 'Tournament')}</span>
+                <button type="button" onclick="adminToggleSingleTournamentPublished('${pfEscapeHtml(t.id)}')" class="${isPub ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-2.5 py-0.5 rounded-full font-mono text-[10px] uppercase transition" title="Toggle whether this tournament is displayed on the public website">
+                  ${isPub ? '🟢 Shown on Site' : '⚪ Hidden on Site'}
                 </button>
-                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#0F291E] text-white border border-[#15803D] font-mono font-black text-xs" style="background:#0F291E !important;color:#FFFFFF !important;">₱${Number(t.entryFee || 0).toLocaleString()}</span>
               </div>
+              <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#0F291E] text-white font-mono text-xs font-black shadow-2xs" style="background:#0F291E !important;color:#FFFFFF !important;">${fee > 0 ? '₱' + fee.toLocaleString() : 'FREE'}</span>
             </div>
 
             <div>
-              <h4 class="text-base font-black uppercase text-slate-900 leading-snug">${pfEscapeHtml(t.title)}</h4>
-              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-700 font-mono font-semibold mt-1">
+              <h4 class="text-base font-black text-slate-900 uppercase leading-snug">${pfEscapeHtml(t.title)}</h4>
+              <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-600 font-mono mt-1">
                 <span>📅 ${pfEscapeHtml(t.date)}</span>
                 <span>⏰ ${pfEscapeHtml(t.time)}</span>
                 <span class="text-emerald-800 font-bold">🏆 ${pfEscapeHtml(t.prizePool)}</span>
               </div>
             </div>
 
-            <!-- INLINE QUICK-EDIT TOURNAMENT PRICING (ENTRY FEE & PRIZE POOL) -->
+            <!-- DESIGNATED COURTS SELECTOR FOR THIS TOURNAMENT -->
+            <div class="p-3 rounded-xl bg-white border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[10px] font-mono font-extrabold uppercase text-[#0369A1]">🏟️ Designated Courts (${dcList.length} of 4 Courts Assigned)</span>
+                <span class="text-[10px] font-mono text-slate-500">Click to toggle courts</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${courtTogglePills}
+              </div>
+            </div>
+
+            <!-- INLINE QUICK EDIT FOR TOURNAMENT PRICE (₱) & PRIZE POOL -->
             <div class="p-3 rounded-xl bg-white border border-slate-200 grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
               <div class="sm:col-span-4">
-                <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-500 mb-0.5">Entry Price (₱)</label>
-                <input type="number" id="quick-fee-${pfEscapeHtml(t.id)}" value="${Number(t.entryFee || 0)}" min="0" step="50" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono font-black text-slate-900">
+                <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-600 mb-1">Entry Price (₱)</label>
+                <input type="number" id="quick-fee-${pfEscapeHtml(t.id)}" value="${fee}" min="0" step="50" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono font-black text-slate-900">
               </div>
               <div class="sm:col-span-5">
-                <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-500 mb-0.5">Prize Pool / Awards</label>
+                <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-600 mb-1">Prize Pool / Perks</label>
                 <input type="text" id="quick-prize-${pfEscapeHtml(t.id)}" value="${pfEscapeHtml(t.prizePool || '')}" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-900">
               </div>
               <div class="sm:col-span-3">
-                <button type="button" onclick="adminQuickSaveTournamentPricing('${pfEscapeHtml(t.id)}')" class="w-full py-1.5 px-2.5 rounded-lg bg-[#15803D] hover:bg-[#166534] text-white font-extrabold text-[10px] uppercase transition" style="color:#FFFFFF !important;">
+                <button type="button" onclick="adminQuickSaveTournamentPricing('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-emerald w-full py-1.5 px-2.5 rounded-lg font-mono text-[10px] uppercase tracking-wider transition">
                   💾 Save Price
                 </button>
               </div>
@@ -7597,14 +7623,14 @@ function clearFieldError(fieldId) {
                 <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="text-[10px] font-mono font-bold text-[#5B21B6] hover:underline">✏️ Edit Players</button>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-700 font-semibold">
-                ${players.slice(0, 4).map((p, idx) => `<div class="truncate">• ${pfEscapeHtml(p)}</div>`).join('')}
+                ${players.slice(0, 4).map(p => `<div class="truncate">• ${pfEscapeHtml(p)}</div>`).join('')}
               </div>
               ${players.length > 4 ? `<div class="text-[10px] font-mono text-slate-500">+ ${players.length - 4} more seeded pairs in bracket</div>` : ''}
             </div>
           </div>
 
           <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
-            <span class="px-2.5 py-1 rounded-full bg-white border border-slate-300 text-[10px] font-mono text-slate-800 font-bold">Entries: ${regCount}/${maxCount}</span>
+            <span class="px-2.5 py-1 rounded-full bg-white border border-slate-300 text-[10px] font-mono text-slate-800 font-bold">Entries: ${regCount}/${maxCount} • ${pubCount} Shown on Site</span>
             <div class="flex flex-wrap items-center gap-1.5">
               <button type="button" onclick="adminSelectActiveBracketTournament('${pfEscapeHtml(t.id)}', true)" class="pf-trn-btn-violet px-3 py-1.5 rounded-lg uppercase text-[10px] transition">🏆 Bracket &amp; Scorekeeper</button>
               <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-royal px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">👥 Players</button>
@@ -7616,6 +7642,56 @@ function clearFieldError(fieldId) {
       `;
       }).join('');
       renderAdminNativeBracketWorkspace();
+    }
+
+    async function adminToggleSingleTournamentPublished(trnId) {
+      const list = getAdminTournamentsList();
+      const target = list.find(t => t.id === trnId);
+      if (!target) return;
+      target.published = target.published === false ? true : false;
+      await saveAndSyncAdminTournaments(`${target.published ? '🟢 Published' : '⚪ Hid'} "${target.title}" on the public website!`);
+    }
+
+    async function adminSetPublishedTournamentCount(count) {
+      const list = getAdminTournamentsList();
+      if (!list.length) return;
+      if (count === 1) {
+        const activeId = adminActiveBracketTrnId || list[0].id;
+        list.forEach(t => { t.published = (t.id === activeId); });
+        const act = list.find(t => t.id === activeId) || list[0];
+        await saveAndSyncAdminTournaments(`1️⃣ Showing ONLY "${act.title}" on the public website!`);
+      } else {
+        list.forEach(t => { t.published = true; });
+        await saveAndSyncAdminTournaments(`👁️ Showing all ${list.length} tournaments on the public website!`);
+      }
+    }
+
+    async function adminToggleTournamentDesignatedCourt(trnId, courtName) {
+      const list = getAdminTournamentsList();
+      const target = list.find(t => t.id === trnId);
+      if (!target) return;
+      let dc = Array.isArray(target.designatedCourts) && target.designatedCourts.length
+        ? [...target.designatedCourts]
+        : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      if (dc.includes(courtName)) {
+        if (dc.length <= 1) {
+          alert('At least 1 court must be designated for a tournament.');
+          return;
+        }
+        dc = dc.filter(c => c !== courtName);
+      } else {
+        dc.push(courtName);
+        dc.sort();
+      }
+      target.designatedCourts = dc;
+      target.courts = dc.length === 4 ? 'All 4 Courts (Courts 1 – 4)' : ('Designated: ' + dc.join(', '));
+      // Automatically reassign bracket matches to the designated courts!
+      if (Array.isArray(target.bracket)) {
+        target.bracket.forEach((m, idx) => {
+          m.court = dc[idx % dc.length];
+        });
+      }
+      await saveAndSyncAdminTournaments(`🏟️ Designated ${dc.join(', ')} for "${target.title}" (Bracket matches updated)!`);
     }
 
     async function adminQuickSaveTournamentPricing(trnId) {
