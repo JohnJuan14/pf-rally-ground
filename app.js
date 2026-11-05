@@ -4605,7 +4605,70 @@ function pfSetTournamentFilter(filterKey) {
   pfRenderPublicTournaments();
 }
 
+function openAdminTournamentHost(event) {
+  if (event) event.preventDefault();
+  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '8088';
+  const targetUrl = isLocalSplit
+    ? `http://${window.location.hostname}:8089/#tab-tournament`
+    : `/admin/#tab-tournament`;
+  window.location.href = targetUrl;
+  return false;
+}
+window.openAdminTournamentHost = openAdminTournamentHost;
+
+function pfRenderLiveSpectatorBracketBanner() {
+  const banner = document.getElementById('public-live-bracket-spectator-banner');
+  if (!banner) return;
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  let bracket = cfg && cfg.liveBracketState ? cfg.liveBracketState : null;
+  if (!bracket) {
+    try {
+      bracket = JSON.parse(localStorage.getItem('pf_live_tournament_bracket') || 'null');
+    } catch (e) {}
+  }
+  if (!bracket || !bracket.matches || bracket.phase === 'SETUP') {
+    banner.classList.add('hidden');
+    banner.innerHTML = '';
+    return;
+  }
+  const r0 = Array.isArray(bracket.matches[0]) ? bracket.matches[0] : [];
+  const r1 = Array.isArray(bracket.matches[1]) ? bracket.matches[1] : [];
+  const r2 = Array.isArray(bracket.matches[2]) ? bracket.matches[2] : [];
+  const allMatches = [...r0, ...r1, ...r2];
+  const doneCount = allMatches.filter(m => m && m.winner).length;
+
+  banner.classList.remove('hidden');
+  banner.innerHTML = `
+    <div class="rounded-3xl bg-gradient-to-r from-[#050E1D] via-[#0E2240] to-[#050E1D] border-2 border-brand-lime p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-3 h-3 rounded-full bg-brand-lime animate-ping"></span>
+          <span class="px-3 py-1 rounded-full bg-brand-lime text-brand-black font-mono text-[10px] font-black uppercase tracking-wider">🔴 LIVE ADMIN-HOSTED 3D TOURNAMENT BRACKET</span>
+          <span class="text-xs font-mono text-slate-300 font-bold">Spectator View Only • ${doneCount}/${allMatches.length} Matches Completed</span>
+        </div>
+        ${bracket.champion ? `<span class="px-3.5 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-xs uppercase">👑 Champion: ${pfEscapeHtml(bracket.champion.name)}</span>` : `<span class="text-xs font-mono text-brand-lime font-bold">Hosted by Club Admin</span>`}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2">
+          <span class="text-[10px] font-mono uppercase text-brand-lime font-black block">Quarterfinals (4 Matches)</span>
+          ${r0.map(m => `<div class="flex justify-between items-center py-1 border-b border-white/5 last:border-0"><span class="${m.winner && m.p1 && m.winner.id===m.p1.id ? 'text-brand-lime font-black' : 'text-slate-300'}">${pfEscapeHtml(m.p1 ? m.p1.name : 'TBD')} vs ${pfEscapeHtml(m.p2 ? m.p2.name : 'TBD')}</span><span class="font-mono text-[11px] text-white font-bold">${m.s1}-${m.s2}</span></div>`).join('')}
+        </div>
+        <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2">
+          <span class="text-[10px] font-mono uppercase text-sky-400 font-black block">Semifinals (2 Matches)</span>
+          ${r1.map(m => `<div class="flex justify-between items-center py-1 border-b border-white/5 last:border-0"><span class="${m.winner && m.p1 && m.winner.id===m.p1.id ? 'text-brand-lime font-black' : 'text-slate-300'}">${pfEscapeHtml(m.p1 ? m.p1.name : 'TBD')} vs ${pfEscapeHtml(m.p2 ? m.p2.name : 'TBD')}</span><span class="font-mono text-[11px] text-white font-bold">${m.s1}-${m.s2}</span></div>`).join('')}
+        </div>
+        <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-amber-400/30 space-y-2">
+          <span class="text-[10px] font-mono uppercase text-amber-300 font-black block">🏆 Championship Final</span>
+          ${r2.map(m => `<div class="flex justify-between items-center py-1"><span class="text-white font-black">${pfEscapeHtml(m.p1 ? m.p1.name : 'TBD')} vs ${pfEscapeHtml(m.p2 ? m.p2.name : 'TBD')}</span><span class="font-mono text-xs text-brand-lime font-black">${m.s1}-${m.s2}</span></div>`).join('')}
+          <p class="text-[10px] text-slate-400 pt-1">Only the Club Admin can score or advance tournament bracket matches.</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function pfRenderPublicTournaments() {
+  try { pfRenderLiveSpectatorBracketBanner(); } catch (e) {}
   const grid = document.getElementById('public-tournaments-grid');
   if (!grid) return;
 
@@ -4632,7 +4695,10 @@ function pfRenderPublicTournaments() {
         <div class="space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="px-2.5 py-1 rounded-full bg-brand-lime/20 text-brand-lime border border-brand-lime/40 font-mono text-[10px] font-black uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
-            <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono text-[10px] font-black uppercase">${spotsLeft} Spots Left</span>
+            <div class="flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-full bg-white/10 text-slate-200 border border-white/15 font-mono text-[9px] font-bold uppercase">🛡️ Admin Hosted</span>
+              <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono text-[10px] font-black uppercase">${spotsLeft} Spots Left</span>
+            </div>
           </div>
 
           <h3 class="text-xl sm:text-2xl font-black uppercase tracking-tight text-white font-display leading-tight">${pfEscapeHtml(t.title)}</h3>

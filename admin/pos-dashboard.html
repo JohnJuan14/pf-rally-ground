@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P&F Rally Ground — P&F CourtHub Rental POS & Analytics Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom Scrollbar for tables */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        
+        /* Hide sections dynamically */
+        .hidden-section {
+            display: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex transition-all duration-300">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-700">
+            <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">
+                <i class="fa-solid fa-basketball"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold leading-tight">P&F CourtHub</h1>
+                <p class="text-xs text-slate-400">Rental POS & Reports</p>
+            </div>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="switchTab('transactions')" id="nav-transactions" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white transition-colors text-left font-medium">
+                <i class="fa-solid fa-receipt w-5"></i> Transactions
+            </button>
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left font-medium">
+                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        
+        <!-- Mobile Header -->
+        <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center z-10 shadow-md">
+            <div class="flex items-center gap-2 font-bold text-lg">
+                <i class="fa-solid fa-basketball text-indigo-400"></i> P&F CourtHub
+            </div>
+            <div class="flex gap-2">
+                <button onclick="switchTab('transactions')" id="nav-mobile-transactions" class="px-3 py-1.5 bg-indigo-600 rounded-md text-sm">List</button>
+                <button onclick="switchTab('dashboard')" id="nav-mobile-dashboard" class="px-3 py-1.5 bg-slate-700 rounded-md text-sm">Stats</button>
+            </div>
+        </header>
+
+        <!-- View: Transactions -->
+        <section id="view-transactions" class="flex-1 overflow-y-auto p-4 md:p-8">
+            <div class="max-w-7xl mx-auto">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Transactions</h2>
+                        <p class="text-slate-500 text-sm">Manage and review all court rental records.</p>
+                    </div>
+                    <button onclick="exportCSV()" class="px-4 py-2 bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm">
+                        <i class="fa-solid fa-file-csv"></i> Export CSV
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Search</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="searchInput" placeholder="Client name, tracking #, or court..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="w-full md:w-48">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Start Date</label>
+                        <input type="date" id="startDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm">
+                    </div>
+                    <div class="w-full md:w-48">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">End Date</label>
+                        <input type="date" id="endDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm">
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left whitespace-nowrap">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold">Tracking #</th>
+                                    <th class="px-6 py-4 font-semibold">Date & Time</th>
+                                    <th class="px-6 py-4 font-semibold">Client Name</th>
+                                    <th class="px-6 py-4 font-semibold">Court</th>
+                                    <th class="px-6 py-4 font-semibold text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody" class="divide-y divide-slate-100 text-sm">
+                                <!-- Data populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="tableEmptyState" class="hidden flex flex-col items-center justify-center p-12 text-center">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-4 text-2xl">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-slate-900 mb-1">No transactions found</h3>
+                        <p class="text-slate-500 text-sm max-w-sm">We couldn't find any records matching your current filters. Try adjusting the search or dates.</p>
+                        <button onclick="clearFilters()" class="mt-4 px-4 py-2 text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors">Clear Filters</button>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center text-sm text-slate-600">
+                        <span id="tableStatus">Showing 0 entries</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- View: Dashboard -->
+        <section id="view-dashboard" class="flex-1 overflow-y-auto p-4 md:p-8 hidden-section">
+            <div class="max-w-7xl mx-auto space-y-6">
+                
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Analytics Dashboard</h2>
+                    <p class="text-slate-500 text-sm">Monitor performance, sales, and optimization metrics.</p>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-peso-sign"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Total Filtered Revenue</p>
+                            <h4 id="kpi-revenue" class="text-2xl font-bold text-slate-900">₱0.00</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Total Bookings</p>
+                            <h4 id="kpi-bookings" class="text-2xl font-bold text-slate-900">0</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Avg. Hourly Rate</p>
+                            <h4 id="kpi-avg" class="text-2xl font-bold text-slate-900">₱0.00</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Monthly Sales -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-800">Monthly Sales</h3>
+                            <input type="month" id="dashMonthPicker" class="px-2 py-1 text-sm border border-slate-300 rounded outline-none focus:border-indigo-500">
+                        </div>
+                        <div class="flex-1 relative min-h-[250px]">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Sales -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-800">Weekly Sales</h3>
+                            <input type="week" id="dashWeekPicker" class="px-2 py-1 text-sm border border-slate-300 rounded outline-none focus:border-indigo-500">
+                        </div>
+                        <div class="flex-1 relative min-h-[250px]">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Peak Hours -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col lg:col-span-2">
+                        <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                            <h3 class="font-bold text-slate-800">Peak Hours Analysis</h3>
+                            <div class="flex gap-2 text-sm">
+                                <select id="peakPeriodType" class="border border-slate-300 rounded px-2 py-1 outline-none">
+                                    <option value="month">Selected Month</option>
+                                    <option value="week">Selected Week</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex-1 relative min-h-[250px]">
+                            <canvas id="peakChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- AI Suggestions -->
+                    <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-xl shadow-md text-white flex flex-col">
+                        <div class="flex items-center gap-3 mb-4 text-indigo-300">
+                            <i class="fa-solid fa-lightbulb text-xl"></i>
+                            <h3 class="font-bold text-lg text-white">Actionable Insights</h3>
+                        </div>
+                        <p class="text-sm text-slate-300 flex-1" id="suggestionText">
+                            Analyzing data to generate actionable insights...
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Message Box (Instead of Alert) -->
+    <div id="messageBox" class="fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-emerald-400" id="msgIcon"></i>
+        <span id="msgText" class="text-sm font-medium">Action completed successfully.</span>
+    </div>
+
+    <script>
+        /* =========================================================================
+           STATE & DATA MOCKING
+        ========================================================================= */
+        let allTransactions = [];
+        let filteredTransactions = [];
+        let currentTab = 'transactions';
+
+        // Chart instances
+        let monthlyChartInstance = null;
+        let weeklyChartInstance = null;
+        let peakChartInstance = null;
+
+        // Constants for generation
+        const courts = ["Court 1 (Indoor)", "Court 2 (Indoor)", "Court 3 (Outdoor)", "Court 4 (Outdoor)"];
+        const clients = ["Alice Johnson", "Bob Smith", "Charlie Davis", "Diana Prince", "Ethan Hunt", "Fiona Gallagher", "George Lucas", "Hannah Abbott", "Ian Wright", "Julia Stiles"];
+        const rates = { "Court 1 (Indoor)": 600, "Court 2 (Indoor)": 600, "Court 3 (Outdoor)": 400, "Court 4 (Outdoor)": 400 };
+
+        // Helper: Format Date as YYYY-MM-DD
+        const formatDate = (date) => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        };
+
+        // Helper: Get ISO Week string YYYY-Www
+        const getISOWeekString = (date) => {
+            const target = new Date(date.valueOf());
+            const dayNr = (date.getDay() + 6) % 7;
+            target.setDate(target.getDate() - dayNr + 3);
+            const firstThursday = target.valueOf();
+            target.setMonth(0, 1);
+            if (target.getDay() !== 4) {
+                target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+            }
+            const weekNum = 1 + Math.ceil((firstThursday - target) / 604800000);
+            return `${target.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+        };
+
+        // Initialize Mock Data
+        function generateMockData() {
+            const data = [];
+            const today = new Date();
+            
+            // Generate data for the past 90 days and 14 days into the future
+            for (let i = -90; i <= 14; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() + i);
+                const dateStr = formatDate(date);
+                const monthStr = dateStr.substring(0, 7);
+                const weekStr = getISOWeekString(date);
+
+                // Random number of bookings per day (0 to 8)
+                const bookingsToday = Math.floor(Math.random() * 9);
+                
+                // Track booked times to prevent overlap for simplicity
+                const booked = new Set();
+
+                for (let j = 0; j < bookingsToday; j++) {
+                    let hour = Math.floor(Math.random() * 14) + 8; // 8 AM to 9 PM
+                    if (booked.has(hour)) continue;
+                    booked.add(hour);
+
+                    const timeStr = `${String(hour).padStart(2, '0')}:00`;
+                    const court = courts[Math.floor(Math.random() * courts.length)];
+                    const client = clients[Math.floor(Math.random() * clients.length)];
+                    const amount = rates[court];
+                    
+                    data.push({
+                        id: `TRK-${Math.floor(Math.random() * 90000) + 10000}`,
+                        date: dateStr,
+                        monthStr: monthStr,
+                        weekStr: weekStr,
+                        time: timeStr,
+                        hour: hour,
+                        clientName: client,
+                        courtNumber: court,
+                        amount: amount
+                    });
+                }
+            }
+            
+            // Sort by date descending, then time descending
+            data.sort((a, b) => {
+                if (a.date !== b.date) return b.date.localeCompare(a.date);
+                return b.time.localeCompare(a.time);
+            });
+            
+            allTransactions = data;
+            filteredTransactions = [...allTransactions];
+        }
+
+        /* =========================================================================
+           UI & NAVIGATION LOGIC
+        ========================================================================= */
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update Desktop Nav UI
+            document.getElementById('nav-transactions').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left font-medium ${tab === 'transactions' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`;
+            document.getElementById('nav-dashboard').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left font-medium ${tab === 'dashboard' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`;
+            
+            // Update Mobile Nav UI
+            document.getElementById('nav-mobile-transactions').className = `px-3 py-1.5 rounded-md text-sm ${tab === 'transactions' ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-300'}`;
+            document.getElementById('nav-mobile-dashboard').className = `px-3 py-1.5 rounded-md text-sm ${tab === 'dashboard' ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-300'}`;
+
+            // Toggle Sections
+            document.getElementById('view-transactions').classList.toggle('hidden-section', tab !== 'transactions');
+            document.getElementById('view-dashboard').classList.toggle('hidden-section', tab !== 'dashboard');
+
+            if (tab === 'dashboard') {
+                updateDashboard();
+            }
+        }
+
+        // Show Message Box
+        function showMessage(text, type="success") {
+            const box = document.getElementById('messageBox');
+            const icon = document.getElementById('msgIcon');
+            const msgText = document.getElementById('msgText');
+            
+            msgText.textContent = text;
+            if(type === "error") {
+                icon.className = "fa-solid fa-circle-exclamation text-red-400";
+            } else {
+                icon.className = "fa-solid fa-circle-check text-emerald-400";
+            }
+
+            box.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                box.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        /* =========================================================================
+           TRANSACTIONS VIEW LOGIC
+        ========================================================================= */
+        const searchInput = document.getElementById('searchInput');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase();
+            const start = startDateInput.value;
+            const end = endDateInput.value;
+
+            filteredTransactions = allTransactions.filter(t => {
+                const matchesSearch = t.clientName.toLowerCase().includes(query) || 
+                                      t.id.toLowerCase().includes(query) || 
+                                      t.courtNumber.toLowerCase().includes(query);
+                
+                let matchesDate = true;
+                if (start && t.date < start) matchesDate = false;
+                if (end && t.date > end) matchesDate = false;
+
+                return matchesSearch && matchesDate;
+            });
+
+            renderTable();
+        }
+
+        function clearFilters() {
+            searchInput.value = '';
+            startDateInput.value = '';
+            endDateInput.value = '';
+            applyFilters();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('transactionsTableBody');
+            const emptyState = document.getElementById('tableEmptyState');
+            const status = document.getElementById('tableStatus');
+            tbody.innerHTML = '';
+
+            if (filteredTransactions.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                status.textContent = "Showing 0 entries";
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+            status.textContent = `Showing ${filteredTransactions.length} entries`;
+
+            // Pagination could go here, but for demo we show all filtered (or limit to 100 max visually to prevent DOM lag)
+            const displayLimit = Math.min(filteredTransactions.length, 200);
+
+            for (let i = 0; i < displayLimit; i++) {
+                const t = filteredTransactions[i];
+                
+                // Formatting Court visual
+                let courtBadge = 'bg-blue-100 text-blue-700';
+                if(t.courtNumber.includes('Outdoor')) courtBadge = 'bg-orange-100 text-orange-700';
+
+                const row = `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 font-mono text-xs font-medium text-slate-500">${t.id}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-slate-900">${t.date}</div>
+                            <div class="text-xs text-slate-500">${t.time}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
+                                    ${t.clientName.charAt(0)}
+                                </div>
+                                <span class="font-medium text-slate-800">${t.clientName}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-medium ${courtBadge}">
+                                ${t.courtNumber.replace(/\(.*\)/, '')}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 font-semibold text-slate-900 text-right">
+                            ₱${t.amount.toFixed(2)}
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            }
+        }
+
+        function exportCSV() {
+            if (filteredTransactions.length === 0) {
+                showMessage("No data to export.", "error");
+                return;
+            }
+
+            const headers = ['Tracking ID', 'Date', 'Time', 'Client Name', 'Court', 'Amount'];
+            const rows = filteredTransactions.map(t => [
+                t.id, t.date, t.time, `"${t.clientName}"`, `"${t.courtNumber}"`, t.amount
+            ]);
+
+            const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `courthub_export_${formatDate(new Date())}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage("CSV Exported successfully!");
+        }
+
+        /* =========================================================================
+           DASHBOARD & REPORTS LOGIC
+        ========================================================================= */
+        const dashMonthPicker = document.getElementById('dashMonthPicker');
+        const dashWeekPicker = document.getElementById('dashWeekPicker');
+        const peakPeriodType = document.getElementById('peakPeriodType');
+
+        // Set default values (Current Month, Current Week)
+        function initDashboardDefaults() {
+            const today = new Date();
+            dashMonthPicker.value = formatDate(today).substring(0, 7); // YYYY-MM
+            dashWeekPicker.value = getISOWeekString(today); // YYYY-Www
+        }
+
+        function updateDashboard() {
+            const selMonth = dashMonthPicker.value;
+            const selWeek = dashWeekPicker.value;
+            const peakType = peakPeriodType.value;
+
+            // 1. KPI Cards (Based on selected Month for simplicity, or could be overall)
+            // Let's make KPIs reflect the Monthly selection
+            const monthData = allTransactions.filter(t => t.monthStr === selMonth);
+            
+            const totalRev = monthData.reduce((sum, t) => sum + t.amount, 0);
+            const totalBookings = monthData.length;
+            const avgRate = totalBookings > 0 ? totalRev / totalBookings : 0;
+
+            document.getElementById('kpi-revenue').textContent = `₱${totalRev.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})}`;
+            document.getElementById('kpi-bookings').textContent = totalBookings.toLocaleString();
+            document.getElementById('kpi-avg').textContent = `₱${avgRate.toFixed(2)}`;
+
+            // 2. Render Monthly Chart
+            renderMonthlyChart(monthData, selMonth);
+
+            // 3. Render Weekly Chart
+            const weekData = allTransactions.filter(t => t.weekStr === selWeek);
+            renderWeeklyChart(weekData, selWeek);
+
+            // 4. Render Peak Hours Chart & Suggestions
+            const peakData = peakType === 'month' ? monthData : weekData;
+            renderPeakChartAndSuggest(peakData, peakType);
+        }
+
+        function renderMonthlyChart(data, monthStr) {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            
+            // Group by day (1 to 31)
+            // Determine max days in month
+            const [y, m] = monthStr.split('-');
+            const daysInMonth = new Date(y, m, 0).getDate();
+            
+            const labels = [];
+            const sales = [];
+            for (let i = 1; i <= daysInMonth; i++) {
+                labels.push(i);
+                sales.push(0);
+            }
+
+            data.forEach(t => {
+                const day = parseInt(t.date.split('-')[2], 10);
+                sales[day - 1] += t.amount;
+            });
+
+            if (monthlyChartInstance) monthlyChartInstance.destroy();
+
+            monthlyChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue (₱)',
+                        data: sales,
+                        borderColor: '#4f46e5', // indigo-600
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderWeeklyChart(data, weekStr) {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            
+            const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const sales = [0, 0, 0, 0, 0, 0, 0];
+
+            data.forEach(t => {
+                const dateObj = new Date(t.date);
+                let dayIdx = dateObj.getDay() - 1; // 0=Sun, 1=Mon -> make Mon=0
+                if (dayIdx === -1) dayIdx = 6; // Sunday
+                sales[dayIdx] += t.amount;
+            });
+
+            if (weeklyChartInstance) weeklyChartInstance.destroy();
+
+            weeklyChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue (₱)',
+                        data: sales,
+                        backgroundColor: '#10b981', // emerald-500
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderPeakChartAndSuggest(data, typeDesc) {
+            const ctx = document.getElementById('peakChart').getContext('2d');
+            
+            // Hours 8 AM to 9 PM (21:00)
+            const hours = [8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+            const labels = hours.map(h => `${h}:00`);
+            const bookings = new Array(hours.length).fill(0);
+
+            data.forEach(t => {
+                const h = t.hour;
+                const idx = hours.indexOf(h);
+                if(idx !== -1) bookings[idx]++;
+            });
+
+            if (peakChartInstance) peakChartInstance.destroy();
+
+            peakChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Bookings',
+                        data: bookings,
+                        backgroundColor: '#3b82f6', // blue-500
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Analyze and Generate Suggestion
+            generateSuggestion(hours, bookings, data.length);
+        }
+
+        function generateSuggestion(hours, bookings, totalBookings) {
+            const textEl = document.getElementById('suggestionText');
+            
+            if (totalBookings === 0) {
+                textEl.innerHTML = "Not enough data for the selected period. Try selecting a different date range to generate insights.";
+                return;
+            }
+
+            // Find lowest performing hours that are not early morning
+            // Focus on 11 AM to 4 PM (indexes 3 to 8)
+            let lowestIdx = -1;
+            let lowestVal = Infinity;
+
+            for(let i = 3; i <= 8; i++) {
+                if (bookings[i] < lowestVal) {
+                    lowestVal = bookings[i];
+                    lowestIdx = i;
+                }
+            }
+
+            const lowHour = hours[lowestIdx];
+            const lowHourStr = `${lowHour}:00 - ${lowHour+1}:00`;
+
+            textEl.innerHTML = `
+                <span class="block mb-2 text-indigo-200">Analysis complete.</span>
+                We detected historically low booking volume during <strong>${lowHourStr}</strong>. 
+                <br><br>
+                <strong>Recommendation:</strong> Consider offering a <strong>20% Off-Peak Discount</strong> for this time slot to stimulate demand and maximize daily court utilization.
+            `;
+        }
+
+        /* =========================================================================
+           INITIALIZATION & EVENT LISTENERS
+        ========================================================================= */
+        document.addEventListener('DOMContentLoaded', () => {
+            generateMockData();
+            initDashboardDefaults();
+            applyFilters(); // Renders initial table
+
+            // Filter Event Listeners
+            searchInput.addEventListener('input', applyFilters);
+            startDateInput.addEventListener('change', applyFilters);
+            endDateInput.addEventListener('change', applyFilters);
+
+            // Dashboard Event Listeners
+            dashMonthPicker.addEventListener('change', updateDashboard);
+            dashWeekPicker.addEventListener('change', updateDashboard);
+            peakPeriodType.addEventListener('change', updateDashboard);
+        });
+
+    </script>
+</body>
+</html>

@@ -1256,28 +1256,40 @@
 
     </div>
   </section>
-  <!-- ================= PICKLEBALL TOURNAMENTS & CHAMPIONSHIP HUB ================= -->
+  <!-- ================= PICKLEBALL TOURNAMENTS & CHAMPIONSHIP HUB (ADMIN-HOSTED ONLY) ================= -->
   <section id="tournaments" class="py-16 sm:py-20 bg-brand-black border-t border-white/10 scroll-mt-28" style="scroll-margin-top: 118px;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div>
-          <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime block mb-2">OFFICIAL BICOL PICKLEBALL CIRCUIT &bull; USA PICKLEBALL RULES</span>
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime">OFFICIAL BICOL PICKLEBALL CIRCUIT &bull; USA PICKLEBALL RULES</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-brand-lime/15 border border-brand-lime/40 text-brand-lime text-[10px] font-mono font-black uppercase">🔒 ADMIN-ONLY HOSTING</span>
+          </div>
           <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">
             PICKLEBALL <span class="text-brand-lime">TOURNAMENTS</span>
           </h2>
           <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-2xl font-medium">
-            Compete in official P&amp;F Rally Ground tournament formats in Daraga, Albay &mdash; from DUPR Round-Robin Pools + Medal Playoffs and King &amp; Queen of the Court Ladder Splits to MLP-Style 4-Player Team Rallies and Double-Elimination Classics.
+            Official club tournaments are <b class="text-brand-lime">hosted and managed exclusively by P&amp;F Rally Ground Admin</b>. Players can register for official events below, while only authorized Club Admin staff can launch the 3D Tournament Bracket &amp; Scorekeeper Arena.
           </p>
         </div>
-        <!-- Format Filter Buttons -->
-        <div class="flex flex-wrap items-center gap-1.5 bg-brand-card p-1.5 rounded-2xl border border-white/10">
-          <button type="button" onclick="pfSetTournamentFilter('ALL')" data-trn-filter="ALL" class="px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider bg-brand-lime text-brand-black shadow transition">All Formats</button>
-          <button type="button" onclick="pfSetTournamentFilter('Round Robin')" data-trn-filter="Round Robin" class="px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">Round Robin</button>
-          <button type="button" onclick="pfSetTournamentFilter('King of the Court')" data-trn-filter="King of the Court" class="px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">King of the Court</button>
-          <button type="button" onclick="pfSetTournamentFilter('MLP')" data-trn-filter="MLP" class="px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">MLP Team</button>
-          <button type="button" onclick="pfSetTournamentFilter('Double Elimination')" data-trn-filter="Double Elimination" class="px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">Double Elim</button>
+        <div class="flex flex-col sm:items-end gap-2.5">
+          <a href="/admin/#tab-tournament" onclick="return openAdminTournamentHost(event)" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-card hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-mono font-black text-[11px] uppercase tracking-wider transition shadow-lg">
+            <span>🔒 Admin-Only Tournament Host (Staff Login)</span>
+            <span>→</span>
+          </a>
+          <!-- Format Filter Buttons -->
+          <div class="flex flex-wrap items-center gap-1.5 bg-brand-card p-1.5 rounded-2xl border border-white/10">
+            <button type="button" onclick="pfSetTournamentFilter('ALL')" data-filter="ALL" data-trn-filter="ALL" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider bg-brand-lime text-brand-black shadow transition">All Formats</button>
+            <button type="button" onclick="pfSetTournamentFilter('ROUND_ROBIN')" data-filter="ROUND_ROBIN" data-trn-filter="Round Robin" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">Round Robin</button>
+            <button type="button" onclick="pfSetTournamentFilter('KING_COURT')" data-filter="KING_COURT" data-trn-filter="King of the Court" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">King of the Court</button>
+            <button type="button" onclick="pfSetTournamentFilter('MLP_TEAM')" data-filter="MLP_TEAM" data-trn-filter="MLP" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">MLP Team</button>
+            <button type="button" onclick="pfSetTournamentFilter('DOUBLE_ELIM')" data-filter="DOUBLE_ELIM" data-trn-filter="Double Elimination" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">Double Elim</button>
+          </div>
         </div>
       </div>
+
+      <!-- Live Spectator Bracket Status Banner (Read-Only on Public Site, Synced from Admin 3D Tournament Host) -->
+      <div id="public-live-bracket-spectator-banner" class="hidden"></div>
 
       <!-- Dynamic Tournaments Grid (Populated by pfRenderPublicTournaments in app.js & editable in Admin) -->
       <div id="public-tournaments-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>

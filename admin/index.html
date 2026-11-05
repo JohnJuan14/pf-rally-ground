@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -265,7 +267,13 @@
 
         <button onclick="switchTab('pos')" id="nav-pos" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span>Point of Sale</span>
+          <span>Court POS &amp; Analytics</span>
+        </button>
+
+        <button onclick="switchTab('tournament')" id="nav-tournament" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+          <span>Host Tournament</span>
+          <span class="ml-auto px-1.5 py-0.5 rounded-full bg-brand-lime text-brand-black text-[8px] font-black">ADMIN</span>
         </button>
 
         <button onclick="switchTab('inventory')" id="nav-inventory" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5 border border-transparent text-left">
@@ -1569,6 +1577,9 @@
                 <button type="button" onclick="adminResetDefaultTournaments()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold uppercase transition">
                   ↺ Restore 4 Default Formats
                 </button>
+                <button type="button" onclick="switchTab('tournament')" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase transition shadow-lg">
+                  🎮 Host 3D Tournament Bracket (Admin Only)
+                </button>
                 <button type="button" onclick="adminOpenTournamentEditorModal()" class="px-4 py-2 rounded-xl bg-brand-lime hover:bg-brand-limeHover text-brand-black font-black text-xs uppercase transition shadow-lg">
                   + Add New Tournament
                 </button>
@@ -1795,76 +1806,332 @@
 
       </section>
 
-      <!-- ================= 4. POINT OF SALE (POS) TAB ================= -->
+      <!-- ================= 4. COURT RENTAL POS & ANALYTICS DASHBOARD TAB (COURTHUB CONCEPT + COUNTER REGISTER) ================= -->
       <section id="tab-pos" class="hidden space-y-6">
         
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
-          <!-- POS Product Catalog (Col 7) -->
-          <div class="lg:col-span-7 space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h2 class="text-lg sm:text-xl font-black uppercase text-white">Front-Desk POS Register</h2>
-                <p class="text-xs text-slate-400">Displays your custom inventory items. Every sale automatically deducts from stock.</p>
-              </div>
-              <button onclick="openAddInventoryModal()" class="px-3.5 py-2 rounded-xl bg-brand-lime/15 border border-brand-lime/40 text-brand-lime text-xs font-black uppercase hover:bg-brand-lime hover:text-brand-black transition">
-                + Add Custom Product
-              </button>
+        <!-- CourtHub POS Header & View Switcher -->
+        <div class="rounded-2xl bg-slate-900 border border-slate-700 p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xl">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 bg-indigo-500 rounded-xl flex items-center justify-center text-xl font-bold text-white shadow-lg flex-shrink-0">
+              <i class="fa-solid fa-table-tennis-paddle-ball"></i>
             </div>
-
-            <!-- POS Category Filter Pills -->
-            <div id="pos-category-filters" class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none"></div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="pos-catalog-grid"></div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg sm:text-xl font-black text-white leading-tight uppercase">CourtHub Rental POS &amp; Analytics</h2>
+                <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 font-mono text-[10px] font-bold uppercase">Live POS</span>
+              </div>
+              <p class="text-xs text-slate-400">Manage court rental transactions, export CSV reports, analyze Monthly/Weekly/Peak Hours charts, and ring up counter sales.</p>
+            </div>
           </div>
 
-          <!-- POS Current Order Panel (Col 5) -->
-          <div class="lg:col-span-5 rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 flex flex-col justify-between card-glow h-fit lg:sticky lg:top-20">
-            <div>
-              <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
-                <h3 class="text-sm font-black uppercase text-white">Current POS Order</h3>
-                <button onclick="clearPosOrder()" class="text-[10px] text-brand-clay hover:underline uppercase font-bold">Clear All</button>
-              </div>
-
-              <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1 touch-scroll mb-4" id="pos-order-items"></div>
-
-              <div class="py-3 border-y border-white/10 space-y-1.5 text-xs font-mono">
-                <div class="flex justify-between text-slate-400"><span>Items Subtotal:</span> <span id="pos-subtotal" class="text-white font-bold">₱0.00</span></div>
-                <div class="flex justify-between text-base font-black pt-1"><span>Total Due:</span> <span id="pos-total-due" class="text-brand-lime">₱0.00</span></div>
-              </div>
-
-              <div class="mt-4 space-y-3 text-xs">
-                <div>
-                  <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Method</label>
-                  <select id="pos-payment-mode" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-                    <option value="Cash">Cash</option>
-                    <option value="GCash">GCash (0999 883 2346)</option>
-                    <option value="Maya">Maya / Card Terminal</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                  </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Cash Received (₱)</label>
-                    <input type="number" id="pos-cash-received" oninput="calculatePosChange()" placeholder="0" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2 text-white font-mono font-bold">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Change Due (₱)</label>
-                    <div id="pos-change-due" class="w-full bg-brand-black/60 border border-white/10 rounded-xl px-3 py-2 text-brand-lime font-mono font-black text-sm">₱0.00</div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <button onclick="completePosSale()" id="pos-complete-btn" class="mt-6 w-full py-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
-              Complete POS Sale &amp; Deduct Stock →
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="switchPosHubView('transactions')" id="poshub-nav-transactions" class="px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow">
+              <i class="fa-solid fa-receipt"></i>
+              <span>Transactions</span>
+            </button>
+            <button type="button" onclick="switchPosHubView('dashboard')" id="poshub-nav-dashboard" class="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Analytics Dashboard</span>
+            </button>
+            <button type="button" onclick="switchPosHubView('register')" id="poshub-nav-register" class="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition">
+              <i class="fa-solid fa-cash-register"></i>
+              <span>Counter Register</span>
             </button>
           </div>
-
         </div>
 
+        <!-- SUB-VIEW 1: COURTHUB TRANSACTIONS VIEW (Light Mode Card Matching Concept) -->
+        <div id="poshub-view-transactions" class="bg-[#f8fafc] text-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl border-2 border-slate-200 shadow-xl space-y-6">
+          <div class="max-w-7xl mx-auto">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+              <div>
+                <h2 class="text-2xl font-bold text-slate-900">Transactions</h2>
+                <p class="text-slate-500 text-sm">Manage and review all court rental records.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <button type="button" onclick="togglePosHubDemoSeed()" id="poshub-seed-toggle-btn" class="px-3.5 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 rounded-lg flex items-center gap-2 text-xs font-bold transition shadow-sm">
+                  <i class="fa-solid fa-database"></i>
+                  <span id="poshub-seed-toggle-label">Showing: Live + 90-Day Analytics Dataset</span>
+                </button>
+                <button type="button" onclick="openNewBookingModal()" class="px-4 py-2 bg-slate-900 text-[#9BE600] hover:bg-slate-800 rounded-lg flex items-center gap-2 text-xs font-bold uppercase transition shadow-sm">
+                  <i class="fa-solid fa-plus"></i> New Court Rental
+                </button>
+                <button type="button" onclick="exportPosHubCSV()" class="px-4 py-2 bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm text-sm">
+                  <i class="fa-solid fa-file-csv"></i> Export CSV
+                </button>
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row gap-4">
+              <div class="flex-1">
+                <label class="block text-xs font-medium text-slate-500 mb-1">Search</label>
+                <div class="relative">
+                  <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                  <input type="text" id="posHubSearchInput" oninput="applyPosHubFilters()" placeholder="Client name, tracking #, or court..." class="w-full pl-9 pr-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm">
+                </div>
+              </div>
+              <div class="w-full md:w-48">
+                <label class="block text-xs font-medium text-slate-500 mb-1">Start Date</label>
+                <input type="date" id="posHubStartDate" onchange="applyPosHubFilters()" class="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm">
+              </div>
+              <div class="w-full md:w-48">
+                <label class="block text-xs font-medium text-slate-500 mb-1">End Date</label>
+                <input type="date" id="posHubEndDate" onchange="applyPosHubFilters()" class="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm">
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left whitespace-nowrap">
+                  <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm">
+                    <tr>
+                      <th class="px-6 py-4 font-semibold">Tracking #</th>
+                      <th class="px-6 py-4 font-semibold">Date &amp; Time</th>
+                      <th class="px-6 py-4 font-semibold">Client Name</th>
+                      <th class="px-6 py-4 font-semibold">Court</th>
+                      <th class="px-6 py-4 font-semibold text-right">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="posHubTransactionsTableBody" class="divide-y divide-slate-100 text-sm">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Empty State -->
+              <div id="posHubTableEmptyState" class="hidden flex-col items-center justify-center p-12 text-center">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-4 text-2xl">
+                  <i class="fa-solid fa-box-open"></i>
+                </div>
+                <h3 class="text-lg font-medium text-slate-900 mb-1">No transactions found</h3>
+                <p class="text-slate-500 text-sm max-w-sm">We couldn't find any records matching your current filters. Try adjusting the search or dates.</p>
+                <button type="button" onclick="clearPosHubFilters()" class="mt-4 px-4 py-2 text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors">Clear Filters</button>
+              </div>
+
+              <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center text-sm text-slate-600">
+                <span id="posHubTableStatus">Showing 0 entries</span>
+                <button type="button" onclick="switchPosHubView('dashboard')" class="text-indigo-600 font-bold hover:underline text-xs">View Charts &amp; Peak Hours Analysis →</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 2: COURTHUB ANALYTICS DASHBOARD VIEW (Chart.js Monthly, Weekly, Peak Hours & AI Insights) -->
+        <div id="poshub-view-dashboard" class="hidden bg-[#f8fafc] text-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl border-2 border-slate-200 shadow-xl">
+          <div class="max-w-7xl mx-auto space-y-6">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-2xl font-bold text-slate-900">Analytics Dashboard</h2>
+                <p class="text-slate-500 text-sm">Monitor performance, sales, and optimization metrics.</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="switchPosHubView('transactions')" class="px-3.5 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold transition">
+                  ← Back to Transactions List
+                </button>
+              </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-peso-sign"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-500 mb-1">Total Filtered Revenue</p>
+                  <h4 id="pos-kpi-revenue" class="text-2xl font-bold text-slate-900">₱0.00</h4>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-500 mb-1">Total Bookings</p>
+                  <h4 id="pos-kpi-bookings" class="text-2xl font-bold text-slate-900">0</h4>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-xl">
+                  <i class="fa-solid fa-clock"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-500 mb-1">Avg. Hourly Rate</p>
+                  <h4 id="pos-kpi-avg" class="text-2xl font-bold text-slate-900">₱0.00</h4>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Monthly Sales -->
+              <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-bold text-slate-800">Monthly Sales</h3>
+                  <input type="month" id="posDashMonthPicker" onchange="updatePosHubDashboard()" class="px-2 py-1 text-sm bg-white text-slate-900 border border-slate-300 rounded outline-none focus:border-indigo-500">
+                </div>
+                <div class="flex-1 relative min-h-[250px]">
+                  <canvas id="posMonthlyChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Weekly Sales -->
+              <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-bold text-slate-800">Weekly Sales</h3>
+                  <input type="week" id="posDashWeekPicker" onchange="updatePosHubDashboard()" class="px-2 py-1 text-sm bg-white text-slate-900 border border-slate-300 rounded outline-none focus:border-indigo-500">
+                </div>
+                <div class="flex-1 relative min-h-[250px]">
+                  <canvas id="posWeeklyChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Peak Hours -->
+              <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col lg:col-span-2">
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                  <h3 class="font-bold text-slate-800">Peak Hours Analysis</h3>
+                  <div class="flex gap-2 text-sm">
+                    <select id="posPeakPeriodType" onchange="updatePosHubDashboard()" class="bg-white text-slate-900 border border-slate-300 rounded px-2 py-1 outline-none">
+                      <option value="month">Selected Month</option>
+                      <option value="week">Selected Week</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flex-1 relative min-h-[250px]">
+                  <canvas id="posPeakChart"></canvas>
+                </div>
+              </div>
+
+              <!-- AI Suggestions -->
+              <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-xl shadow-md text-white flex flex-col">
+                <div class="flex items-center gap-3 mb-4 text-indigo-300">
+                  <i class="fa-solid fa-lightbulb text-xl"></i>
+                  <h3 class="font-bold text-lg text-white">Actionable Insights</h3>
+                </div>
+                <p class="text-sm text-slate-300 flex-1" id="posSuggestionText">
+                  Analyzing data to generate actionable insights...
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 3: FRONT-DESK PRODUCT & GEAR COUNTER REGISTER (Auto-Deducts Inventory) -->
+        <div id="poshub-view-register" class="hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- POS Product Catalog (Col 7) -->
+            <div class="lg:col-span-7 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h2 class="text-lg sm:text-xl font-black uppercase text-white">Front-Desk Counter Register (Drinks &amp; Gear)</h2>
+                  <p class="text-xs text-slate-400">Displays your custom inventory items. Every sale automatically deducts from stock and logs to POS Transactions.</p>
+                </div>
+                <button onclick="openAddInventoryModal()" class="px-3.5 py-2 rounded-xl bg-brand-lime/15 border border-brand-lime/40 text-brand-lime text-xs font-black uppercase hover:bg-brand-lime hover:text-brand-black transition">
+                  + Add Custom Product
+                </button>
+              </div>
+
+              <!-- POS Category Filter Pills -->
+              <div id="pos-category-filters" class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none"></div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="pos-catalog-grid"></div>
+            </div>
+
+            <!-- POS Current Order Panel (Col 5) -->
+            <div class="lg:col-span-5 rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 flex flex-col justify-between card-glow h-fit lg:sticky lg:top-20">
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                  <h3 class="text-sm font-black uppercase text-white">Current POS Order</h3>
+                  <button onclick="clearPosOrder()" class="text-[10px] text-brand-clay hover:underline uppercase font-bold">Clear All</button>
+                </div>
+
+                <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1 touch-scroll mb-4" id="pos-order-items"></div>
+
+                <div class="py-3 border-y border-white/10 space-y-1.5 text-xs font-mono">
+                  <div class="flex justify-between text-slate-400"><span>Items Subtotal:</span> <span id="pos-subtotal" class="text-white font-bold">₱0.00</span></div>
+                  <div class="flex justify-between text-base font-black pt-1"><span>Total Due:</span> <span id="pos-total-due" class="text-brand-lime">₱0.00</span></div>
+                </div>
+
+                <div class="mt-4 space-y-3 text-xs">
+                  <div>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Method</label>
+                    <select id="pos-payment-mode" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
+                      <option value="Cash">Cash</option>
+                      <option value="GCash">GCash (0999 883 2346)</option>
+                      <option value="Maya">Maya / Card Terminal</option>
+                      <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Cash Received (₱)</label>
+                      <input type="number" id="pos-cash-received" oninput="calculatePosChange()" placeholder="0" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2 text-white font-mono font-bold">
+                    </div>
+                    <div>
+                      <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Change Due (₱)</label>
+                      <div id="pos-change-due" class="w-full bg-brand-black/60 border border-white/10 rounded-xl px-3 py-2 text-brand-lime font-mono font-black text-sm">₱0.00</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <button onclick="completePosSale()" id="pos-complete-btn" class="mt-6 w-full py-4 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 lime-glow">
+                Complete POS Sale &amp; Deduct Stock →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- POS Toast Message Box -->
+        <div id="posMessageBox" class="fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 pointer-events-none">
+          <i class="fa-solid fa-circle-check text-emerald-400" id="posMsgIcon"></i>
+          <span id="posMsgText" class="text-sm font-medium">Action completed successfully.</span>
+        </div>
+
+      </section>
+
+      <!-- ================= 4B. ADMIN-ONLY 3D PICKLEBALL PRO TOURNAMENT HOST TAB ================= -->
+      <section id="tab-tournament" class="hidden space-y-5">
+        <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border-2 border-brand-lime/40 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-2xl">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center text-2xl font-black shadow-lg flex-shrink-0">
+              🏆
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-brand-lime text-brand-black font-mono text-[10px] font-black uppercase">🔒 ADMIN-ONLY TOURNAMENT HOST</span>
+                <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono text-[10px] font-bold uppercase">3D Bracket &amp; Live Scorekeeper</span>
+              </div>
+              <h2 class="text-lg sm:text-xl font-black uppercase text-white mt-1">P&amp;F Rally Ground 3D Pickleball Tournament Manager</h2>
+              <p class="text-xs text-slate-300">Exclusively restricted to Admin. Register players (with camera/photo avatars), choose Singles (16) or Doubles (8), run The Draw, and score matches live (11 pts, Win by 2).</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="reloadAdminTournamentArena()" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold uppercase transition">
+              ↻ Reset / Reload Arena
+            </button>
+            <a href="tournament.html" target="_blank" class="px-4 py-2.5 rounded-xl bg-brand-lime hover:bg-brand-limeHover text-brand-black font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2">
+              <span>⛶ Launch Full-Screen 3D Arena</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Embedded 3D Tournament Simulator Arena -->
+        <div class="rounded-2xl overflow-hidden border-2 border-brand-lime/40 shadow-2xl bg-[#020617] relative" style="height: 780px;">
+          <iframe id="admin-3d-tournament-iframe" src="tournament.html?embed=admin" title="Admin-Only 3D Pickleball Tournament Manager" class="w-full h-full border-0" allow="camera; microphone"></iframe>
+        </div>
       </section>
 
             <!-- ================= 5. INVENTORY TAB (WHOLESALE-TO-RETAIL CAPITAL & AUTO-DEDUCT) ================= -->
@@ -3707,12 +3974,13 @@ function clearFieldError(fieldId) {
         bookings: 'Bookings',
         schedule: 'Court Calendar',
         announcements: 'Announcements',
-        pos: 'POS Register',
+        pos: 'CourtHub Rental POS & Analytics',
+        tournament: 'Admin-Only 3D Tournament Host',
         inventory: 'Inventory',
         reports: 'Sales & Reports',
         settings: 'Settings & Security'
       };
-      ['site-editor', 'overview', 'bookings', 'schedule', 'announcements', 'pos', 'inventory', 'reports', 'settings'].forEach(t => {
+      ['site-editor', 'overview', 'bookings', 'schedule', 'announcements', 'pos', 'tournament', 'inventory', 'reports', 'settings'].forEach(t => {
         const sec = document.getElementById('tab-' + t);
         const nav = document.getElementById('nav-' + t);
         if (sec) sec.classList.add('hidden');
@@ -3770,7 +4038,7 @@ function clearFieldError(fieldId) {
       if (tabId === 'bookings') renderBookingsTable();
       if (tabId === 'schedule') renderScheduleBlocks();
       if (tabId === 'announcements' && typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
-      if (tabId === 'pos') { renderPosCatalog(); renderPosOrder(); }
+      if (tabId === 'pos') { renderPosCatalog(); renderPosOrder(); if (typeof refreshPosHubFromLiveState === 'function') refreshPosHubFromLiveState(); }
       if (tabId === 'inventory') renderInventoryTable();
       if (tabId === 'reports') renderReportsLedger();
     }
@@ -7981,6 +8249,13 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           if (targetEl) {
             setTimeout(() => targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
           }
+        } else if (h === '#tab-tournament' || h === '#tournament') {
+          switchTab('tournament');
+        } else if (h === '#tab-pos' || h === '#pos') {
+          switchTab('pos');
+        } else if (h.startsWith('#tab-')) {
+          const requestedTab = h.replace('#tab-', '');
+          switchTab(requestedTab);
         }
       };
       window.addEventListener('hashchange', handleAdminHashRoute);
@@ -9717,6 +9992,523 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         setTimeout(() => fb.classList.add('hidden'), 3000);
       }
     }
+  
+    // ================= COURTHUB RENTAL POS & ANALYTICS DASHBOARD ENGINE =================
+    let posHubAllTransactions = [];
+    let posHubFilteredTransactions = [];
+    let posHubCurrentView = 'transactions';
+    let posHubIncludeDemoDataset = true;
+    let posHubSeedCache = null;
+
+    let posMonthlyChartInstance = null;
+    let posWeeklyChartInstance = null;
+    let posPeakChartInstance = null;
+
+    const posFormatDateYMD = (date) => {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    const posGetISOWeekString = (date) => {
+      const target = new Date(date.valueOf());
+      const dayNr = (date.getDay() + 6) % 7;
+      target.setDate(target.getDate() - dayNr + 3);
+      const firstThursday = target.valueOf();
+      target.setMonth(0, 1);
+      if (target.getDay() !== 4) {
+        target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+      }
+      const weekNum = 1 + Math.ceil((firstThursday - target) / 604800000);
+      return `${target.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+    };
+
+    function generatePosHub90DaySeed() {
+      if (posHubSeedCache) return posHubSeedCache;
+      const courts = ["Court 1 (Indoor)", "Court 2 (Indoor)", "Court 3 (Outdoor)", "Court 4 (Outdoor)"];
+      const clients = ["Alice Johnson", "Bob Smith", "Charlie Davis", "Diana Prince", "Ethan Hunt", "Fiona Gallagher", "George Lucas", "Hannah Abbott", "Ian Wright", "Julia Stiles"];
+      const dayRateVal = Number((currentSiteConfig && currentSiteConfig.dayRate) || 400);
+      const nightRateVal = Number((currentSiteConfig && currentSiteConfig.nightRate) || 500);
+      const data = [];
+      const today = new Date();
+      let seedCounter = 10420;
+
+      for (let i = -90; i <= 14; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() + i);
+        const dateStr = posFormatDateYMD(date);
+        const monthStr = dateStr.substring(0, 7);
+        const weekStr = posGetISOWeekString(date);
+
+        // Deterministic pseudo-random bookings per day so charts remain stable
+        const dayHash = Math.abs((i * 37 + date.getDate() * 13) % 7) + 1;
+        const booked = new Set();
+
+        for (let j = 0; j < dayHash; j++) {
+          let hour = 8 + ((Math.abs(i * 19 + j * 23)) % 14); // 8 AM to 9 PM
+          if (booked.has(hour)) continue;
+          booked.add(hour);
+
+          const timeStr = `${String(hour).padStart(2, '0')}:00`;
+          const court = courts[(Math.abs(i + j * 3)) % courts.length];
+          const client = clients[(Math.abs(i * 5 + j * 7)) % clients.length];
+          const amount = hour >= 18 ? nightRateVal : dayRateVal;
+          seedCounter++;
+
+          data.push({
+            id: `TRK-${seedCounter}`,
+            date: dateStr,
+            monthStr: monthStr,
+            weekStr: weekStr,
+            time: timeStr,
+            hour: hour,
+            clientName: client,
+            courtNumber: court,
+            amount: amount,
+            isDemoSeed: true
+          });
+        }
+      }
+      posHubSeedCache = data;
+      return data;
+    }
+
+    function buildPosHubLiveRecords() {
+      const records = [];
+      const seenIds = new Set();
+
+      // 1. Real Court Bookings
+      (bookings || []).forEach(b => {
+        if (!b || b.status === 'DECLINED' || b.status === 'CANCELLED') return;
+        const id = String(b.ref || 'PF-BOOK').trim();
+        seenIds.add(id);
+        let dateStr = String(b.date || '').trim();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          const m = String(b.time || '').match(/(\d{4}-\d{2}-\d{2})/);
+          dateStr = m ? m[1] : posFormatDateYMD(new Date());
+        }
+        let hour = 18;
+        let timeStr = '18:00';
+        const tm = String(b.time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+        if (tm) {
+          let h = parseInt(tm[1], 10);
+          const ap = tm[3].toUpperCase();
+          if (ap === 'PM' && h < 12) h += 12;
+          if (ap === 'AM' && h === 12) h = 0;
+          hour = h;
+          timeStr = `${String(h).padStart(2, '0')}:${tm[2]}`;
+        }
+        const parsedDate = new Date(dateStr + 'T12:00:00');
+        const safeDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+        const cNum = extractAdminCourtNum(b.court || '1');
+        const courtLabel = cNum <= 2 ? `Court ${cNum} (Indoor)` : `Court ${cNum} (Outdoor)`;
+        const amt = Number(String(b.total || 400).replace(/[^0-9.]/g, '') || 400);
+
+        records.push({
+          id: id,
+          date: dateStr,
+          monthStr: dateStr.substring(0, 7),
+          weekStr: posGetISOWeekString(safeDate),
+          time: timeStr,
+          hour: hour,
+          clientName: b.name || b.customerName || 'Valued Guest',
+          courtNumber: courtLabel,
+          amount: amt,
+          isDemoSeed: false
+        });
+      });
+
+      // 2. Real POS Counter Sales from salesLedger
+      (salesLedger || []).forEach(s => {
+        if (!s || !s.ref || seenIds.has(String(s.ref).trim())) return;
+        seenIds.add(String(s.ref).trim());
+        const rawDt = String(s.date || '').trim();
+        const dm = rawDt.match(/(\d{4}-\d{2}-\d{2})/);
+        const dateStr = dm ? dm[1] : posFormatDateYMD(new Date());
+        const hm = rawDt.match(/(\d{2}):(\d{2})/);
+        const hour = hm ? parseInt(hm[1], 10) : 14;
+        const timeStr = hm ? `${hm[1]}:${hm[2]}` : '14:00';
+        const parsedDate = new Date(dateStr + 'T12:00:00');
+        const safeDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+
+        records.push({
+          id: String(s.ref),
+          date: dateStr,
+          monthStr: dateStr.substring(0, 7),
+          weekStr: posGetISOWeekString(safeDate),
+          time: timeStr,
+          hour: hour,
+          clientName: s.type === 'Court Rental' ? (s.desc || 'Court Guest') : `POS Walk-In (${s.method || 'Cash'})`,
+          courtNumber: s.type === 'Court Rental' ? 'Court 1 (Indoor)' : 'POS Counter (Indoor)',
+          amount: Number(s.amount || 0),
+          isDemoSeed: false
+        });
+      });
+
+      if (posHubIncludeDemoDataset) {
+        const seed = generatePosHub90DaySeed();
+        seed.forEach(item => records.push(item));
+      }
+
+      records.sort((a, b) => {
+        if (a.date !== b.date) return b.date.localeCompare(a.date);
+        return b.time.localeCompare(a.time);
+      });
+
+      return records;
+    }
+
+    function togglePosHubDemoSeed() {
+      posHubIncludeDemoDataset = !posHubIncludeDemoDataset;
+      const lbl = document.getElementById('poshub-seed-toggle-label');
+      if (lbl) {
+        lbl.textContent = posHubIncludeDemoDataset
+          ? 'Showing: Live + 90-Day Analytics Dataset'
+          : 'Showing: Live Club Bookings Only';
+      }
+      refreshPosHubFromLiveState();
+      showPosHubMessage(posHubIncludeDemoDataset ? '90-Day Analytics Dataset enabled.' : 'Showing Live Club Bookings only.');
+    }
+
+    function initPosHubDefaults() {
+      const mPicker = document.getElementById('posDashMonthPicker');
+      const wPicker = document.getElementById('posDashWeekPicker');
+      const today = new Date();
+      if (mPicker && !mPicker.value) {
+        mPicker.value = posFormatDateYMD(today).substring(0, 7);
+      }
+      if (wPicker && !wPicker.value) {
+        wPicker.value = posGetISOWeekString(today);
+      }
+    }
+
+    function refreshPosHubFromLiveState() {
+      initPosHubDefaults();
+      posHubAllTransactions = buildPosHubLiveRecords();
+      applyPosHubFilters();
+      if (posHubCurrentView === 'dashboard') {
+        updatePosHubDashboard();
+      }
+    }
+
+    function switchPosHubView(view) {
+      posHubCurrentView = view;
+      ['transactions', 'dashboard', 'register'].forEach(v => {
+        const btn = document.getElementById('poshub-nav-' + v);
+        const sec = document.getElementById('poshub-view-' + v);
+        if (btn) {
+          btn.className = (v === view)
+            ? 'px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow'
+            : 'px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition';
+        }
+        if (sec) {
+          sec.classList.toggle('hidden', v !== view);
+        }
+      });
+      if (view === 'transactions') {
+        refreshPosHubFromLiveState();
+      } else if (view === 'dashboard') {
+        refreshPosHubFromLiveState();
+        setTimeout(() => updatePosHubDashboard(), 40);
+      } else if (view === 'register') {
+        renderPosCatalog();
+        renderPosOrder();
+      }
+    }
+
+    function showPosHubMessage(text, type = 'success') {
+      const box = document.getElementById('posMessageBox');
+      const icon = document.getElementById('posMsgIcon');
+      const msgText = document.getElementById('posMsgText');
+      if (!box || !msgText) return;
+      msgText.textContent = text;
+      if (icon) {
+        icon.className = type === 'error'
+          ? 'fa-solid fa-circle-exclamation text-red-400'
+          : 'fa-solid fa-circle-check text-emerald-400';
+      }
+      box.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        box.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    function applyPosHubFilters() {
+      const query = (document.getElementById('posHubSearchInput')?.value || '').toLowerCase();
+      const start = document.getElementById('posHubStartDate')?.value || '';
+      const end = document.getElementById('posHubEndDate')?.value || '';
+
+      posHubFilteredTransactions = posHubAllTransactions.filter(t => {
+        const matchesSearch = t.clientName.toLowerCase().includes(query) ||
+                              t.id.toLowerCase().includes(query) ||
+                              t.courtNumber.toLowerCase().includes(query);
+        let matchesDate = true;
+        if (start && t.date < start) matchesDate = false;
+        if (end && t.date > end) matchesDate = false;
+        return matchesSearch && matchesDate;
+      });
+
+      renderPosHubTable();
+    }
+
+    function clearPosHubFilters() {
+      const s = document.getElementById('posHubSearchInput');
+      const sd = document.getElementById('posHubStartDate');
+      const ed = document.getElementById('posHubEndDate');
+      if (s) s.value = '';
+      if (sd) sd.value = '';
+      if (ed) ed.value = '';
+      applyPosHubFilters();
+    }
+
+    function renderPosHubTable() {
+      const tbody = document.getElementById('posHubTransactionsTableBody');
+      const emptyState = document.getElementById('posHubTableEmptyState');
+      const status = document.getElementById('posHubTableStatus');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (posHubFilteredTransactions.length === 0) {
+        if (emptyState) {
+          emptyState.classList.remove('hidden');
+          emptyState.classList.add('flex');
+        }
+        if (status) status.textContent = 'Showing 0 entries';
+        return;
+      }
+
+      if (emptyState) {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+      if (status) status.textContent = `Showing ${posHubFilteredTransactions.length} entries`;
+
+      const displayLimit = Math.min(posHubFilteredTransactions.length, 200);
+      const rowsHtml = [];
+      for (let i = 0; i < displayLimit; i++) {
+        const t = posHubFilteredTransactions[i];
+        let courtBadge = 'bg-blue-100 text-blue-700';
+        if (t.courtNumber.includes('Outdoor')) courtBadge = 'bg-orange-100 text-orange-700';
+        if (t.courtNumber.includes('POS')) courtBadge = 'bg-emerald-100 text-emerald-700';
+
+        rowsHtml.push(`
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="px-6 py-4 font-mono text-xs font-medium text-slate-500">${pfEscapeHtml(t.id)}</td>
+            <td class="px-6 py-4">
+              <div class="font-medium text-slate-900">${pfEscapeHtml(t.date)}</div>
+              <div class="text-xs text-slate-500">${pfEscapeHtml(t.time)}</div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
+                  ${pfEscapeHtml((t.clientName || 'G').charAt(0).toUpperCase())}
+                </div>
+                <span class="font-medium text-slate-800">${pfEscapeHtml(t.clientName)}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2.5 py-1 rounded-full text-xs font-medium ${courtBadge}">
+                ${pfEscapeHtml(t.courtNumber.replace(/\(.*\)/, '').trim())}
+              </span>
+            </td>
+            <td class="px-6 py-4 font-semibold text-slate-900 text-right">
+              ₱${Number(t.amount || 0).toFixed(2)}
+            </td>
+          </tr>
+        `);
+      }
+      tbody.innerHTML = rowsHtml.join('');
+    }
+
+    function exportPosHubCSV() {
+      if (posHubFilteredTransactions.length === 0) {
+        showPosHubMessage('No data to export.', 'error');
+        return;
+      }
+      const headers = ['Tracking ID', 'Date', 'Time', 'Client Name', 'Court', 'Amount'];
+      const rows = posHubFilteredTransactions.map(t => [
+        t.id, t.date, t.time, `"${String(t.clientName || '').replace(/"/g, '""')}"`, `"${String(t.courtNumber || '').replace(/"/g, '""')}"`, t.amount
+      ]);
+      const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `courthub_export_${posFormatDateYMD(new Date())}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showPosHubMessage('CSV Exported successfully!');
+    }
+
+    function updatePosHubDashboard() {
+      initPosHubDefaults();
+      const selMonth = document.getElementById('posDashMonthPicker')?.value || posFormatDateYMD(new Date()).substring(0, 7);
+      const selWeek = document.getElementById('posDashWeekPicker')?.value || posGetISOWeekString(new Date());
+      const peakType = document.getElementById('posPeakPeriodType')?.value || 'month';
+
+      const monthData = posHubAllTransactions.filter(t => t.monthStr === selMonth);
+      const totalRev = monthData.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+      const totalBookings = monthData.length;
+      const avgRate = totalBookings > 0 ? totalRev / totalBookings : 0;
+
+      const revEl = document.getElementById('pos-kpi-revenue');
+      const bkEl = document.getElementById('pos-kpi-bookings');
+      const avgEl = document.getElementById('pos-kpi-avg');
+      if (revEl) revEl.textContent = `₱${totalRev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      if (bkEl) bkEl.textContent = totalBookings.toLocaleString();
+      if (avgEl) avgEl.textContent = `₱${avgRate.toFixed(2)}`;
+
+      if (typeof Chart === 'undefined') return;
+
+      // 1. Monthly Chart
+      const mCanvas = document.getElementById('posMonthlyChart');
+      if (mCanvas) {
+        const [y, m] = selMonth.split('-');
+        const daysInMonth = new Date(Number(y), Number(m), 0).getDate() || 30;
+        const labels = [];
+        const sales = [];
+        for (let i = 1; i <= daysInMonth; i++) {
+          labels.push(i);
+          sales.push(0);
+        }
+        monthData.forEach(t => {
+          const day = parseInt(t.date.split('-')[2], 10);
+          if (day >= 1 && day <= daysInMonth) sales[day - 1] += Number(t.amount || 0);
+        });
+        if (posMonthlyChartInstance) posMonthlyChartInstance.destroy();
+        posMonthlyChartInstance = new Chart(mCanvas.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Revenue (₱)',
+              data: sales,
+              borderColor: '#4f46e5',
+              backgroundColor: 'rgba(79, 70, 229, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.3,
+              pointRadius: 2,
+              pointHoverRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+
+      // 2. Weekly Chart
+      const wCanvas = document.getElementById('posWeeklyChart');
+      const weekData = posHubAllTransactions.filter(t => t.weekStr === selWeek);
+      if (wCanvas) {
+        const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const sales = [0, 0, 0, 0, 0, 0, 0];
+        weekData.forEach(t => {
+          const dateObj = new Date(t.date + 'T12:00:00');
+          let dayIdx = dateObj.getDay() - 1;
+          if (dayIdx === -1) dayIdx = 6;
+          if (dayIdx >= 0 && dayIdx < 7) sales[dayIdx] += Number(t.amount || 0);
+        });
+        if (posWeeklyChartInstance) posWeeklyChartInstance.destroy();
+        posWeeklyChartInstance = new Chart(wCanvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Revenue (₱)',
+              data: sales,
+              backgroundColor: '#10b981',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+
+      // 3. Peak Hours Chart & Actionable Insights
+      const pCanvas = document.getElementById('posPeakChart');
+      const peakData = peakType === 'month' ? monthData : weekData;
+      if (pCanvas) {
+        const hours = [8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+        const labels = hours.map(h => `${h}:00`);
+        const bkCounts = new Array(hours.length).fill(0);
+        peakData.forEach(t => {
+          const idx = hours.indexOf(t.hour);
+          if (idx !== -1) bkCounts[idx]++;
+        });
+        if (posPeakChartInstance) posPeakChartInstance.destroy();
+        posPeakChartInstance = new Chart(pCanvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Bookings',
+              data: bkCounts,
+              backgroundColor: '#3b82f6',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+
+        const textEl = document.getElementById('posSuggestionText');
+        if (textEl) {
+          if (peakData.length === 0) {
+            textEl.innerHTML = 'Not enough data for the selected period. Try selecting a different date range to generate insights.';
+          } else {
+            let lowestIdx = 3;
+            let lowestVal = Infinity;
+            for (let i = 3; i <= 8; i++) {
+              if (bkCounts[i] < lowestVal) {
+                lowestVal = bkCounts[i];
+                lowestIdx = i;
+              }
+            }
+            const lowHour = hours[lowestIdx];
+            const lowHourStr = `${lowHour}:00 - ${lowHour + 1}:00`;
+            textEl.innerHTML = `
+              <span class="block mb-2 text-indigo-200">Analysis complete.</span>
+              We detected historically low booking volume during <strong>${lowHourStr}</strong>.
+              <br><br>
+              <strong>Recommendation:</strong> Consider offering a <strong>20% Off-Peak Discount</strong> for this time slot to stimulate demand and maximize daily court utilization.
+            `;
+          }
+        }
+      }
+    }
+
+    function reloadAdminTournamentArena() {
+      const ifr = document.getElementById('admin-3d-tournament-iframe');
+      if (ifr) {
+        ifr.src = 'tournament.html?embed=admin&t=' + Date.now();
+      }
+    }
+
   </script>
 
   <!-- ================= UNIVERSAL "TYPE RESET TO CONFIRM" SAFETY POP-UP MODAL ================= -->
