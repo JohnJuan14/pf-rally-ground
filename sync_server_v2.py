@@ -1565,10 +1565,10 @@ def cleanup_existing_port_listeners(ports):
         pass
 
 if __name__ == "__main__":
-    cleanup_existing_port_listeners([8090, 8091])
+    cleanup_existing_port_listeners([8188, 8189])
     load_db()
-    pub_port = int(os.environ.get("PORT", 8090))
-    adm_port = int(os.environ.get("ADMIN_PORT", 8091))
+    pub_port = int(os.environ.get("PORT", 8188))
+    adm_port = int(os.environ.get("ADMIN_PORT", 8189))
     t1 = threading.Thread(target=run_server, args=(pub_port, PUBLIC_DIR), daemon=True)
     t2 = threading.Thread(target=run_server, args=(adm_port, ADMIN_DIR), daemon=True)
     t1.start()

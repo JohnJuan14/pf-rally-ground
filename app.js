@@ -433,8 +433,8 @@ function openAdminPortal(event) {
   if (event) event.preventDefault();
   const host = window.location.hostname;
   const port = window.location.port;
-  if ((host === 'localhost' || host === '127.0.0.1') && (port === '8088' || port === '8090')) {
-    window.location.href = 'http://' + host + ':8091/?login=1';
+  if ((host === 'localhost' || host === '127.0.0.1') && (port === '8088' || port === '8188')) {
+    window.location.href = 'http://' + host + ':8189/?login=1';
   } else {
     window.location.href = '/admin/?login=1';
   }
@@ -2225,65 +2225,70 @@ function closeAnnouncementLightbox() {
 }
 
 function renderPublicAnnouncementBoard() {
-  const feed = document.getElementById('public-announcement-feed');
-  const badge = document.getElementById('ann-floating-badge');
+  const feedEl = document.getElementById('public-announcement-feed');
+  const list = getSharedAnnouncements();
+
   const headerBadge = document.getElementById('header-ann-badge');
-  const rawList = getLiveAnnouncementsList();
+  const floatBadge = document.getElementById('ann-floating-badge');
+  const floatBadgeAlt = document.getElementById('floating-ann-badge');
+  const dropdownBadge = document.getElementById('dropdown-ann-badge');
+  [headerBadge, floatBadge, floatBadgeAlt, dropdownBadge].forEach(b => {
+    if (!b) return;
+    b.textContent = list.length;
+    b.style.display = list.length > 0 ? 'inline-flex' : 'none';
+  });
 
-  // Sort pinned first, preserving chronological order
-  const sorted = [...rawList].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+  if (!feedEl) return;
 
-  if (badge) {
-    badge.textContent = String(sorted.length);
+  if (list.length === 0) {
+    feedEl.innerHTML = `
+      <div class="p-6 text-center rounded-2xl bg-white border border-[#E2E0D8] text-[#52605A] text-xs shadow-sm">
+        <p class="font-bold text-[#0D1F18] mb-1">No Club Updates Yet</p>
+        <p>Official news, Open Play schedules, and court advisories from P&amp;F Rally Ground will appear here.</p>
+      </div>
+    `;
+    return;
   }
-  if (headerBadge) {
-    headerBadge.textContent = String(sorted.length);
-  }
 
-  if (!feed) return;
-
-  const catColors = {
-    'Open Play Alert': 'bg-[#d9f99d] text-[#365314] border-[#84cc16]',
-    'Tournament / Event': 'bg-amber-100 text-amber-900 border-amber-300',
-    'Promo & Rates': 'bg-sky-100 text-sky-900 border-sky-300',
-    'Court Advisory': 'bg-rose-100 text-rose-800 border-rose-300',
-    'Club Update': 'bg-emerald-100 text-emerald-900 border-emerald-300'
-  };
-
-  feed.innerHTML = sorted.map(ann => {
-    const cat = ann.category || 'Club Update';
-    const pillCls = catColors[cat] || catColors['Club Update'];
-    const safeTitle = pfEscapeHtml(ann.title || '');
-    const safeMsg = pfEscapeHtml(ann.message || '').replace(/\n/g, '<br>');
-    const safeAuthor = pfEscapeHtml(ann.author || 'P&F Rally Ground Admin');
-    const safeTime = pfEscapeHtml(ann.createdAt || 'Just now');
-    const hasImg = Boolean(ann.img && String(ann.img).trim());
-    const safeCaption = (ann.title || cat || 'Club Update').replace(/'/g, "\'");
+  feedEl.innerHTML = list.map(item => {
+    const safeTitle = escapeAnnouncementHtml(item.title || 'Club Update');
+    const safeTag = escapeAnnouncementHtml(item.tag || 'CLUB UPDATE');
+    const safeAuthor = escapeAnnouncementHtml(item.author || 'P&F Rally Ground');
+    const safeMsg = escapeAnnouncementHtml(item.message || '');
+    const timeStr = formatAnnouncementTime(item.createdAt);
+    const hasPhoto = Boolean(item.imageDataUrl && String(item.imageDataUrl).trim());
+    const safeImg = hasPhoto ? escapeAnnouncementHtml(item.imageDataUrl) : '';
 
     return `
-      <div class="flex items-start gap-2.5">
-        <img src="assets/logo.png" alt="Admin" class="w-8 h-8 rounded-xl object-contain bg-white p-0.5 border-2 border-[#050E1D] flex-shrink-0 mt-0.5 shadow-sm" style="border-radius:5px;">
-        <div class="flex-1 min-w-0 rounded-2xl bg-white border-2 ${ann.pinned ? 'border-[#0E8A2D] shadow-md' : 'border-slate-200 shadow-sm'} p-3.5 space-y-2 text-[#050E1D]" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
-          <div class="flex flex-wrap items-center justify-between gap-1.5">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-[11px] font-black text-[#050E1D]">${safeAuthor}</span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-black uppercase border ${pillCls}" style="border-radius:5px;">${pfEscapeHtml(cat)}</span>
-              ${ann.pinned ? '<span class="px-1.5 py-0.5 rounded bg-[#9BE600] text-[#050E1D] border border-[#050E1D]/20 text-[8px] font-mono font-black uppercase" style="border-radius:5px;">📌 PINNED</span>' : ''}
-            </div>
-            <span class="text-[9px] font-mono font-bold text-slate-500">${safeTime}</span>
-          </div>
-          ${safeTitle ? `<h4 class="text-xs sm:text-sm font-black text-[#050E1D] leading-snug">${safeTitle}</h4>` : ''}
-          ${safeMsg ? `<p class="text-xs text-slate-700 font-medium leading-relaxed break-words">${safeMsg}</p>` : ''}
-          ${hasImg ? `
-            <div class="pt-1">
-              <div onclick="openAnnouncementLightbox('${ann.img}', '${safeCaption}')" class="group relative rounded-2xl overflow-hidden border border-slate-300 bg-slate-100 cursor-pointer" style="border-radius:5px;">
-                <img src="${ann.img}" alt="${safeTitle || 'Announcement Photo'}" class="w-full max-h-60 object-cover group-hover:scale-[1.02] transition-transform duration-200">
-                <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-[#050E1D]/85 text-white text-[9px] font-mono font-bold" style="border-radius:5px;">🔍 View Full Photo</span>
+      <article class="rounded-2xl bg-white border border-[#E2E0D8] p-3.5 sm:p-4 shadow-sm space-y-2.5 text-[#0D1F18] transition hover:border-[#15803D]/50">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <img src="assets/logo.png" alt="P&F" class="w-8 h-8 rounded-lg object-contain bg-[#F6F5F0] p-0.5 border border-[#E2E0D8] flex-shrink-0">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs font-bold text-[#0D1F18] truncate">${safeAuthor}</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[9px] font-mono font-bold uppercase tracking-wider">${safeTag}</span>
               </div>
+              <span class="text-[10px] font-mono text-[#52605A] block font-medium">${escapeAnnouncementHtml(timeStr)}</span>
             </div>
-          ` : ''}
+          </div>
+          ${item.pinned ? '<span class="px-2 py-0.5 rounded-full bg-[#EFECE6] text-[#0D1F18] border border-[#D5D3CC] text-[9px] font-mono font-bold uppercase flex-shrink-0">Pinned</span>' : ''}
         </div>
-      </div>
+
+        <div class="space-y-1">
+          <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">${safeTitle}</h4>
+          <p class="text-xs text-[#334139] leading-relaxed whitespace-pre-line font-normal">${safeMsg}</p>
+        </div>
+
+        ${hasPhoto ? `
+          <div class="pt-1">
+            <div onclick="openAnnouncementLightbox('${safeImg.replace(/'/g, "\\'")}', '${safeTitle.replace(/'/g, "\\'")}')" class="group relative rounded-xl overflow-hidden border border-[#E2E0D8] bg-[#F6F5F0] cursor-pointer max-h-56 flex items-center justify-center">
+              <img src="${safeImg}" alt="${safeTitle}" class="w-full max-h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300">
+              <span class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-[#0D1F18]/85 text-white text-[9px] font-mono font-bold uppercase backdrop-blur-sm">View Photo</span>
+            </div>
+          </div>
+        ` : ''}
+      </article>
     `;
   }).join('');
 }
@@ -2456,31 +2461,31 @@ function applySiteConfig(incomingCfg) {
         existingTxt.textContent = bannerText;
         bannerEl.querySelectorAll('.pf-live-ticker-clone').forEach(el => { el.textContent = bannerText; });
       } else {
-        bannerEl.setAttribute('style', 'background:linear-gradient(90deg,#9BE600 0%,#C6FF00 50%,#9BE600 100%);color:#050E1D;border-bottom:2px solid #050E1D;padding:6px 12px;height:36px;overflow:hidden;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;');
+        bannerEl.setAttribute('style', 'background:#EFECE6;color:#0D1F18;border-bottom:1px solid #D5D3CC;padding:6px 12px;height:36px;overflow:hidden;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;');
         bannerEl.innerHTML = `
-          <span class="pf-live-ticker-badge" style="display:inline-flex;align-items:center;gap:6px;background:#050E1D;color:#9BE600;font-size:10px;font-weight:900;padding:3px 8px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
-            <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
-            <span>LIVE UPDATE</span>
+          <span class="pf-live-ticker-badge" style="display:inline-flex;align-items:center;gap:6px;background:#15803D;color:#FFFFFF;font-size:10px;font-weight:800;padding:3px 9px;border-radius:9999px;flex-shrink:0;white-space:nowrap;">
+            <span class="w-2 h-2 rounded-full bg-[#A7F3D0] animate-pulse"></span>
+            <span>CLUB ADVISORY</span>
           </span>
           <div class="pf-live-ticker-viewport" style="flex:1 1 0%;min-width:0;overflow:hidden;white-space:nowrap;position:relative;display:flex;align-items:center;">
             <div class="pf-live-ticker-track" id="live-site-update-banner-track" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;">
-              <div class="pf-live-ticker-item" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
+              <div class="pf-live-ticker-item" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:700;color:#0D1F18;">
                 <span id="live-site-update-banner-text">${safeBanner}</span>
-                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 8px;background:rgba(13,31,24,0.08);color:#15803D;border-radius:9999px;font-size:10px;font-weight:800;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">COURTS 1 – 4</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 8px;background:rgba(13,31,24,0.08);color:#15803D;border-radius:9999px;font-size:10px;font-weight:800;white-space:nowrap;">COURTS 1 – 4</span>
               </div>
-              <div class="pf-live-ticker-item" aria-hidden="true" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
+              <div class="pf-live-ticker-item" aria-hidden="true" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:700;color:#0D1F18;">
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 8px;background:rgba(13,31,24,0.08);color:#15803D;border-radius:9999px;font-size:10px;font-weight:800;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
                 <span class="pf-live-ticker-clone">${safeBanner}</span>
-                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">COURTS 1 – 4</span>
+                <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 8px;background:rgba(13,31,24,0.08);color:#15803D;border-radius:9999px;font-size:10px;font-weight:800;white-space:nowrap;">COURTS 1 – 4</span>
               </div>
             </div>
           </div>
-          <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta" style="display:inline-flex;align-items:center;gap:4px;background:#050E1D;color:#FFFFFF;font-size:10px;font-weight:800;padding:3px 9px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
-            <span class="hidden sm:inline">Updates</span>
-            <span>Feed →</span>
+          <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta" style="display:inline-flex;align-items:center;gap:4px;background:#0D1F18;color:#FFFFFF;font-size:10px;font-weight:700;padding:4px 10px;border-radius:9999px;flex-shrink:0;white-space:nowrap;">
+            <span class="hidden sm:inline">Club</span>
+            <span>Updates →</span>
           </button>
         `;
       }
@@ -4616,9 +4621,9 @@ function pfSetTournamentFilter(filterKey) {
 
 function openAdminTournamentHost(event) {
   if (event) event.preventDefault();
-  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.(port === '8088' || port === '8090');
+  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (window.location.port === '8088' || port === '8188');
   const targetUrl = isLocalSplit
-    ? `http://${window.location.hostname}:8091/#tab-tournament`
+    ? `http://${window.location.hostname}:8189/#tab-tournament`
     : `/admin/#tab-tournament`;
   window.location.href = targetUrl;
   return false;
@@ -4688,19 +4693,42 @@ function pfRenderPublicTournaments() {
 
   const navTrn = document.getElementById('nav-link-tournaments');
   const mobNavTrn = document.getElementById('mob-nav-link-tournaments');
+  const topNavTrn = document.getElementById('nav-top-link-tournaments');
+  const filtersWrap = document.getElementById('public-tournament-filters-wrap');
   const hasLiveBracket = Boolean(cfg.liveBracketApproved === true && cfg.liveBracketState && cfg.liveBracketState.phase && cfg.liveBracketState.phase !== 'SETUP');
 
-  // Only show the #tournaments section on the Home Page when Admin explicitly posts/approves an available tournament!
-  if ((!masterPublished || list.length === 0) && !hasLiveBracket) {
-    if (sec) sec.classList.add('hidden');
-    if (navTrn) navTrn.classList.add('hidden');
-    if (mobNavTrn) mobNavTrn.classList.add('hidden');
-    grid.innerHTML = '';
-    return;
-  }
+  // Always keep Tournaments section & navigation links visible
   if (sec) sec.classList.remove('hidden');
   if (navTrn) navTrn.classList.remove('hidden');
   if (mobNavTrn) mobNavTrn.classList.remove('hidden');
+  if (topNavTrn) topNavTrn.classList.remove('hidden');
+
+  const isPublishedWithEvents = Boolean(masterPublished && list.length > 0);
+  if (filtersWrap) {
+    if (isPublishedWithEvents) {
+      filtersWrap.classList.remove('hidden');
+      filtersWrap.classList.add('flex');
+    } else {
+      filtersWrap.classList.add('hidden');
+      filtersWrap.classList.remove('flex');
+    }
+  }
+
+  // Render clean Empty State card when no tournaments are scheduled/published
+  if (!isPublishedWithEvents) {
+    grid.innerHTML = `
+      <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
+        <div class="w-11 h-11 rounded-xl bg-[#E2E0D8] text-[#475569] flex items-center justify-center mx-auto mb-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 21h8m-4-4v4m-5-9a5 5 0 01-4-5V5h4m10 7a5 5 0 004-5V5h-4M7 5h10v5a5 5 0 01-10 0V5z"/></svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-[#0D1F18]">No tournaments on the calendar yet</h3>
+        <p class="text-xs sm:text-sm text-[#52605A] max-w-md mx-auto mt-2 leading-relaxed">
+          Nothing is scheduled right now. New tournaments are posted here as soon as registration opens — check back, or ask us at the desk what's coming up.
+        </p>
+      </div>
+    `;
+    return;
+  }
 
   const filtered = list.filter(t => {
     if (!activePublicTournamentFilter || activePublicTournamentFilter === 'ALL') return true;
@@ -4720,59 +4748,59 @@ function pfRenderPublicTournaments() {
     const pct = Math.min(100, Math.round((regT / maxT) * 100));
 
     return `
-      <div class="rounded-3xl bg-brand-card border-2 border-white/15 hover:border-brand-lime transition-all p-5 sm:p-6 shadow-2xl flex flex-col justify-between space-y-4">
+      <div class="rounded-2xl bg-white border border-[#E2E0D8] hover:border-[#15803D] transition-all p-5 sm:p-6 shadow-sm flex flex-col justify-between space-y-4 text-[#0D1F18]">
         <div class="space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="px-2.5 py-1 rounded-full bg-brand-lime/20 text-brand-lime border border-brand-lime/40 font-mono text-[10px] font-black uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
+            <span class="px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-bold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
             <div class="flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full bg-white/10 text-slate-200 border border-white/15 font-mono text-[9px] font-bold uppercase">🛡️ Admin Hosted</span>
-              <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono text-[10px] font-black uppercase">${spotsLeft} Spots Left</span>
+              <span class="px-2 py-0.5 rounded-full bg-[#F6F5F0] text-[#52605A] border border-[#E2E0D8] font-mono text-[9px] font-bold uppercase">Club Event</span>
+              <span class="px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#0D1F18] border border-[#D5D3CC] font-mono text-[10px] font-bold uppercase">${spotsLeft} Spots Left</span>
             </div>
           </div>
 
-          <h3 class="text-xl sm:text-2xl font-black uppercase tracking-tight text-white font-display leading-tight">${pfEscapeHtml(t.title)}</h3>
-          <p class="text-xs text-slate-300 leading-relaxed">${pfEscapeHtml(t.description || '')}</p>
+          <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-[#0D1F18] leading-tight">${pfEscapeHtml(t.title)}</h3>
+          <p class="text-xs text-[#52605A] leading-relaxed">${pfEscapeHtml(t.description || '')}</p>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 text-xs">
-            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
-              <span class="text-[10px] font-mono uppercase text-slate-400 block">📅 Date &amp; Time</span>
-              <b class="text-white font-mono">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)}</b>
+            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
+              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Date &amp; Time</span>
+              <b class="text-[#0D1F18] font-mono">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)}</b>
             </div>
-            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
-              <span class="text-[10px] font-mono uppercase text-slate-400 block">🎾 Division / Skill</span>
-              <b class="text-brand-lime">${pfEscapeHtml(t.division)}</b>
+            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
+              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Division / Skill</span>
+              <b class="text-[#15803D]">${pfEscapeHtml(t.division)}</b>
             </div>
-            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
-              <span class="text-[10px] font-mono uppercase text-slate-400 block">🏅 Prize Pool &amp; Perks</span>
-              <b class="text-amber-300">${pfEscapeHtml(t.prizePool)}</b>
+            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
+              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Prize Pool &amp; Perks</span>
+              <b class="text-[#C85A32]">${pfEscapeHtml(t.prizePool)}</b>
             </div>
-            <div class="p-3 rounded-2xl bg-brand-black/80 border border-white/10">
-              <span class="text-[10px] font-mono uppercase text-slate-400 block">💵 Registration Fee</span>
-              <b class="text-brand-lime font-mono text-base">${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</b>
+            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
+              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Registration Fee</span>
+              <b class="text-[#15803D] font-mono text-base">${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</b>
             </div>
           </div>
         </div>
 
-        <div class="pt-3 border-t border-white/10 space-y-3">
+        <div class="pt-3 border-t border-[#E2E0D8] space-y-3">
           <div>
             <div class="flex justify-between text-[11px] font-mono mb-1">
-              <span class="text-slate-300">Registered Entries: <b class="text-white">${regT} / ${maxT}</b></span>
-              <span class="text-brand-lime font-bold">${pct}% Full</span>
+              <span class="text-[#52605A]">Registered Entries: <b class="text-[#0D1F18]">${regT} / ${maxT}</b></span>
+              <span class="text-[#15803D] font-bold">${pct}% Full</span>
             </div>
-            <div class="w-full h-2 rounded-full bg-brand-black overflow-hidden border border-white/10">
-              <div class="h-full bg-brand-lime rounded-full" style="width:${pct}%"></div>
+            <div class="w-full h-2 rounded-full bg-[#EFECE6] overflow-hidden border border-[#E2E0D8]">
+              <div class="h-full bg-[#15803D] rounded-full" style="width:${pct}%"></div>
             </div>
           </div>
 
-          <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="w-full py-3.5 px-5 rounded-2xl bg-brand-lime hover:bg-brand-limeHover text-brand-black font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
-            <span>🏆 Register for Tournament (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'})</span>
-            <span>→</span>
+          <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="w-full py-3.5 px-5 rounded-xl bg-[#0D1F18] hover:bg-[#15803D] text-white font-bold text-xs tracking-wide transition active:scale-95 shadow-sm flex items-center justify-center gap-2">
+            <span>Register for Tournament (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}) →</span>
           </button>
         </div>
       </div>
     `;
   }).join('');
 }
+window.renderPublicTournaments = pfRenderPublicTournaments;
 
 function pfRegisterForTournament(tournamentId) {
   const list = pfGetTournamentsList();
@@ -4922,6 +4950,7 @@ window.pfGetDefaultTournaments = pfGetDefaultTournaments;
 window.pfGetTournamentsList = pfGetTournamentsList;
 window.pfSetTournamentFilter = pfSetTournamentFilter;
 window.pfRenderPublicTournaments = pfRenderPublicTournaments;
+window.renderPublicTournaments = pfRenderPublicTournaments;
 window.pfRegisterForTournament = pfRegisterForTournament;
 window.pfCloseTournamentRegModal = pfCloseTournamentRegModal;
 window.pfProceedTournamentToPayment = pfProceedTournamentToPayment;

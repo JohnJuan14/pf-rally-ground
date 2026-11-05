@@ -1433,27 +1433,15 @@
     <!-- Official Logo Court Color Stripe -->
     <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
     <!-- Live Site Update Top Banner (Moving Marquee Ticker Synced from Admin Website Editor) -->
-    <div id="live-site-update-banner" style="background:linear-gradient(90deg,#9BE600 0%,#C6FF00 50%,#9BE600 100%);color:#050E1D;border-bottom:2px solid #050E1D;padding:6px 12px;height:36px;overflow:hidden;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;">
-      <span class="pf-live-ticker-badge" style="display:inline-flex;align-items:center;gap:6px;background:#050E1D;color:#9BE600;font-size:10px;font-weight:900;padding:3px 8px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
-        <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
-        <span>LIVE UPDATE</span>
-      </span>
-      <div class="pf-live-ticker-viewport" style="flex:1 1 0%;min-width:0;overflow:hidden;white-space:nowrap;position:relative;display:flex;align-items:center;">
-        <div class="pf-live-ticker-track" id="live-site-update-banner-track" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;">
-          <div class="pf-live-ticker-item" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
-            <span id="live-site-update-banner-text">LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!</span>
-            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
-            <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!</span>
-            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">COURTS 1 – 4</span>
-          </div>
-          <div class="pf-live-ticker-item" aria-hidden="true" style="display:inline-flex;flex-direction:row;flex-wrap:nowrap;align-items:center;white-space:nowrap;gap:20px;padding-right:40px;font-size:12px;font-weight:800;color:#050E1D;">
-            <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!</span>
-            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">P&amp;F RALLY GROUND • DARAGA</span>
-            <span class="pf-live-ticker-clone">LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!</span>
-            <span class="pf-live-ticker-sep" style="display:inline-block;padding:1px 7px;background:rgba(5,14,29,0.14);color:#050E1D;border-radius:5px;font-size:10px;font-weight:900;white-space:nowrap;">COURTS 1 – 4</span>
-          </div>
+    <div id="live-site-update-banner" class="bg-[#EFECE6] text-[#0D1F18] border-b border-[#D5D3CC] px-3 py-1.5 text-[11px] sm:text-xs font-medium tracking-wide">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2 min-w-0 truncate">
+          <span class="px-2 py-0.5 rounded-full bg-[#15803D] text-white font-mono text-[9px] font-bold uppercase tracking-widest flex-shrink-0">Club Advisory</span>
+          <span id="live-site-update-text" class="truncate font-semibold text-[#0D1F18]">Courts 1–4 Open Daily 6:00 AM – 12:00 MN • Day ₱400/hr • Night ₱500/hr • Open Play ₱150/player</span>
         </div>
+        <a href="book.html" class="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase text-[#15803D] hover:text-[#0D1F18] flex-shrink-0 underline">Reserve Slot →</a>
       </div>
+    </div>
       <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta" style="display:inline-flex;align-items:center;gap:4px;background:#050E1D;color:#FFFFFF;font-size:10px;font-weight:800;padding:3px 9px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
         <span class="hidden sm:inline">Updates</span>
         <span>Feed →</span>
@@ -1503,12 +1491,16 @@
               <span>Reserve a Court</span>
               <span class="text-[10px] font-mono opacity-75">→</span>
             </a>
-            <a href="#tournaments" id="nav-link-tournaments" onclick="pfCloseAllNavDropdowns();" class="hidden pf-nav-dropdown-item">
+            <a href="#tournaments" id="nav-link-tournaments" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
               <span>Tournaments</span>
               <span class="text-[10px] font-mono text-amber-600 font-bold">🏆</span>
             </a>
           </div>
         </div>
+        <a href="#tournaments" id="nav-top-link-tournaments" class="whitespace-nowrap px-3.5 py-2 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-[#0D1F18] hover:text-[#15803D] hover:bg-[#0D1F18]/5 font-bold">
+          <span>Tournaments</span>
+        </a>
+
 
         <!-- Dropdown 2: About (Matches User Reference Design) -->
         <div class="pf-nav-dropdown" data-dropdown="about">
@@ -1525,7 +1517,7 @@
             </a>
             <button type="button" onclick="pfCloseAllNavDropdowns(); toggleAnnouncementBoard();" class="pf-nav-dropdown-item">
               <span>Club Updates</span>
-              <span id="dropdown-ann-badge" class="px-1.5 py-0.5 rounded bg-[#9BE600] text-[#050E1D] text-[10px] font-mono font-black">Live</span>
+              <span id="dropdown-ann-badge" class="px-1.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] text-[10px] font-mono font-bold">Live</span>
             </button>
             <a href="#footer-contact" onclick="pfCloseAllNavDropdowns(); const f=document.querySelector('footer'); if(f){event.preventDefault(); f.scrollIntoView({behavior:'smooth'});}" class="pf-nav-dropdown-item">
               <span>Contact</span>
@@ -1590,7 +1582,7 @@
           <a href="book.html" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
             <span>Reserve a Court</span> <span>→</span>
           </a>
-          <a href="#tournaments" id="mob-nav-link-tournaments" onclick="toggleMobileMenu()" class="hidden flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+          <a href="#tournaments" id="mob-nav-link-tournaments" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
             <span>Tournaments</span> <span>🏆</span>
           </a>
         </div>
@@ -1794,44 +1786,7 @@
           </p>
         </div>
 
-                <div class="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs font-bold bg-[#F8F9F4] px-4 py-3 rounded-2xl border border-slate-200 shadow-lg">
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#D1FAE5] border border-[#6EE7B7] text-[#065F46]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#10B981]"></span>
-            <span>Available</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFECE6] border border-[#C8BCA8] text-[#5C2D0C]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#78350F]"></span>
-            <span>Selected</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#DBEAFE] border border-[#93C5FD] text-[#1E40AF]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#3B82F6]"></span>
-            <span>Confirmed</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F59E0B]"></span>
-            <span>Pending</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FFEDD5] border border-[#FDBA74] text-[#9A3412]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F97316]"></span>
-            <span>Hold</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#EF4444]"></span>
-            <span>Blocked</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9] border border-[#CBD5E1] text-[#334155]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#64748B]"></span>
-            <span>Private</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EDE9FE] border border-[#C4B5FD] text-[#5B21B6]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#8B5CF6]"></span>
-            <span>Open Play</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9]/80 border border-[#E2E8F0] text-[#64748B] opacity-80">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#CBD5E1]"></span>
-            <span>Past</span>
-          </span>
-        </div>
+                
       </div>
 
       <!-- 30-Day Horizontal Date Carousel (Mobile-Optimized White Calendar Box) -->
@@ -1891,6 +1846,45 @@
             <tbody id="schedule-matrix-rows" class="divide-y divide-slate-200 bg-white"></tbody>
           </table>
         </div>
+        <!-- 9-Category Calendar Legend Bar (Positioned Below Court Schedule Table) -->
+        <div id="schedule-category-legend-bar" class="mt-4 p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E5E4DF] flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs font-bold shadow-sm">
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D1FAE5] border border-[#6EE7B7] text-[#065F46]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#10B981]"></span>
+            <span>Available</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE6] border border-[#C8BCA8] text-[#5C2D0C]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#78350F]"></span>
+            <span>Selected</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DBEAFE] border border-[#93C5FD] text-[#1E40AF]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#3B82F6]"></span>
+            <span>Confirmed</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+            <span>Pending</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFEDD5] border border-[#FDBA74] text-[#9A3412]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#F97316]"></span>
+            <span>Hold</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#EF4444]"></span>
+            <span>Blocked</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F1F5F9] border border-[#CBD5E1] text-[#334155]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#64748B]"></span>
+            <span>Private</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] border border-[#C4B5FD] text-[#5B21B6]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#8B5CF6]"></span>
+            <span>Open Play</span>
+          </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F1F5F9]/80 border border-[#E2E8F0] text-[#64748B] opacity-80">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#CBD5E1]"></span>
+            <span>Past</span>
+          </span>
+        </div>
       </div>
 
       <!-- 24-Player Open Play Random Pod & Dedicated Time Slot Rotator Board -->
@@ -1898,34 +1892,27 @@
 
     </div>
   </section>
-  <!-- ================= PICKLEBALL TOURNAMENTS & CHAMPIONSHIP HUB (ADMIN-HOSTED ONLY) ================= -->
-  <section id="tournaments" class="hidden py-16 sm:py-20 bg-brand-black border-t border-white/10 scroll-mt-28" style="scroll-margin-top: 118px;">
+  <!-- ================= PICKLEBALL TOURNAMENTS IN DARAGA ================= -->
+  <section id="tournaments" class="py-16 sm:py-20 bg-[#F6F5F0] text-[#0D1F18] border-t border-[#E2E0D8] scroll-mt-28" style="scroll-margin-top: 118px;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div>
-          <div class="flex flex-wrap items-center gap-2 mb-2">
-            <span class="text-xs font-black uppercase tracking-[0.25em] text-brand-lime">OFFICIAL BICOL PICKLEBALL CIRCUIT &bull; USA PICKLEBALL RULES</span>
-            <span class="px-2.5 py-0.5 rounded-full bg-brand-lime/15 border border-brand-lime/40 text-brand-lime text-[10px] font-mono font-black uppercase">🔒 ADMIN-ONLY HOSTING</span>
-          </div>
-          <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white">
-            PICKLEBALL <span class="text-brand-lime">TOURNAMENTS</span>
+          <span class="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#15803D] block mb-2">COMPETITIVE PLAY &bull; P&amp;F RALLY GROUND</span>
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-[#0D1F18]">
+            Tournaments in Daraga
           </h2>
-          <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-2xl font-medium">
-            Official club tournaments are <b class="text-brand-lime">hosted and managed exclusively by P&amp;F Rally Ground Admin</b>. Players can register for official events below, while only authorized Club Admin staff can launch the 3D Tournament Bracket &amp; Scorekeeper Arena.
+          <p class="text-xs sm:text-sm text-[#52605A] mt-2 max-w-2xl leading-relaxed">
+            Upcoming tournaments and competitive events at P&amp;F Rally Ground in Daraga, Albay. View the schedule, entry fees, prize pools and register online.
           </p>
         </div>
-        <div class="flex flex-col sm:items-end gap-2.5">
-          <a href="/admin/#tab-tournament" onclick="return openAdminTournamentHost(event)" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-card hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-mono font-black text-[11px] uppercase tracking-wider transition shadow-lg">
-            <span>🔒 Admin-Only Tournament Host (Staff Login)</span>
-            <span>→</span>
-          </a>
-          <!-- Format Filter Buttons -->
-          <div class="flex flex-wrap items-center gap-1.5 bg-brand-card p-1.5 rounded-2xl border border-white/10">
-            <button type="button" onclick="pfSetTournamentFilter('ALL')" data-filter="ALL" data-trn-filter="ALL" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider bg-brand-lime text-brand-black shadow transition">All Formats</button>
-            <button type="button" onclick="pfSetTournamentFilter('ROUND_ROBIN')" data-filter="ROUND_ROBIN" data-trn-filter="Round Robin" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">Round Robin</button>
-            <button type="button" onclick="pfSetTournamentFilter('KING_COURT')" data-filter="KING_COURT" data-trn-filter="King of the Court" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">King of the Court</button>
-            <button type="button" onclick="pfSetTournamentFilter('MLP_TEAM')" data-filter="MLP_TEAM" data-trn-filter="MLP" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">MLP Team</button>
-            <button type="button" onclick="pfSetTournamentFilter('DOUBLE_ELIM')" data-filter="DOUBLE_ELIM" data-trn-filter="Double Elimination" class="pf-trn-filter-btn px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 hover:text-white border border-white/10 transition">Double Elim</button>
+        <div id="public-tournament-filters-wrap" class="hidden flex-col sm:items-end gap-2.5">
+          <!-- Format Filter Buttons (Shown automatically when tournaments are scheduled) -->
+          <div class="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-[#E2E0D8] shadow-sm">
+            <button type="button" onclick="pfSetTournamentFilter('ALL')" data-filter="ALL" data-trn-filter="ALL" class="pf-trn-filter-btn px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-wider bg-[#0D1F18] text-white shadow-sm transition">All Formats</button>
+            <button type="button" onclick="pfSetTournamentFilter('ROUND_ROBIN')" data-filter="ROUND_ROBIN" data-trn-filter="Round Robin" class="pf-trn-filter-btn px-3 py-1.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider bg-[#F6F5F0] text-[#52605A] hover:text-[#0D1F18] border border-[#E2E0D8] transition">Round Robin</button>
+            <button type="button" onclick="pfSetTournamentFilter('KING_COURT')" data-filter="KING_COURT" data-trn-filter="King of the Court" class="pf-trn-filter-btn px-3 py-1.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider bg-[#F6F5F0] text-[#52605A] hover:text-[#0D1F18] border border-[#E2E0D8] transition">King of the Court</button>
+            <button type="button" onclick="pfSetTournamentFilter('MLP_TEAM')" data-filter="MLP_TEAM" data-trn-filter="MLP" class="pf-trn-filter-btn px-3 py-1.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider bg-[#F6F5F0] text-[#52605A] hover:text-[#0D1F18] border border-[#E2E0D8] transition">MLP Team</button>
+            <button type="button" onclick="pfSetTournamentFilter('DOUBLE_ELIM')" data-filter="DOUBLE_ELIM" data-trn-filter="Double Elimination" class="pf-trn-filter-btn px-3 py-1.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider bg-[#F6F5F0] text-[#52605A] hover:text-[#0D1F18] border border-[#E2E0D8] transition">Double Elim</button>
           </div>
         </div>
       </div>
@@ -1934,7 +1921,17 @@
       <div id="public-live-bracket-spectator-banner" class="hidden"></div>
 
       <!-- Dynamic Tournaments Grid (Populated by pfRenderPublicTournaments in app.js & editable in Admin) -->
-      <div id="public-tournaments-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+      <div id="public-tournaments-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
+          <div class="w-11 h-11 rounded-xl bg-[#E2E0D8] text-[#475569] flex items-center justify-center mx-auto mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 21h8m-4-4v4m-5-9a5 5 0 01-4-5V5h4m10 7a5 5 0 004-5V5h-4M7 5h10v5a5 5 0 01-10 0V5z"/></svg>
+          </div>
+          <h3 class="text-lg sm:text-xl font-bold text-[#0D1F18]">No tournaments on the calendar yet</h3>
+          <p class="text-xs sm:text-sm text-[#52605A] max-w-md mx-auto mt-2 leading-relaxed">
+            Nothing is scheduled right now. New tournaments are posted here as soon as registration opens — check back, or ask us at the desk what's coming up.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2179,31 +2176,29 @@
           <img src="assets/logo.png" alt="P&amp;F Logo" class="h-10 w-10 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
           <div>
             <div class="flex items-center gap-2">
-              <h3 class="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">Reserve Your Court</h3>
-              <span class="px-2 py-0.5 rounded-full bg-brand-lime/20 text-brand-lime text-[10px] font-mono font-black">ONLINE BOOKING</span>
+              <h3 class="text-base sm:text-lg font-bold tracking-tight text-[#0D1F18] leading-none">Reserve a Court</h3><span class="px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[10px] font-mono font-bold uppercase">Online Booking</span>
             </div>
-            <p class="text-[11px] text-slate-300 mt-1 font-semibold">Choose any date within the next 30 days &bull; Day: ₱400/hr &bull; Night: ₱500/hr</p>
+            <p class="text-[11px] text-[#52605A] mt-1 font-medium">Choose a date within 30 days &bull; Day ₱400/hr &bull; Night ₱500/hr</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <a href="book.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-brand-lime hover:text-brand-black text-[11px] font-mono font-bold text-slate-200 transition" title="Open Full Screen Booking Portal">
+          <a href="book.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#0D1F18] hover:text-white border border-[#E2E0D8] text-[11px] font-mono font-bold transition" title="Open Full Screen Booking Portal">
             <span>Full Page</span>
             <span>↗</span>
           </a>
-          <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-sm font-bold active:scale-95" aria-label="Close reservation drawer">✕</button>
+          <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#52605A] hover:text-white border border-[#E2E0D8] flex items-center justify-center text-sm font-bold transition active:scale-95" aria-label="Close reservation drawer">✕</button>
         </div>
       </div>
 
       <!-- Drawer Scrollable Body -->
-      <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-6 overscroll-contain touch-scroll">
+      <div id="drawer-step-1" class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-4 overscroll-contain touch-scroll bg-[#F6F5F0] text-[#0D1F18]">
 
         <!-- STEP 1: Authentic 31-Day Date Rail (Mobile-Optimized White Calendar Box) -->
         <div class="p-3.5 sm:p-5 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200 space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <div>
-                <span class="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 block leading-none">Step 1</span>
-                <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900 font-display">Choose a Date</span>
+                <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#15803D] block">1. Choose a Date</span>
               </div>
               <span id="drawer-selected-date-label" class="text-[11px] font-mono text-slate-800 font-bold bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full truncate max-w-[150px] sm:max-w-none">Today</span>
             </div>
@@ -2226,31 +2221,31 @@
             <span class="text-xs font-black uppercase tracking-wider text-brand-lime">2. Select Court &amp; Duration</span>
             <div class="flex items-center gap-2">
               <span class="text-xs text-slate-300 font-semibold">Duration:</span>
-              <div class="inline-flex rounded-xl bg-brand-black p-1 border border-white/15 text-xs font-mono">
-                <button type="button" onclick="setDrawerDuration(1)" id="dur-btn-1" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black">1 hr</button>
-                <button type="button" onclick="setDrawerDuration(2)" id="dur-btn-2" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">2 hrs</button>
-                <button type="button" onclick="setDrawerDuration(3)" id="dur-btn-3" class="px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40">3 hrs</button>
+              <div class="inline-flex rounded-xl bg-[#F2F0E8] p-1 border border-[#E2E0D8] text-xs font-mono">
+                <button type="button" onclick="setDrawerDuration(1)" id="dur-btn-1" class="px-3 py-1 rounded-lg text-[11px] font-mono font-bold transition bg-[#0D1F18] text-white shadow-sm">1 hr</button>
+                <button type="button" onclick="setDrawerDuration(2)" id="dur-btn-2" class="px-3 py-1 rounded-lg text-[11px] font-mono font-semibold transition bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18]">2 hrs</button>
+                <button type="button" onclick="setDrawerDuration(3)" id="dur-btn-3" class="px-3 py-1 rounded-lg text-[11px] font-mono font-semibold transition bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18]">3 hrs</button>
               </div>
             </div>
           </div>
 
           <!-- 4 Courts Buttons -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="drawer-court-buttons">
-            <button type="button" onclick="drawerSetCourt(1)" class="drawer-court active py-3 px-3.5 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-center transition flex items-center justify-between" data-court="1">
-              <span class="text-xs sm:text-sm font-black text-brand-lime block">Court 1</span>
-              <span class="text-brand-lime font-mono text-xs">→</span>
+            <button type="button" onclick="drawerSetCourt(1)" class="drawer-court active py-3 px-3.5 rounded-2xl bg-[#0D1F18] text-white border-2 border-[#15803D] shadow-sm text-center transition flex items-center justify-between" data-court="1">
+              <span class="text-xs sm:text-sm font-bold text-white block">Court 1</span>
+              <span class="text-[#A7F3D0] font-mono text-xs">→</span>
             </button>
-            <button type="button" onclick="drawerSetCourt(2)" class="drawer-court py-3 px-3.5 rounded-2xl border border-white/10 bg-brand-black text-center transition hover:border-white/20 flex items-center justify-between" data-court="2">
-              <span class="text-xs sm:text-sm font-black text-white block">Court 2</span>
-              <span class="text-slate-400 font-mono text-xs">→</span>
+            <button type="button" onclick="drawerSetCourt(2)" class="drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between" data-court="2">
+              <span class="text-xs sm:text-sm font-bold text-[#0D1F18] block">Court 2</span>
+              <span class="text-[#52605A] font-mono text-xs">→</span>
             </button>
-            <button type="button" onclick="drawerSetCourt(3)" class="drawer-court py-3 px-3.5 rounded-2xl border border-white/10 bg-brand-black text-center transition hover:border-white/20 flex items-center justify-between" data-court="3">
-              <span class="text-xs sm:text-sm font-black text-white block">Court 3</span>
-              <span class="text-slate-400 font-mono text-xs">→</span>
+            <button type="button" onclick="drawerSetCourt(3)" class="drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between" data-court="3">
+              <span class="text-xs sm:text-sm font-bold text-[#0D1F18] block">Court 3</span>
+              <span class="text-[#52605A] font-mono text-xs">→</span>
             </button>
-            <button type="button" onclick="drawerSetCourt(4)" class="drawer-court py-3 px-3.5 rounded-2xl border border-white/10 bg-brand-black text-center transition hover:border-white/20 flex items-center justify-between" data-court="4">
-              <span class="text-xs sm:text-sm font-black text-white block">Court 4</span>
-              <span class="text-slate-400 font-mono text-xs">→</span>
+            <button type="button" onclick="drawerSetCourt(4)" class="drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between" data-court="4">
+              <span class="text-xs sm:text-sm font-bold text-[#0D1F18] block">Court 4</span>
+              <span class="text-[#52605A] font-mono text-xs">→</span>
             </button>
           </div>
         </div>
@@ -2263,11 +2258,11 @@
           </div>
 
           <!-- Mobile-Friendly Time-of-Day Filter Pills -->
-          <div class="grid grid-cols-4 gap-1.5 p-1 rounded-2xl bg-brand-black border border-white/10 text-[10px] sm:text-[11px] font-mono" id="drawer-period-filter">
-            <button type="button" onclick="setDrawerTimePeriod('ALL')" data-period="ALL" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-black uppercase bg-brand-lime text-brand-black transition">All (18h)</button>
-            <button type="button" onclick="setDrawerTimePeriod('MORNING')" data-period="MORNING" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition">Morning</button>
-            <button type="button" onclick="setDrawerTimePeriod('AFTERNOON')" data-period="AFTERNOON" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition">Afternoon</button>
-            <button type="button" onclick="setDrawerTimePeriod('EVENING')" data-period="EVENING" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition">Evening</button>
+          <div class="grid grid-cols-4 gap-1.5 p-1 rounded-2xl bg-[#F2F0E8] border border-[#E2E0D8] text-[10px] sm:text-[11px] font-mono" id="drawer-period-filter">
+            <button type="button" onclick="setDrawerTimePeriod('ALL')" data-period="ALL" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase bg-[#0D1F18] text-white shadow-sm transition">All (18h)</button>
+            <button type="button" onclick="setDrawerTimePeriod('MORNING')" data-period="MORNING" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-semibold uppercase bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18] transition">Morning</button>
+            <button type="button" onclick="setDrawerTimePeriod('AFTERNOON')" data-period="AFTERNOON" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-semibold uppercase bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18] transition">Afternoon</button>
+            <button type="button" onclick="setDrawerTimePeriod('EVENING')" data-period="EVENING" class="drawer-period-btn py-1.5 px-1.5 rounded-xl font-semibold uppercase bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18] transition">Evening</button>
           </div>
 
           <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="drawer-time-chips">
@@ -2449,24 +2444,23 @@
       </div>
 
       <!-- Drawer Sticky Footer -->
-      <div class="flex-shrink-0 p-4 sm:p-5 border-t border-white/10 bg-brand-dark/95 backdrop-blur-xl z-20 space-y-3">
+      <div class="flex-shrink-0 p-4 sm:p-5 border-t border-[#E2E0D8] bg-white text-[#0D1F18] z-20 space-y-3 shadow-[0_-8px_24px_rgba(13,31,24,0.06)]">
         <div class="flex items-center justify-between text-xs">
           <div>
-            <span class="text-[10px] font-mono text-slate-400 block uppercase" id="drawer-summary-meta">Court 1 &bull; 1 hr session</span>
+            <span class="text-[10px] font-mono text-[#52605A] block uppercase" id="drawer-summary-meta">Court 1 &bull; 1 hr session</span>
             <div class="flex items-center gap-2 mt-0.5">
-              <span class="text-white font-bold" id="drawer-row-court-label">Court Hire</span>
-              <span class="text-brand-lime font-mono font-bold" id="drawer-cost-court">₱400.00</span>
+              <span class="text-[#0D1F18] font-bold" id="drawer-row-court-label">Court Hire</span>
+              <span class="text-[#15803D] font-mono font-bold" id="drawer-cost-court">₱400.00</span>
             </div>
           </div>
           <div class="text-right">
-            <span class="text-[10px] font-mono text-slate-400 block uppercase">Total Amount</span>
-            <span class="text-2xl sm:text-3xl font-black text-brand-lime font-mono" id="drawer-cost-total">₱400.00</span>
+            <span class="text-[10px] font-mono text-[#52605A] block uppercase">Total Amount</span>
+            <span class="text-2xl sm:text-3xl font-black text-[#15803D] font-mono" id="drawer-cost-total">₱400.00</span>
           </div>
         </div>
 
-        <button type="button" onclick="handleDrawerProceed()" class="w-full py-3.5 rounded-2xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider hover:bg-brand-limeHover transition active:scale-95 shadow-lg shadow-brand-lime/25 flex items-center justify-center gap-2">
-          <span>Proceed to Payment &amp; QR Verification</span>
-          <span>&rarr;</span>
+        <button type="button" onclick="handleDrawerProceed()" class="w-full py-3.5 px-5 rounded-xl bg-[#0D1F18] hover:bg-[#15803D] text-white font-bold text-xs sm:text-sm tracking-wide transition active:scale-95 shadow-md flex items-center justify-center gap-2">
+          <span>Continue to Payment &amp; QR Verification →</span>
         </button>
       </div>
 
@@ -2688,31 +2682,63 @@
     </div>
   </div>
 
-  <!-- 3B. FLOATING LIVE CHAT-STYLE ANNOUNCEMENT BOARD (WHITE OUTER BOX STUDIO DESIGN) -->
-  <div id="announcement-floating-root" class="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end">
+    <!-- 3B. FLOATING CLUB UPDATES & ADVISORIES BOARD (KOKONUT UI / BKLIT UI EDITORIAL DESIGN) -->
+  <div id="announcement-floating-root" class="fixed bottom-4 left-3 sm:bottom-6 sm:left-6 z-40 flex flex-col items-start">
     
-    <!-- Expandable Live-Chat Style Announcement Window (Crisp White Outer Box) -->
-    <div id="announcement-board-window" class="hidden mb-3 w-[calc(100vw-1.5rem)] sm:w-[410px] max-h-[76dvh] rounded-3xl bg-white text-[#050E1D] border-2 border-white ring-2 ring-[#050E1D]/20 shadow-[0_24px_65px_rgba(0,0,0,0.65)] flex flex-col overflow-hidden" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
-      <!-- Top Court Accent Line -->
-      <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D] flex-shrink-0"></div>
+    <!-- Expandable Editorial Announcement Window (Warm Alabaster & Crisp White) -->
+    <div id="announcement-board-window" class="hidden mb-3 w-[calc(100vw-1.5rem)] sm:w-[410px] max-h-[76dvh] rounded-2xl bg-[#F6F5F0] text-[#0D1F18] border border-[#D5D3CC] shadow-[0_24px_60px_rgba(13,31,24,0.22)] flex flex-col overflow-hidden">
+      <!-- Top Architectural Accent Bar -->
+      <div class="h-1 w-full bg-gradient-to-r from-[#0D1F18] via-[#15803D] to-[#C85A32] flex-shrink-0"></div>
 
-      <!-- Chat Header (White Studio Header) -->
-      <div class="px-4 py-3.5 bg-white border-b-2 border-slate-200 flex items-center justify-between gap-2 flex-shrink-0" style="background:#FFFFFF;">
+      <!-- Editorial Header -->
+      <div class="px-4 py-3.5 bg-white border-b border-[#E2E0D8] flex items-center justify-between gap-2 flex-shrink-0">
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="relative flex-shrink-0">
-            <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Admin" class="w-10 h-10 rounded-xl object-contain bg-white p-0.5 border-2 border-[#050E1D] shadow-sm">
-            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#16A34A] ring-2 ring-white animate-pulse"></span>
+            <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Admin" class="w-10 h-10 rounded-xl object-contain bg-white p-0.5 border border-[#E2E0D8] shadow-sm">
+            <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#15803D] ring-2 ring-white animate-pulse"></span>
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <h3 class="text-xs sm:text-sm font-black uppercase tracking-tight text-[#050E1D] truncate font-display">Club Announcement Board</h3>
-              <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[9px] font-mono font-black uppercase">LIVE</span>
+              <h3 class="text-xs sm:text-sm font-bold tracking-tight text-[#0D1F18] truncate">Club Updates &amp; Advisories</h3>
+              <span class="px-2 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[9px] font-mono font-bold uppercase">Live</span>
             </div>
-            <p class="text-[10px] text-slate-600 font-semibold truncate">Official Updates &amp; Photos from P&amp;F Admin</p>
+            <p class="text-[11px] text-[#52605A] font-medium truncate">Official news, Open Play schedules &amp; court advisories</p>
           </div>
         </div>
-        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-700 hover:text-white border border-slate-300 hidden md:flex items-center justify-center text-xs font-black transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
+        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#52605A] hover:text-white border border-[#E2E0D8] flex items-center justify-center text-xs font-bold transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
       </div>
+
+      <!-- Feed Stream (Warm Alabaster Surface) -->
+      <div id="public-announcement-feed" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 bg-[#F6F5F0] overscroll-contain touch-scroll">
+        <!-- Dynamically populated by renderPublicAnnouncementBoard() -->
+      </div>
+
+      <!-- Editorial Footer Bar -->
+      <div class="px-4 py-3 bg-white border-t border-[#E2E0D8] flex items-center justify-between gap-2 text-[11px] flex-shrink-0">
+        <span class="text-[#52605A] font-mono font-semibold flex items-center gap-1.5 truncate">
+          <span class="w-2 h-2 rounded-full bg-[#15803D]"></span>
+          <span>P&amp;F Rally Ground Desk</span>
+        </span>
+        <button type="button" onclick="toggleAnnouncementBoard(); openBookingDrawer();" class="px-3.5 py-1.5 rounded-xl bg-[#0D1F18] hover:bg-[#15803D] text-white font-bold tracking-wide text-[11px] transition flex-shrink-0 shadow-sm">
+          Reserve a Court →
+        </button>
+      </div>
+    </div>
+
+    <!-- Sleek Kokonut UI / Bklit UI Floating Card Pill -->
+    <button type="button" id="announcement-launcher-btn" onclick="toggleAnnouncementBoard()" class="group relative flex items-center gap-2.5 bg-white/95 backdrop-blur-md text-[#0D1F18] border border-[#D5D3CC] hover:border-[#15803D] shadow-[0_12px_32px_rgba(13,31,24,0.14)] px-3.5 py-2.5 rounded-2xl transition-all active:scale-95">
+      <div class="w-9 h-9 rounded-xl bg-[#0D1F18] text-[#A7F3D0] flex items-center justify-center relative flex-shrink-0 shadow-sm">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#10B981] ring-2 ring-white animate-pulse"></span>
+      </div>
+      <div class="text-left pr-0.5">
+        <span class="text-[9px] font-mono uppercase tracking-widest text-[#15803D] font-bold block leading-none">News &amp; Advisories</span>
+        <span class="text-xs font-bold text-[#0D1F18] block leading-tight mt-0.5">Club Updates</span>
+      </div>
+      <span id="ann-floating-badge" class="bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] rounded-full px-2 py-0.5 text-[10px] font-mono font-bold flex items-center justify-center leading-none">1</span>
+      <span id="floating-ann-badge" class="hidden">1</span>
+    </button>
+  </div>
 
       <!-- Chat Feed Stream (Clean Light/White Studio Feed) -->
       <div id="public-announcement-feed" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 bg-slate-50 overscroll-contain touch-scroll" style="background:#F8FAFC;">
@@ -2748,7 +2774,7 @@
   <!-- Full-Screen Announcement Photo Lightbox Modal (White Outer Frame) -->
   <div id="ann-photo-lightbox" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div onclick="closeAnnouncementLightbox()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
-    <div class="relative z-10 max-w-2xl w-full rounded-3xl bg-white border-2 border-slate-200 p-3 sm:p-5 shadow-2xl text-center" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
+    <div class="relative z-10 max-w-2xl w-full rounded-3xl bg-white border-2 border-slate-200 p-3 sm:p-5 shadow-2xl text-center" style="background:#FFFFFF;color:#0D1F18;border-radius:16px;">
       <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-200">
         <span id="ann-lightbox-caption" class="text-xs font-black uppercase text-[#050E1D] truncate pr-2">Official Club Announcement Photo</span>
         <button type="button" onclick="closeAnnouncementLightbox()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white text-xs font-black flex items-center justify-center flex-shrink-0">✕</button>
@@ -2998,9 +3024,9 @@
         btn.type = 'button';
         btn.className = `date-tile ${isSelected ? 'date-tile-active' : ''}`;
         btn.innerHTML = `
-          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
-          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
-          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
+          <span class="tile-weekday block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider ${isSelected ? 'text-white' : 'text-[#52605A]'}">${d.weekday}</span>
+          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-[#0D1F18]'}">${d.day}</span>
+          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-semibold opacity-80 ${isSelected ? 'text-white' : 'text-[#52605A]'}">${d.month}</span>
         `;
         btn.onclick = () => {
           selectedScheduleDateYMD = d.value;
@@ -3212,15 +3238,15 @@
     }
 
     function setDrawerTimePeriod(period) {
-      currentDrawerPeriod = period;
+      if (typeof currentDrawerPeriod !== 'undefined') currentDrawerPeriod = period;
       document.querySelectorAll('.drawer-period-btn').forEach(btn => {
         if (btn.dataset.period === period) {
-          btn.className = 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-black uppercase bg-brand-lime text-brand-black transition';
+          btn.className = 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase bg-[#0D1F18] text-white shadow-sm transition';
         } else {
-          btn.className = 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-bold uppercase text-slate-300 hover:text-white transition';
+          btn.className = 'drawer-period-btn py-1.5 px-1.5 rounded-xl font-semibold uppercase bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18] transition';
         }
       });
-      renderDrawerSlots();
+      if (typeof renderDrawerSlots === 'function') renderDrawerSlots();
     }
 
     // 3. Drawer Date Rail & Time Chips (#booking-drawer)
@@ -3241,9 +3267,9 @@
         btn.onclick = () => selectDrawerDate(d.value, btn);
 
         btn.innerHTML = `
-          <span class="tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.weekday}</span>
-          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-[#050E1D]' : 'text-white'}">${d.day}</span>
-          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 ${isSelected ? 'text-[#050E1D]' : 'text-slate-400'}">${d.month}</span>
+          <span class="tile-weekday block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider ${isSelected ? 'text-white' : 'text-[#52605A]'}">${d.weekday}</span>
+          <span class="tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono ${isSelected ? 'text-white' : 'text-[#0D1F18]'}">${d.day}</span>
+          <span class="tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-semibold opacity-80 ${isSelected ? 'text-white' : 'text-[#52605A]'}">${d.month}</span>
         `;
         container.appendChild(btn);
       });
@@ -3289,13 +3315,13 @@
         const c = Number(btn.getAttribute('data-court')) || (idx + 1);
         const spans = btn.querySelectorAll('span');
         if (c === normalized) {
-          btn.className = 'drawer-court active py-3 px-3.5 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-center transition flex items-center justify-between';
-          if (spans[0]) spans[0].className = 'text-xs sm:text-sm font-black text-brand-lime block';
-          if (spans[1]) spans[1].className = 'text-brand-lime font-mono text-xs';
+          btn.className = 'drawer-court active py-3 px-3.5 rounded-2xl bg-[#0D1F18] text-white border-2 border-[#15803D] shadow-sm text-center transition flex items-center justify-between';
+          if (spans[0]) spans[0].className = 'text-xs sm:text-sm font-bold text-white block';
+          if (spans[1]) spans[1].className = 'text-[#A7F3D0] font-mono text-xs';
         } else {
-          btn.className = 'drawer-court py-3 px-3.5 rounded-2xl border border-white/10 bg-brand-black text-center transition hover:border-white/20 flex items-center justify-between';
-          if (spans[0]) spans[0].className = 'text-xs sm:text-sm font-black text-white block';
-          if (spans[1]) spans[1].className = 'text-slate-400 font-mono text-xs';
+          btn.className = 'drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between';
+          if (spans[0]) spans[0].className = 'text-xs sm:text-sm font-bold text-[#0D1F18] block';
+          if (spans[1]) spans[1].className = 'text-[#52605A] font-mono text-xs';
         }
       });
       renderDrawerSlots();
@@ -3303,18 +3329,18 @@
     }
 
     function setDrawerDuration(hours) {
-      DRAWER_STATE.selectedDuration = hours;
+      if (typeof DRAWER_STATE !== 'undefined') DRAWER_STATE.selectedDuration = hours;
       [1, 2, 3].forEach(h => {
         const btn = document.getElementById(`dur-btn-${h}`);
         if (!btn) return;
         if (h === hours) {
-          btn.className = 'px-3 py-1 rounded-lg border text-[11px] font-mono font-black transition border-brand-lime bg-brand-lime text-brand-black';
+          btn.className = 'px-3 py-1 rounded-lg text-[11px] font-mono font-bold transition bg-[#0D1F18] text-white shadow-sm';
         } else {
-          btn.className = 'px-3 py-1 rounded-lg border text-[11px] font-mono font-bold transition border-white/15 bg-brand-black text-slate-300 hover:border-brand-lime/40';
+          btn.className = 'px-3 py-1 rounded-lg text-[11px] font-mono font-semibold transition bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18]';
         }
       });
-      renderDrawerSlots();
-      recalculateDrawerTotal();
+      if (typeof renderDrawerSlots === 'function') renderDrawerSlots();
+      if (typeof recalculateDrawerTotal === 'function') recalculateDrawerTotal();
     }
 
     function renderDrawerSlots() {

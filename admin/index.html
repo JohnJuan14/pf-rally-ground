@@ -2220,47 +2220,6 @@
                 </button>
               </div>
             </div>
-        <div class="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs font-bold bg-[#F8F9F4] px-4 py-3 rounded-2xl border border-slate-200 shadow-lg">
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#D1FAE5] border border-[#6EE7B7] text-[#065F46]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#10B981]"></span>
-            <span>Available</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFECE6] border border-[#C8BCA8] text-[#5C2D0C]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#78350F]"></span>
-            <span>Selected</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#DBEAFE] border border-[#93C5FD] text-[#1E40AF]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#3B82F6]"></span>
-            <span>Confirmed</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F59E0B]"></span>
-            <span>Pending</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FFEDD5] border border-[#FDBA74] text-[#9A3412]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F97316]"></span>
-            <span>Hold</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#EF4444]"></span>
-            <span>Blocked</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9] border border-[#CBD5E1] text-[#334155]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#64748B]"></span>
-            <span>Private</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EDE9FE] border border-[#C4B5FD] text-[#5B21B6]">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#8B5CF6]"></span>
-            <span>Open Play</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9]/80 border border-[#E2E8F0] text-[#64748B] opacity-80">
-            <span class="cal-cat-dot w-2.5 h-2.5 bg-[#CBD5E1]"></span>
-            <span>Past</span>
-          </span>
-        </div>
-            <div class="hidden">
-            </div>
-
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <table class="w-full table-fixed sm:table-auto text-xs border-collapse">
                 <thead>
@@ -2274,6 +2233,46 @@
                 </thead>
                 <tbody id="admin-calendar-matrix-tbody" class="divide-y divide-slate-200 bg-white"></tbody>
               </table>
+            </div>
+
+            <!-- 9-Category Calendar Legend Bar (Positioned Below the Calendar Table) -->
+            <div class="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs font-bold bg-[#F8F9F4] px-4 py-3 rounded-2xl border border-slate-200 shadow-lg">
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#D1FAE5] border border-[#6EE7B7] text-[#065F46]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#10B981]"></span>
+                <span>Available</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EFECE6] border border-[#C8BCA8] text-[#5C2D0C]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#78350F]"></span>
+                <span>Selected</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#DBEAFE] border border-[#93C5FD] text-[#1E40AF]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#3B82F6]"></span>
+                <span>Confirmed</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F59E0B]"></span>
+                <span>Pending</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FFEDD5] border border-[#FDBA74] text-[#9A3412]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F97316]"></span>
+                <span>Hold</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#EF4444]"></span>
+                <span>Blocked</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9] border border-[#CBD5E1] text-[#334155]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#64748B]"></span>
+                <span>Private</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EDE9FE] border border-[#C4B5FD] text-[#5B21B6]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#8B5CF6]"></span>
+                <span>Open Play</span>
+              </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9]/80 border border-[#E2E8F0] text-[#64748B] opacity-80">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#CBD5E1]"></span>
+                <span>Past</span>
+              </span>
             </div>
           </div>
         </div>
@@ -4193,8 +4192,8 @@ function clearFieldError(fieldId) {
       if (event) event.preventDefault();
       const host = window.location.hostname;
       const port = window.location.port;
-      if ((host === 'localhost' || host === '127.0.0.1') && (port === '8089' || port === '8091')) {
-        window.location.href = 'http://' + host + ':8090/' + (pagePath || '');
+      if ((host === 'localhost' || host === '127.0.0.1') && (port === '8089' || port === '8189')) {
+        window.location.href = 'http://' + host + ':8188/' + (pagePath || '');
       } else {
         const target = pagePath && pagePath !== 'index.html' ? '/' + pagePath.replace(/^\//, '') : '/';
         window.location.href = target;
@@ -4483,9 +4482,9 @@ function clearFieldError(fieldId) {
 
       const stateEndpoints = ['/api/state'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        stateEndpoints.push('http://127.0.0.1:8090/api/state');
+        stateEndpoints.push('http://127.0.0.1:8188/api/state');
         stateEndpoints.push('http://127.0.0.1:8089/api/state');
-        stateEndpoints.push('http://localhost:8090/api/state');
+        stateEndpoints.push('http://localhost:8188/api/state');
       }
 
       for (const ep of stateEndpoints) {
@@ -5215,7 +5214,7 @@ function clearFieldError(fieldId) {
       renderAllAdminViews(true);
       const delEndpoints = ['/api/bookings/delete'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        delEndpoints.push('http://localhost:8090/api/bookings/delete');
+        delEndpoints.push('http://localhost:8188/api/bookings/delete');
         delEndpoints.push('http://127.0.0.1:8089/api/bookings/delete');
       }
       for (const ep of delEndpoints) {
@@ -9305,7 +9304,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         }
       } catch (e) {}
 
-      const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8090/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
+      const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8188/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -9357,7 +9356,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         labelMap[ch] || labelMap.all,
         descMap[ch] || descMap.all,
         async () => {
-          const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8090/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
+          const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8188/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
           let updatedCfg = null;
           for (const ep of endpoints) {
             try {
@@ -9482,7 +9481,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       annMutationLockUntil = Date.now() + 5000;
       const endpoints = ['/api/announcements'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        endpoints.push('http://127.0.0.1:8090/api/announcements');
+        endpoints.push('http://127.0.0.1:8188/api/announcements');
         endpoints.push('http://127.0.0.1:8089/api/announcements');
       }
       for (const ep of endpoints) {
@@ -9884,7 +9883,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     async function uploadAssetToServer(slotKey, dataUrl) {
       const endpoints = ['/api/upload-asset'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        endpoints.push('http://127.0.0.1:8090/api/upload-asset');
+        endpoints.push('http://127.0.0.1:8188/api/upload-asset');
         endpoints.push('http://127.0.0.1:8089/api/upload-asset');
       }
       let finalUrl = dataUrl;
@@ -9978,9 +9977,9 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           prev.src = resolved;
         }
         prev.onerror = function() {
-          if (val.startsWith('assets/') && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.(port === '8089' || port === '8091')) {
+          if (val.startsWith('assets/') && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (window.location.port === '8089' || window.location.port === '8189')) {
             this.onerror = function() { this.onerror = null; this.src = resolvePreviewAssetPath(defVal); };
-            this.src = 'http://' + window.location.hostname + ':8090/' + val;
+            this.src = 'http://' + window.location.hostname + ':8188/' + val;
           } else if (defVal && this.src !== resolvePreviewAssetPath(defVal)) {
             this.onerror = null;
             this.src = resolvePreviewAssetPath(defVal);
@@ -10310,7 +10309,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       siteConfigLockUntil = Date.now() + 5000;
       const endpoints = ['/api/site-config'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        endpoints.push('http://127.0.0.1:8090/api/site-config');
+        endpoints.push('http://127.0.0.1:8188/api/site-config');
         endpoints.push('http://127.0.0.1:8089/api/site-config');
       }
       for (const ep of endpoints) {
