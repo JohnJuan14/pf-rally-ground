@@ -1836,35 +1836,70 @@
 
 
 
-/* === P&F RALLY GROUND CLEAN PRO TOURNAMENT & BRACKET DESIGN SYSTEM === */
+
+/* === P&F RALLY GROUND PRO MAX TOURNAMENT & BRACKET DESIGN SYSTEM === */
 .pf-arena-stage {
   position: relative;
-  background: linear-gradient(160deg, #081C14 0%, #0D291E 55%, #071710 100%) !important;
-  border: 1.5px solid #15803D !important;
-  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(2, 132, 199, 0.24) 0%, rgba(21, 128, 61, 0.22) 38%, rgba(7, 23, 16, 0.98) 78%),
+    linear-gradient(145deg, #061510 0%, #0B241A 50%, #071610 100%) !important;
+  border: 2px solid #15803D !important;
+  border-radius: 28px !important;
   overflow: hidden;
   color: #FFFFFF !important;
-  box-shadow: 0 20px 48px -12px rgba(6, 22, 15, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 24px 60px -15px rgba(4, 18, 12, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
 }
 .pf-arena-stage::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(110, 231, 183, 0.1) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image:
+    radial-gradient(rgba(163, 230, 53, 0.16) 1.25px, transparent 1.25px),
+    linear-gradient(90deg, transparent 49.8%, rgba(255, 255, 255, 0.05) 49.8%, rgba(255, 255, 255, 0.05) 50.2%, transparent 50.2%);
+  background-size: 22px 22px, 100% 100%;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Hide legacy corner shards completely */
+/* Brand-Matched Corner Shards (Royal Blue #0284C7, Pickleball Volt #A3E635, Court Green #15803D) */
 .pf-arena-shard-tl,
 .pf-arena-shard-tr,
 .pf-arena-shard-bl,
 .pf-arena-shard-br {
-  display: none !important;
+  display: block !important;
+  position: absolute;
+  width: 170px;
+  height: 82px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.9;
+}
+.pf-arena-shard-tl {
+  top: -16px;
+  left: -24px;
+  background: linear-gradient(135deg, #A3E635 0%, #0284C7 62%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 56% 42%, 80% 42%, 0 100%);
+}
+.pf-arena-shard-tr {
+  top: -16px;
+  right: -24px;
+  background: linear-gradient(225deg, #A3E635 0%, #0284C7 62%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 42%, 44% 42%);
+}
+.pf-arena-shard-bl {
+  bottom: -16px;
+  left: -24px;
+  background: linear-gradient(45deg, #A3E635 0%, #15803D 62%, transparent 100%);
+  clip-path: polygon(0 0, 72% 58%, 45% 58%, 100% 100%, 0 100%);
+}
+.pf-arena-shard-br {
+  bottom: -16px;
+  right: -24px;
+  background: linear-gradient(315deg, #A3E635 0%, #15803D 62%, transparent 100%);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 55% 58%, 28% 58%);
 }
 
-/* Center Bracket Logo Emblem — Clean Padded Crest with Generous Breathing Room */
+/* Rectangular Court Crest Frame with FIXED SPACING to the pill & surrounding cards */
 .pf-center-crest-wrap {
   position: relative;
   display: flex;
@@ -1872,50 +1907,55 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 8px 6px;
+  gap: 14px !important;
+  padding: 10px 14px !important;
 }
 .pf-center-court-crest {
-  width: 96px;
-  height: 114px;
+  width: 112px;
+  height: 136px;
   border-radius: 18px !important;
-  padding: 6px;
-  background: #FFFFFF !important;
-  border: 2px solid #10B981 !important;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(16, 185, 129, 0.18) !important;
+  padding: 4px;
+  background: linear-gradient(180deg, #38BDF8 0%, #A3E635 50%, #22C55E 100%) !important;
+  box-shadow:
+    0 14px 34px -6px rgba(0, 0, 0, 0.75),
+    0 0 28px rgba(163, 230, 53, 0.38),
+    0 0 0 2px rgba(255, 255, 255, 0.22) !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
 }
 .pf-center-court-crest:hover {
-  transform: translateY(-2px);
+  transform: scale(1.04);
 }
 .pf-center-court-crest-inner {
   width: 100%;
   height: 100%;
-  border-radius: 12px !important;
+  border-radius: 14px !important;
   background: #FFFFFF !important;
+  padding: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(15, 41, 30, 0.15);
 }
 .pf-center-court-crest-inner img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  border-radius: 11px !important;
   display: block;
 }
 
-/* Clean Header Logo Tile (Properly Aligned with Title & Pills) */
+/* Header Rectangular Court Logo Badge with Balanced Spacing */
 .pf-rect-logo-badge {
-  width: 56px;
-  height: 66px;
-  border-radius: 14px !important;
-  padding: 4px;
-  background: #FFFFFF !important;
-  border: 1.5px solid #CBD5E1 !important;
-  box-shadow: 0 4px 12px rgba(15, 41, 30, 0.08);
+  width: 68px;
+  height: 82px;
+  border-radius: 16px !important;
+  padding: 3px;
+  background: linear-gradient(180deg, #38BDF8 0%, #A3E635 50%, #22C55E 100%) !important;
+  box-shadow: 0 8px 22px rgba(15, 41, 30, 0.18);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -1924,114 +1964,132 @@
 .pf-rect-logo-badge img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 9px !important;
+  object-fit: cover;
+  border-radius: 13px !important;
+  background: #FFFFFF;
   display: block;
 }
 
 /* Match Container in Symmetrical Tree */
 .pf-sym-match-card {
   position: relative;
-  border-radius: 16px !important;
-  padding: 12px;
-  background: rgba(13, 41, 30, 0.9) !important;
-  border: 1.5px solid rgba(110, 231, 183, 0.24) !important;
-  transition: all 0.2s ease;
-  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.4);
+  border-radius: 18px !important;
+  padding: 14px !important;
+  background: rgba(8, 28, 20, 0.92) !important;
+  border: 1.5px solid rgba(110, 231, 183, 0.32) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
 }
 .pf-sym-match-card:hover {
   transform: translateY(-2px);
-  border-color: #34D399 !important;
-  box-shadow: 0 12px 24px -6px rgba(16, 185, 129, 0.28) !important;
+  border-color: #A3E635 !important;
+  box-shadow: 0 12px 28px -6px rgba(163, 230, 53, 0.28) !important;
 }
 .pf-sym-match-card.is-active-match {
-  border: 2px solid #FACC15 !important;
-  background: rgba(17, 52, 38, 0.98) !important;
-  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.22), 0 12px 28px -6px rgba(0, 0, 0, 0.55) !important;
+  border: 2.5px solid #A3E635 !important;
+  background: linear-gradient(145deg, rgba(163, 230, 53, 0.16) 0%, rgba(10, 35, 24, 0.96) 100%) !important;
+  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.24), 0 16px 32px -6px rgba(0, 0, 0, 0.7) !important;
 }
 .pf-sym-match-card.is-completed-match {
-  border-color: rgba(56, 189, 248, 0.5) !important;
+  border-color: rgba(56, 189, 248, 0.6) !important;
 }
 
-/* Clean Broadcast Team Slot Row */
+/* Slot Row (Restored Framed Score Box + Banner Bar with Clean Spacing) */
 .pf-sym-slot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 11px !important;
-  background: rgba(6, 20, 14, 0.78) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  transition: all 0.15s ease;
+  gap: 8px !important;
+  position: relative;
 }
 .pf-sym-slot.dir-right {
-  flex-direction: row;
-}
-.pf-sym-slot.is-winner {
-  background: rgba(21, 128, 61, 0.38) !important;
-  border-color: #34D399 !important;
-}
-.pf-sym-slot.is-awaiting {
-  background: rgba(15, 23, 42, 0.55) !important;
-  border-color: rgba(148, 163, 184, 0.18) !important;
-}
-.pf-sym-team-label {
-  flex: 1;
-  min-width: 0;
-  font-size: 12px;
-  font-weight: 700;
-  color: #F8FAFC !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pf-sym-slot.is-awaiting .pf-sym-team-label {
-  color: #94A3B8 !important;
-  font-weight: 600;
-}
-.pf-sym-slot.is-winner .pf-sym-team-label {
-  color: #ECFDF5 !important;
-  font-weight: 800;
+  flex-direction: row-reverse;
 }
 .pf-sym-score-box {
-  min-width: 34px;
-  height: 30px;
-  padding: 0 8px;
-  border-radius: 8px !important;
+  width: 44px;
+  height: 40px;
+  border-radius: 11px !important;
   background: #04100B !important;
-  border: 1.5px solid rgba(110, 231, 183, 0.4) !important;
+  border: 2px solid #A3E635 !important;
+  box-shadow: 0 0 0 2px #04100B, inset 0 2px 6px rgba(0,0,0,0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 900;
   color: #FFFFFF !important;
   flex-shrink: 0;
+  z-index: 2;
 }
 .pf-sym-slot.is-winner .pf-sym-score-box {
-  background: #10B981 !important;
-  border-color: #A7F3D0 !important;
+  background: #15803D !important;
+  border-color: #BEF264 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 14px rgba(163, 230, 53, 0.65);
+}
+.pf-sym-banner-bar {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 11px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: linear-gradient(90deg, #FEFCE8 0%, #FEF08A 45%, #FDE047 100%) !important;
+  color: #05140D !important;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  border: 1.5px solid #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+.pf-sym-slot.dir-right .pf-sym-banner-bar {
+  background: linear-gradient(270deg, #FEFCE8 0%, #FEF08A 45%, #FDE047 100%) !important;
+}
+.pf-sym-slot.is-winner .pf-sym-banner-bar {
+  background: linear-gradient(90deg, #BBF7D0 0%, #86EFAC 50%, #4ADE80 100%) !important;
   color: #04120B !important;
+  border-color: #FFFFFF !important;
+}
+.pf-sym-slot.is-awaiting .pf-sym-banner-bar {
+  background: linear-gradient(90deg, #1E293B 0%, #334155 100%) !important;
+  color: #F8FAFC !important;
+  border-color: rgba(148, 163, 184, 0.45) !important;
+}
+.pf-sym-slot.is-awaiting .pf-sym-banner-bar span {
+  color: #F8FAFC !important;
+}
+.pf-sym-slot:not(.is-awaiting) .pf-sym-banner-bar span {
+  color: #05140D !important;
 }
 
-/* === LOCKED WCAG AAA TOURNAMENT BUTTON SYSTEM (NO WRAPPING, HIGH CONTRAST) === */
+.pf-sym-diamond {
+  width: 8px;
+  height: 8px;
+  background: #FFFFFF !important;
+  border: 1.5px solid #04100B !important;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* === LOCKED WCAG AAA TOURNAMENT BUTTON SYSTEM (SINGLE LINE, HIGH CONTRAST) === */
 button.pf-trn-btn-primary,
 .pf-trn-btn-primary {
   background: #0F291E !important;
   background-color: #0F291E !important;
   color: #FFFFFF !important;
-  border: 1.5px solid #0F291E !important;
+  border: 1.5px solid #15803D !important;
   font-weight: 800 !important;
   white-space: nowrap !important;
-  box-shadow: 0 2px 8px rgba(15, 41, 30, 0.16) !important;
+  box-shadow: 0 4px 12px rgba(15, 41, 30, 0.2) !important;
 }
 button.pf-trn-btn-primary:hover,
 .pf-trn-btn-primary:hover {
   background: #15803D !important;
   background-color: #15803D !important;
-  border-color: #15803D !important;
   color: #FFFFFF !important;
 }
 
@@ -2043,6 +2101,7 @@ button.pf-trn-btn-emerald,
   border: 1.5px solid #166534 !important;
   font-weight: 800 !important;
   white-space: nowrap !important;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25) !important;
 }
 button.pf-trn-btn-emerald:hover,
 .pf-trn-btn-emerald:hover {
@@ -2059,6 +2118,7 @@ button.pf-trn-btn-royal,
   border: 1.5px solid #0284C7 !important;
   font-weight: 800 !important;
   white-space: nowrap !important;
+  box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25) !important;
 }
 button.pf-trn-btn-royal:hover,
 .pf-trn-btn-royal:hover {
@@ -2075,6 +2135,7 @@ button.pf-trn-btn-gold,
   border: 1.5px solid #CA8A04 !important;
   font-weight: 900 !important;
   white-space: nowrap !important;
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.28) !important;
 }
 button.pf-trn-btn-gold:hover,
 .pf-trn-btn-gold:hover {
@@ -2085,17 +2146,18 @@ button.pf-trn-btn-gold:hover,
 
 button.pf-trn-btn-volt,
 .pf-trn-btn-volt {
-  background: #10B981 !important;
-  background-color: #10B981 !important;
+  background: #A3E635 !important;
+  background-color: #A3E635 !important;
   color: #04120B !important;
-  border: 1.5px solid #34D399 !important;
-  font-weight: 800 !important;
+  border: 1.5px solid #65A30D !important;
+  font-weight: 900 !important;
   white-space: nowrap !important;
+  box-shadow: 0 4px 14px rgba(163, 230, 53, 0.35) !important;
 }
 button.pf-trn-btn-volt:hover,
 .pf-trn-btn-volt:hover {
-  background: #34D399 !important;
-  background-color: #34D399 !important;
+  background: #BEF264 !important;
+  background-color: #BEF264 !important;
   color: #04120B !important;
 }
 
@@ -2135,19 +2197,19 @@ button.pf-trn-btn-secondary:hover,
 
 button.pf-trn-btn-arena-ghost,
 .pf-trn-btn-arena-ghost {
-  background: rgba(255, 255, 255, 0.08) !important;
-  background-color: rgba(255, 255, 255, 0.08) !important;
-  color: #E2E8F0 !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  font-weight: 700 !important;
+  background: #0F2E20 !important;
+  background-color: #0F2E20 !important;
+  color: #ECFDF5 !important;
+  border: 1.5px solid rgba(110, 231, 183, 0.45) !important;
+  font-weight: 800 !important;
   white-space: nowrap !important;
 }
 button.pf-trn-btn-arena-ghost:hover,
 .pf-trn-btn-arena-ghost:hover {
-  background: rgba(255, 255, 255, 0.16) !important;
-  background-color: rgba(255, 255, 255, 0.16) !important;
+  background: #15803D !important;
+  background-color: #15803D !important;
   color: #FFFFFF !important;
-  border-color: #34D399 !important;
+  border-color: #A3E635 !important;
 }
 
 button.pf-trn-btn-danger,
@@ -2170,17 +2232,17 @@ button.pf-trn-btn-danger:hover,
 .pf-scoring-portal {
   background: #FFFFFF !important;
   border: 2px solid #CBD5E1 !important;
-  border-radius: 24px !important;
+  border-radius: 28px !important;
   color: #0F172A !important;
-  box-shadow: 0 18px 40px -12px rgba(15, 41, 30, 0.1) !important;
+  box-shadow: 0 20px 45px -12px rgba(15, 41, 30, 0.12) !important;
 }
 
 @keyframes pfPhaseSlideIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .pf-phase-slide-panel {
-  animation: pfPhaseSlideIn 0.22s ease-out;
+  animation: pfPhaseSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
   </style>
