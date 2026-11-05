@@ -7,22 +7,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Three.js for 3D Background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Framer Motion & Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800;900&display=swap');
-        
         :root {
-            --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.6);
+            --primary: #15803d;
+            --primary-glow: rgba(21, 128, 61, 0.55);
             --accent: #10b981;
-            --accent-glow: rgba(16, 185, 129, 0.6);
-            --bg-glass: rgba(15, 23, 42, 0.7);
-            --connector-color: rgba(56, 189, 248, 0.7);
+            --accent-glow: rgba(16, 185, 129, 0.55);
+            --bg-glass: rgba(15, 36, 28, 0.78);
+            --connector-color: rgba(52, 211, 153, 0.7);
             --connector-width: 3px;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #020617;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #06100C;
             color: white;
             overflow: hidden;
             touch-action: none;
@@ -1367,6 +1369,16 @@
         const originalNavTo = app.navTo;
         app.navTo = function(screenId) {
             originalNavTo.call(app, screenId);
+            const activeScreen = document.getElementById('screen-' + screenId);
+            if (activeScreen && window.Motion && typeof window.Motion.animate === 'function') {
+                try {
+                    window.Motion.animate(
+                        activeScreen,
+                        { opacity: [0, 1], transform: ['scale(0.97) translateY(8px)', 'scale(1) translateY(0px)'] },
+                        { duration: 0.28, easing: [0.16, 1, 0.3, 1] }
+                    );
+                } catch (e) {}
+            }
             if(screenId === 'draw') {
                 document.getElementById('draw-spinner').style.display = 'block';
                 document.getElementById('btn-reveal-bracket').style.display = 'none';

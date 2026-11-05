@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth" data-adm-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>P&amp;F Rally Ground | Staff Admin &amp; POS Workspace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     tailwind.config = {
@@ -17,34 +19,68 @@
         extend: {
           borderRadius: {
             none: '0px',
-            sm: '4px',
-            DEFAULT: '5px',
-            md: '5px',
-            lg: '5px',
-            xl: '5px',
-            '2xl': '5px',
-            '3xl': '5px',
+            sm: '6px',
+            DEFAULT: '8px',
+            md: '8px',
+            lg: '10px',
+            xl: '12px',
+            '2xl': '14px',
+            '3xl': '16px',
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
-            mono: ['"Space Grotesk"', 'monospace'],
+            display: ['"Instrument Serif"', 'Georgia', 'serif'],
+            mono: ['"JetBrains Mono"', '"Space Grotesk"', 'monospace'],
           },
           colors: {
             brand: {
-              black: '#050E1D',
-              dark: '#08182E',
-              card: '#0E2240',
-              border: 'rgba(155, 230, 0, 0.16)',
-              lime: '#9BE600',
-              limeHover: '#B4FF00',
-              blue: '#0072CE',
-              green: '#0E8A2D',
-              clay: '#FF5733',
+              black: '#0B110E',
+              dark: '#111915',
+              card: '#16211C',
+              border: 'rgba(21, 128, 61, 0.22)',
+              lime: '#15803D',
+              limeHover: '#166534',
+              blue: '#0284C7',
+              green: '#15803D',
+              clay: '#C85A32',
             }
           }
         }
       }
     }
+
+    function applyAdminThemeMode(mode) {
+      const cleanMode = mode === 'dark' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-adm-theme', cleanMode);
+      try { localStorage.setItem('pf_adm_theme_mode', cleanMode); } catch (e) {}
+      const labelEl = document.getElementById('adm-theme-toggle-label');
+      const iconEl = document.getElementById('adm-theme-toggle-icon');
+      if (labelEl) labelEl.textContent = cleanMode === 'light' ? 'Daylight' : 'Dark Slate';
+      if (iconEl) iconEl.textContent = cleanMode === 'light' ? '☀' : '☾';
+    }
+
+    function toggleAdminThemeMode() {
+      const current = document.documentElement.getAttribute('data-adm-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      applyAdminThemeMode(next);
+      if (window.anime) {
+        window.anime({
+          targets: '#adm-theme-toggle-btn',
+          scale: [0.92, 1],
+          duration: 320,
+          easing: 'easeOutElastic(1, .6)'
+        });
+      }
+    }
+
+    (function initSavedAdminTheme() {
+      try {
+        const saved = localStorage.getItem('pf_adm_theme_mode');
+        document.documentElement.setAttribute('data-adm-theme', saved === 'dark' ? 'dark' : 'light');
+      } catch (e) {
+        document.documentElement.setAttribute('data-adm-theme', 'light');
+      }
+    })();
 
     function toggleAdminDropdown(event, btnEl) {
       if (event) event.stopPropagation();
@@ -52,7 +88,19 @@
       if (!wrap) return;
       const isOpen = wrap.classList.contains('open');
       closeAllAdminDropdowns();
-      if (!isOpen) wrap.classList.add('open');
+      if (!isOpen) {
+        wrap.classList.add('open');
+        const menu = wrap.querySelector('.adm-dropdown-menu');
+        if (menu && window.Motion && typeof window.Motion.animate === 'function') {
+          try {
+            window.Motion.animate(
+              menu,
+              { opacity: [0, 1], transform: ['translateY(6px) scale(0.97)', 'translateY(0px) scale(1)'] },
+              { duration: 0.18, easing: [0.16, 1, 0.3, 1] }
+            );
+          } catch (e) {}
+        }
+      }
     }
 
     function closeAllAdminDropdowns() {
@@ -62,9 +110,20 @@
     function toggleSidebarGroup(groupId, btnEl) {
       const grp = document.getElementById(groupId);
       if (!grp) return;
+      const willOpen = grp.classList.contains('hidden');
       grp.classList.toggle('hidden');
       const svg = btnEl ? btnEl.querySelector('svg') : null;
       if (svg) svg.classList.toggle('rotate-180');
+      if (willOpen && window.anime) {
+        window.anime({
+          targets: grp.children,
+          opacity: [0, 1],
+          translateX: [-6, 0],
+          delay: window.anime.stagger(35),
+          duration: 240,
+          easing: 'easeOutQuad'
+        });
+      }
     }
 
     document.addEventListener('click', (e) => {
@@ -72,14 +131,68 @@
         closeAllAdminDropdowns();
       }
     });
+    document.addEventListener('DOMContentLoaded', () => {
+      applyAdminThemeMode(document.documentElement.getAttribute('data-adm-theme') || 'light');
+    });
   </script>
   <style>
+    :root,
+    html[data-adm-theme="light"] {
+      --adm-bg: #F4F4F0;
+      --adm-surface: #FFFFFF;
+      --adm-surface-subtle: #F8F9F7;
+      --adm-surface-muted: #EFEFE9;
+      --adm-border: #E2E5E1;
+      --adm-border-strong: #CBD2CE;
+      --adm-text: #111815;
+      --adm-text-secondary: #52605A;
+      --adm-text-muted: #718079;
+      --adm-forest: #0F291E;
+      --adm-forest-hover: #163B2B;
+      --adm-emerald: #15803D;
+      --adm-emerald-soft: #ECFDF5;
+      --adm-terracotta: #C85A32;
+      --adm-shadow-sm: 0 2px 6px rgba(15, 41, 30, 0.04);
+      --adm-shadow-card: 0 8px 24px -6px rgba(15, 41, 30, 0.06), 0 1px 3px rgba(15, 41, 30, 0.04);
+      --adm-shadow-float: 0 18px 38px -8px rgba(15, 41, 30, 0.14), 0 4px 12px rgba(15, 41, 30, 0.06);
+    }
+
+    html[data-adm-theme="dark"] {
+      --adm-bg: #0B110E;
+      --adm-surface: #121A16;
+      --adm-surface-subtle: #17211C;
+      --adm-surface-muted: #1D2923;
+      --adm-border: #23332B;
+      --adm-border-strong: #2E4238;
+      --adm-text: #ECFDF5;
+      --adm-text-secondary: #A3B5AD;
+      --adm-text-muted: #6E8279;
+      --adm-forest: #10B981;
+      --adm-forest-hover: #059669;
+      --adm-emerald: #34D399;
+      --adm-emerald-soft: rgba(16, 185, 129, 0.14);
+      --adm-terracotta: #F97316;
+      --adm-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --adm-shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.45);
+      --adm-shadow-float: 0 20px 44px -10px rgba(0, 0, 0, 0.65);
+    }
+
     html { -webkit-tap-highlight-color: transparent; }
+    body {
+      background-color: var(--adm-bg) !important;
+      color: var(--adm-text) !important;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      transition: background-color 0.22s ease, color 0.22s ease;
+    }
+    .font-mono {
+      font-variant-numeric: tabular-nums;
+    }
     .touch-scroll { -webkit-overflow-scrolling: touch; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-    .lime-glow { box-shadow: 0 0 30px -5px rgba(155, 230, 0, 0.35); }
-    .card-glow:hover { border-color: rgba(155, 230, 0, 0.3); }
+    .lime-glow { box-shadow: 0 6px 18px -4px rgba(15, 41, 30, 0.24); }
+    .card-glow { transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; }
+    .card-glow:hover { border-color: var(--adm-border-strong); box-shadow: var(--adm-shadow-card); }
     @keyframes authShake {
       0%, 100% { transform: translateX(0); }
       20%, 60% { transform: translateX(-8px); }
@@ -87,18 +200,23 @@
     }
     .auth-shake { animation: authShake 0.4s ease-in-out; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #050E1D; }
-    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #9BE600; }
+    ::-webkit-scrollbar-track { background: var(--adm-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--adm-border-strong); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--adm-emerald); }
 
-    /* === 2026 CLEAN 5PX ARCHITECTURAL UI & RESPONSIVE SYSTEM (ADMIN PORTAL) === */
-    .rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-lg, .rounded-md, .rounded,
-    .white-studio-card, .white-studio-subcard, .white-studio-input, .white-studio-btn-sec,
-    input, select, textarea, button, a {
-      border-radius: 5px !important;
+    /* === BKLIT UI × KOKONUT UI ARCHITECTURAL RADII & RESPONSIVE SHELL === */
+    .rounded-3xl, .rounded-2xl {
+      border-radius: 12px !important;
     }
-    .rounded-full:not(.w-1\.5):not(.w-2):not(.w-2\.5):not(.w-3) {
-      border-radius: 5px !important;
+    .rounded-xl {
+      border-radius: 9px !important;
+    }
+    .rounded-lg, .rounded-md, .rounded,
+    input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+      border-radius: 8px !important;
+    }
+    .rounded-full {
+      border-radius: 9999px !important;
     }
     @media (max-width: 639px) {
       main {
@@ -109,7 +227,7 @@
         padding: 1rem !important;
       }
     }
-    /* === END 2026 CLEAN 5PX ARCHITECTURAL UI === */
+
     /* === ANTI-CUTOFF & FIXED SIDEBAR DESKTOP SHELL === */
     main, main > section, #tab-site-editor, #tab-site-editor > div, .white-studio-card {
       min-width: 0 !important;
@@ -139,11 +257,8 @@
         overflow-x: clip !important;
       }
     }
-    /* === END ANTI-CUTOFF & FIXED SIDEBAR DESKTOP SHELL === */
 
-
-
-    /* === CLEAN DROPDOWN MENU UI SYSTEM === */
+    /* === BKLIT UI × KOKONUT UI DROPDOWN MENU SYSTEM === */
     .adm-dropdown {
       position: relative;
       display: inline-block;
@@ -153,22 +268,23 @@
       align-items: center;
       gap: 6px;
       padding: 7px 13px;
-      border-radius: 6px;
+      border-radius: 8px !important;
       font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      background: #0066FF;
-      color: #FFFFFF;
-      border: 1px solid #3B82F6;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: #0F291E;
+      color: #ECFDF5;
+      border: 1px solid #0F291E;
       cursor: pointer;
-      transition: all 0.16s ease;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
       white-space: nowrap;
+      box-shadow: 0 1px 2px rgba(15, 41, 30, 0.12);
     }
     .adm-dropdown-btn.secondary {
-      background: #1E293B;
-      color: #F8FAFC;
-      border: 1px solid #334155;
+      background: var(--adm-surface);
+      color: var(--adm-text);
+      border: 1px solid var(--adm-border-strong);
+      box-shadow: var(--adm-shadow-sm);
     }
     .adm-dropdown-btn.danger {
       background: #FEF2F2;
@@ -177,15 +293,27 @@
     }
     .adm-dropdown:hover .adm-dropdown-btn,
     .adm-dropdown.open .adm-dropdown-btn {
-      background: #0052CC;
+      background: #163B2B;
       color: #FFFFFF;
-      border-color: #60A5FA;
-      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+      border-color: #15803D;
+      box-shadow: 0 4px 12px rgba(15, 41, 30, 0.18);
+    }
+    .adm-dropdown:hover .adm-dropdown-btn.secondary,
+    .adm-dropdown.open .adm-dropdown-btn.secondary {
+      background: var(--adm-surface-subtle);
+      color: var(--adm-text);
+      border-color: var(--adm-forest);
+    }
+    .adm-dropdown:hover .adm-dropdown-btn.danger,
+    .adm-dropdown.open .adm-dropdown-btn.danger {
+      background: #DC2626;
+      color: #FFFFFF;
+      border-color: #B91C1C;
     }
     .adm-dropdown-chevron {
       width: 13px;
       height: 13px;
-      transition: transform 0.18s ease;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .adm-dropdown:hover .adm-dropdown-chevron,
     .adm-dropdown.open .adm-dropdown-chevron {
@@ -193,19 +321,20 @@
     }
     .adm-dropdown-menu {
       position: absolute;
-      top: calc(100% + 4px);
+      top: calc(100% + 6px);
       left: 0;
-      min-width: 190px;
-      background: #FFFFFF;
-      color: #050E1D;
-      border: 1.5px solid #050E1D;
-      border-radius: 6px;
-      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.4);
+      min-width: 204px;
+      padding: 5px;
+      background: var(--adm-surface);
+      color: var(--adm-text);
+      border: 1px solid var(--adm-border-strong);
+      border-radius: 10px !important;
+      box-shadow: var(--adm-shadow-float);
       overflow: hidden;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(5px);
-      transition: all 0.15s ease;
+      transform: translateY(6px) scale(0.98);
+      transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.16s ease;
       z-index: 95;
     }
     .adm-dropdown-menu.right-align {
@@ -216,31 +345,295 @@
     .adm-dropdown.open .adm-dropdown-menu {
       opacity: 1;
       visibility: visible;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
     .adm-dropdown-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      padding: 10px 14px;
+      padding: 8px 11px;
+      border-radius: 6px !important;
       font-size: 12px;
-      font-weight: 700;
-      color: #050E1D;
-      background: #FFFFFF;
-      border-bottom: 1px solid #E2E8F0;
+      font-weight: 600;
+      color: var(--adm-text);
+      background: transparent;
+      border-bottom: none;
       text-align: left;
-      transition: background 0.14s ease, color 0.14s ease;
+      transition: background 0.12s ease, color 0.12s ease, transform 0.12s ease;
       cursor: pointer;
     }
-    .adm-dropdown-item:last-child {
-      border-bottom: none;
-    }
     .adm-dropdown-item:hover {
-      background: #050E1D;
-      color: #FFFFFF;
+      background: #0F291E;
+      color: #ECFDF5;
     }
 
+    /* === DAYLIGHT EXECUTIVE SUITE THEME OVERRIDES (data-adm-theme="light") === */
+    html[data-adm-theme="light"] #admin-sidebar {
+      background: #FFFFFF !important;
+      border-right: 1px solid #E2E5E1 !important;
+      box-shadow: 4px 0 24px -12px rgba(15, 41, 30, 0.05) !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar > div:first-child > div:first-child {
+      border-bottom: 1px solid #E2E5E1 !important;
+      background: #FAFAF8 !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar > div:first-child > div:first-child .text-white {
+      color: #0F291E !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar > div:first-child > div:first-child .text-brand-lime {
+      color: #15803D !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar nav > div {
+      background: #F8F9F6 !important;
+      border: 1px solid #E2E5E1 !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar nav > div > button {
+      background: #F1F3EE !important;
+      color: #111815 !important;
+      border-bottom: 1px solid #E2E5E1 !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar nav button[id^="nav-"] {
+      color: #46544E !important;
+      font-weight: 600 !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar nav button[id^="nav-"]:hover {
+      background: #EAECE6 !important;
+      color: #0F291E !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar nav button[id^="nav-"].bg-brand-lime\/10 {
+      background: #0F291E !important;
+      color: #ECFDF5 !important;
+      border-color: #0F291E !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 12px -2px rgba(15, 41, 30, 0.22) !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar nav button[id^="nav-"].bg-brand-lime\/10 span:not(.ml-auto) {
+      color: #ECFDF5 !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar > div:last-child {
+      background: #F8F9F6 !important;
+      border-top: 1px solid #E2E5E1 !important;
+      color: #52605A !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar > div:last-child a {
+      background: #FFFFFF !important;
+      border: 1px solid #D5DAD6 !important;
+      color: #0F291E !important;
+    }
+    html[data-adm-theme="light"] #admin-sidebar > div:last-child .text-brand-lime {
+      color: #15803D !important;
+    }
+
+    /* Top Header in Daylight Executive Mode */
+    html[data-adm-theme="light"] #admin-main-col > header {
+      background: rgba(255, 255, 255, 0.92) !important;
+      border-bottom: 1px solid #E2E5E1 !important;
+      box-shadow: 0 2px 10px -4px rgba(15, 41, 30, 0.05) !important;
+    }
+    html[data-adm-theme="light"] #current-section-title {
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] #sync-status-indicator {
+      color: #15803D !important;
+    }
+
+    /* Main Workspace Cards, Panels & Bento Surfaces in Daylight Mode */
+    html[data-adm-theme="light"] main .bg-brand-card,
+    html[data-adm-theme="light"] main .bg-brand-dark,
+    html[data-adm-theme="light"] #inventory-modal .bg-brand-card,
+    html[data-adm-theme="light"] #new-booking-modal .bg-brand-card,
+    html[data-adm-theme="light"] #receipt-viewer-modal .bg-brand-card {
+      background-color: #FFFFFF !important;
+      border-color: #E2E5E1 !important;
+      color: #111815 !important;
+      box-shadow: var(--adm-shadow-card) !important;
+    }
+    html[data-adm-theme="light"] main .bg-brand-black\/40,
+    html[data-adm-theme="light"] main .bg-brand-black\/60,
+    html[data-adm-theme="light"] main .bg-brand-black\/70,
+    html[data-adm-theme="light"] main .bg-brand-black\/75,
+    html[data-adm-theme="light"] main .bg-brand-black\/80,
+    html[data-adm-theme="light"] main .bg-brand-black\/90,
+    html[data-adm-theme="light"] main .bg-\[\#1a2e05\]\/95,
+    html[data-adm-theme="light"] #inventory-modal .bg-brand-black\/60,
+    html[data-adm-theme="light"] #inventory-modal .bg-brand-black\/70,
+    html[data-adm-theme="light"] #inventory-modal .bg-brand-black\/80 {
+      background-color: #F8F9F6 !important;
+      border-color: #DDE2DC !important;
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] #tab-site-editor {
+      background-color: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+    html[data-adm-theme="light"] #tab-announcements {
+      background-color: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    /* Inputs, Selects & Textareas in Daylight Mode */
+    html[data-adm-theme="light"] main input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    html[data-adm-theme="light"] main select,
+    html[data-adm-theme="light"] main textarea,
+    html[data-adm-theme="light"] #inventory-modal input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    html[data-adm-theme="light"] #inventory-modal select,
+    html[data-adm-theme="light"] #new-booking-modal input:not([type="checkbox"]):not([type="radio"]),
+    html[data-adm-theme="light"] #new-booking-modal select {
+      background-color: #FFFFFF !important;
+      border-color: #CBD2CE !important;
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] main input:focus,
+    html[data-adm-theme="light"] main select:focus,
+    html[data-adm-theme="light"] main textarea:focus,
+    html[data-adm-theme="light"] #inventory-modal input:focus,
+    html[data-adm-theme="light"] #new-booking-modal input:focus {
+      border-color: #0F291E !important;
+      box-shadow: 0 0 0 3px rgba(15, 41, 30, 0.1) !important;
+    }
+
+    /* Typography Contrast Normalization in Daylight Mode */
+    html[data-adm-theme="light"] main h1,
+    html[data-adm-theme="light"] main h2,
+    html[data-adm-theme="light"] main h3,
+    html[data-adm-theme="light"] main h4,
+    html[data-adm-theme="light"] #inventory-modal h3,
+    html[data-adm-theme="light"] #new-booking-modal h3,
+    html[data-adm-theme="light"] #receipt-viewer-modal h3 {
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] main .bg-brand-card .text-white:not(button):not(.bg-rose-600):not(.bg-emerald-600):not(.bg-blue-600):not(.bg-indigo-600),
+    html[data-adm-theme="light"] main .bg-brand-black\/60 .text-white:not(button),
+    html[data-adm-theme="light"] main .bg-brand-black\/75 .text-white:not(button),
+    html[data-adm-theme="light"] main .bg-brand-black\/80 .text-white:not(button),
+    html[data-adm-theme="light"] main .bg-brand-black\/90 .text-white:not(button),
+    html[data-adm-theme="light"] main .bg-\[\#1a2e05\]\/95 .text-white:not(button),
+    html[data-adm-theme="light"] main table tbody .text-white,
+    html[data-adm-theme="light"] #inventory-modal .text-white:not(button),
+    html[data-adm-theme="light"] #new-booking-modal .text-white:not(button) {
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] main .text-slate-200:not(button),
+    html[data-adm-theme="light"] main .text-slate-300:not(button),
+    html[data-adm-theme="light"] main .text-slate-400:not(button),
+    html[data-adm-theme="light"] #inventory-modal .text-slate-300,
+    html[data-adm-theme="light"] #inventory-modal .text-slate-400,
+    html[data-adm-theme="light"] #new-booking-modal .text-slate-300,
+    html[data-adm-theme="light"] #new-booking-modal .text-slate-400 {
+      color: #52605A !important;
+    }
+
+    /* Replace Neon Lime Text & Buttons with Deep Court Forest & Court Emerald in Daylight Mode */
+    html[data-adm-theme="light"] main .text-brand-lime,
+    html[data-adm-theme="light"] main .text-\[\#9BE600\]:not(.bg-\[\#050E1D\]):not(button),
+    html[data-adm-theme="light"] main .text-\[\#bef264\],
+    html[data-adm-theme="light"] #inventory-modal .text-brand-lime,
+    html[data-adm-theme="light"] #new-booking-modal .text-brand-lime,
+    html[data-adm-theme="light"] footer .text-brand-lime {
+      color: #15803D !important;
+    }
+    html[data-adm-theme="light"] main .text-amber-300,
+    html[data-adm-theme="light"] main .text-amber-400,
+    html[data-adm-theme="light"] #inventory-modal .text-amber-300 {
+      color: #B45309 !important;
+    }
+    html[data-adm-theme="light"] main .text-sky-300,
+    html[data-adm-theme="light"] main .text-sky-400 {
+      color: #0369A1 !important;
+    }
+    html[data-adm-theme="light"] main button.bg-brand-lime,
+    html[data-adm-theme="light"] main button.bg-\[\#9BE600\],
+    html[data-adm-theme="light"] #inventory-modal button.bg-brand-lime,
+    html[data-adm-theme="light"] #new-booking-modal button.bg-brand-lime {
+      background-color: #0F291E !important;
+      color: #ECFDF5 !important;
+      border-color: #0F291E !important;
+      box-shadow: 0 4px 12px -2px rgba(15, 41, 30, 0.22) !important;
+    }
+    html[data-adm-theme="light"] main button.bg-brand-lime:hover,
+    html[data-adm-theme="light"] main button.bg-\[\#9BE600\]:hover,
+    html[data-adm-theme="light"] #inventory-modal button.bg-brand-lime:hover,
+    html[data-adm-theme="light"] #new-booking-modal button.bg-brand-lime:hover {
+      background-color: #163B2B !important;
+      color: #FFFFFF !important;
+    }
+    html[data-adm-theme="light"] main button.bg-white\/5,
+    html[data-adm-theme="light"] main button.bg-white\/10 {
+      background-color: #F4F4F0 !important;
+      color: #111815 !important;
+      border: 1px solid #D5DAD6 !important;
+    }
+    html[data-adm-theme="light"] main button.bg-white\/5:hover,
+    html[data-adm-theme="light"] main button.bg-white\/10:hover {
+      background-color: #E6E8E3 !important;
+      border-color: #0F291E !important;
+    }
+
+    /* Tables & Borders in Daylight Mode */
+    html[data-adm-theme="light"] main .border-white\/10,
+    html[data-adm-theme="light"] main .border-white\/15,
+    html[data-adm-theme="light"] main .border-brand-border,
+    html[data-adm-theme="light"] #inventory-modal .border-white\/10,
+    html[data-adm-theme="light"] #new-booking-modal .border-white\/10 {
+      border-color: #E2E5E1 !important;
+    }
+    html[data-adm-theme="light"] main .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
+      border-color: #E9ECE8 !important;
+    }
+    html[data-adm-theme="light"] main table thead tr.bg-brand-black\/40,
+    html[data-adm-theme="light"] main table thead tr.bg-brand-black\/60 {
+      background-color: #F4F5F2 !important;
+      color: #46544E !important;
+      border-bottom: 1px solid #DDE2DC !important;
+    }
+
+    /* Auth Gate & Footer in Daylight Mode */
+    html[data-adm-theme="light"] #admin-auth-gate {
+      background: rgba(244, 244, 240, 0.94) !important;
+    }
+    html[data-adm-theme="light"] #admin-auth-card {
+      background: #FFFFFF !important;
+      border: 1px solid #D5DAD6 !important;
+      box-shadow: 0 24px 54px -12px rgba(15, 41, 30, 0.14) !important;
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] #admin-auth-card h1 {
+      color: #0F291E !important;
+    }
+    html[data-adm-theme="light"] #admin-auth-card .text-slate-300,
+    html[data-adm-theme="light"] #admin-auth-card .text-slate-400 {
+      color: #52605A !important;
+    }
+    html[data-adm-theme="light"] #admin-auth-card .bg-brand-black,
+    html[data-adm-theme="light"] #admin-auth-card .bg-brand-black\/80,
+    html[data-adm-theme="light"] #admin-auth-card .bg-brand-black\/70 {
+      background: #F4F4F0 !important;
+      border-color: #D5DAD6 !important;
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] #admin-auth-card input {
+      background: #FFFFFF !important;
+      border-color: #CBD2CE !important;
+      color: #111815 !important;
+    }
+    html[data-adm-theme="light"] #admin-auth-card button.bg-brand-lime {
+      background: #0F291E !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-adm-theme="light"] footer {
+      background: #FFFFFF !important;
+      border-top: 1px solid #E2E5E1 !important;
+      color: #52605A !important;
+    }
+    html[data-adm-theme="light"] #admin-mobile-bottom-nav {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border-top: 1px solid #E2E5E1 !important;
+    }
 
     /* === 9-CATEGORY CALENDAR LEGEND & TRANSLUCENT PAST SLOTS === */
     .cal-cat-pill {
@@ -499,6 +892,12 @@
 
       <!-- Clean Top Dropdown Navigation & Actions -->
       <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- 1-Click Daylight / Dark Slate Theme Switcher -->
+        <button type="button" id="adm-theme-toggle-btn" onclick="toggleAdminThemeMode()" class="adm-dropdown-btn secondary" title="Switch between Daylight Executive Mode and Dark Slate Mode">
+          <span id="adm-theme-toggle-icon" class="text-xs leading-none">☀</span>
+          <span id="adm-theme-toggle-label" class="hidden sm:inline">Daylight</span>
+        </button>
+
         <!-- Dropdown 1: Navigate -->
         <div class="adm-dropdown">
           <button type="button" onclick="toggleAdminDropdown(event, this)" class="adm-dropdown-btn">
@@ -3794,8 +4193,8 @@ function clearFieldError(fieldId) {
       if (event) event.preventDefault();
       const host = window.location.hostname;
       const port = window.location.port;
-      if ((host === 'localhost' || host === '127.0.0.1') && port === '8089') {
-        window.location.href = 'http://' + host + ':8088/' + (pagePath || '');
+      if ((host === 'localhost' || host === '127.0.0.1') && (port === '8089' || port === '8091')) {
+        window.location.href = 'http://' + host + ':8090/' + (pagePath || '');
       } else {
         const target = pagePath && pagePath !== 'index.html' ? '/' + pagePath.replace(/^\//, '') : '/';
         window.location.href = target;
@@ -4084,9 +4483,9 @@ function clearFieldError(fieldId) {
 
       const stateEndpoints = ['/api/state'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        stateEndpoints.push('http://127.0.0.1:8088/api/state');
+        stateEndpoints.push('http://127.0.0.1:8090/api/state');
         stateEndpoints.push('http://127.0.0.1:8089/api/state');
-        stateEndpoints.push('http://localhost:8088/api/state');
+        stateEndpoints.push('http://localhost:8090/api/state');
       }
 
       for (const ep of stateEndpoints) {
@@ -4266,7 +4665,26 @@ function clearFieldError(fieldId) {
       const activeNav = document.getElementById('nav-' + tabId);
       const title = document.getElementById('current-section-title');
 
-      if (activeSec) activeSec.classList.remove('hidden');
+      if (activeSec) {
+        activeSec.classList.remove('hidden');
+        if (window.Motion && typeof window.Motion.animate === 'function') {
+          try {
+            window.Motion.animate(
+              activeSec,
+              { opacity: [0, 1], transform: ['translateY(8px)', 'translateY(0px)'] },
+              { duration: 0.26, easing: [0.16, 1, 0.3, 1] }
+            );
+          } catch (e) {}
+        } else if (window.anime) {
+          window.anime({
+            targets: activeSec,
+            opacity: [0, 1],
+            translateY: [8, 0],
+            duration: 260,
+            easing: 'easeOutCubic'
+          });
+        }
+      }
       if (activeNav) {
         activeNav.className = 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition bg-brand-lime/10 text-brand-lime border border-brand-lime/30 text-left';
       }
@@ -4797,7 +5215,7 @@ function clearFieldError(fieldId) {
       renderAllAdminViews(true);
       const delEndpoints = ['/api/bookings/delete'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        delEndpoints.push('http://localhost:8088/api/bookings/delete');
+        delEndpoints.push('http://localhost:8090/api/bookings/delete');
         delEndpoints.push('http://127.0.0.1:8089/api/bookings/delete');
       }
       for (const ep of delEndpoints) {
@@ -8887,7 +9305,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         }
       } catch (e) {}
 
-      const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
+      const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8090/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -8939,7 +9357,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         labelMap[ch] || labelMap.all,
         descMap[ch] || descMap.all,
         async () => {
-          const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8088/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
+          const endpoints = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? ['/api/payment-config', 'http://localhost:8090/api/payment-config', 'http://localhost:8089/api/payment-config'] : ['/api/payment-config'];
           let updatedCfg = null;
           for (const ep of endpoints) {
             try {
@@ -9064,7 +9482,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       annMutationLockUntil = Date.now() + 5000;
       const endpoints = ['/api/announcements'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        endpoints.push('http://127.0.0.1:8088/api/announcements');
+        endpoints.push('http://127.0.0.1:8090/api/announcements');
         endpoints.push('http://127.0.0.1:8089/api/announcements');
       }
       for (const ep of endpoints) {
@@ -9466,7 +9884,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     async function uploadAssetToServer(slotKey, dataUrl) {
       const endpoints = ['/api/upload-asset'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        endpoints.push('http://127.0.0.1:8088/api/upload-asset');
+        endpoints.push('http://127.0.0.1:8090/api/upload-asset');
         endpoints.push('http://127.0.0.1:8089/api/upload-asset');
       }
       let finalUrl = dataUrl;
@@ -9560,9 +9978,9 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           prev.src = resolved;
         }
         prev.onerror = function() {
-          if (val.startsWith('assets/') && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '8089') {
+          if (val.startsWith('assets/') && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.(port === '8089' || port === '8091')) {
             this.onerror = function() { this.onerror = null; this.src = resolvePreviewAssetPath(defVal); };
-            this.src = 'http://' + window.location.hostname + ':8088/' + val;
+            this.src = 'http://' + window.location.hostname + ':8090/' + val;
           } else if (defVal && this.src !== resolvePreviewAssetPath(defVal)) {
             this.onerror = null;
             this.src = resolvePreviewAssetPath(defVal);
@@ -9892,7 +10310,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       siteConfigLockUntil = Date.now() + 5000;
       const endpoints = ['/api/site-config'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        endpoints.push('http://127.0.0.1:8088/api/site-config');
+        endpoints.push('http://127.0.0.1:8090/api/site-config');
         endpoints.push('http://127.0.0.1:8089/api/site-config');
       }
       for (const ep of endpoints) {

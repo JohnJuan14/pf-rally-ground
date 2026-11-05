@@ -433,8 +433,8 @@ function openAdminPortal(event) {
   if (event) event.preventDefault();
   const host = window.location.hostname;
   const port = window.location.port;
-  if ((host === 'localhost' || host === '127.0.0.1') && port === '8088') {
-    window.location.href = 'http://' + host + ':8089/?login=1';
+  if ((host === 'localhost' || host === '127.0.0.1') && (port === '8088' || port === '8090')) {
+    window.location.href = 'http://' + host + ':8091/?login=1';
   } else {
     window.location.href = '/admin/?login=1';
   }
@@ -4616,9 +4616,9 @@ function pfSetTournamentFilter(filterKey) {
 
 function openAdminTournamentHost(event) {
   if (event) event.preventDefault();
-  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '8088';
+  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.(port === '8088' || port === '8090');
   const targetUrl = isLocalSplit
-    ? `http://${window.location.hostname}:8089/#tab-tournament`
+    ? `http://${window.location.hostname}:8091/#tab-tournament`
     : `/admin/#tab-tournament`;
   window.location.href = targetUrl;
   return false;

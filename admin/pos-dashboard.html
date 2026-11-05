@@ -8,15 +8,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Framer Motion & Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F4F4F0;
+            color: #111815;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
         }
         /* Custom Scrollbar for tables */
         ::-webkit-scrollbar {
@@ -24,14 +32,14 @@
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f5f9; 
+            background: #F4F4F0; 
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
+            background: #CBD2CE; 
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
+            background: #15803D; 
         }
         
         /* Hide sections dynamically */
@@ -42,22 +50,22 @@
 </head>
 <body class="text-slate-800 flex h-screen overflow-hidden">
 
-    <!-- Sidebar Navigation -->
-    <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex transition-all duration-300">
-        <div class="p-6 flex items-center gap-3 border-b border-slate-700">
-            <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">
-                <i class="fa-solid fa-basketball"></i>
+    <!-- Sidebar Navigation (Bklit UI × Kokonut UI Executive Chrome) -->
+    <aside class="w-64 bg-[#0F291E] text-white flex flex-col hidden md:flex transition-all duration-300 border-r border-[#1E3F30]">
+        <div class="p-6 flex items-center gap-3 border-b border-white/10">
+            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">
+                <i class="fa-solid fa-table-tennis-paddle-ball"></i>
             </div>
             <div>
-                <h1 class="text-lg font-bold leading-tight">P&F CourtHub</h1>
-                <p class="text-xs text-slate-400">Rental POS & Reports</p>
+                <h1 class="text-lg font-bold leading-tight tracking-tight">P&F CourtHub</h1>
+                <p class="text-xs text-emerald-200/80 font-mono">Rental POS & Reports</p>
             </div>
         </div>
         <nav class="flex-1 p-4 space-y-2">
-            <button onclick="switchTab('transactions')" id="nav-transactions" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white transition-colors text-left font-medium">
+            <button onclick="switchTab('transactions')" id="nav-transactions" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-emerald-600 text-white transition-colors text-left font-semibold shadow-sm">
                 <i class="fa-solid fa-receipt w-5"></i> Transactions
             </button>
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left font-medium">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-emerald-100/80 hover:bg-white/10 hover:text-white transition-colors text-left font-semibold">
                 <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
             </button>
         </nav>
@@ -67,13 +75,13 @@
     <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
         
         <!-- Mobile Header -->
-        <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center z-10 shadow-md">
+        <header class="md:hidden bg-[#0F291E] text-white p-4 flex justify-between items-center z-10 shadow-md">
             <div class="flex items-center gap-2 font-bold text-lg">
-                <i class="fa-solid fa-basketball text-indigo-400"></i> P&F CourtHub
+                <i class="fa-solid fa-table-tennis-paddle-ball text-emerald-400"></i> P&F CourtHub
             </div>
             <div class="flex gap-2">
-                <button onclick="switchTab('transactions')" id="nav-mobile-transactions" class="px-3 py-1.5 bg-indigo-600 rounded-md text-sm">List</button>
-                <button onclick="switchTab('dashboard')" id="nav-mobile-dashboard" class="px-3 py-1.5 bg-slate-700 rounded-md text-sm">Stats</button>
+                <button onclick="switchTab('transactions')" id="nav-mobile-transactions" class="px-3 py-1.5 bg-emerald-600 rounded-md text-sm font-semibold">List</button>
+                <button onclick="switchTab('dashboard')" id="nav-mobile-dashboard" class="px-3 py-1.5 bg-white/10 rounded-md text-sm font-semibold">Stats</button>
             </div>
         </header>
 
@@ -353,16 +361,29 @@
             currentTab = tab;
             
             // Update Desktop Nav UI
-            document.getElementById('nav-transactions').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left font-medium ${tab === 'transactions' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`;
-            document.getElementById('nav-dashboard').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left font-medium ${tab === 'dashboard' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`;
+            document.getElementById('nav-transactions').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left font-semibold ${tab === 'transactions' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-100/80 hover:bg-white/10 hover:text-white'}`;
+            document.getElementById('nav-dashboard').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left font-semibold ${tab === 'dashboard' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-100/80 hover:bg-white/10 hover:text-white'}`;
             
             // Update Mobile Nav UI
-            document.getElementById('nav-mobile-transactions').className = `px-3 py-1.5 rounded-md text-sm ${tab === 'transactions' ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-300'}`;
-            document.getElementById('nav-mobile-dashboard').className = `px-3 py-1.5 rounded-md text-sm ${tab === 'dashboard' ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-300'}`;
+            document.getElementById('nav-mobile-transactions').className = `px-3 py-1.5 rounded-md text-sm font-semibold ${tab === 'transactions' ? 'bg-emerald-600 text-white' : 'bg-white/10 text-emerald-100'}`;
+            document.getElementById('nav-mobile-dashboard').className = `px-3 py-1.5 rounded-md text-sm font-semibold ${tab === 'dashboard' ? 'bg-emerald-600 text-white' : 'bg-white/10 text-emerald-100'}`;
 
             // Toggle Sections
-            document.getElementById('view-transactions').classList.toggle('hidden-section', tab !== 'transactions');
-            document.getElementById('view-dashboard').classList.toggle('hidden-section', tab !== 'dashboard');
+            const txView = document.getElementById('view-transactions');
+            const dashView = document.getElementById('view-dashboard');
+            txView.classList.toggle('hidden-section', tab !== 'transactions');
+            dashView.classList.toggle('hidden-section', tab !== 'dashboard');
+
+            const activeEl = tab === 'transactions' ? txView : dashView;
+            if (activeEl && window.Motion && typeof window.Motion.animate === 'function') {
+                try {
+                    window.Motion.animate(
+                        activeEl,
+                        { opacity: [0, 1], transform: ['translateY(8px)', 'translateY(0px)'] },
+                        { duration: 0.25, easing: [0.16, 1, 0.3, 1] }
+                    );
+                } catch (e) {}
+            }
 
             if (tab === 'dashboard') {
                 updateDashboard();

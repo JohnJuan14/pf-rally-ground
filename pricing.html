@@ -190,39 +190,42 @@
   <!-- === END SEO & GEO === -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script>
+  <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           borderRadius: {
             none: '0px',
-            sm: '4px',
-            DEFAULT: '5px',
-            md: '5px',
-            lg: '5px',
-            xl: '5px',
-            '2xl': '5px',
-            '3xl': '5px',
+            sm: '6px',
+            DEFAULT: '8px',
+            md: '8px',
+            lg: '10px',
+            xl: '12px',
+            '2xl': '14px',
+            '3xl': '16px',
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
-            mono: ['"Space Grotesk"', 'monospace'],
+            serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            display: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
           },
           colors: {
             brand: {
-              black: '#050E1D',
-              dark: '#08182E',
-              card: '#0E2240',
-              border: 'rgba(155, 230, 0, 0.16)',
-              lime: '#9BE600',
-              limeHover: '#B4FF00',
-              blue: '#0072CE',
-              green: '#0E8A2D',
-              clay: '#FF5733',
+              black: '#0D1F18',
+              dark: '#132A21',
+              card: '#18352A',
+              cardBorder: 'rgba(52, 211, 153, 0.18)',
+              border: 'rgba(52, 211, 153, 0.20)',
+              lime: '#34D399',
+              limeHover: '#10B981',
+              blue: '#0D9488',
+              green: '#15803D',
+              clay: '#C85A32',
             }
           },
           animation: {
@@ -837,6 +840,414 @@
       pointer-events: none;
       z-index: 15;
       box-shadow: 0 0 6px rgba(239, 68, 68, 0.45);
+    }
+
+  
+    /* ==========================================================================
+       2026 ARCHITECTURAL EDITORIAL DESIGN SYSTEM (KOKONUT UI × BKLIT UI × MOTION)
+       Aesthetic: "Bicol Heritage Court Club" — Warm Alabaster + Deep Cypress Forest
+       ========================================================================== */
+    :root {
+      --pf-radius-card: 14px;
+      --pf-radius-control: 9px;
+      --pf-bg-canvas: #F6F5F0;
+      --pf-bg-elevated: #EFECE6;
+      --pf-bg-card: #FFFFFF;
+      --pf-text-primary: #0D1F18;
+      --pf-text-secondary: #334155;
+      --pf-text-muted: #64748B;
+      --pf-accent-emerald: #15803D;
+      --pf-accent-mint: #34D399;
+      --pf-accent-clay: #C85A32;
+      --pf-border-subtle: rgba(13, 31, 24, 0.11);
+    }
+
+    html[data-theme="dark"] {
+      --pf-bg-canvas: #0D1F18;
+      --pf-bg-elevated: #132A21;
+      --pf-bg-card: #18352A;
+      --pf-text-primary: #F8FAFC;
+      --pf-text-secondary: #CBD5E1;
+      --pf-text-muted: #94A3B8;
+      --pf-accent-emerald: #34D399;
+      --pf-accent-mint: #6EE7B7;
+      --pf-accent-clay: #E07A5F;
+      --pf-border-subtle: rgba(52, 211, 153, 0.18);
+    }
+
+    /* Organic Film Grain Texture Overlay (Creative Director Standard) */
+    #pf-editorial-grain {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Refined Kokonut UI / Bklit UI Border Radii (Replacing rigid 5px override) */
+    .rounded-3xl, .rounded-2xl {
+      border-radius: 14px !important;
+    }
+    .rounded-xl, .rounded-lg, .rounded-md, .rounded,
+    .date-tile, .white-calendar-rail .date-tile, .time-chip,
+    input:not([type="checkbox"]):not([type="radio"]), select, textarea,
+    header nav a, #mobile-menu a, #mobile-menu > div,
+    #announcement-board-window, #public-announcement-feed > div > div {
+      border-radius: 9px !important;
+    }
+    .rounded-full, .cal-cat-pill, .cal-cat-dot, .slider-arrow-btn-light, .pf-bklit-theme-pill {
+      border-radius: 9999px !important;
+    }
+
+    /* Editorial Serif Display Accents */
+    h1 .text-brand-lime,
+    h2 .text-brand-lime {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      padding-right: 0.06em;
+    }
+
+    /* Kokonut UI Radial Spotlight Card Surface */
+    .pf-kokonut-card {
+      position: relative;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.28s ease !important;
+    }
+    .pf-kokonut-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: radial-gradient(
+        480px circle at var(--pf-mouse-x, 50%) var(--pf-mouse-y, 50%),
+        rgba(21, 128, 61, 0.065),
+        transparent 45%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .pf-kokonut-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Header & Top Live Ticker Editorial Restyling */
+    header {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-bottom: 1px solid rgba(13, 31, 24, 0.12) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      box-shadow: 0 4px 24px -6px rgba(13, 31, 24, 0.06) !important;
+    }
+    html[data-theme="dark"] header {
+      background: rgba(13, 31, 24, 0.94) !important;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.18) !important;
+    }
+
+    /* Top Court Stripe */
+    header > div:first-child,
+    footer > div:first-child {
+      background: linear-gradient(90deg, #0D9488 0%, #15803D 50%, #C85A32 100%) !important;
+    }
+
+    /* Live Ticker Banner: Warm Championship Sand & Deep Cypress */
+    #live-site-update-banner {
+      background: #EFECE6 !important;
+      color: #0D1F18 !important;
+      border-bottom: 1px solid rgba(13, 31, 24, 0.12) !important;
+      box-shadow: none !important;
+    }
+    html[data-theme="dark"] #live-site-update-banner {
+      background: #132A21 !important;
+      color: #ECFDF5 !important;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.16) !important;
+    }
+    .pf-live-ticker-badge {
+      background: #15803D !important;
+      color: #FFFFFF !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      border-radius: 9999px !important;
+      padding: 2px 10px !important;
+    }
+    .pf-live-ticker-badge span.animate-ping,
+    .pf-live-ticker-badge span.rounded-full {
+      background: #A7F3D0 !important;
+    }
+    .pf-live-ticker-item {
+      color: #0D1F18 !important;
+      font-weight: 700 !important;
+    }
+    html[data-theme="dark"] .pf-live-ticker-item {
+      color: #ECFDF5 !important;
+    }
+    .pf-live-ticker-sep {
+      background: rgba(21, 128, 61, 0.12) !important;
+      color: #15803D !important;
+      border-radius: 9999px !important;
+    }
+    html[data-theme="dark"] .pf-live-ticker-sep {
+      background: rgba(52, 211, 153, 0.16) !important;
+      color: #6EE7B7 !important;
+    }
+    .pf-live-ticker-cta {
+      background: #0D1F18 !important;
+      color: #FFFFFF !important;
+      border-radius: 9999px !important;
+    }
+    .pf-live-ticker-cta:hover {
+      background: #15803D !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Header Brand Title & Navigation Links in Daylight vs Night Court Mode */
+    html[data-theme="light"] header [data-site-club-name] {
+      color: #0D1F18 !important;
+    }
+    html[data-theme="light"] header [data-site-club-subtitle] {
+      color: #15803D !important;
+    }
+    html[data-theme="light"] header nav > a:not(.bg-brand-lime) {
+      color: #1E293B !important;
+    }
+    html[data-theme="light"] header nav > a:not(.bg-brand-lime):hover {
+      color: #15803D !important;
+      background: rgba(21, 128, 61, 0.08) !important;
+    }
+    html[data-theme="light"] header nav > a.bg-brand-lime {
+      background: #0D1F18 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 12px rgba(13, 31, 24, 0.15) !important;
+    }
+    html[data-theme="light"] .pf-nav-dropdown-btn {
+      color: #1E293B !important;
+    }
+    .pf-nav-dropdown:hover .pf-nav-dropdown-btn,
+    .pf-nav-dropdown.open .pf-nav-dropdown-btn,
+    .pf-nav-dropdown-btn.active {
+      background: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: #15803D !important;
+      box-shadow: 0 6px 16px -4px rgba(21, 128, 61, 0.35) !important;
+    }
+    .pf-nav-dropdown-menu {
+      background: #FFFFFF !important;
+      border: 1px solid rgba(13, 31, 24, 0.14) !important;
+      border-radius: 12px !important;
+      padding: 6px !important;
+      box-shadow: 0 20px 45px -10px rgba(13, 31, 24, 0.22) !important;
+    }
+    .pf-nav-dropdown-item {
+      border-radius: 8px !important;
+      border-bottom: none !important;
+      color: #0D1F18 !important;
+      padding: 9px 12px !important;
+    }
+    .pf-nav-dropdown-item:hover,
+    .pf-nav-dropdown-item.active {
+      background: #0D1F18 !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Bklit UI Header Theme Switcher Pill */
+    .pf-bklit-theme-pill {
+      background: #F6F5F0;
+      color: #0D1F18;
+      border: 1px solid rgba(13, 31, 24, 0.15);
+      box-shadow: 0 1px 3px rgba(13, 31, 24, 0.06);
+    }
+    .pf-bklit-theme-pill:hover {
+      border-color: #15803D;
+      background: #EFECE6;
+    }
+    html[data-theme="dark"] .pf-bklit-theme-pill {
+      background: #18352A;
+      color: #ECFDF5;
+      border-color: rgba(52, 211, 153, 0.3);
+    }
+
+    /* Header Right CTA Buttons */
+    header button[onclick*="openBookingDrawer"] {
+      background: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: transparent !important;
+      box-shadow: 0 6px 18px -4px rgba(21, 128, 61, 0.4) !important;
+    }
+    header button[onclick*="openBookingDrawer"]:hover {
+      background: #166534 !important;
+    }
+    header button[onclick*="toggleAnnouncementBoard"] {
+      background: #F6F5F0 !important;
+      color: #0D1F18 !important;
+      border: 1px solid rgba(13, 31, 24, 0.15) !important;
+    }
+    header button[onclick*="toggleAnnouncementBoard"] span.text-\[\#9BE600\] {
+      color: #15803D !important;
+    }
+    header #header-ann-badge {
+      background: #15803D !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] {
+      background: #18352A !important;
+      color: #FFFFFF !important;
+      border-color: rgba(52, 211, 153, 0.3) !important;
+    }
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] span.text-\[\#9BE600\] {
+      color: #34D399 !important;
+    }
+
+    /* Hero Section Vignette & Primary CTAs (Deep Cypress Forest Editorial) */
+    .hero-mask {
+      background:
+        linear-gradient(90deg, rgba(13, 31, 24, 0.62) 0%, rgba(13, 31, 24, 0.28) 55%, rgba(13, 31, 24, 0.08) 100%),
+        linear-gradient(180deg, rgba(13, 31, 24, 0.15) 0%, rgba(13, 31, 24, 0.42) 70%, #0D1F18 100%) !important;
+    }
+    .hero-cta-primary {
+      background: #15803D !important;
+      color: #FFFFFF !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 14px 32px -6px rgba(21, 128, 61, 0.55) !important;
+      animation: none !important;
+    }
+    .hero-cta-primary:hover {
+      background: #166534 !important;
+      box-shadow: 0 18px 38px -6px rgba(21, 128, 61, 0.7) !important;
+    }
+    .hero-cta-tertiary {
+      background: rgba(13, 31, 24, 0.78) !important;
+      border-color: rgba(52, 211, 153, 0.55) !important;
+      color: #6EE7B7 !important;
+      animation: none !important;
+    }
+
+    /* ==========================================================================
+       EDITORIAL WARM DAYLIGHT MODE (html[data-theme="light"] — DEFAULT)
+       Clean Alabaster Stone Canvas + Crisp Paper Cards + Deep Cypress Typography
+       ========================================================================== */
+    html[data-theme="light"] body {
+      background-color: #F6F5F0 !important;
+      color: #0D1F18 !important;
+    }
+
+    /* Page Sections in Daylight Mode (excluding photo hero & bottom photo CTA) */
+    html[data-theme="light"] main,
+    html[data-theme="light"] section#courts,
+    html[data-theme="light"] section#schedule,
+    html[data-theme="light"] section#tournaments,
+    html[data-theme="light"] section#location,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) {
+      background-color: #F6F5F0 !important;
+      color: #0D1F18 !important;
+      border-color: rgba(13, 31, 24, 0.09) !important;
+    }
+
+    html[data-theme="light"] section#courts {
+      background-color: #EFECE6 !important;
+    }
+
+    /* Cards & Elevated Surfaces in Daylight Mode */
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .bg-brand-card,
+    html[data-theme="light"] main .bg-brand-card,
+    html[data-theme="light"] main section.bg-brand-card\/90,
+    html[data-theme="light"] main div.bg-brand-card\/95 {
+      background-color: #FFFFFF !important;
+      border-color: rgba(13, 31, 24, 0.12) !important;
+      box-shadow: 0 12px 32px -8px rgba(13, 31, 24, 0.07) !important;
+      color: #0D1F18 !important;
+    }
+
+    /* Sub-boxes inside Cards in Daylight Mode */
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .bg-brand-black,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .bg-brand-black\/60,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .bg-brand-black\/70,
+    html[data-theme="light"] main .bg-brand-black,
+    html[data-theme="light"] main .bg-brand-black\/60,
+    html[data-theme="light"] main .bg-brand-black\/70 {
+      background-color: #F6F5F0 !important;
+      border-color: rgba(13, 31, 24, 0.12) !important;
+      color: #0D1F18 !important;
+    }
+
+    /* High-Contrast Typography Mapping in Daylight Mode */
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) h1,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) h2,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) h3,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) h4,
+    html[data-theme="light"] main h1,
+    html[data-theme="light"] main h2,
+    html[data-theme="light"] main h3,
+    html[data-theme="light"] main h4,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-white:not(button):not(a.bg-brand-lime):not(tr),
+    html[data-theme="light"] main .text-white:not(button):not(a.bg-brand-lime):not(tr) {
+      color: #0D1F18 !important;
+    }
+
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-slate-100,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-slate-200,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-slate-300,
+    html[data-theme="light"] main .text-slate-100,
+    html[data-theme="light"] main .text-slate-200,
+    html[data-theme="light"] main .text-slate-300 {
+      color: #334155 !important;
+    }
+
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-slate-400,
+    html[data-theme="light"] main .text-slate-400 {
+      color: #64748B !important;
+    }
+
+    /* Court Emerald Accents in Daylight Mode (Replacing low-contrast lime on white) */
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-brand-lime,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-\[\#D4FF00\],
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-\[\#34D399\],
+    html[data-theme="light"] main .text-brand-lime {
+      color: #15803D !important;
+    }
+
+    /* Interactive Buttons & Active Chips in Daylight Mode */
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .bg-brand-lime,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .bg-\[\#9BE600\],
+    html[data-theme="light"] main .bg-brand-lime,
+    html[data-theme="light"] main .bg-\[\#9BE600\] {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: #15803D !important;
+    }
+
+    /* Preserve white text inside solid dark table headers & active pills */
+    #schedule-table-head,
+    #schedule-table-head th,
+    .sched-filter-btn.bg-\[\#050E1D\],
+    .white-calendar-rail .date-tile.date-tile-active {
+      background-color: #0D1F18 !important;
+      color: #FFFFFF !important;
+      border-color: #0D1F18 !important;
+    }
+    .white-calendar-rail .date-tile.date-tile-active .tile-weekday {
+      color: #6EE7B7 !important;
+    }
+
+    /* Time Chips in Daylight Mode */
+    html[data-theme="light"] .time-chip {
+      background: #F6F5F0;
+      border: 1px solid rgba(13, 31, 24, 0.15);
+      color: #0D1F18;
+    }
+    html[data-theme="light"] .time-chip:hover:not(:disabled) {
+      background: rgba(21, 128, 61, 0.1);
+      border-color: #15803D;
+    }
+    .time-chip.time-chip-active {
+      background: #15803D !important;
+      border-color: #15803D !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 8px 20px -4px rgba(21, 128, 61, 0.35) !important;
     }
 
   </style>
@@ -2036,7 +2447,10 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261104v2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
+  <script src="pf-motion-ui.js?v=20261105v1"></script>
+<script src="app.js?v=20261104v2"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
