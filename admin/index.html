@@ -831,89 +831,162 @@
     }
   
 
-/* === P&F RALLY GROUND SYMMETRICAL LOGO-CENTER TOURNAMENT BRACKET & SCORING PORTAL === */
+
+
+/* === P&F RALLY GROUND PRO MAX TOURNAMENT & BRACKET DESIGN SYSTEM === */
 .pf-arena-stage {
   position: relative;
-  background: radial-gradient(circle at 50% 32%, rgba(16, 185, 129, 0.22) 0%, rgba(15, 41, 30, 0.96) 52%, #06130D 100%);
-  border: 2px solid rgba(16, 185, 129, 0.45);
-  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(2, 132, 199, 0.24) 0%, rgba(21, 128, 61, 0.22) 38%, rgba(7, 23, 16, 0.98) 78%),
+    linear-gradient(145deg, #061510 0%, #0B241A 50%, #071610 100%) !important;
+  border: 2px solid #15803D !important;
+  border-radius: 28px !important;
   overflow: hidden;
   color: #FFFFFF !important;
-  box-shadow: 0 24px 60px -15px rgba(4, 18, 12, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  box-shadow: 0 24px 60px -15px rgba(4, 18, 12, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
 }
 .pf-arena-stage::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(rgba(110, 231, 183, 0.16) 1.25px, transparent 1.25px),
-    linear-gradient(125deg, rgba(245, 158, 11, 0.08) 0%, transparent 35%, transparent 65%, rgba(16, 185, 129, 0.10) 100%);
-  background-size: 20px 20px, 100% 100%;
+    radial-gradient(rgba(163, 230, 53, 0.16) 1.25px, transparent 1.25px),
+    linear-gradient(90deg, transparent 49.8%, rgba(255, 255, 255, 0.05) 49.8%, rgba(255, 255, 255, 0.05) 50.2%, transparent 50.2%);
+  background-size: 22px 22px, 100% 100%;
   pointer-events: none;
   z-index: 0;
 }
-/* Corner Shard Accents (like reference image, in P&F Gold & Emerald) */
+
+/* Brand-Matched Corner Shards (Royal Blue #0284C7, Pickleball Volt #A3E635, Court Green #15803D) */
 .pf-arena-shard-tl,
 .pf-arena-shard-tr,
 .pf-arena-shard-bl,
 .pf-arena-shard-br {
   position: absolute;
-  width: 180px;
-  height: 90px;
+  width: 170px;
+  height: 82px;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 .pf-arena-shard-tl {
-  top: -18px;
-  left: -28px;
-  background: linear-gradient(135deg, #F59E0B 0%, #10B981 65%, transparent 100%);
-  clip-path: polygon(0 0, 100% 0, 58% 42%, 82% 42%, 0 100%);
+  top: -16px;
+  left: -24px;
+  background: linear-gradient(135deg, #A3E635 0%, #0284C7 62%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 56% 42%, 80% 42%, 0 100%);
 }
 .pf-arena-shard-tr {
-  top: -18px;
-  right: -28px;
-  background: linear-gradient(225deg, #F59E0B 0%, #10B981 65%, transparent 100%);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 18% 42%, 42% 42%);
+  top: -16px;
+  right: -24px;
+  background: linear-gradient(225deg, #A3E635 0%, #0284C7 62%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 42%, 44% 42%);
 }
 .pf-arena-shard-bl {
-  bottom: -18px;
-  left: -28px;
-  background: linear-gradient(45deg, #F59E0B 0%, #15803D 65%, transparent 100%);
+  bottom: -16px;
+  left: -24px;
+  background: linear-gradient(45deg, #A3E635 0%, #15803D 62%, transparent 100%);
   clip-path: polygon(0 0, 72% 58%, 45% 58%, 100% 100%, 0 100%);
 }
 .pf-arena-shard-br {
-  bottom: -18px;
-  right: -28px;
-  background: linear-gradient(315deg, #F59E0B 0%, #15803D 65%, transparent 100%);
+  bottom: -16px;
+  right: -24px;
+  background: linear-gradient(315deg, #A3E635 0%, #15803D 62%, transparent 100%);
   clip-path: polygon(100% 0, 100% 100%, 0 100%, 55% 58%, 28% 58%);
+}
+
+/* Rectangular Court Crest Frame (Exact 4:5 Portrait Match for assets/logo.png — NO Circle Clipping!) */
+.pf-center-crest-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.pf-center-court-crest {
+  width: 112px;
+  height: 136px;
+  border-radius: 18px !important;
+  padding: 4px;
+  background: linear-gradient(180deg, #38BDF8 0%, #A3E635 50%, #22C55E 100%) !important;
+  box-shadow:
+    0 14px 34px -6px rgba(0, 0, 0, 0.75),
+    0 0 28px rgba(163, 230, 53, 0.38),
+    0 0 0 2px rgba(255, 255, 255, 0.22) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+}
+.pf-center-court-crest:hover {
+  transform: scale(1.04);
+}
+.pf-center-court-crest-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px !important;
+  background: #FFFFFF !important;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(15, 41, 30, 0.15);
+}
+.pf-center-court-crest-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 11px !important;
+  display: block;
+}
+
+/* Small Rectangular Court Logo Badge for Headers & Scorebugs */
+.pf-rect-logo-badge {
+  width: 44px;
+  height: 54px;
+  border-radius: 10px !important;
+  padding: 2px;
+  background: linear-gradient(180deg, #38BDF8 0%, #A3E635 50%, #22C55E 100%) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf-rect-logo-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px !important;
+  background: #FFFFFF;
 }
 
 /* Match Container in Symmetrical Tree */
 .pf-sym-match-card {
   position: relative;
-  border-radius: 18px;
-  padding: 10px;
-  background: rgba(7, 25, 17, 0.82);
-  border: 1.5px solid rgba(110, 231, 183, 0.25);
+  border-radius: 18px !important;
+  padding: 11px;
+  background: rgba(8, 28, 20, 0.92) !important;
+  border: 1.5px solid rgba(110, 231, 183, 0.32) !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(8px);
 }
 .pf-sym-match-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(245, 158, 11, 0.75);
-  box-shadow: 0 10px 26px -6px rgba(245, 158, 11, 0.28);
+  border-color: #A3E635 !important;
+  box-shadow: 0 12px 28px -6px rgba(163, 230, 53, 0.28) !important;
 }
 .pf-sym-match-card.is-active-match {
-  border: 2px solid #F59E0B !important;
-  background: linear-gradient(145deg, rgba(245, 158, 11, 0.16) 0%, rgba(15, 41, 30, 0.94) 100%) !important;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.22), 0 14px 30px -6px rgba(0, 0, 0, 0.65) !important;
+  border: 2.5px solid #A3E635 !important;
+  background: linear-gradient(145deg, rgba(163, 230, 53, 0.16) 0%, rgba(10, 35, 24, 0.96) 100%) !important;
+  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.24), 0 16px 32px -6px rgba(0, 0, 0, 0.7) !important;
 }
 .pf-sym-match-card.is-completed-match {
-  border-color: rgba(16, 185, 129, 0.55);
+  border-color: rgba(56, 189, 248, 0.6) !important;
 }
 
-/* Slot Row (Score Box + Team Banner Bar like Reference Image) */
+/* Slot Row (Framed Score Box + High-Contrast Team Banner Bar) */
 .pf-sym-slot {
   display: flex;
   align-items: center;
@@ -924,12 +997,12 @@
   flex-direction: row-reverse;
 }
 .pf-sym-score-box {
-  width: 42px;
+  width: 44px;
   height: 40px;
-  border-radius: 11px;
-  background: #040E09 !important;
-  border: 2px solid #F59E0B;
-  box-shadow: 0 0 0 2px rgba(4, 14, 9, 0.95), 0 0 0 3.5px rgba(245, 158, 11, 0.45), inset 0 2px 6px rgba(0,0,0,0.85);
+  border-radius: 11px !important;
+  background: #04100B !important;
+  border: 2px solid #A3E635 !important;
+  box-shadow: 0 0 0 2px #04100B, inset 0 2px 6px rgba(0,0,0,0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -941,120 +1014,230 @@
   z-index: 2;
 }
 .pf-sym-slot.is-winner .pf-sym-score-box {
-  background: #064E3B !important;
-  border-color: #34D399 !important;
-  box-shadow: 0 0 0 2px #040E09, 0 0 12px rgba(52, 211, 153, 0.65);
-  color: #A7F3D0 !important;
+  background: #15803D !important;
+  border-color: #BEF264 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 14px rgba(163, 230, 53, 0.65);
 }
 .pf-sym-banner-bar {
   flex: 1;
   min-width: 0;
-  height: 34px;
-  padding: 0 12px;
+  height: 36px;
+  padding: 0 11px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  background: linear-gradient(90deg, #D97706 0%, #F59E0B 48%, #FBBF24 100%);
+  background: linear-gradient(90deg, #FEFCE8 0%, #FEF08A 45%, #FDE047 100%) !important;
   color: #05140D !important;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 11.5px;
   letter-spacing: 0.01em;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.55);
-  border-bottom: 1.5px solid rgba(180, 83, 9, 0.85);
+  border-top: 1.5px solid #FFFFFF !important;
+  border-bottom: 1.5px solid #CA8A04 !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   position: relative;
 }
 .pf-sym-slot.dir-left .pf-sym-banner-bar {
   margin-left: -4px;
   padding-left: 12px;
-  border-radius: 0 9px 9px 0;
-  border-right: 2px solid #FEF3C7;
+  border-radius: 0 10px 10px 0 !important;
+  border-right: 2px solid #FFFFFF !important;
 }
 .pf-sym-slot.dir-right .pf-sym-banner-bar {
   margin-right: -4px;
   padding-right: 12px;
-  border-radius: 9px 0 0 9px;
-  border-left: 2px solid #FEF3C7;
-  background: linear-gradient(270deg, #D97706 0%, #F59E0B 48%, #FBBF24 100%);
+  border-radius: 10px 0 0 10px !important;
+  border-left: 2px solid #FFFFFF !important;
+  background: linear-gradient(270deg, #FEFCE8 0%, #FEF08A 45%, #FDE047 100%) !important;
 }
 .pf-sym-slot.is-winner .pf-sym-banner-bar {
-  background: linear-gradient(90deg, #059669 0%, #10B981 55%, #34D399 100%) !important;
-  color: #03150D !important;
-  border-color: #A7F3D0 !important;
+  background: linear-gradient(90deg, #BBF7D0 0%, #86EFAC 50%, #4ADE80 100%) !important;
+  color: #04120B !important;
+  border-color: #FFFFFF !important;
 }
 .pf-sym-slot.is-awaiting .pf-sym-banner-bar {
   background: linear-gradient(90deg, #1E293B 0%, #334155 100%) !important;
-  color: #E2E8F0 !important;
-  border-color: rgba(148, 163, 184, 0.4) !important;
+  color: #F8FAFC !important;
+  border-color: rgba(148, 163, 184, 0.45) !important;
 }
 .pf-sym-slot.is-awaiting .pf-sym-banner-bar span {
-  color: #E2E8F0 !important;
+  color: #F8FAFC !important;
 }
 .pf-sym-slot:not(.is-awaiting) .pf-sym-banner-bar span {
-  color: #04120B !important;
+  color: #05140D !important;
 }
 
-/* Diamond Connector Pin on Inner Tip of Each Slot */
 .pf-sym-diamond {
   width: 8px;
   height: 8px;
-  background: #FFFFFF;
-  border: 1.5px solid #040E09;
+  background: #FFFFFF !important;
+  border: 1.5px solid #04100B !important;
   transform: rotate(45deg);
   flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
 }
 
-/* Center Club Crest Shield */
-.pf-center-crest-wrap {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.pf-center-crest-ring {
-  width: 108px;
-  height: 108px;
-  border-radius: 9999px;
-  padding: 5px;
-  background: conic-gradient(from 0deg, #F59E0B, #10B981, #FBBF24, #059669, #F59E0B);
-  box-shadow: 0 0 35px rgba(16, 185, 129, 0.45), 0 0 60px rgba(245, 158, 11, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.pf-center-crest-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 9999px;
-  background: #06150E;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-/* Pro Broadcast Scoring Console */
-.pf-scoring-portal {
-  background: linear-gradient(155deg, #071911 0%, #0E291D 55%, #06140E 100%) !important;
-  border: 2px solid rgba(16, 185, 129, 0.45) !important;
-  border-radius: 28px;
+/* === LOCKED WCAG AAA TOURNAMENT BUTTON SYSTEM (IMMUNE TO LIGHT/DARK OVERRIDES) === */
+button.pf-trn-btn-primary,
+.pf-trn-btn-primary {
+  background: #0F291E !important;
+  background-color: #0F291E !important;
   color: #FFFFFF !important;
-  box-shadow: 0 22px 50px -12px rgba(4, 18, 12, 0.8);
+  border: 1.5px solid #15803D !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 12px rgba(15, 41, 30, 0.2) !important;
 }
-.pf-led-digits {
-  font-family: 'JetBrains Mono', monospace;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 22px rgba(52, 211, 153, 0.45);
+button.pf-trn-btn-primary:hover,
+.pf-trn-btn-primary:hover {
+  background: #15803D !important;
+  background-color: #15803D !important;
+  color: #FFFFFF !important;
 }
-.pf-led-digits-gold {
-  font-family: 'JetBrains Mono', monospace;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 22px rgba(251, 191, 36, 0.45);
+
+button.pf-trn-btn-emerald,
+.pf-trn-btn-emerald {
+  background: #15803D !important;
+  background-color: #15803D !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #166534 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25) !important;
+}
+button.pf-trn-btn-emerald:hover,
+.pf-trn-btn-emerald:hover {
+  background: #166534 !important;
+  background-color: #166534 !important;
+  color: #FFFFFF !important;
+}
+
+button.pf-trn-btn-royal,
+.pf-trn-btn-royal {
+  background: #0369A1 !important;
+  background-color: #0369A1 !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #0284C7 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25) !important;
+}
+button.pf-trn-btn-royal:hover,
+.pf-trn-btn-royal:hover {
+  background: #075985 !important;
+  background-color: #075985 !important;
+  color: #FFFFFF !important;
+}
+
+button.pf-trn-btn-gold,
+.pf-trn-btn-gold {
+  background: #FACC15 !important;
+  background-color: #FACC15 !important;
+  color: #05140D !important;
+  border: 1.5px solid #CA8A04 !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.28) !important;
+}
+button.pf-trn-btn-gold:hover,
+.pf-trn-btn-gold:hover {
+  background: #EAB308 !important;
+  background-color: #EAB308 !important;
+  color: #05140D !important;
+}
+
+button.pf-trn-btn-volt,
+.pf-trn-btn-volt {
+  background: #A3E635 !important;
+  background-color: #A3E635 !important;
+  color: #04120B !important;
+  border: 1.5px solid #65A30D !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 14px rgba(163, 230, 53, 0.35) !important;
+}
+button.pf-trn-btn-volt:hover,
+.pf-trn-btn-volt:hover {
+  background: #BEF264 !important;
+  background-color: #BEF264 !important;
+  color: #04120B !important;
+}
+
+button.pf-trn-btn-violet,
+.pf-trn-btn-violet {
+  background: #EDE9FE !important;
+  background-color: #EDE9FE !important;
+  color: #4C1D95 !important;
+  border: 1.5px solid #C4B5FD !important;
+  font-weight: 800 !important;
+}
+button.pf-trn-btn-violet:hover,
+.pf-trn-btn-violet:hover {
+  background: #5B21B6 !important;
+  background-color: #5B21B6 !important;
+  color: #FFFFFF !important;
+  border-color: #5B21B6 !important;
+}
+
+button.pf-trn-btn-secondary,
+.pf-trn-btn-secondary {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  color: #0F291E !important;
+  border: 1.5px solid #CBD5E1 !important;
+  font-weight: 800 !important;
+}
+button.pf-trn-btn-secondary:hover,
+.pf-trn-btn-secondary:hover {
+  background: #F1F5F9 !important;
+  background-color: #F1F5F9 !important;
+  color: #0F291E !important;
+  border-color: #0F291E !important;
+}
+
+button.pf-trn-btn-arena-ghost,
+.pf-trn-btn-arena-ghost {
+  background: #0F2E20 !important;
+  background-color: #0F2E20 !important;
+  color: #ECFDF5 !important;
+  border: 1.5px solid rgba(110, 231, 183, 0.45) !important;
+  font-weight: 800 !important;
+}
+button.pf-trn-btn-arena-ghost:hover,
+.pf-trn-btn-arena-ghost:hover {
+  background: #15803D !important;
+  background-color: #15803D !important;
+  color: #FFFFFF !important;
+  border-color: #A3E635 !important;
+}
+
+button.pf-trn-btn-danger,
+.pf-trn-btn-danger {
+  background: #FEE2E2 !important;
+  background-color: #FEE2E2 !important;
+  color: #991B1B !important;
+  border: 1.5px solid #FCA5A5 !important;
+  font-weight: 800 !important;
+}
+button.pf-trn-btn-danger:hover,
+.pf-trn-btn-danger:hover {
+  background: #DC2626 !important;
+  background-color: #DC2626 !important;
+  color: #FFFFFF !important;
+  border-color: #DC2626 !important;
+}
+
+/* Pro Broadcast Referee Scoring Portal (Editorial High-Contrast Surface) */
+.pf-scoring-portal {
+  background: #FFFFFF !important;
+  border: 2px solid #CBD5E1 !important;
+  border-radius: 28px !important;
+  color: #0F172A !important;
+  box-shadow: 0 20px 45px -12px rgba(15, 41, 30, 0.12) !important;
+}
+
+/* Phase Slide Animation */
+@keyframes pfPhaseSlideIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.pf-phase-slide-panel {
+  animation: pfPhaseSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
   </style>
@@ -3094,27 +3277,32 @@
       </section>
 
       <!-- ================= 4B. UNIFIED OFFICIAL TOURNAMENTS, PRICING, PLAYER ROSTERS, BRACKETS & LIVE SCOREKEEPER TAB ================= -->
-      <section id="tab-tournament" class="hidden space-y-6">
+                  <section id="tab-tournament" class="hidden space-y-6">
 
         <!-- 1. MANAGE OFFICIAL PICKLEBALL TOURNAMENTS, PRICING & PUBLIC VISIBILITY -->
         <div class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 space-y-5 shadow-md">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-            <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🏆 OFFICIAL PICKLEBALL TOURNAMENTS &amp; PRICING MANAGER</span>
-                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase tracking-wider">Synced Live with #tournaments</span>
+            <div class="flex items-start sm:items-center gap-3.5">
+              <div class="pf-rect-logo-badge hidden sm:flex">
+                <img src="../assets/logo.png" alt="P&amp;F Rally Ground">
               </div>
-              <h2 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">Manage Official Pickleball Tournaments, Entry Fees, Players &amp; Formats</h2>
-              <p class="text-xs text-slate-600">Edit tournament entry fees (₱), prize pools, registered player names, and live brackets below. All updates sync immediately to the public website.</p>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🏆 OFFICIAL PICKLEBALL TOURNAMENTS &amp; PRICING MANAGER</span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase tracking-wider">Synced Live with #tournaments</span>
+                </div>
+                <h2 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">Manage Official Pickleball Tournaments, Entry Fees, Players &amp; Formats</h2>
+                <p class="text-xs text-slate-600">Edit tournament entry fees (₱), prize pools, registered player names, and live brackets below. All updates sync immediately to the public website.</p>
+              </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" id="btn-toggle-home-tournaments-master" onclick="toggleMasterHomeTournamentVisibility()" class="px-3.5 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider transition shadow-sm" style="color:#FFFFFF !important;">
+              <button type="button" id="btn-toggle-home-tournaments-master" onclick="toggleMasterHomeTournamentVisibility()" class="pf-trn-btn-emerald px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
                 ✅ Homepage Tournaments: PUBLISHED
               </button>
-              <button type="button" onclick="adminResetDefaultTournaments()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-extrabold uppercase transition shadow-2xs">
+              <button type="button" onclick="adminResetDefaultTournaments()" class="pf-trn-btn-secondary px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
                 ↺ Restore 4 Default Formats
               </button>
-              <button type="button" onclick="adminOpenTournamentEditorModal()" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">
+              <button type="button" onclick="adminOpenTournamentEditorModal()" class="pf-trn-btn-primary px-4 py-2.5 rounded-xl text-xs uppercase transition">
                 + Add New Tournament
               </button>
             </div>
@@ -3123,7 +3311,7 @@
           <div id="admin-tournaments-manager-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs"></div>
         </div>
 
-                <!-- 2. SYMMETRICAL LOGO-CENTER TOURNAMENT BRACKET ARENA & PRO BROADCAST SCORING PORTAL -->
+        <!-- 2. SYMMETRICAL LOGO-CENTER TOURNAMENT BRACKET ARENA & PRO BROADCAST SCORING PORTAL -->
         <div id="admin-native-bracket-workspace" class="space-y-6">
           <!-- Top Tournament Control Bar -->
           <div class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-md space-y-4">
@@ -3152,13 +3340,13 @@
                     <option value="21">21 Pts (MLP Rally)</option>
                   </select>
                 </div>
-                <button type="button" onclick="adminOpenTournamentPlayersModal()" class="px-3.5 py-2.5 rounded-xl bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#5B21B6] hover:text-white border border-[#C4B5FD] text-xs font-extrabold uppercase transition">
+                <button type="button" onclick="adminOpenTournamentPlayersModal()" class="pf-trn-btn-violet px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
                   👥 Edit Players (8 Seeds)
                 </button>
-                <button type="button" onclick="adminConfirmShuffleActiveBracket()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-extrabold uppercase transition">
+                <button type="button" onclick="adminConfirmShuffleActiveBracket()" class="pf-trn-btn-secondary px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
                   🔀 Shuffle Seeds
                 </button>
-                <button type="button" onclick="adminConfirmResetActiveBracket()" class="px-3.5 py-2.5 rounded-xl bg-[#FEE2E2] hover:bg-rose-600 text-[#991B1B] hover:text-white border border-[#FCA5A5] text-xs font-extrabold uppercase transition">
+                <button type="button" onclick="adminConfirmResetActiveBracket()" class="pf-trn-btn-danger px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
                   ↺ Reset Bracket
                 </button>
               </div>
@@ -3171,33 +3359,33 @@
                   <span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-mono font-extrabold uppercase">👥 REGISTERED PLAYERS &amp; 8 SEEDED PAIRS</span>
                   <span class="text-xs font-bold text-slate-600">Click any seed slot to edit player names</span>
                 </div>
-                <button type="button" onclick="adminOpenTournamentPlayersModal()" class="text-xs font-mono font-extrabold text-[#5B21B6] hover:underline">✏️ Edit All 8 Seed Names →</button>
+                <button type="button" onclick="adminOpenTournamentPlayersModal()" class="pf-trn-btn-violet px-3 py-1 rounded-lg text-[11px] font-mono uppercase">✏️ Edit All 8 Seed Names →</button>
               </div>
               <div id="adm-brk-players-strip" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs"></div>
             </div>
           </div>
 
-          <!-- SYMMETRICAL LOGO-CENTER CHAMPIONSHIP BRACKET ARENA (1/4 LEFT -> 1/2 LEFT -> P&F LOGO + FINAL <- 1/2 RIGHT <- 1/4 RIGHT) -->
+          <!-- SYMMETRICAL LOGO-CENTER CHAMPIONSHIP BRACKET ARENA (WITH PHASE SLIDER BAR) -->
           <div class="pf-arena-stage p-5 sm:p-7">
             <div class="pf-arena-shard-tl"></div>
             <div class="pf-arena-shard-tr"></div>
             <div class="pf-arena-shard-bl"></div>
             <div class="pf-arena-shard-br"></div>
 
-            <div class="relative z-10 space-y-6">
-              <!-- Top Arena Title Header (Like Reference Image: ━━━ TOURNAMENT NAME ━━━) -->
+            <div class="relative z-10 space-y-5">
+              <!-- Top Arena Title Header -->
               <div class="text-center space-y-1.5">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-950/90 border border-emerald-400/40 text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-300" style="color:#6EE7B7 !important;">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635]/60 text-[10px] font-mono font-extrabold uppercase tracking-widest" style="background:#04120B !important;color:#BEF264 !important;">
                   <span>🏓 P&amp;F RALLY GROUND OFFICIAL CHAMPIONSHIP BRACKET</span>
                   <span>•</span>
-                  <span id="adm-arena-sub-format" style="color:#FDE68A !important;">ROUND ROBIN + PLAYOFFS</span>
+                  <span id="adm-arena-sub-format" style="color:#38BDF8 !important;">ROUND ROBIN + PLAYOFFS</span>
                 </div>
                 <div class="flex items-center justify-center gap-3 sm:gap-5">
-                  <span class="hidden sm:inline-block w-14 md:w-24 h-1 rounded-full bg-gradient-to-r from-transparent via-[#F59E0B] to-[#10B981]"></span>
-                  <h2 id="adm-arena-banner-title" class="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-wider text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.8)]" style="color:#FFFFFF !important;">BICOL OPEN DUPR PICKLEBALL CUP</h2>
-                  <span class="hidden sm:inline-block w-14 md:w-24 h-1 rounded-full bg-gradient-to-l from-transparent via-[#F59E0B] to-[#10B981]"></span>
+                  <span class="hidden sm:inline-block w-14 md:w-24 h-1 rounded-full bg-gradient-to-r from-transparent via-[#38BDF8] to-[#A3E635]"></span>
+                  <h2 id="adm-arena-banner-title" class="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-wider drop-shadow-[0_3px_12px_rgba(0,0,0,0.8)]" style="color:#FFFFFF !important;">BICOL OPEN DUPR PICKLEBALL CUP</h2>
+                  <span class="hidden sm:inline-block w-14 md:w-24 h-1 rounded-full bg-gradient-to-l from-transparent via-[#38BDF8] to-[#A3E635]"></span>
                 </div>
-                <p class="text-xs font-mono text-emerald-200/90" style="color:#A7F3D0 !important;">Click any match box in the bracket tree below (`1/4`, `1/2`, or `FINAL`) to load it into the Referee Scoring Portal</p>
+                <p class="text-xs font-mono" style="color:#E2E8F0 !important;">Click any match card (`1/4`, `1/2`, or `FINAL`) to load it into the Referee Scoring Portal below</p>
               </div>
 
               <!-- Dynamic Symmetrical Bracket Container -->
@@ -3205,28 +3393,28 @@
             </div>
           </div>
 
-          <!-- PRO BROADCAST REFEREE SCORING PORTAL (USA PICKLEBALL OFFICIAL SCOREKEEPER) -->
+          <!-- PRO BROADCAST REFEREE SCORING PORTAL (EDITORIAL HIGH-CONTRAST CONSOLE) -->
           <div id="admin-pro-scoring-portal" class="pf-scoring-portal p-5 sm:p-7 space-y-6">
             <!-- Top Broadcast Bar: Match Selector Pills + Court + Stopwatch + Voice Call -->
-            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-emerald-500/25 pb-4">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-4">
               <div class="space-y-2">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-rose-500/20 text-rose-200 border border-rose-400/50 text-[10px] font-mono font-black uppercase tracking-wider" style="color:#FECDD3 !important;">
-                    <span class="w-2 h-2 rounded-full bg-rose-400 animate-ping"></span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[10px] font-mono font-black uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
                     <span>PRO REFEREE SCORING PORTAL</span>
                   </span>
-                  <span id="adm-sk-match-label" class="px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/50 text-amber-200 font-mono text-xs font-black uppercase" style="color:#FDE68A !important;">Quarterfinal 1 (QF1)</span>
-                  <span id="adm-sk-point-alert" class="hidden px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-mono text-[10px] font-black uppercase animate-pulse" style="color:#05140D !important;">🔥 GAME POINT</span>
+                  <span id="adm-sk-match-label" class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-xs font-black uppercase">Quarterfinal 1 (QF1)</span>
+                  <span id="adm-sk-point-alert" class="hidden cal-cat-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B] font-mono text-[10px] font-black uppercase animate-pulse">🔥 GAME POINT</span>
                 </div>
                 <!-- Quick Match Switcher Bar -->
                 <div id="adm-sk-quick-match-pills" class="flex flex-wrap items-center gap-1.5 pt-0.5"></div>
               </div>
 
               <!-- Right Controls: Court Selector, Match Stopwatch & Audio Announcer -->
-              <div class="flex flex-wrap items-center gap-2.5 bg-black/35 p-2.5 rounded-2xl border border-emerald-500/30">
-                <div class="px-2">
-                  <span class="block text-[9px] font-mono uppercase text-emerald-300/80" style="color:#6EE7B7 !important;">Assigned Court</span>
-                  <select id="adm-sk-court-select" onchange="adminChangeActiveMatchCourt(this.value)" class="mt-0.5 bg-[#0A2218] border border-emerald-500/40 rounded-lg px-2.5 py-1 text-xs font-mono font-extrabold text-white" style="background:#0A2218 !important;color:#FFFFFF !important;">
+              <div class="flex flex-wrap items-center gap-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                <div class="px-1">
+                  <span class="block text-[9px] font-mono font-extrabold uppercase text-slate-500">Assigned Court</span>
+                  <select id="adm-sk-court-select" onchange="adminChangeActiveMatchCourt(this.value)" class="mt-0.5 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono font-extrabold text-slate-900">
                     <option value="Court 1">Court 1 (Championship)</option>
                     <option value="Court 2">Court 2</option>
                     <option value="Court 3">Court 3</option>
@@ -3234,134 +3422,132 @@
                   </select>
                 </div>
 
-                <div class="h-8 w-px bg-emerald-500/25 hidden sm:block"></div>
+                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
 
                 <!-- Match Stopwatch -->
-                <div class="flex items-center gap-2 px-2">
+                <div class="flex items-center gap-2 px-1">
                   <div>
-                    <span class="block text-[9px] font-mono uppercase text-emerald-300/80" style="color:#6EE7B7 !important;">Match Timer</span>
-                    <span id="adm-sk-timer-display" class="font-mono text-sm font-black text-white" style="color:#FFFFFF !important;">00:00</span>
+                    <span class="block text-[9px] font-mono font-extrabold uppercase text-slate-500">Match Timer</span>
+                    <span id="adm-sk-timer-display" class="font-mono text-sm font-black text-slate-900">00:00</span>
                   </div>
-                  <button type="button" id="adm-sk-timer-btn" onclick="adminToggleMatchStopwatch()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-[10px] font-extrabold uppercase transition" style="color:#FFFFFF !important;">▶ Start</button>
-                  <button type="button" onclick="adminResetMatchStopwatch()" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] font-bold transition" title="Reset Stopwatch" style="color:#FFFFFF !important;">↺</button>
+                  <button type="button" id="adm-sk-timer-btn" onclick="adminToggleMatchStopwatch()" class="pf-trn-btn-emerald px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase transition">▶ Start</button>
+                  <button type="button" onclick="adminResetMatchStopwatch()" class="pf-trn-btn-secondary px-2.5 py-1.5 rounded-lg font-mono text-[10px] transition" title="Reset Stopwatch">↺</button>
                 </div>
 
-                <div class="h-8 w-px bg-emerald-500/25 hidden sm:block"></div>
+                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
 
                 <!-- Voice Score Callout Button -->
-                <button type="button" onclick="adminSpeakOfficialScoreCall()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-black uppercase tracking-wider transition shadow-md flex items-center gap-1.5" style="background:#F59E0B !important;color:#05140D !important;">
+                <button type="button" onclick="adminSpeakOfficialScoreCall()" class="pf-trn-btn-gold px-3.5 py-2 rounded-xl font-mono text-xs uppercase tracking-wider transition flex items-center gap-1.5">
                   <span>🔊 Call Score</span>
                 </button>
               </div>
             </div>
 
             <!-- USA Pickleball Official 3-Number Broadcast Scorebug -->
-            <div class="rounded-2xl bg-black/45 border-2 border-emerald-500/40 p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-inner">
+            <div class="rounded-2xl bg-[#071912] border-2 border-[#15803D] p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-md" style="background:#071912 !important;color:#FFFFFF !important;">
               <div class="flex items-center gap-3.5">
-                <div class="w-12 h-12 rounded-2xl bg-[#0F291E] border border-amber-400/60 p-1.5 flex items-center justify-center flex-shrink-0 shadow-md">
-                  <img src="../assets/logo.png" alt="P&amp;F Logo" class="w-full h-full object-contain">
+                <div class="pf-rect-logo-badge">
+                  <img src="../assets/logo.png" alt="P&amp;F Logo">
                 </div>
                 <div>
-                  <span class="text-[10px] font-mono uppercase tracking-widest text-amber-300 font-extrabold block" style="color:#FCD34D !important;">USA PICKLEBALL OFFICIAL 3-NUMBER SCORE CALL (SERVER • RECEIVER • SERVER #)</span>
-                  <div id="adm-sk-serving-info" class="text-sm sm:text-base text-white font-extrabold mt-0.5" style="color:#FFFFFF !important;">Serving: Side A • Server #2</div>
+                  <span class="text-[10px] font-mono uppercase tracking-widest font-extrabold block" style="color:#A3E635 !important;">USA PICKLEBALL OFFICIAL 3-NUMBER SCORE CALL (SERVER • RECEIVER • SERVER #)</span>
+                  <div id="adm-sk-serving-info" class="text-sm sm:text-base font-extrabold mt-0.5" style="color:#FFFFFF !important;">Serving: Side A • Server #2</div>
                 </div>
               </div>
 
               <div class="flex items-center gap-3">
-                <div id="adm-sk-callout" class="px-5 py-2.5 rounded-2xl bg-[#040E09] border-2 border-amber-400 font-mono text-3xl sm:text-4xl font-black tracking-widest text-amber-300 shadow-[0_0_24px_rgba(245,158,11,0.3)]" style="background:#040E09 !important;color:#FCD34D !important;">0 - 0 - 2</div>
+                <div id="adm-sk-callout" class="px-5 py-2.5 rounded-2xl bg-[#030B07] border-2 border-[#A3E635] font-mono text-3xl sm:text-4xl font-black tracking-widest shadow-inner" style="background:#030B07 !important;color:#BEF264 !important;">0 - 0 - 2</div>
               </div>
             </div>
 
-            <!-- Dual Team Broadcast Consoles (SIDE A vs CENTER REFEREE DECK vs SIDE B) -->
+            <!-- Dual Team Broadcast Consoles (SIDE A ROYAL BLUE COURT vs CENTER REFEREE DECK vs SIDE B EMERALD COURT) -->
             <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 items-stretch">
-              <!-- SIDE A CONSOLE (4 Cols) -->
-              <div id="adm-sk-card-a" class="lg:col-span-4 rounded-3xl bg-[#0A2218]/90 border-2 border-emerald-400 p-5 flex flex-col justify-between space-y-4 shadow-lg">
+              <!-- SIDE A CONSOLE (4 Cols — Royal Blue Top-Court Brand Accent) -->
+              <div id="adm-sk-card-a" class="lg:col-span-4 rounded-3xl bg-[#F8FAFC] border-2 border-[#0284C7] p-5 flex flex-col justify-between space-y-4 shadow-sm">
                 <div class="space-y-2">
                   <div class="flex items-center justify-between gap-2">
-                    <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/50 text-[10px] font-mono font-black uppercase" style="color:#A7F3D0 !important;">SIDE A • EMERALD CORNER</span>
-                    <span id="adm-sk-badge-a" class="px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-[10px] font-mono font-black uppercase shadow-sm" style="background:#FBBF24 !important;color:#05140D !important;">🎾 SERVING #2</span>
+                    <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[10px] font-mono font-black uppercase">SIDE A • BLUE COURT</span>
+                    <span id="adm-sk-badge-a" class="cal-cat-pill px-3 py-1 rounded-full bg-[#0F291E] text-white text-[10px] font-mono font-black uppercase" style="background:#0F291E !important;color:#FFFFFF !important;">🎾 SERVING #2</span>
                   </div>
-                  <div id="adm-sk-team-a" class="text-base sm:text-lg font-black text-white leading-snug break-words" style="color:#FFFFFF !important;">Seed #1</div>
+                  <div id="adm-sk-team-a" class="text-base sm:text-lg font-black text-slate-900 leading-snug break-words">Seed #1</div>
                 </div>
 
-                <div class="my-2 py-4 rounded-2xl bg-[#040E09] border-2 border-emerald-500/50 text-center shadow-inner">
-                  <span class="block text-[9px] font-mono uppercase tracking-widest text-emerald-400/80 mb-1" style="color:#6EE7B7 !important;">CURRENT POINTS</span>
-                  <div id="adm-sk-score-a" class="pf-led-digits text-6xl sm:text-7xl font-black text-emerald-300" style="color:#6EE7B7 !important;">0</div>
+                <div class="my-1 py-4 rounded-2xl bg-white border-2 border-[#BAE6FD] text-center shadow-inner">
+                  <span class="block text-[9px] font-mono font-extrabold uppercase tracking-widest text-[#0369A1] mb-1">SIDE A POINTS</span>
+                  <div id="adm-sk-score-a" class="font-mono text-6xl sm:text-7xl font-black text-[#0369A1]">0</div>
                 </div>
 
-                <div class="space-y-2">
+                <div class="space-y-2.5">
                   <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="adminAdjustBracketScore('A', -1)" class="py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-black text-sm transition" style="color:#FFFFFF !important;">-1 PT</button>
-                    <button type="button" onclick="adminAdjustBracketScore('A', 1)" class="col-span-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-black text-sm uppercase tracking-wider shadow-lg transition active:scale-95" style="background:#10B981 !important;color:#04120B !important;">+1 POINT (SIDE A)</button>
+                    <button type="button" onclick="adminAdjustBracketScore('A', -1)" class="pf-trn-btn-secondary py-3 rounded-xl font-mono text-sm transition">-1 PT</button>
+                    <button type="button" onclick="adminAdjustBracketScore('A', 1)" class="pf-trn-btn-royal col-span-2 py-3 rounded-xl font-mono text-sm uppercase tracking-wider transition active:scale-95">+1 POINT (SIDE A)</button>
                   </div>
                   <div class="flex items-center justify-between gap-2 pt-1">
-                    <span id="adm-sk-timeouts-a" class="text-[11px] font-mono font-bold text-emerald-200/90" style="color:#A7F3D0 !important;">⏱️ Time-Outs Left: 2</span>
-                    <button type="button" onclick="adminUseBracketTimeout('A')" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[10px] font-mono font-bold uppercase border border-white/15 transition" style="color:#FFFFFF !important;">Call 60s Time-Out</button>
+                    <span id="adm-sk-timeouts-a" class="text-[11px] font-mono font-extrabold text-slate-700">⏱️ Time-Outs Left: 2</span>
+                    <button type="button" onclick="adminUseBracketTimeout('A')" class="pf-trn-btn-secondary px-3 py-1.5 rounded-lg text-[10px] font-mono uppercase transition">Call 60s Time-Out</button>
                   </div>
                 </div>
               </div>
 
               <!-- CENTER REFEREE COMMAND COLUMN (3 Cols) -->
-              <div class="lg:col-span-3 rounded-3xl bg-black/40 border border-white/15 p-4 flex flex-col items-center justify-between space-y-4 text-center">
-                <div class="space-y-1.5 pt-1">
-                  <div class="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-emerald-500 p-1 mx-auto shadow-lg">
-                    <div class="w-full h-full rounded-full bg-[#06150E] flex items-center justify-center">
-                      <img src="../assets/logo.png" alt="P&amp;F Logo" class="w-11 h-11 object-contain">
-                    </div>
+              <div class="lg:col-span-3 rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 flex flex-col items-center justify-between space-y-4 text-center">
+                <div class="space-y-2 pt-1 flex flex-col items-center">
+                  <div class="pf-rect-logo-badge" style="width:54px;height:66px;">
+                    <img src="../assets/logo.png" alt="P&amp;F Logo">
                   </div>
-                  <div class="text-[10px] font-mono font-extrabold uppercase tracking-widest text-amber-300" style="color:#FCD34D !important;">OFFICIAL COURT CONTROL</div>
-                  <div id="adm-sk-target-pill" class="text-xs font-bold text-emerald-200" style="color:#A7F3D0 !important;">Game to 11 Pts (Win by 2)</div>
+                  <div class="text-[10px] font-mono font-extrabold uppercase tracking-widest text-[#0F291E]">OFFICIAL COURT CONTROL</div>
+                  <div id="adm-sk-target-pill" class="cal-cat-pill px-3 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[11px] font-mono font-bold">Game to 11 Pts (Win by 2)</div>
                 </div>
 
-                <div class="w-full space-y-2.5">
-                  <button type="button" onclick="adminRotateBracketServer()" class="w-full py-3 px-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-1.5" style="background:#F59E0B !important;color:#05140D !important;">
+                <div class="w-full space-y-2">
+                  <button type="button" onclick="adminRotateBracketServer()" class="pf-trn-btn-primary w-full py-3 px-3.5 rounded-2xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5">
                     <span>⇄ Rally Lost: Next Server / Side Out</span>
                   </button>
-                  <button type="button" onclick="adminSwapMatchSides()" class="w-full py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-[11px] uppercase tracking-wider transition" style="color:#FFFFFF !important;">
+                  <button type="button" onclick="adminSwapMatchSides()" class="pf-trn-btn-secondary w-full py-2.5 px-3 rounded-xl text-[11px] uppercase tracking-wider transition">
                     ⇄ Swap Court Ends (A ↔ B)
                   </button>
-                  <button type="button" onclick="adminConfirmResetSingleMatch()" class="w-full py-2.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-600 text-rose-200 hover:text-white border border-rose-400/40 font-bold text-[11px] uppercase tracking-wider transition" style="color:#FECDD3 !important;">
+                  <button type="button" onclick="adminConfirmResetSingleMatch()" class="pf-trn-btn-danger w-full py-2.5 px-3 rounded-xl text-[11px] uppercase tracking-wider transition">
                     ↺ Reset Match Score (0 - 0)
                   </button>
                 </div>
 
                 <!-- Live Rally Log Mini Ticker -->
-                <div class="w-full p-2.5 rounded-xl bg-black/50 border border-white/10 text-left space-y-1">
-                  <span class="text-[9px] font-mono uppercase text-emerald-300/80 block" style="color:#6EE7B7 !important;">📋 Latest Referee Action</span>
-                  <div id="adm-sk-last-action" class="text-[11px] font-mono text-white truncate" style="color:#FFFFFF !important;">Match ready on court</div>
+                <div class="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-left space-y-0.5">
+                  <span class="text-[9px] font-mono font-extrabold uppercase text-[#15803D] block">📋 Latest Referee Action</span>
+                  <div id="adm-sk-last-action" class="text-[11px] font-mono font-bold text-slate-800 truncate">Match ready on court</div>
                 </div>
               </div>
 
-              <!-- SIDE B CONSOLE (4 Cols) -->
-              <div id="adm-sk-card-b" class="lg:col-span-4 rounded-3xl bg-[#0A2218]/90 border-2 border-amber-400/60 p-5 flex flex-col justify-between space-y-4 shadow-lg">
+              <!-- SIDE B CONSOLE (4 Cols — Championship Green Bottom-Court Brand Accent) -->
+              <div id="adm-sk-card-b" class="lg:col-span-4 rounded-3xl bg-[#F8FAFC] border-2 border-[#15803D] p-5 flex flex-col justify-between space-y-4 shadow-sm">
                 <div class="space-y-2">
                   <div class="flex items-center justify-between gap-2">
-                    <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/50 text-[10px] font-mono font-black uppercase" style="color:#FDE68A !important;">SIDE B • GOLD CORNER</span>
-                    <span id="adm-sk-badge-b" class="px-3 py-1 rounded-full bg-white/15 text-white text-[10px] font-mono font-black uppercase" style="color:#FFFFFF !important;">RECEIVING</span>
+                    <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[10px] font-mono font-black uppercase">SIDE B • GREEN COURT</span>
+                    <span id="adm-sk-badge-b" class="cal-cat-pill px-3 py-1 rounded-full bg-slate-200 text-slate-800 text-[10px] font-mono font-black uppercase">RECEIVING</span>
                   </div>
-                  <div id="adm-sk-team-b" class="text-base sm:text-lg font-black text-white leading-snug break-words" style="color:#FFFFFF !important;">Seed #8</div>
+                  <div id="adm-sk-team-b" class="text-base sm:text-lg font-black text-slate-900 leading-snug break-words">Seed #8</div>
                 </div>
 
-                <div class="my-2 py-4 rounded-2xl bg-[#040E09] border-2 border-amber-400/50 text-center shadow-inner">
-                  <span class="block text-[9px] font-mono uppercase tracking-widest text-amber-300/80 mb-1" style="color:#FCD34D !important;">CURRENT POINTS</span>
-                  <div id="adm-sk-score-b" class="pf-led-digits-gold text-6xl sm:text-7xl font-black text-amber-300" style="color:#FCD34D !important;">0</div>
+                <div class="my-1 py-4 rounded-2xl bg-white border-2 border-[#A7F3D0] text-center shadow-inner">
+                  <span class="block text-[9px] font-mono font-extrabold uppercase tracking-widest text-[#15803D] mb-1">SIDE B POINTS</span>
+                  <div id="adm-sk-score-b" class="font-mono text-6xl sm:text-7xl font-black text-[#15803D]">0</div>
                 </div>
 
-                <div class="space-y-2">
+                <div class="space-y-2.5">
                   <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="adminAdjustBracketScore('B', -1)" class="py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-black text-sm transition" style="color:#FFFFFF !important;">-1 PT</button>
-                    <button type="button" onclick="adminAdjustBracketScore('B', 1)" class="col-span-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono font-black text-sm uppercase tracking-wider shadow-lg transition active:scale-95" style="background:#F59E0B !important;color:#04120B !important;">+1 POINT (SIDE B)</button>
+                    <button type="button" onclick="adminAdjustBracketScore('B', -1)" class="pf-trn-btn-secondary py-3 rounded-xl font-mono text-sm transition">-1 PT</button>
+                    <button type="button" onclick="adminAdjustBracketScore('B', 1)" class="pf-trn-btn-emerald col-span-2 py-3 rounded-xl font-mono text-sm uppercase tracking-wider transition active:scale-95">+1 POINT (SIDE B)</button>
                   </div>
                   <div class="flex items-center justify-between gap-2 pt-1">
-                    <span id="adm-sk-timeouts-b" class="text-[11px] font-mono font-bold text-amber-200/90" style="color:#FDE68A !important;">⏱️ Time-Outs Left: 2</span>
-                    <button type="button" onclick="adminUseBracketTimeout('B')" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[10px] font-mono font-bold uppercase border border-white/15 transition" style="color:#FFFFFF !important;">Call 60s Time-Out</button>
+                    <span id="adm-sk-timeouts-b" class="text-[11px] font-mono font-extrabold text-slate-700">⏱️ Time-Outs Left: 2</span>
+                    <button type="button" onclick="adminUseBracketTimeout('B')" class="pf-trn-btn-secondary px-3 py-1.5 rounded-lg text-[10px] font-mono uppercase transition">Call 60s Time-Out</button>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Confirm Match Winner & Advance Bar -->
-            <button type="button" onclick="adminConfirmDeclareMatchWinner()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#10B981] via-[#F59E0B] to-[#10B981] hover:brightness-110 text-slate-950 font-black text-sm uppercase tracking-wider transition shadow-xl flex items-center justify-center gap-2.5" style="color:#04120B !important;">
+            <button type="button" onclick="adminConfirmDeclareMatchWinner()" class="pf-trn-btn-primary w-full py-4 px-6 rounded-2xl text-sm uppercase tracking-wider transition flex items-center justify-center gap-2.5">
               <span>🏆 CONFIRM MATCH WINNER &amp; ADVANCE IN CHAMPIONSHIP BRACKET</span>
               <span>→</span>
             </button>
@@ -7417,10 +7603,10 @@ function clearFieldError(fieldId) {
           <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <span class="px-2.5 py-1 rounded-full bg-white border border-slate-300 text-[10px] font-mono text-slate-800 font-bold">Entries: ${regCount}/${maxCount}</span>
             <div class="flex flex-wrap items-center gap-1.5">
-              <button type="button" onclick="adminSelectActiveBracketTournament('${pfEscapeHtml(t.id)}', true)" class="px-3 py-1.5 rounded-lg bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#5B21B6] hover:text-white border border-[#C4B5FD] font-extrabold uppercase text-[10px] transition">🏆 Bracket &amp; Scorekeeper</button>
-              <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="px-2.5 py-1.5 rounded-lg bg-[#DBEAFE] hover:bg-[#1E40AF] text-[#1E40AF] hover:text-white border border-[#93C5FD] font-extrabold uppercase text-[10px] transition">👥 Players</button>
-              <button type="button" onclick="adminOpenTournamentEditorModal('${pfEscapeHtml(t.id)}')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-900 text-slate-800 hover:text-white border border-slate-300 font-extrabold uppercase text-[10px] transition">✏️ Edit</button>
-              <button type="button" onclick="adminDeleteTournament('${pfEscapeHtml(t.id)}')" class="px-2.5 py-1.5 rounded-lg bg-[#FEE2E2] hover:bg-rose-600 text-[#991B1B] hover:text-white border border-[#FCA5A5] font-extrabold uppercase text-[10px] transition">🗑️ Delete</button>
+              <button type="button" onclick="adminSelectActiveBracketTournament('${pfEscapeHtml(t.id)}', true)" class="pf-trn-btn-violet px-3 py-1.5 rounded-lg uppercase text-[10px] transition">🏆 Bracket &amp; Scorekeeper</button>
+              <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-royal px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">👥 Players</button>
+              <button type="button" onclick="adminOpenTournamentEditorModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-secondary px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">✏️ Edit</button>
+              <button type="button" onclick="adminDeleteTournament('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-danger px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">🗑️ Delete</button>
             </div>
           </div>
         </div>
@@ -7465,7 +7651,8 @@ function clearFieldError(fieldId) {
     }
 
     
-    function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath) {
+    function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath, phaseFilter) {
+      const mode = phaseFilter || 'ALL';
       const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : [];
       const getM = (id, fallbackLabel, fallbackCourt) => matches.find(m => m.id === id) || {
         id, label: fallbackLabel, court: fallbackCourt, teamA: 'TBD', teamB: 'TBD', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
@@ -7490,7 +7677,7 @@ function clearFieldError(fieldId) {
         ].filter(Boolean).join(' ');
 
         return `
-          <div class="${cls}">
+          <div class="${cls}" title="${pfEscapeHtml(teamName || 'TBD')}">
             <div class="pf-sym-score-box">${Number(score || 0)}</div>
             <div class="pf-sym-banner-bar">
               <span class="truncate">${isWin ? '🏆 ' : ''}${pfEscapeHtml(teamName || 'TBD')}</span>
@@ -7509,19 +7696,19 @@ function clearFieldError(fieldId) {
           ? `onclick="adminSelectBracketMatch('${m.id}', true)"`
           : '';
 
-        let statusPill = `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-mono text-[9px] font-extrabold uppercase" style="color:#6EE7B7 !important;">🟢 Ready</span>`;
+        let statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-extrabold uppercase" style="background:#064E3B !important;color:#A7F3D0 !important;">🟢 Ready</span>`;
         if (isDone) {
-          statusPill = `<span class="px-2 py-0.5 rounded-full bg-sky-500/25 text-sky-200 border border-sky-400/50 font-mono text-[9px] font-extrabold uppercase" style="color:#BAE6FD !important;">✓ Final</span>`;
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#0C4A6E] border border-[#38BDF8] font-mono text-[9px] font-extrabold uppercase" style="background:#0C4A6E !important;color:#BAE6FD !important;">✓ Final</span>`;
         } else if (isAct || m.status === 'LIVE') {
-          statusPill = `<span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-mono text-[9px] font-black uppercase shadow-xs" style="background:#FBBF24 !important;color:#05140D !important;">🟣 On Court</span>`;
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#A3E635] font-mono text-[9px] font-black uppercase shadow-xs" style="background:#A3E635 !important;color:#05140D !important;">🟣 On Court</span>`;
         } else if (m.status === 'PENDING') {
-          statusPill = `<span class="px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/15 font-mono text-[9px] font-bold uppercase" style="color:#CBD5E1 !important;">⏳ Awaiting</span>`;
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#1E293B] border border-[#475569] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#E2E8F0 !important;">⏳ Awaiting</span>`;
         }
 
         return `
           <div ${clickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${isAct ? 'is-active-match' : ''} ${isDone ? 'is-completed-match' : ''} space-y-2">
             <div class="flex items-center justify-between gap-1.5 px-0.5">
-              <span class="font-mono text-[10px] font-black uppercase tracking-wider text-amber-300" style="color:#FCD34D !important;">${pfEscapeHtml(stageTag)} • ${pfEscapeHtml(m.court || 'Court 1')}</span>
+              <span class="font-mono text-[10px] font-black uppercase tracking-wider" style="color:#BEF264 !important;">${pfEscapeHtml(stageTag)} • ${pfEscapeHtml(m.court || 'Court 1')}</span>
               ${statusPill}
             </div>
             <div class="space-y-2">
@@ -7532,20 +7719,132 @@ function clearFieldError(fieldId) {
         `;
       };
 
+      const centerCrestHtml = `
+        <div class="pf-center-crest-wrap space-y-2">
+          <div class="pf-center-court-crest">
+            <div class="pf-center-court-crest-inner">
+              <img src="${logoPath}" alt="P&amp;F Rally Ground Official Crest">
+            </div>
+          </div>
+          <div class="px-2.5 py-0.5 rounded-md bg-[#A3E635] font-mono text-[9px] font-black uppercase tracking-widest shadow" style="background:#A3E635 !important;color:#04120B !important;">
+            P&amp;F RALLY GROUND
+          </div>
+        </div>
+      `;
+
+      // Focused Phase Slide 1: QUARTERFINALS (1/4 STAGE)
+      if (mode === 'QF') {
+        return `
+          <div class="pf-phase-slide-panel space-y-5">
+            <div class="grid grid-cols-1 lg:grid-cols-11 gap-5 items-center">
+              <div class="lg:col-span-5 space-y-4">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • LEFT BRACKET (COURTS 1 &amp; 2)</span>
+                </div>
+                ${renderMatchNode(qf1, 'left', 'QUARTERFINAL 1 (QF1)')}
+                ${renderMatchNode(qf2, 'left', 'QUARTERFINAL 2 (QF2)')}
+              </div>
+              <div class="lg:col-span-1 flex flex-col items-center justify-center py-2">
+                ${centerCrestHtml}
+              </div>
+              <div class="lg:col-span-5 space-y-4">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • RIGHT BRACKET (COURTS 3 &amp; 4)</span>
+                </div>
+                ${renderMatchNode(qf3, 'right', 'QUARTERFINAL 3 (QF3)')}
+                ${renderMatchNode(qf4, 'right', 'QUARTERFINAL 4 (QF4)')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Focused Phase Slide 2: SEMIFINALS (1/2 STAGE)
+      if (mode === 'SF') {
+        return `
+          <div class="pf-phase-slide-panel space-y-5 max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-11 gap-5 items-center">
+              <div class="lg:col-span-5 space-y-3">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 1 (COURT 1)</span>
+                </div>
+                ${renderMatchNode(sf1, 'left', 'SEMIFINAL 1 (WINNERS QF1 vs QF2)')}
+              </div>
+              <div class="lg:col-span-1 flex flex-col items-center justify-center py-2">
+                ${centerCrestHtml}
+              </div>
+              <div class="lg:col-span-5 space-y-3">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 2 (COURT 2)</span>
+                </div>
+                ${renderMatchNode(sf2, 'right', 'SEMIFINAL 2 (WINNERS QF3 vs QF4)')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       const finIsAct = isAdminInteractive && fin.id === activeMatchId;
       const finClickAttr = isAdminInteractive ? `onclick="adminSelectBracketMatch('FIN', true)"` : '';
       const finWaitA = String(fin.teamA || '').startsWith('Winner ');
       const finWaitB = String(fin.teamB || '').startsWith('Winner ');
 
+      const grandFinalCardHtml = `
+        <div class="max-w-3xl mx-auto pt-2">
+          <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-4 sm:p-5 border-2 border-[#A3E635] shadow-2xl">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <span class="px-3 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest" style="background:#A3E635 !important;color:#04120B !important;">
+                🏆 GRAND CHAMPIONSHIP FINAL • ${pfEscapeHtml(fin.court || 'Court 1')}
+              </span>
+              <span class="font-mono text-[10px] font-extrabold uppercase" style="color:#A7F3D0 !important;">
+                ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : (isAdminInteractive ? 'CLICK TO SCORE FINAL MATCH' : 'GOLD MEDAL CHAMPIONSHIP'))}
+              </span>
+            </div>
+
+            <!-- Opposing Left vs Right Finalist Banners -->
+            <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
+              <div class="md:col-span-5">
+                ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
+              </div>
+              <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
+                <span class="px-2.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[10px] font-black" style="background:#04120B !important;color:#BEF264 !important;">VS</span>
+              </div>
+              <div class="md:col-span-5">
+                ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
+              <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em]" style="color:#FFFFFF !important;">FINAL</div>
+              ${champName
+                ? `<div class="px-4 py-1.5 rounded-full bg-[#A3E635] font-mono text-xs font-black uppercase shadow-lg" style="background:#A3E635 !important;color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
+                : `<div class="text-xs font-mono" style="color:#E2E8F0 !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
+              }
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Focused Phase Slide 3: GRAND CHAMPIONSHIP FINAL
+      if (mode === 'FIN') {
+        return `
+          <div class="pf-phase-slide-panel space-y-4">
+            <div class="flex justify-center">${centerCrestHtml}</div>
+            ${grandFinalCardHtml}
+          </div>
+        `;
+      }
+
+      // Default 'ALL': Complete Symmetrical Tree (1/4 -> 1/2 -> Center Crest + Grand Final)
       return `
-        <div class="space-y-6">
-          <!-- UPPER SYMMETRICAL WINGS: [1/4 LEFT] ── [1/2 LEFT] ── [P&F LOGO CENTER] ── [1/2 RIGHT] ── [1/4 RIGHT] -->
+        <div class="pf-phase-slide-panel space-y-6">
+          <!-- UPPER SYMMETRICAL WINGS: [1/4 LEFT] ── [1/2 LEFT] ── [RECTANGULAR P&F COURT CREST] ── [1/2 RIGHT] ── [1/4 RIGHT] -->
           <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 lg:gap-3 items-center">
 
             <!-- FAR LEFT WING: 1/4 QUARTERFINALS (QF1 & QF2) -->
             <div class="lg:col-span-3 space-y-4">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-amber-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/4 • QUARTERFINALS A &amp; B</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • QUARTERFINALS A &amp; B</span>
               </div>
               <div class="space-y-4">
                 ${renderMatchNode(qf1, 'left', 'QF1')}
@@ -7556,46 +7855,35 @@ function clearFieldError(fieldId) {
             <!-- INNER LEFT WING: 1/2 SEMIFINAL 1 (SF1) -->
             <div class="lg:col-span-2 space-y-4 relative">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-emerald-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/2 • SEMIFINAL 1</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 1</span>
               </div>
-              <!-- Connector indicator lines on desktop -->
-              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono text-emerald-300/80 px-1" style="color:#6EE7B7 !important;">
+              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono px-1" style="color:#A7F3D0 !important;">
                 <span>◆ QF1 / QF2</span>
                 <span>SF1 ◆</span>
               </div>
               ${renderMatchNode(sf1, 'left', 'SF1')}
             </div>
 
-            <!-- CENTERPIECE: P&F RALLY GROUND LOGO IN THE MIDDLE + T-BRIDGE DOWN TO FINAL -->
+            <!-- CENTERPIECE: FITTED RECTANGULAR P&F RALLY GROUND COURT CREST (4:5 ASPECT RATIO) + T-BRIDGE -->
             <div class="lg:col-span-1 py-2 flex flex-col items-center justify-center">
-              <div class="pf-center-crest-wrap space-y-2">
-                <div class="pf-center-crest-ring">
-                  <div class="pf-center-crest-inner p-2">
-                    <img src="${logoPath}" alt="P&amp;F Rally Ground Logo" class="w-full h-full object-contain drop-shadow">
-                  </div>
+              ${centerCrestHtml}
+              <div class="hidden lg:flex flex-col items-center pt-1">
+                <div class="flex items-center">
+                  <span class="w-5 h-0.5 bg-[#A3E635]"></span>
+                  <span class="w-2.5 h-2.5 rotate-45 bg-[#A3E635] border border-slate-950"></span>
+                  <span class="w-5 h-0.5 bg-[#A3E635]"></span>
                 </div>
-                <div class="px-2.5 py-0.5 rounded-md bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-mono text-[9px] font-black uppercase tracking-widest shadow" style="color:#04120B !important;">
-                  P&amp;F RALLY GROUND
-                </div>
-                <!-- Central T-Bridge Line dropping to FINAL -->
-                <div class="hidden lg:flex flex-col items-center pt-1">
-                  <div class="flex items-center">
-                    <span class="w-5 h-0.5 bg-amber-400"></span>
-                    <span class="w-2.5 h-2.5 rotate-45 bg-amber-400 border border-slate-950"></span>
-                    <span class="w-5 h-0.5 bg-amber-400"></span>
-                  </div>
-                  <div class="w-0.5 h-10 bg-gradient-to-b from-amber-400 to-emerald-400"></div>
-                  <span class="w-2.5 h-2.5 rotate-45 bg-emerald-400 border border-slate-950"></span>
-                </div>
+                <div class="w-0.5 h-9 bg-gradient-to-b from-[#A3E635] to-[#38BDF8]"></div>
+                <span class="w-2.5 h-2.5 rotate-45 bg-[#38BDF8] border border-slate-950"></span>
               </div>
             </div>
 
             <!-- INNER RIGHT WING: 1/2 SEMIFINAL 2 (SF2) -->
             <div class="lg:col-span-2 space-y-4 relative">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-emerald-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/2 • SEMIFINAL 2</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 2</span>
               </div>
-              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono text-emerald-300/80 px-1" style="color:#6EE7B7 !important;">
+              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono px-1" style="color:#A7F3D0 !important;">
                 <span>◆ SF2</span>
                 <span>QF3 / QF4 ◆</span>
               </div>
@@ -7605,7 +7893,7 @@ function clearFieldError(fieldId) {
             <!-- FAR RIGHT WING: 1/4 QUARTERFINALS (QF3 & QF4) -->
             <div class="lg:col-span-3 space-y-4">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-amber-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/4 • QUARTERFINALS C &amp; D</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • QUARTERFINALS C &amp; D</span>
               </div>
               <div class="space-y-4">
                 ${renderMatchNode(qf3, 'right', 'QF3')}
@@ -7615,46 +7903,27 @@ function clearFieldError(fieldId) {
 
           </div>
 
-          <!-- BOTTOM CENTER: GRAND CHAMPIONSHIP FINAL (DIRECTLY UNDER P&F LOGO LIKE REFERENCE IMAGE) -->
-          <div class="max-w-3xl mx-auto pt-2">
-            <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-4 sm:p-5 border-2 border-amber-400/75 shadow-2xl">
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <span class="px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-mono text-[10px] font-black uppercase tracking-widest" style="background:#FBBF24 !important;color:#04120B !important;">
-                  🏆 GRAND CHAMPIONSHIP FINAL • ${pfEscapeHtml(fin.court || 'Court 1')}
-                </span>
-                <span class="font-mono text-[10px] font-extrabold uppercase text-emerald-300" style="color:#6EE7B7 !important;">
-                  ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : 'CLICK TO SCORE FINAL MATCH')}
-                </span>
-              </div>
-
-              <!-- Opposing Left vs Right Finalist Banners (Reference Image Bottom FINAL Style) -->
-              <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
-                <div class="md:col-span-5">
-                  ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
-                </div>
-                <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
-                  <span class="px-2.5 py-1 rounded-full bg-black/70 border border-amber-400 font-mono text-[10px] font-black text-amber-300" style="color:#FCD34D !important;">VS</span>
-                </div>
-                <div class="md:col-span-5">
-                  ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
-                </div>
-              </div>
-
-              <div class="mt-3 pt-2.5 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
-                <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em] text-white" style="color:#FFFFFF !important;">FINAL</div>
-                ${champName
-                  ? `<div class="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-mono text-xs font-black uppercase shadow-lg" style="color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
-                  : `<div class="text-xs font-mono text-amber-200/90" style="color:#FDE68A !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
-                }
-              </div>
-            </div>
-          </div>
+          ${grandFinalCardHtml}
         </div>
       `;
     }
 
     let adminMatchStopwatchInterval = null;
     let adminMatchStopwatchSeconds = 0;
+    let adminBracketPhaseIndex = 0;
+    const ADMIN_BRACKET_PHASES = [
+      { key: 'ALL', num: '01', label: 'Full Bracket Tree (1/4 • 1/2 • Final)' },
+      { key: 'QF',  num: '02', label: 'Phase 1: Quarterfinals (1/4)' },
+      { key: 'SF',  num: '03', label: 'Phase 2: Semifinals (1/2)' },
+      { key: 'FIN', num: '04', label: 'Phase 3: Championship Final' }
+    ];
+    function adminSelectBracketPhase(idx) {
+      adminBracketPhaseIndex = ((idx % ADMIN_BRACKET_PHASES.length) + ADMIN_BRACKET_PHASES.length) % ADMIN_BRACKET_PHASES.length;
+      renderAdminNativeBracketWorkspace();
+    }
+    function adminStepBracketPhase(delta) {
+      adminSelectBracketPhase(adminBracketPhaseIndex + delta);
+    }
 
     function formatAdminStopwatch(sec) {
       const m = Math.floor(sec / 60);
@@ -7757,21 +8026,20 @@ function clearFieldError(fieldId) {
       if (progPill) progPill.textContent = `${doneCount} / ${matches.length} Matches Completed`;
 
       if (stagesGrid) {
-        stagesGrid.innerHTML = pfBuildSymmetricalBracketTreeHtml(trn, adminActiveBracketMatchId, true, '../assets/logo.png');
+        const curPh = ADMIN_BRACKET_PHASES[adminBracketPhaseIndex] || ADMIN_BRACKET_PHASES[0];
+        const phBar = `<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 bg-[#04120B]/85 p-3 rounded-2xl border border-[#A3E635]/40 mb-5"><div class="flex flex-wrap items-center gap-1.5">${ADMIN_BRACKET_PHASES.map((ph, i) => `<button type="button" onclick="adminSelectBracketPhase(${i})" class="${i === adminBracketPhaseIndex ? 'pf-trn-btn-volt' : 'pf-trn-btn-arena-ghost'} px-3 py-1.5 rounded-xl font-mono text-xs transition flex items-center gap-1.5"><span class="text-[10px] font-black opacity-80">${ph.num}</span><span>${ph.label}</span></button>`).join('')}</div><div class="flex items-center gap-1.5"><button type="button" onclick="adminStepBracketPhase(-1)" class="pf-trn-btn-arena-ghost px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">← Prev Phase</button><button type="button" onclick="adminStepBracketPhase(1)" class="pf-trn-btn-volt px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">Next Phase →</button></div></div>`;
+        stagesGrid.innerHTML = phBar + pfBuildSymmetricalBracketTreeHtml(trn, adminActiveBracketMatchId, true, '../assets/logo.png', curPh.key);
       }
 
-      // Render Quick Match Switcher Pills in Pro Scoring Portal
+      // Render Quick Match Switcher Pills in Pro Scoring Portal (High-Contrast Locked Classes)
       const quickPills = document.getElementById('adm-sk-quick-match-pills');
       if (quickPills) {
         quickPills.innerHTML = matches.map(m => {
           const isAct = m.id === adminActiveBracketMatchId;
           const isDone = m.status === 'COMPLETED';
+          const btnCls = isAct ? 'pf-trn-btn-primary' : (isDone ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary');
           return `
-            <button type="button" onclick="adminSelectBracketMatch('${m.id}', false)" class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-extrabold uppercase transition ${
-              isAct
-                ? 'bg-amber-400 text-slate-950 shadow-sm'
-                : (isDone ? 'bg-emerald-500/25 text-emerald-200 border border-emerald-400/40' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15')
-            }" style="${isAct ? 'background:#FBBF24 !important;color:#05140D !important;' : 'color:#FFFFFF !important;'}">
+            <button type="button" onclick="adminSelectBracketMatch('${m.id}', false)" class="${btnCls} px-3 py-1.5 rounded-xl font-mono text-[10px] uppercase transition">
               ${m.id === 'FIN' ? '🏆 FINAL' : m.id}${isDone ? ' ✓' : ''}
             </button>
           `;
@@ -7815,14 +8083,14 @@ function clearFieldError(fieldId) {
         if (bA && bB) {
           if (srvSide === 'A') {
             bA.textContent = `🎾 SERVING #${srvNum}`;
-            bA.setAttribute('style', 'background:#FBBF24 !important;color:#05140D !important;');
+            bA.setAttribute('style', 'background:#0F291E !important;color:#FFFFFF !important;');
             bB.textContent = 'RECEIVING';
-            bB.setAttribute('style', 'background:rgba(255,255,255,0.14) !important;color:#FFFFFF !important;');
+            bB.setAttribute('style', 'background:#E2E8F0 !important;color:#1E293B !important;');
           } else {
             bB.textContent = `🎾 SERVING #${srvNum}`;
-            bB.setAttribute('style', 'background:#FBBF24 !important;color:#05140D !important;');
+            bB.setAttribute('style', 'background:#0F291E !important;color:#FFFFFF !important;');
             bA.textContent = 'RECEIVING';
-            bA.setAttribute('style', 'background:rgba(255,255,255,0.14) !important;color:#FFFFFF !important;');
+            bA.setAttribute('style', 'background:#E2E8F0 !important;color:#1E293B !important;');
           }
         }
 

@@ -5373,7 +5373,8 @@ function pfRenderLiveSpectatorBracketBanner() {
 }
 
 
-    function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath) {
+    function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath, phaseFilter) {
+      const mode = phaseFilter || 'ALL';
       const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : [];
       const getM = (id, fallbackLabel, fallbackCourt) => matches.find(m => m.id === id) || {
         id, label: fallbackLabel, court: fallbackCourt, teamA: 'TBD', teamB: 'TBD', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
@@ -5398,7 +5399,7 @@ function pfRenderLiveSpectatorBracketBanner() {
         ].filter(Boolean).join(' ');
 
         return `
-          <div class="${cls}">
+          <div class="${cls}" title="${pfEscapeHtml(teamName || 'TBD')}">
             <div class="pf-sym-score-box">${Number(score || 0)}</div>
             <div class="pf-sym-banner-bar">
               <span class="truncate">${isWin ? '🏆 ' : ''}${pfEscapeHtml(teamName || 'TBD')}</span>
@@ -5417,19 +5418,19 @@ function pfRenderLiveSpectatorBracketBanner() {
           ? `onclick="adminSelectBracketMatch('${m.id}', true)"`
           : '';
 
-        let statusPill = `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-mono text-[9px] font-extrabold uppercase" style="color:#6EE7B7 !important;">🟢 Ready</span>`;
+        let statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-extrabold uppercase" style="background:#064E3B !important;color:#A7F3D0 !important;">🟢 Ready</span>`;
         if (isDone) {
-          statusPill = `<span class="px-2 py-0.5 rounded-full bg-sky-500/25 text-sky-200 border border-sky-400/50 font-mono text-[9px] font-extrabold uppercase" style="color:#BAE6FD !important;">✓ Final</span>`;
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#0C4A6E] border border-[#38BDF8] font-mono text-[9px] font-extrabold uppercase" style="background:#0C4A6E !important;color:#BAE6FD !important;">✓ Final</span>`;
         } else if (isAct || m.status === 'LIVE') {
-          statusPill = `<span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-mono text-[9px] font-black uppercase shadow-xs" style="background:#FBBF24 !important;color:#05140D !important;">🟣 On Court</span>`;
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#A3E635] font-mono text-[9px] font-black uppercase shadow-xs" style="background:#A3E635 !important;color:#05140D !important;">🟣 On Court</span>`;
         } else if (m.status === 'PENDING') {
-          statusPill = `<span class="px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/15 font-mono text-[9px] font-bold uppercase" style="color:#CBD5E1 !important;">⏳ Awaiting</span>`;
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-[#1E293B] border border-[#475569] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#E2E8F0 !important;">⏳ Awaiting</span>`;
         }
 
         return `
           <div ${clickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${isAct ? 'is-active-match' : ''} ${isDone ? 'is-completed-match' : ''} space-y-2">
             <div class="flex items-center justify-between gap-1.5 px-0.5">
-              <span class="font-mono text-[10px] font-black uppercase tracking-wider text-amber-300" style="color:#FCD34D !important;">${pfEscapeHtml(stageTag)} • ${pfEscapeHtml(m.court || 'Court 1')}</span>
+              <span class="font-mono text-[10px] font-black uppercase tracking-wider" style="color:#BEF264 !important;">${pfEscapeHtml(stageTag)} • ${pfEscapeHtml(m.court || 'Court 1')}</span>
               ${statusPill}
             </div>
             <div class="space-y-2">
@@ -5440,20 +5441,132 @@ function pfRenderLiveSpectatorBracketBanner() {
         `;
       };
 
+      const centerCrestHtml = `
+        <div class="pf-center-crest-wrap space-y-2">
+          <div class="pf-center-court-crest">
+            <div class="pf-center-court-crest-inner">
+              <img src="${logoPath}" alt="P&amp;F Rally Ground Official Crest">
+            </div>
+          </div>
+          <div class="px-2.5 py-0.5 rounded-md bg-[#A3E635] font-mono text-[9px] font-black uppercase tracking-widest shadow" style="background:#A3E635 !important;color:#04120B !important;">
+            P&amp;F RALLY GROUND
+          </div>
+        </div>
+      `;
+
+      // Focused Phase Slide 1: QUARTERFINALS (1/4 STAGE)
+      if (mode === 'QF') {
+        return `
+          <div class="pf-phase-slide-panel space-y-5">
+            <div class="grid grid-cols-1 lg:grid-cols-11 gap-5 items-center">
+              <div class="lg:col-span-5 space-y-4">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • LEFT BRACKET (COURTS 1 &amp; 2)</span>
+                </div>
+                ${renderMatchNode(qf1, 'left', 'QUARTERFINAL 1 (QF1)')}
+                ${renderMatchNode(qf2, 'left', 'QUARTERFINAL 2 (QF2)')}
+              </div>
+              <div class="lg:col-span-1 flex flex-col items-center justify-center py-2">
+                ${centerCrestHtml}
+              </div>
+              <div class="lg:col-span-5 space-y-4">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • RIGHT BRACKET (COURTS 3 &amp; 4)</span>
+                </div>
+                ${renderMatchNode(qf3, 'right', 'QUARTERFINAL 3 (QF3)')}
+                ${renderMatchNode(qf4, 'right', 'QUARTERFINAL 4 (QF4)')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Focused Phase Slide 2: SEMIFINALS (1/2 STAGE)
+      if (mode === 'SF') {
+        return `
+          <div class="pf-phase-slide-panel space-y-5 max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-11 gap-5 items-center">
+              <div class="lg:col-span-5 space-y-3">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 1 (COURT 1)</span>
+                </div>
+                ${renderMatchNode(sf1, 'left', 'SEMIFINAL 1 (WINNERS QF1 vs QF2)')}
+              </div>
+              <div class="lg:col-span-1 flex flex-col items-center justify-center py-2">
+                ${centerCrestHtml}
+              </div>
+              <div class="lg:col-span-5 space-y-3">
+                <div class="text-center">
+                  <span class="inline-block px-4 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 2 (COURT 2)</span>
+                </div>
+                ${renderMatchNode(sf2, 'right', 'SEMIFINAL 2 (WINNERS QF3 vs QF4)')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       const finIsAct = isAdminInteractive && fin.id === activeMatchId;
       const finClickAttr = isAdminInteractive ? `onclick="adminSelectBracketMatch('FIN', true)"` : '';
       const finWaitA = String(fin.teamA || '').startsWith('Winner ');
       const finWaitB = String(fin.teamB || '').startsWith('Winner ');
 
+      const grandFinalCardHtml = `
+        <div class="max-w-3xl mx-auto pt-2">
+          <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-4 sm:p-5 border-2 border-[#A3E635] shadow-2xl">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <span class="px-3 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest" style="background:#A3E635 !important;color:#04120B !important;">
+                🏆 GRAND CHAMPIONSHIP FINAL • ${pfEscapeHtml(fin.court || 'Court 1')}
+              </span>
+              <span class="font-mono text-[10px] font-extrabold uppercase" style="color:#A7F3D0 !important;">
+                ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : (isAdminInteractive ? 'CLICK TO SCORE FINAL MATCH' : 'GOLD MEDAL CHAMPIONSHIP'))}
+              </span>
+            </div>
+
+            <!-- Opposing Left vs Right Finalist Banners -->
+            <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
+              <div class="md:col-span-5">
+                ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
+              </div>
+              <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
+                <span class="px-2.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[10px] font-black" style="background:#04120B !important;color:#BEF264 !important;">VS</span>
+              </div>
+              <div class="md:col-span-5">
+                ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
+              <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em]" style="color:#FFFFFF !important;">FINAL</div>
+              ${champName
+                ? `<div class="px-4 py-1.5 rounded-full bg-[#A3E635] font-mono text-xs font-black uppercase shadow-lg" style="background:#A3E635 !important;color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
+                : `<div class="text-xs font-mono" style="color:#E2E8F0 !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
+              }
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Focused Phase Slide 3: GRAND CHAMPIONSHIP FINAL
+      if (mode === 'FIN') {
+        return `
+          <div class="pf-phase-slide-panel space-y-4">
+            <div class="flex justify-center">${centerCrestHtml}</div>
+            ${grandFinalCardHtml}
+          </div>
+        `;
+      }
+
+      // Default 'ALL': Complete Symmetrical Tree (1/4 -> 1/2 -> Center Crest + Grand Final)
       return `
-        <div class="space-y-6">
-          <!-- UPPER SYMMETRICAL WINGS: [1/4 LEFT] ── [1/2 LEFT] ── [P&F LOGO CENTER] ── [1/2 RIGHT] ── [1/4 RIGHT] -->
+        <div class="pf-phase-slide-panel space-y-6">
+          <!-- UPPER SYMMETRICAL WINGS: [1/4 LEFT] ── [1/2 LEFT] ── [RECTANGULAR P&F COURT CREST] ── [1/2 RIGHT] ── [1/4 RIGHT] -->
           <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 lg:gap-3 items-center">
 
             <!-- FAR LEFT WING: 1/4 QUARTERFINALS (QF1 & QF2) -->
             <div class="lg:col-span-3 space-y-4">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-amber-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/4 • QUARTERFINALS A &amp; B</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • QUARTERFINALS A &amp; B</span>
               </div>
               <div class="space-y-4">
                 ${renderMatchNode(qf1, 'left', 'QF1')}
@@ -5464,46 +5577,35 @@ function pfRenderLiveSpectatorBracketBanner() {
             <!-- INNER LEFT WING: 1/2 SEMIFINAL 1 (SF1) -->
             <div class="lg:col-span-2 space-y-4 relative">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-emerald-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/2 • SEMIFINAL 1</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 1</span>
               </div>
-              <!-- Connector indicator lines on desktop -->
-              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono text-emerald-300/80 px-1" style="color:#6EE7B7 !important;">
+              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono px-1" style="color:#A7F3D0 !important;">
                 <span>◆ QF1 / QF2</span>
                 <span>SF1 ◆</span>
               </div>
               ${renderMatchNode(sf1, 'left', 'SF1')}
             </div>
 
-            <!-- CENTERPIECE: P&F RALLY GROUND LOGO IN THE MIDDLE + T-BRIDGE DOWN TO FINAL -->
+            <!-- CENTERPIECE: FITTED RECTANGULAR P&F RALLY GROUND COURT CREST (4:5 ASPECT RATIO) + T-BRIDGE -->
             <div class="lg:col-span-1 py-2 flex flex-col items-center justify-center">
-              <div class="pf-center-crest-wrap space-y-2">
-                <div class="pf-center-crest-ring">
-                  <div class="pf-center-crest-inner p-2">
-                    <img src="${logoPath}" alt="P&amp;F Rally Ground Logo" class="w-full h-full object-contain drop-shadow">
-                  </div>
+              ${centerCrestHtml}
+              <div class="hidden lg:flex flex-col items-center pt-1">
+                <div class="flex items-center">
+                  <span class="w-5 h-0.5 bg-[#A3E635]"></span>
+                  <span class="w-2.5 h-2.5 rotate-45 bg-[#A3E635] border border-slate-950"></span>
+                  <span class="w-5 h-0.5 bg-[#A3E635]"></span>
                 </div>
-                <div class="px-2.5 py-0.5 rounded-md bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-mono text-[9px] font-black uppercase tracking-widest shadow" style="color:#04120B !important;">
-                  P&amp;F RALLY GROUND
-                </div>
-                <!-- Central T-Bridge Line dropping to FINAL -->
-                <div class="hidden lg:flex flex-col items-center pt-1">
-                  <div class="flex items-center">
-                    <span class="w-5 h-0.5 bg-amber-400"></span>
-                    <span class="w-2.5 h-2.5 rotate-45 bg-amber-400 border border-slate-950"></span>
-                    <span class="w-5 h-0.5 bg-amber-400"></span>
-                  </div>
-                  <div class="w-0.5 h-10 bg-gradient-to-b from-amber-400 to-emerald-400"></div>
-                  <span class="w-2.5 h-2.5 rotate-45 bg-emerald-400 border border-slate-950"></span>
-                </div>
+                <div class="w-0.5 h-9 bg-gradient-to-b from-[#A3E635] to-[#38BDF8]"></div>
+                <span class="w-2.5 h-2.5 rotate-45 bg-[#38BDF8] border border-slate-950"></span>
               </div>
             </div>
 
             <!-- INNER RIGHT WING: 1/2 SEMIFINAL 2 (SF2) -->
             <div class="lg:col-span-2 space-y-4 relative">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-emerald-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/2 • SEMIFINAL 2</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 • SEMIFINAL 2</span>
               </div>
-              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono text-emerald-300/80 px-1" style="color:#6EE7B7 !important;">
+              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono px-1" style="color:#A7F3D0 !important;">
                 <span>◆ SF2</span>
                 <span>QF3 / QF4 ◆</span>
               </div>
@@ -5513,7 +5615,7 @@ function pfRenderLiveSpectatorBracketBanner() {
             <!-- FAR RIGHT WING: 1/4 QUARTERFINALS (QF3 & QF4) -->
             <div class="lg:col-span-3 space-y-4">
               <div class="text-center">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-amber-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/4 • QUARTERFINALS C &amp; D</span>
+                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 • QUARTERFINALS C &amp; D</span>
               </div>
               <div class="space-y-4">
                 ${renderMatchNode(qf3, 'right', 'QF3')}
@@ -5523,43 +5625,45 @@ function pfRenderLiveSpectatorBracketBanner() {
 
           </div>
 
-          <!-- BOTTOM CENTER: GRAND CHAMPIONSHIP FINAL (DIRECTLY UNDER P&F LOGO LIKE REFERENCE IMAGE) -->
-          <div class="max-w-3xl mx-auto pt-2">
-            <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-4 sm:p-5 border-2 border-amber-400/75 shadow-2xl">
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <span class="px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-mono text-[10px] font-black uppercase tracking-widest" style="background:#FBBF24 !important;color:#04120B !important;">
-                  🏆 GRAND CHAMPIONSHIP FINAL • ${pfEscapeHtml(fin.court || 'Court 1')}
-                </span>
-                <span class="font-mono text-[10px] font-extrabold uppercase text-emerald-300" style="color:#6EE7B7 !important;">
-                  ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : 'CLICK TO SCORE FINAL MATCH')}
-                </span>
-              </div>
-
-              <!-- Opposing Left vs Right Finalist Banners (Reference Image Bottom FINAL Style) -->
-              <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
-                <div class="md:col-span-5">
-                  ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
-                </div>
-                <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
-                  <span class="px-2.5 py-1 rounded-full bg-black/70 border border-amber-400 font-mono text-[10px] font-black text-amber-300" style="color:#FCD34D !important;">VS</span>
-                </div>
-                <div class="md:col-span-5">
-                  ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
-                </div>
-              </div>
-
-              <div class="mt-3 pt-2.5 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
-                <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em] text-white" style="color:#FFFFFF !important;">FINAL</div>
-                ${champName
-                  ? `<div class="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-mono text-xs font-black uppercase shadow-lg" style="color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
-                  : `<div class="text-xs font-mono text-amber-200/90" style="color:#FDE68A !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
-                }
-              </div>
-            </div>
-          </div>
+          ${grandFinalCardHtml}
         </div>
       `;
     }
+
+let pfActivePublicTrnIndex = 0;
+let pfActivePublicPhaseIndex = 0; // 0 = Quarterfinals (1/4), 1 = Semifinals (1/2), 2 = Grand Final, 3 = Full Bracket Tree, 4 = Seeded Players
+
+const PF_TOURNAMENT_PHASES = [
+  { key: 'ALL', num: '01', label: 'Full Bracket Tree', sub: '1/4 • 1/2 • Final' },
+  { key: 'QF',  num: '02', label: 'Phase 1: Quarterfinals (1/4)', sub: 'Courts 1 – 4 Matchups' },
+  { key: 'SF',  num: '03', label: 'Phase 2: Semifinals (1/2)', sub: 'Courts 1 & 2 Clash' },
+  { key: 'FIN', num: '04', label: 'Phase 3: Championship Final', sub: 'Gold Medal Court 1' },
+  { key: 'PLAYERS', num: '05', label: 'Seeded Players (8 Seeds)', sub: 'Official Tournament Roster' }
+];
+
+function pfSelectPublicTournamentEvent(idx) {
+  const list = pfGetTournamentsList().filter(t => t && t.approved !== false);
+  if (!list.length) return;
+  pfActivePublicTrnIndex = ((idx % list.length) + list.length) % list.length;
+  pfRenderPublicTournaments();
+}
+window.pfSelectPublicTournamentEvent = pfSelectPublicTournamentEvent;
+
+function pfStepPublicTournamentEvent(delta) {
+  pfSelectPublicTournamentEvent(pfActivePublicTrnIndex + delta);
+}
+window.pfStepPublicTournamentEvent = pfStepPublicTournamentEvent;
+
+function pfSelectPublicTournamentPhase(phaseIdx) {
+  pfActivePublicPhaseIndex = ((phaseIdx % PF_TOURNAMENT_PHASES.length) + PF_TOURNAMENT_PHASES.length) % PF_TOURNAMENT_PHASES.length;
+  pfRenderPublicTournaments();
+}
+window.pfSelectPublicTournamentPhase = pfSelectPublicTournamentPhase;
+
+function pfStepPublicTournamentPhase(delta) {
+  pfSelectPublicTournamentPhase(pfActivePublicPhaseIndex + delta);
+}
+window.pfStepPublicTournamentPhase = pfStepPublicTournamentPhase;
 
 function pfOpenFullBracketModal(trnId) {
   const list = pfGetTournamentsList();
@@ -5579,14 +5683,14 @@ function pfOpenFullBracketModal(trnId) {
         <div class="pf-arena-shard-br"></div>
         <div class="relative z-10 space-y-6">
           <div class="flex items-center justify-between gap-3 border-b border-white/15 pb-3">
-            <div class="flex items-center gap-2.5">
-              <img src="assets/logo.png" alt="P&amp;F Logo" class="w-9 h-9 rounded-lg object-contain bg-black/40 p-1 border border-amber-400/50">
+            <div class="flex items-center gap-3">
+              <div class="pf-rect-logo-badge"><img src="assets/logo.png" alt="P&amp;F Logo"></div>
               <div>
-                <span id="pf-modal-brk-format" class="text-[10px] font-mono font-extrabold uppercase text-amber-300 block" style="color:#FCD34D !important;">OFFICIAL CHAMPIONSHIP BRACKET</span>
-                <h3 id="pf-modal-brk-title" class="text-lg sm:text-2xl font-black uppercase text-white" style="color:#FFFFFF !important;">Tournament Bracket</h3>
+                <span id="pf-modal-brk-format" class="text-[10px] font-mono font-extrabold uppercase block" style="color:#BEF264 !important;">OFFICIAL CHAMPIONSHIP BRACKET</span>
+                <h3 id="pf-modal-brk-title" class="text-lg sm:text-2xl font-black uppercase" style="color:#FFFFFF !important;">Tournament Bracket</h3>
               </div>
             </div>
-            <button type="button" onclick="document.getElementById('pf-public-full-bracket-modal').classList.add('hidden')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-xs font-extrabold uppercase border border-white/20" style="color:#FFFFFF !important;">✕ Close Arena</button>
+            <button type="button" onclick="document.getElementById('pf-public-full-bracket-modal').classList.add('hidden')" class="pf-trn-btn-gold px-4 py-2 rounded-xl font-mono text-xs uppercase">✕ Close Arena</button>
           </div>
           <div id="pf-modal-brk-body"></div>
         </div>
@@ -5599,7 +5703,7 @@ function pfOpenFullBracketModal(trnId) {
   const titleEl = document.getElementById('pf-modal-brk-title');
   if (titleEl) titleEl.textContent = trn.title;
   const bodyEl = document.getElementById('pf-modal-brk-body');
-  if (bodyEl) bodyEl.innerHTML = pfBuildSymmetricalBracketTreeHtml(trn, null, false, 'assets/logo.png');
+  if (bodyEl) bodyEl.innerHTML = pfBuildSymmetricalBracketTreeHtml(trn, null, false, 'assets/logo.png', 'ALL');
   modal.classList.remove('hidden');
 }
 window.pfOpenFullBracketModal = pfOpenFullBracketModal;
@@ -5624,17 +5728,12 @@ function pfRenderPublicTournaments() {
   if (mobNavTrn) mobNavTrn.classList.remove('hidden');
   if (topNavTrn) topNavTrn.classList.remove('hidden');
 
-  const isPublishedWithEvents = Boolean(masterPublished && list.length > 0);
   if (filtersWrap) {
-    if (isPublishedWithEvents) {
-      filtersWrap.classList.remove('hidden');
-      filtersWrap.classList.add('flex');
-    } else {
-      filtersWrap.classList.add('hidden');
-      filtersWrap.classList.remove('flex');
-    }
+    filtersWrap.classList.add('hidden');
+    filtersWrap.classList.remove('flex');
   }
 
+  const isPublishedWithEvents = Boolean(masterPublished && list.length > 0);
   if (!isPublishedWithEvents) {
     grid.innerHTML = `
       <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
@@ -5650,122 +5749,188 @@ function pfRenderPublicTournaments() {
     return;
   }
 
-  const filtered = list.filter(t => {
-    if (!activePublicTournamentFilter || activePublicTournamentFilter === 'ALL') return true;
-    const fk = String(t.formatKey || t.format || '').toUpperCase();
-    if (activePublicTournamentFilter === 'ROUND_ROBIN') return fk.includes('ROUND') || fk.includes('ROBIN');
-    if (activePublicTournamentFilter === 'KING_COURT') return fk.includes('KING') || fk.includes('LADDER');
-    if (activePublicTournamentFilter === 'MLP_TEAM') return fk.includes('MLP') || fk.includes('SQUAD') || fk.includes('TEAM');
-    if (activePublicTournamentFilter === 'DOUBLE_ELIM') return fk.includes('DOUBLE') || fk.includes('ELIM');
-    return true;
-  });
+  if (pfActivePublicTrnIndex >= list.length) pfActivePublicTrnIndex = 0;
+  const t = list[pfActivePublicTrnIndex] || list[0];
+  const fee = Number(t.entryFee || 0);
+  const players = Array.isArray(t.players) ? t.players : [];
+  const bracket = Array.isArray(t.bracket) ? t.bracket : pfBuildDefaultBracketForPlayers(players);
+  t.bracket = bracket;
+  const maxT = Math.max(players.length, Number(t.maxTeams || 24));
+  const regT = Math.min(maxT, Math.max(players.length, Number(t.registeredCount || players.length)));
+  const spotsLeft = Math.max(0, maxT - regT);
+  const pct = Math.min(100, Math.round((regT / maxT) * 100));
 
-  grid.innerHTML = filtered.map(t => {
-    const fee = Number(t.entryFee || 0);
-    const players = Array.isArray(t.players) ? t.players : [];
-    const bracket = Array.isArray(t.bracket) ? t.bracket : pfBuildDefaultBracketForPlayers(players);
-    t.bracket = bracket;
-    const maxT = Math.max(players.length, Number(t.maxTeams || 24));
-    const regT = Math.min(maxT, Math.max(players.length, Number(t.registeredCount || players.length)));
-    const spotsLeft = Math.max(0, maxT - regT);
-    const pct = Math.min(100, Math.round((regT / maxT) * 100));
+  const finMatch = bracket.find(m => m.stage === 'Championship Final' || m.id === 'FIN') || null;
+  const champName = (finMatch && finMatch.winner) ? (finMatch.winner === 'A' ? finMatch.teamA : finMatch.teamB) : null;
+  const activePhase = PF_TOURNAMENT_PHASES[pfActivePublicPhaseIndex] || PF_TOURNAMENT_PHASES[0];
 
-    const finMatch = bracket.find(m => m.stage === 'Championship Final' || m.id === 'FIN') || null;
-    const champName = (finMatch && finMatch.winner) ? (finMatch.winner === 'A' ? finMatch.teamA : finMatch.teamB) : null;
-
-    const playersGridHtml = players.map((pName, idx) => `
-      <div class="flex items-center gap-2 p-2 rounded-xl bg-white border border-[#E2E0D8] text-xs shadow-2xs">
-        <span class="w-6 h-6 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-extrabold flex items-center justify-center flex-shrink-0" style="background:#0F291E !important;color:#FFFFFF !important;">#${idx + 1}</span>
-        <span class="font-bold text-[#0D1F18] truncate">${pfEscapeHtml(pName)}</span>
-      </div>
-    `).join('');
-
+  // Event Selector Tabs (Slide between Tournament 1..4 instead of stacking all 4!)
+  const eventTabsHtml = list.map((item, idx) => {
+    const isAct = idx === pfActivePublicTrnIndex;
+    const itemFee = Number(item.entryFee || 0);
     return `
-      <div class="col-span-full rounded-3xl bg-white border-2 border-[#E2E0D8] hover:border-[#15803D] transition-all p-5 sm:p-7 shadow-lg flex flex-col justify-between space-y-5 text-[#0D1F18]">
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
-              <span class="pf-pill px-3 py-1 rounded-full bg-[#0F291E] text-white font-mono text-xs font-black" style="background:#0F291E !important;color:#FFFFFF !important;">Entry: ${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              ${champName ? `<span class="pf-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">👑 Champion: ${pfEscapeHtml(champName)}</span>` : `<span class="pf-pill px-3 py-1 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] font-mono text-[10px] font-extrabold uppercase">${spotsLeft} Spots Left</span>`}
-              <button type="button" onclick="pfOpenFullBracketModal('${pfEscapeHtml(t.id)}')" class="px-3 py-1.5 rounded-xl bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#5B21B6] hover:text-white border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase transition">
-                🔍 Full-Screen Arena
-              </button>
-            </div>
-          </div>
+      <button type="button" onclick="pfSelectPublicTournamentEvent(${idx})" class="${isAct ? 'pf-trn-btn-primary' : 'pf-trn-btn-secondary'} px-3.5 py-2.5 rounded-2xl text-left transition flex items-center gap-2.5">
+        <span class="w-6 h-6 rounded-lg ${isAct ? 'bg-[#A3E635] text-[#04120B]' : 'bg-[#EFECE6] text-[#0F291E]'} font-mono text-[11px] font-black flex items-center justify-center flex-shrink-0" style="${isAct ? 'background:#A3E635 !important;color:#04120B !important;' : ''}">0${idx + 1}</span>
+        <div class="min-w-0">
+          <div class="text-xs font-extrabold truncate">${pfEscapeHtml(item.title)}</div>
+          <div class="text-[10px] font-mono opacity-85">${pfEscapeHtml(item.date)} • ${itemFee > 0 ? '₱' + itemFee.toLocaleString() : 'Free'}</div>
+        </div>
+      </button>
+    `;
+  }).join('');
 
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div>
-              <h3 class="text-xl sm:text-2xl font-black tracking-tight text-[#0D1F18] leading-tight">${pfEscapeHtml(t.title)}</h3>
-              <p class="text-xs text-[#52605A] leading-relaxed mt-1 max-w-3xl">${pfEscapeHtml(t.description || '')}</p>
-            </div>
-            <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="px-5 py-3 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white font-extrabold text-xs tracking-wide transition active:scale-95 shadow-md flex items-center justify-center gap-2 flex-shrink-0" style="background:#0F291E !important;color:#FFFFFF !important;">
-              <span>Register for Tournament (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}) →</span>
-            </button>
-          </div>
+  // Phase Selector Slides Bar (Slide for each phase of the tournament!)
+  const phaseTabsHtml = PF_TOURNAMENT_PHASES.map((ph, pIdx) => {
+    const isAct = pIdx === pfActivePublicPhaseIndex;
+    return `
+      <button type="button" onclick="pfSelectPublicTournamentPhase(${pIdx})" class="${isAct ? 'pf-trn-btn-volt' : 'pf-trn-btn-arena-ghost'} px-3.5 py-2 rounded-xl font-mono text-xs transition flex items-center gap-2">
+        <span class="text-[10px] font-black opacity-80">${ph.num}</span>
+        <span>${ph.label}</span>
+      </button>
+    `;
+  }).join('');
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
-            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
-              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Date &amp; Time</span>
-              <b class="text-[#0D1F18] font-mono">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)}</b>
-            </div>
-            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
-              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Division / Skill</span>
-              <b class="text-[#15803D]">${pfEscapeHtml(t.division)}</b>
-            </div>
-            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
-              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Prize Pool &amp; Perks</span>
-              <b class="text-[#C85A32]">${pfEscapeHtml(t.prizePool)}</b>
-            </div>
-            <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
-              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Registered Entries</span>
-              <b class="text-[#15803D] font-mono">${regT} / ${maxT} (${pct}% Full)</b>
-            </div>
+  // Phase Content Body
+  let phaseSlideBodyHtml = '';
+  if (activePhase.key === 'PLAYERS') {
+    phaseSlideBodyHtml = `
+      <div class="pf-phase-slide-panel space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/15 pb-3">
+          <div>
+            <span class="text-[10px] font-mono font-black uppercase tracking-widest block" style="color:#A3E635 !important;">OFFICIAL TOURNAMENT SEEDING ROSTER</span>
+            <h4 class="text-lg sm:text-xl font-black uppercase" style="color:#FFFFFF !important;">8 Seeded Player Pairs &amp; Squads • ${pfEscapeHtml(t.title)}</h4>
           </div>
-
-          <!-- REGISTERED PLAYERS & SEEDED TEAMS ROSTER -->
-          <div class="rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8] p-3.5 space-y-2.5">
-            <div class="flex items-center justify-between gap-2">
-              <span class="pf-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-mono font-extrabold uppercase">👥 Official Seeded Players &amp; Pairs (${players.length})</span>
-              <span class="text-[10px] font-mono font-bold text-[#52605A]">Courts 1 – 4</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-              ${playersGridHtml}
-            </div>
-          </div>
-
-          <!-- SYMMETRICAL LOGO-CENTER CHAMPIONSHIP BRACKET ARENA -->
-          <details class="group rounded-3xl overflow-hidden border-2 border-[#0F291E]" open>
-            <summary class="cursor-pointer px-5 py-3.5 flex items-center justify-between gap-2 select-none bg-[#0F291E] text-white" style="background:#0F291E !important;color:#FFFFFF !important;">
-              <div class="flex items-center gap-2.5">
-                <img src="assets/logo.png" alt="Logo" class="w-6 h-6 rounded object-contain">
-                <span class="text-xs font-black uppercase tracking-wider text-white" style="color:#FFFFFF !important;">🏆 Official Championship Bracket Arena (1/4 • 1/2 • FINAL)</span>
-              </div>
-              <span class="text-[11px] font-mono font-bold text-amber-300" style="color:#FCD34D !important;">▼ Show / Hide Live Bracket Tree</span>
-            </summary>
-            <div class="pf-arena-stage rounded-none border-0 p-4 sm:p-6">
-              <div class="pf-arena-shard-tl"></div>
-              <div class="pf-arena-shard-tr"></div>
-              <div class="pf-arena-shard-bl"></div>
-              <div class="pf-arena-shard-br"></div>
-              <div class="relative z-10 space-y-4">
-                <div class="text-center">
-                  <div class="flex items-center justify-center gap-3">
-                    <span class="hidden sm:inline-block w-12 h-0.5 bg-amber-400"></span>
-                    <h4 class="text-lg sm:text-2xl font-black uppercase tracking-wider text-white" style="color:#FFFFFF !important;">${pfEscapeHtml(t.title)}</h4>
-                    <span class="hidden sm:inline-block w-12 h-0.5 bg-amber-400"></span>
-                  </div>
-                </div>
-                ${pfBuildSymmetricalBracketTreeHtml(t, null, false, 'assets/logo.png')}
+          <span class="px-3 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-extrabold" style="background:#04120B !important;color:#BEF264 !important;">${regT} / ${maxT} Registered (${pct}% Full)</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          ${players.map((pName, idx) => `
+            <div class="p-3.5 rounded-2xl bg-[#071D14] border-2 border-[#15803D] flex items-center gap-3 shadow-md">
+              <span class="w-8 h-8 rounded-xl bg-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0" style="background:#A3E635 !important;color:#04120B !important;">#${idx + 1}</span>
+              <div class="min-w-0">
+                <span class="text-[9px] font-mono uppercase block" style="color:#6EE7B7 !important;">Quarterfinal ${Math.floor(idx / 2) + 1} Seed</span>
+                <div class="text-xs font-extrabold truncate" style="color:#FFFFFF !important;" title="${pfEscapeHtml(pName)}">${pfEscapeHtml(pName)}</div>
               </div>
             </div>
-          </details>
+          `).join('')}
         </div>
       </div>
     `;
-  }).join('');
+  } else {
+    phaseSlideBodyHtml = pfBuildSymmetricalBracketTreeHtml(t, null, false, 'assets/logo.png', activePhase.key);
+  }
+
+  grid.innerHTML = `
+    <div class="col-span-full space-y-5">
+      <!-- 1. TOURNAMENT EVENT SELECTOR CAROUSEL BAR (1 FEATURED TOURNAMENT AT A TIME) -->
+      <div class="p-3 sm:p-4 rounded-3xl bg-white border-2 border-[#E2E0D8] shadow-sm space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+          <div class="flex items-center gap-2">
+            <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">🏓 Official Tournament Series (${pfActivePublicTrnIndex + 1} of ${list.length})</span>
+            <span class="text-xs font-bold text-[#52605A] hidden sm:inline">Select an event below or slide through each tournament phase</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="pfStepPublicTournamentEvent(-1)" class="pf-trn-btn-secondary px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">← Prev Event</button>
+            <button type="button" onclick="pfStepPublicTournamentEvent(1)" class="pf-trn-btn-primary px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">Next Event →</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          ${eventTabsHtml}
+        </div>
+      </div>
+
+      <!-- 2. FEATURED TOURNAMENT STAGE & PHASE SLIDER -->
+      <div class="rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-7 shadow-xl space-y-6 text-[#0D1F18]">
+        <!-- Event Spotlight Header -->
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-5 border-b border-[#E2E0D8] pb-5">
+          <div class="flex items-start sm:items-center gap-4">
+            <div class="pf-rect-logo-badge hidden sm:flex" style="width:60px;height:74px;">
+              <img src="assets/logo.png" alt="P&amp;F Rally Ground">
+            </div>
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
+                <span class="pf-pill px-3 py-1 rounded-full bg-[#0F291E] text-white font-mono text-xs font-black" style="background:#0F291E !important;color:#FFFFFF !important;">Entry Fee: ${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</span>
+                ${champName
+                  ? `<span class="pf-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">👑 Champion: ${pfEscapeHtml(champName)}</span>`
+                  : `<span class="pf-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase">${spotsLeft} Spots Open</span>`
+                }
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-[#0D1F18] leading-tight">${pfEscapeHtml(t.title)}</h3>
+              <p class="text-xs sm:text-sm text-[#52605A] max-w-3xl leading-relaxed">${pfEscapeHtml(t.description || '')}</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+            <button type="button" onclick="pfOpenFullBracketModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-violet px-4 py-3 rounded-xl font-mono text-xs uppercase transition">
+              🔍 Full-Screen Arena
+            </button>
+            <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-primary px-5 py-3 rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+              🏓 Register Now (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}) →
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Key Tournament Specs Strip -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8]">
+            <span class="text-[10px] font-mono font-bold uppercase text-[#52605A] block">📅 Date &amp; Time</span>
+            <b class="text-[#0D1F18] font-mono text-sm mt-0.5 block">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)}</b>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8]">
+            <span class="text-[10px] font-mono font-bold uppercase text-[#52605A] block">🎾 Division &amp; Skill</span>
+            <b class="text-[#15803D] text-sm mt-0.5 block">${pfEscapeHtml(t.division)}</b>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8]">
+            <span class="text-[10px] font-mono font-bold uppercase text-[#52605A] block">🏆 Prize Pool &amp; Perks</span>
+            <b class="text-[#B45309] text-sm mt-0.5 block">${pfEscapeHtml(t.prizePool)}</b>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8]">
+            <span class="text-[10px] font-mono font-bold uppercase text-[#52605A] block">👥 Registered Roster</span>
+            <b class="text-[#0369A1] font-mono text-sm mt-0.5 block">${regT} / ${maxT} Teams (${pct}% Full)</b>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE PHASE-BY-PHASE BRACKET ARENA SLIDER -->
+        <div class="pf-arena-stage p-5 sm:p-7">
+          <div class="pf-arena-shard-tl"></div>
+          <div class="pf-arena-shard-tr"></div>
+          <div class="pf-arena-shard-bl"></div>
+          <div class="pf-arena-shard-br"></div>
+
+          <div class="relative z-10 space-y-6">
+            <!-- Phase Carousel Controls Bar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-[#04120B]/85 p-3.5 rounded-2xl border border-[#A3E635]/40">
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${phaseTabsHtml}
+              </div>
+              <div class="flex items-center justify-between lg:justify-end gap-2">
+                <span class="font-mono text-[11px] font-bold px-2" style="color:#BEF264 !important;">Slide ${pfActivePublicPhaseIndex + 1} / ${PF_TOURNAMENT_PHASES.length}</span>
+                <button type="button" onclick="pfStepPublicTournamentPhase(-1)" class="pf-trn-btn-arena-ghost px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">← Prev Phase</button>
+                <button type="button" onclick="pfStepPublicTournamentPhase(1)" class="pf-trn-btn-volt px-3.5 py-1.5 rounded-xl font-mono text-xs uppercase transition">Next Phase →</button>
+              </div>
+            </div>
+
+            <!-- Arena Title Banner -->
+            <div class="text-center space-y-1">
+              <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[10px] font-black uppercase tracking-widest" style="background:#04120B !important;color:#38BDF8 !important;">
+                <span>${pfEscapeHtml(activePhase.label)}</span>
+                <span>•</span>
+                <span style="color:#BEF264 !important;">${pfEscapeHtml(activePhase.sub)}</span>
+              </div>
+              <div class="flex items-center justify-center gap-3">
+                <span class="hidden sm:inline-block w-14 h-1 rounded-full bg-gradient-to-r from-transparent via-[#38BDF8] to-[#A3E635]"></span>
+                <h4 class="text-xl sm:text-3xl font-black uppercase tracking-wider" style="color:#FFFFFF !important;">${pfEscapeHtml(t.title)}</h4>
+                <span class="hidden sm:inline-block w-14 h-1 rounded-full bg-gradient-to-l from-transparent via-[#38BDF8] to-[#A3E635]"></span>
+              </div>
+            </div>
+
+            <!-- Active Phase Slide Content -->
+            ${phaseSlideBodyHtml}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 window.renderPublicTournaments = pfRenderPublicTournaments;
 
