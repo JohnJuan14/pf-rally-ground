@@ -4765,6 +4765,8 @@ function pfGetDefaultTournaments() {
     "maxTeams": 24,
     "registeredCount": 8,
     "approved": true,
+    "published": true,
+    "showCourtsOnSite": true,
     "scoringTarget": 11,
     "status": "OPEN FOR REGISTRATION",
     "description": "Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 – 4.",
@@ -4908,6 +4910,8 @@ function pfGetDefaultTournaments() {
     "maxTeams": 24,
     "registeredCount": 8,
     "approved": true,
+    "published": false,
+    "showCourtsOnSite": true,
     "scoringTarget": 11,
     "status": "OPEN FOR REGISTRATION",
     "description": "Play 12-minute timed ladder rounds across Courts 1 – 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!",
@@ -5194,6 +5198,8 @@ function pfGetDefaultTournaments() {
     "maxTeams": 24,
     "registeredCount": 8,
     "approved": true,
+    "published": false,
+    "showCourtsOnSite": true,
     "scoringTarget": 15,
     "status": "OPEN FOR REGISTRATION",
     "description": "Full USA Pickleball Championship Bracket across Courts 1 – 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.",
@@ -5879,7 +5885,7 @@ function pfRenderPublicTournaments() {
               <!-- Top Status & Format Ribbon -->
               <div class="flex flex-wrap items-center gap-2">
                 <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Official Tournament')}</span>
-                <span class="pf-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-extrabold uppercase">🏟️ ${pfEscapeHtml(courtsLabel)}</span>
+                ${t.showCourtsOnSite !== false ? `<span class="pf-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-extrabold uppercase">🏟️ ${pfEscapeHtml(courtsLabel)}</span>` : ''}
                 ${champName
                   ? `<span class="pf-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">👑 Champion: ${pfEscapeHtml(champName)}</span>`
                   : `<span class="pf-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase">${spotsLeft} Spots Available</span>`
@@ -5893,26 +5899,28 @@ function pfRenderPublicTournaments() {
               </div>
             </div>
 
-            <!-- Structured 3-Column Architectural Spec Bar (Clean Dividers, Zero Dangling Pipes!) -->
-            <div class="pt-4 border-t border-[#DEDAD0] grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Structured Architectural Spec Bar (Adapts to 2 or 3 Columns when Court Display is Optional!) -->
+            <div class="pt-4 border-t border-[#DEDAD0] grid grid-cols-1 ${t.showCourtsOnSite !== false ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4">
               <div class="space-y-1 md:pr-3 md:border-r md:border-[#DEDAD0]">
                 <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Event Date &amp; Hours</span>
                 <div class="font-mono text-xs sm:text-sm font-black text-[#0D1F18]">${pfEscapeHtml(pfFormatTournamentDateNice(t.date))}</div>
                 <div class="font-mono text-[11px] font-bold text-[#15803D]">${pfEscapeHtml(t.time)}</div>
               </div>
 
-              <div class="space-y-1 md:px-2 md:border-r md:border-[#DEDAD0]">
+              <div class="space-y-1 md:px-2 ${t.showCourtsOnSite !== false ? 'md:border-r md:border-[#DEDAD0]' : ''}">
                 <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Division &amp; Skill Level</span>
                 <div class="text-xs sm:text-sm font-extrabold text-[#0D1F18] leading-snug">${pfEscapeHtml(t.division)}</div>
                 <div class="text-[11px] font-semibold text-[#52605A]">${pfEscapeHtml(t.category || 'Official Bracket Play')}</div>
               </div>
 
+              ${t.showCourtsOnSite !== false ? `
               <div class="space-y-1.5 md:pl-2">
                 <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Designated Tournament Courts</span>
                 <div class="flex flex-wrap items-center gap-1.5">
                   ${designatedCourtPillsHtml}
                 </div>
               </div>
+              ` : ''}
             </div>
           </div>
 
