@@ -655,7 +655,7 @@
         </a>
       </div>
 
-            <!-- Desktop Navigation Links (Clean Dropdown Menu Architecture) -->
+                  <!-- Desktop Navigation Links (Clean Dropdown Menu Architecture) -->
       <nav class="hidden lg:flex items-center justify-center gap-2 text-xs uppercase tracking-wider flex-shrink-0" aria-label="Main Navigation">
         <a href="index.html" id="nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="whitespace-nowrap px-3.5 py-2 rounded-md transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Home</a>
 
@@ -672,11 +672,15 @@
             </a>
             <a href="index.html#open-play-24-board-container" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
               <span>Open Play</span>
-              <span class="text-[10px] font-mono text-emerald-600 font-bold" data-site-price="open-play-badge">₱150</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold" data-site-price="open-play-badge">₱150/player</span>
             </a>
-            <a href="pricing.html" class="pf-nav-dropdown-item ">
-              <span>Rates &amp; Gear</span>
+            <a href="pricing.html#court-rates" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item ">
+              <span>Court Rates</span>
               <span class="text-[10px] font-mono opacity-75">₱400/hr</span>
+            </a>
+            <a href="pricing.html#gear-rentals" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Gear &amp; Rentals</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">From ₱50</span>
             </a>
             <a href="book.html" class="pf-nav-dropdown-item active">
               <span>Reserve a Court</span>
@@ -733,7 +737,15 @@
           <svg class="hidden sm:inline-block w-3.5 h-3.5 arrow-nudge flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
 
-            <!-- Mobile & Tablet Clean Dropdown Navigation Drawer -->
+                    <!-- Mobile & Tablet Menu Toggle -->
+        <button type="button" onclick="toggleMobileMenu()" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] border border-[#050E1D] flex items-center justify-center transition active:scale-95 shadow-md flex-shrink-0" aria-label="Toggle navigation menu">
+          <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile & Tablet Clean Dropdown Navigation Drawer -->
     <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-4 py-3.5 space-y-2 text-xs font-bold max-h-[calc(100dvh-5.5rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
       <a href="index.html" id="mob-nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-[#050E1D] text-[#9BE600] font-black transition">
         <span>Home</span> <span id="mob-nav-badge-home" class="text-[#9BE600] font-mono text-[10px]">●</span>
@@ -750,10 +762,13 @@
             <span>Live Schedule</span> <span id="mob-nav-badge-schedule" class="font-mono text-[10px] text-emerald-700">6AM–12AM</span>
           </a>
           <a href="index.html#open-play-24-board-container" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Open Play (3–6 PM)</span> <span class="font-mono text-[10px] text-emerald-700" data-site-price="open-play-badge">₱150</span>
+            <span>Open Play (3–6 PM)</span> <span class="font-mono text-[10px] text-emerald-700" data-site-price="open-play-badge">₱150/player</span>
           </a>
-          <a href="pricing.html" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Rates &amp; Gear</span> <span>→</span>
+          <a href="pricing.html#court-rates" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Court Rates</span> <span class="font-mono text-[10px] text-slate-600">₱400/hr</span>
+          </a>
+          <a href="pricing.html#gear-rentals" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Gear &amp; Rentals</span> <span class="font-mono text-[10px] text-emerald-700">From ₱50</span>
           </a>
           <a href="book.html" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
             <span>Reserve a Court</span> <span>→</span>
