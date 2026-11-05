@@ -1183,9 +1183,104 @@
     html[data-theme="light"] main h2,
     html[data-theme="light"] main h3,
     html[data-theme="light"] main h4,
-    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-white:not(button):not(a.bg-brand-lime):not(tr),
-    html[data-theme="light"] main .text-white:not(button):not(a.bg-brand-lime):not(tr) {
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-white:not(button):not(a):not(tr):not(th):not(.tile-weekday):not(.tile-day):not(.tile-month),
+    html[data-theme="light"] main .text-white:not(button):not(a):not(tr):not(th):not(.tile-weekday):not(.tile-day):not(.tile-month) {
       color: #0D1F18 !important;
+    }
+
+    /* ==========================================================================
+       BULLETPROOF LIGHT & DARK MODE CONTRAST SYSTEM
+       Ensures every button, stepper, date tile, open-play card, and dark header
+       is 100% readable in both Light Mode and Dark Mode!
+       ========================================================================== */
+    .white-calendar-rail .date-tile.date-tile-active,
+    html[data-theme="light"] .white-calendar-rail .date-tile.date-tile-active,
+    html[data-theme="dark"] .white-calendar-rail .date-tile.date-tile-active {
+      background-color: #0F291E !important;
+      border-color: #15803D !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 8px 20px -4px rgba(15, 41, 30, 0.3) !important;
+    }
+    .white-calendar-rail .date-tile.date-tile-active span,
+    .white-calendar-rail .date-tile.date-tile-active .tile-day,
+    .white-calendar-rail .date-tile.date-tile-active .tile-month,
+    html[data-theme="light"] .white-calendar-rail .date-tile.date-tile-active span,
+    html[data-theme="light"] .white-calendar-rail .date-tile.date-tile-active .tile-day,
+    html[data-theme="light"] .white-calendar-rail .date-tile.date-tile-active .tile-month {
+      color: #FFFFFF !important;
+    }
+    .white-calendar-rail .date-tile.date-tile-active .tile-weekday,
+    html[data-theme="light"] .white-calendar-rail .date-tile.date-tile-active .tile-weekday {
+      color: #6EE7B7 !important;
+    }
+
+    /* Keep white text on all dark/emerald badges, buttons, and table headers */
+    html[data-theme="light"] #schedule-table-head,
+    html[data-theme="light"] #schedule-table-head th,
+    html[data-theme="light"] #schedule-table-head span,
+    html[data-theme="light"] .bg-\[\#050E1D\],
+    html[data-theme="light"] .bg-\[\#050E1D\] *,
+    html[data-theme="light"] .bg-\[\#0D1F18\],
+    html[data-theme="light"] .bg-\[\#0D1F18\] *,
+    html[data-theme="light"] .bg-\[\#0F291E\],
+    html[data-theme="light"] .bg-\[\#0F291E\] *,
+    html[data-theme="light"] .bg-slate-900,
+    html[data-theme="light"] .bg-slate-900 *,
+    html[data-theme="light"] .bg-emerald-600,
+    html[data-theme="light"] .bg-emerald-600 *,
+    html[data-theme="light"] .bg-\[\#15803D\],
+    html[data-theme="light"] .bg-\[\#15803D\] *,
+    html[data-theme="light"] .pf-stepper-plus {
+      color: #FFFFFF !important;
+    }
+
+    /* Stepper Minus Buttons: Crisp dark minus sign in Light Mode, Crisp white in Dark Mode */
+    html[data-theme="light"] .pf-stepper-minus,
+    html[data-theme="light"] .pf-stepper-btn:first-child {
+      background-color: #E2E8F0 !important;
+      color: #0F172A !important;
+      border: 1px solid #CBD5E1 !important;
+    }
+    html[data-theme="light"] .pf-stepper-minus:hover,
+    html[data-theme="light"] .pf-stepper-btn:first-child:hover {
+      background-color: #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="dark"] .pf-stepper-minus,
+    html[data-theme="dark"] .pf-stepper-btn:first-child {
+      background-color: #1E293B !important;
+      color: #FFFFFF !important;
+      border: 1px solid #475569 !important;
+    }
+
+    /* Dark Mode adaptation for white cards (Calendar, Open Play, Tournaments, Policies) */
+    html[data-theme="dark"] section#tournaments {
+      background-color: #091510 !important;
+      color: #ECFDF5 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    html[data-theme="dark"] section#tournaments h2,
+    html[data-theme="dark"] section#tournaments h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] section#tournaments p {
+      color: #A7F3D0 !important;
+    }
+    html[data-theme="dark"] #public-tournaments-grid > div {
+      background-color: #0F231B !important;
+      border-color: rgba(52, 211, 153, 0.25) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] #open-play-card-surface {
+      background-color: #0F231B !important;
+      border-color: rgba(52, 211, 153, 0.25) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] #open-play-card-surface h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] #open-play-card-surface > div > div > p {
+      color: #CBD5E1 !important;
     }
 
     html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-slate-100,
@@ -1256,6 +1351,149 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <style>
+    /* === V2.5 UNIVERSAL PILL ALIGNMENT, BOOKING DRAWER WHITE UI & DROPDOWN CONTRAST FIX === */
+    .cal-cat-pill,
+    .pf-pill,
+    .pf-live-ticker-badge,
+    .pf-live-ticker-sep,
+    [class*="rounded-full"] {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      line-height: 1.15 !important;
+      vertical-align: middle !important;
+    }
+
+    /* Courts & Play / About Dropdown Menu Item Contrast Fix (Never Light-on-Light) */
+    .pf-nav-dropdown-menu {
+      background: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.22) !important;
+    }
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item,
+    .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
+    .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    .pf-nav-dropdown-menu #nav-link-schedule {
+      color: #0F172A !important;
+      background: transparent !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 0.8125rem !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 0.625rem 0.875rem !important;
+      border-radius: 0.625rem !important;
+      text-decoration: none !important;
+    }
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item span:first-child,
+    .pf-nav-dropdown-menu #nav-link-schedule span:first-child {
+      color: #0F172A !important;
+      font-weight: 700 !important;
+    }
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:hover,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item.active,
+    .pf-nav-dropdown-menu #nav-link-schedule:hover,
+    .pf-nav-dropdown-menu #nav-link-schedule.active {
+      background: #0F291E !important;
+      color: #FFFFFF !important;
+    }
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:hover span,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item.active span,
+    .pf-nav-dropdown-menu #nav-link-schedule:hover span,
+    .pf-nav-dropdown-menu #nav-link-schedule.active span {
+      color: #FFFFFF !important;
+    }
+
+    /* Booking Drawer & Full-Page Booking Clean White Editorial Theme */
+    #booking-drawer #drawer-panel {
+      background: #F6F5F0 !important;
+      color: #0F172A !important;
+      border-left: 1px solid #CBD5E1 !important;
+    }
+    #booking-drawer #drawer-panel > div:first-child {
+      background: #FFFFFF !important;
+      border-bottom: 1px solid #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+    #booking-drawer #drawer-panel > div:first-child h3 {
+      color: #0F172A !important;
+      font-weight: 800 !important;
+    }
+    #booking-drawer #drawer-panel > div:first-child p {
+      color: #475569 !important;
+    }
+    #booking-drawer #drawer-step-1 > div,
+    main section.bg-brand-card,
+    main section[class*="bg-brand-card"] {
+      background: #FFFFFF !important;
+      border: 1px solid #E2E8F0 !important;
+      color: #0F172A !important;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+    }
+    #booking-drawer #drawer-step-1 .text-brand-lime,
+    main section .text-brand-lime {
+      color: #15803D !important;
+    }
+    #booking-drawer #drawer-step-1 .text-white,
+    main section h2.text-white,
+    main section span.text-white,
+    main section b.text-white,
+    main section label.text-white {
+      color: #0F172A !important;
+    }
+    #booking-drawer #drawer-step-1 .text-slate-300,
+    #booking-drawer #drawer-step-1 .text-slate-400,
+    main section .text-slate-300,
+    main section .text-slate-400 {
+      color: #475569 !important;
+    }
+    #booking-drawer #drawer-step-1 .bg-brand-black,
+    #booking-drawer #drawer-step-1 [class*="bg-brand-black"],
+    main section .bg-brand-black,
+    main section [class*="bg-brand-black"] {
+      background: #F8FAFC !important;
+      border-color: #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    #booking-drawer #drawer-step-1 input[type="text"],
+    #booking-drawer #drawer-step-1 input[type="tel"],
+    #booking-drawer #drawer-step-1 input[type="email"],
+    #booking-drawer #drawer-step-1 input[type="number"],
+    main section input[type="text"],
+    main section input[type="tel"],
+    main section input[type="email"],
+    main section input[type="number"] {
+      background: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 700 !important;
+    }
+
+    /* Make Time Picker Chips in Drawer & book.html Match Main Calendar Font & Style */
+    #drawer-time-chips button,
+    #time-chips-container button,
+    #schedule-table button,
+    #schedule-table td,
+    #schedule-table th {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      letter-spacing: -0.01em !important;
+    }
+    #drawer-time-chips button span,
+    #time-chips-container button span {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+
+    /* Keep active dark buttons (like Court 1 active button or All 18h active button) white text */
+    #booking-drawer button.bg-\[\#0D1F18\],
+    #booking-drawer button.bg-\[\#0D1F18\] span,
+    #booking-drawer button.bg-emerald-600,
+    #booking-drawer button.bg-emerald-600 span {
+      color: #FFFFFF !important;
+    }
+</style>
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black">
 
@@ -1275,11 +1513,6 @@
         </div>
         <a href="book.html" class="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase text-[#15803D] hover:text-[#0D1F18] flex-shrink-0 underline">Reserve Slot →</a>
       </div>
-    </div>
-      <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta" style="display:inline-flex;align-items:center;gap:4px;background:#050E1D;color:#FFFFFF;font-size:10px;font-weight:800;padding:3px 9px;border-radius:5px;flex-shrink:0;white-space:nowrap;">
-        <span class="hidden sm:inline">Updates</span>
-        <span>Feed →</span>
-      </button>
     </div>
     <div class="w-full max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-14 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3">
       
@@ -1324,10 +1557,6 @@
             <a href="book.html" class="pf-nav-dropdown-item ">
               <span>Reserve a Court</span>
               <span class="text-[10px] font-mono opacity-75">→</span>
-            </a>
-            <a href="index.html#tournaments" id="nav-link-tournaments" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
-              <span>Tournaments</span>
-              <span class="text-[10px] font-mono text-amber-600 font-bold">🏆</span>
             </a>
           </div>
         </div>
@@ -1586,7 +1815,7 @@
                 <span data-site-price="paddle-std" class="text-xl font-black text-white font-mono">₱50</span>
                 <span class="text-[10px] text-slate-400 uppercase">/ session</span>
               </div>
-              <button id="pricing-btn-paddle-std" onclick="openBookingDrawer()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-white text-xs font-bold transition active:scale-95">Book with Court →</button>
+              <button id="pricing-btn-paddle-std" onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm" style="color:#FFFFFF !important;">Book with Court →</button>
             </div>
           </div>
 
@@ -1608,7 +1837,7 @@
                 <span data-site-price="paddle-carbon" class="text-xl font-black text-brand-lime font-mono">₱100</span>
                 <span class="text-[10px] text-slate-400 uppercase">/ session</span>
               </div>
-              <button id="pricing-btn-paddle-carbon" onclick="openBookingDrawer()" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black text-xs font-black transition active:scale-95">Book with Court →</button>
+              <button id="pricing-btn-paddle-carbon" onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm" style="color:#FFFFFF !important;">Book with Court →</button>
             </div>
           </div>
 
@@ -1627,7 +1856,7 @@
                 <span data-site-price="paddle-branded" class="text-xl font-black text-brand-lime font-mono">₱200</span>
                 <span class="text-[10px] text-slate-400 uppercase">/ session</span>
               </div>
-              <button id="pricing-btn-paddle-branded" onclick="openBookingDrawer()" class="px-3 py-1.5 rounded-lg bg-brand-lime text-brand-black text-xs font-black transition active:scale-95">Book with Court →</button>
+              <button id="pricing-btn-paddle-branded" onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm" style="color:#FFFFFF !important;">Book with Court →</button>
             </div>
           </div>
 
@@ -1646,7 +1875,7 @@
                 <span data-site-price="ball-single" class="text-xl font-black text-white font-mono">₱50</span>
                 <span class="text-[10px] text-slate-400 uppercase">/ ball</span>
               </div>
-              <button id="pricing-btn-ball-single" onclick="openBookingDrawer()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-white text-xs font-bold transition active:scale-95">Book with Court →</button>
+              <button id="pricing-btn-ball-single" onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm" style="color:#FFFFFF !important;">Book with Court →</button>
             </div>
           </div>
 
@@ -1665,7 +1894,7 @@
                 <span data-site-price="balls-bucket" class="text-xl font-black text-white font-mono">₱100</span>
                 <span class="text-[10px] text-slate-400 uppercase">/ bucket</span>
               </div>
-              <button id="pricing-btn-balls-bucket" onclick="openBookingDrawer()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-white text-xs font-bold transition active:scale-95">Book with Court →</button>
+              <button id="pricing-btn-balls-bucket" onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm" style="color:#FFFFFF !important;">Book with Court →</button>
             </div>
           </div>
 
@@ -1684,7 +1913,7 @@
                 <span data-site-price="machine-num" class="text-xl font-black text-brand-lime font-mono">₱100</span>
                 <span class="text-[10px] text-slate-400 uppercase">/ hour</span>
               </div>
-              <button id="pricing-btn-machine" onclick="openBookingDrawer()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-white text-xs font-bold transition active:scale-95">Book with Court →</button>
+              <button id="pricing-btn-machine" onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition active:scale-95 shadow-sm" style="color:#FFFFFF !important;">Book with Court →</button>
             </div>
           </div>
 
@@ -1715,100 +1944,69 @@
     </div>
   </section>
             <!-- ================= UNIFIED MOBILE-FIRST LUXURY FOOTER ================= -->
-  <footer class="bg-brand-black border-t border-brand-lime/20 text-xs text-slate-300 font-medium relative z-10 overflow-hidden">
-    <!-- Top Court Accent Line -->
-    <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8 sm:pt-14 sm:pb-12">
-      
-      <!-- Responsive Grid: Clean Stack/2-Col on Mobile, 12-Col on Desktop -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 border-b border-white/10 pb-8 sm:pb-12">
-        
-        <!-- Col 1 (Span 4 on Desktop): Official Logo & Venue Info -->
-        <div class="sm:col-span-2 lg:col-span-4 space-y-3.5">
+  <footer id="footer-contact" class="bg-[#0D1F18] text-slate-200 border-t border-emerald-900/60 text-xs font-medium relative z-10 overflow-hidden">
+    <div class="h-1 w-full bg-gradient-to-r from-emerald-600 via-teal-400 to-emerald-700"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-8 border-b border-white/10 items-start">
+        <!-- Brand & Address -->
+        <div class="md:col-span-5 space-y-3">
           <div class="inline-flex items-center gap-3">
-            <a href="index.html" class="group flex-shrink-0">
-              <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Official Logo" class="h-14 w-14 rounded-2xl object-contain bg-white p-1 shadow-lg border border-brand-lime/50 group-hover:scale-105 transition-transform flex-shrink-0">
+            <a href="index.html" class="flex-shrink-0">
+              <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Logo" class="h-12 w-12 rounded-xl object-contain bg-white p-1 shadow-md border border-white/20">
             </a>
-            <a href="index.html" title="P&amp;F Rally Ground Home" class="group text-left">
-              <span class="text-base sm:text-lg font-black text-white group-hover:text-brand-lime transition-colors tracking-tight uppercase block leading-none font-display" data-site-club-name="1">P&amp;F Rally Ground</span>
-              <span class="text-[10px] font-mono font-bold text-brand-lime uppercase tracking-widest mt-1 block" data-site-club-subtitle="1">Pickleball Club &bull; Daraga</span>
-            </a>
+            <div>
+              <a href="index.html" class="text-base font-extrabold text-white tracking-tight uppercase block leading-none" style="color:#FFFFFF !important;" data-site-club-name="1">P&amp;F Rally Ground</a>
+              <span class="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest mt-1 block" data-site-club-subtitle="1">Pickleball Club &bull; Daraga, Albay</span>
+            </div>
           </div>
-          <p class="text-slate-300 text-xs leading-relaxed">
-            Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Philippines, 4501. Open daily 6:00 AM – 12:00 midnight for court reservations, Open Play, and equipment rentals.
+          <p class="text-slate-300 text-xs leading-relaxed max-w-md" style="color:#CBD5E1 !important;">
+            Velasco St., Phase 4, Do&ntilde;a Maria Subd., Tagas, Daraga, Albay 4501. Open daily 6:00 AM – 12:00 Midnight.
           </p>
-          <div class="flex flex-wrap gap-2 text-[11px] font-mono pt-1">
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-lime/15 px-3 py-1 font-bold text-brand-lime border border-brand-lime/30">
-              <span class="h-2 w-2 rounded-full bg-brand-lime animate-pulse"></span>
-              6:00 AM – 12:00 AM
-            </span>
-            <a href="tel:09998832346" class="inline-flex items-center gap-1.5 rounded-full bg-brand-card hover:bg-white/10 px-3 py-1 text-white border border-white/15 font-bold transition">
-              0999 883 2346
+          <div class="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px]">
+            <a href="tel:09998832346" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 hover:bg-white/15 px-3 py-1 text-white border border-white/15 font-bold transition" style="color:#FFFFFF !important;">
+              📞 0999 883 2346
+            </a>
+            <a href="index.html#location" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 px-3 py-1 text-emerald-300 border border-emerald-500/30 font-bold transition">
+              📍 Google Satellite Map
             </a>
           </div>
         </div>
 
-        <!-- Mobile 2-Column Wrapper for Navigation Links -->
-        <div class="sm:col-span-2 lg:col-span-5 grid grid-cols-2 gap-4 sm:gap-8">
-          <!-- Courts & Play -->
-          <div class="space-y-2.5">
-            <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Courts &amp; Play</h4>
-            <ul class="space-y-2 text-xs leading-snug">
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 1</a></li>
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 2</a></li>
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 3</a></li>
-              <li><a href="index.html#schedule" class="hover:text-brand-lime transition block">Court 4</a></li>
-              <li><a href="index.html#schedule" class="text-brand-lime font-bold hover:underline block pt-0.5">Live Schedule →</a></li>
+        <!-- Quick Navigation -->
+        <div class="md:col-span-4 grid grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <h4 class="text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-400">Play &amp; Courts</h4>
+            <ul class="space-y-1.5 text-xs text-slate-300">
+              <li><a href="index.html#schedule" class="hover:text-white transition block">Court Schedule</a></li>
+              <li><a href="index.html#tournaments" class="hover:text-white transition block">Tournaments</a></li>
+              <li><a href="pricing.html" class="hover:text-white transition block">Rates &amp; Gear</a></li>
             </ul>
           </div>
-
-          <!-- Rates & Booking -->
-          <div class="space-y-2.5">
-            <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Rates &amp; Booking</h4>
-            <ul class="space-y-2 text-xs leading-snug">
-              <li><a href="pricing.html" class="hover:text-brand-lime transition block">Court &amp; Gear Rates</a></li>
-              <li><a href="pricing.html" class="hover:text-brand-lime transition block">Club Rates &amp; Gear</a></li>
-              <li><a href="book.html" class="hover:text-brand-lime transition block">Full-Page Booking</a></li>
-              <li><button type="button" onclick="openBookingDrawer()" class="text-brand-lime font-bold hover:underline text-left block pt-0.5">Quick Book Drawer →</button></li>
+          <div class="space-y-2">
+            <h4 class="text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-400">Reservations</h4>
+            <ul class="space-y-1.5 text-xs text-slate-300">
+              <li><a href="book.html" class="hover:text-white transition block">Book Online</a></li>
+              <li><a href="check-booking.html" class="hover:text-white transition block">My Booking Pass</a></li>
+              <li><a href="/admin/" onclick="return openAdminPortal(event)" class="text-emerald-400 hover:text-emerald-300 font-bold transition block">Staff Portal →</a></li>
             </ul>
           </div>
         </div>
 
-        <!-- Col 4 (Span 3 on Desktop): Guest & Staff Portals -->
-        <div class="sm:col-span-2 lg:col-span-3 space-y-3">
-          <h4 class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-brand-lime">Player Quick Tools</h4>
-          <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 text-xs">
-            <a href="check-booking.html" class="py-2.5 px-3 rounded-xl bg-brand-card border border-white/10 hover:border-brand-lime/40 text-white hover:text-brand-lime font-bold transition text-center lg:text-left">
-              My Booking Pass →
-            </a>
-            <a href="/admin/" onclick="return openAdminPortal(event)" class="col-span-2 lg:col-span-1 py-2.5 px-3 rounded-xl bg-brand-lime/15 border border-brand-lime/40 hover:bg-brand-lime text-brand-lime hover:text-brand-black font-black transition text-center lg:text-left">
-              🛡️ Admin Portal →
-            </a>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Bottom Copyright & Quick Links Bar -->
-      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400 text-center sm:text-left">
-        <div>
-          © 2026 P&amp;F Rally Ground Pickleball Club • Est. 2026 | Daraga, Albay. All rights reserved.
-        </div>
-        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-slate-300 font-semibold">
-          <a href="index.html" class="hover:text-brand-lime transition">Home</a>
-          <span>•</span>
-          <a href="pricing.html" class="hover:text-brand-lime transition">Rates &amp; Gear</a>
-          <span>•</span>
-          <a href="book.html" class="hover:text-brand-lime transition">Book</a>
-          <span>•</span>
-          <a href="check-booking.html" class="hover:text-brand-lime transition">My Booking</a>
-          <span>•</span>
-          <a href="/admin/" onclick="return openAdminPortal(event)" class="px-2.5 py-1 rounded-lg bg-brand-lime/15 border border-brand-lime/40 text-brand-lime hover:bg-brand-lime hover:text-brand-black text-[11px] font-mono font-black flex items-center gap-1 transition" title="Open Admin Portal">
-            <span>🛡️ Admin Portal</span>
+        <!-- Primary Action -->
+        <div class="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-2.5 justify-end">
+          <button type="button" onclick="openBookingDrawer()" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-md text-center" style="color:#FFFFFF !important;">
+            Reserve a Court →
+          </button>
+          <a href="check-booking.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-bold text-xs transition text-center" style="color:#FFFFFF !important;">
+            Check Booking Status
           </a>
         </div>
       </div>
 
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
+        <span>© 2026 P&amp;F Rally Ground Pickleball Club • Daraga, Albay.</span>
+        <span>4 Covered Courts • Daily 6:00 AM – 12:00 MN</span>
+      </div>
     </div>
   </footer>
 
@@ -1820,7 +2018,7 @@
     <div class="absolute right-0 top-0 bottom-0 w-full sm:max-w-2xl lg:max-w-3xl bg-brand-dark border-l border-brand-lime/25 shadow-2xl z-10 flex flex-col h-full overflow-hidden" id="drawer-panel">
       
       <!-- Drawer Top Bar -->
-      <div class="flex-shrink-0 px-4 sm:px-6 py-4 border-b border-white/10 flex items-center justify-between bg-brand-dark/95 backdrop-blur-md">
+      <div class="flex-shrink-0 px-4 sm:px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-white text-slate-900 shadow-xs">
         <div class="flex items-center gap-3">
           <img src="assets/logo.png" alt="P&amp;F Logo" class="h-10 w-10 rounded-xl object-contain bg-white p-0.5 flex-shrink-0">
           <div>
@@ -1921,7 +2119,7 @@
 
           <div class="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
             <span>Selected Start: <b class="text-brand-lime" id="drawer-selected-slot-badge">06:00 AM</b></span>
-            <span>Open Play (Yellow-Green) • Booked (Red) • Closed (Dark)</span>
+            <span class="text-slate-600 font-sans font-semibold">Available (Mint) • Selected (Brown) • Open Play (Purple) • Booked (Blue/Amber)</span>
           </div>
         </div>
 
@@ -1933,9 +2131,9 @@
               <p data-site-price="players-note" class="text-[11px] text-slate-400 mt-0.5">Up to 6 players included free (+₱100/extra player beyond 6).</p>
             </div>
             <div class="flex items-center gap-3 bg-brand-black border border-white/15 p-1.5 rounded-2xl">
-              <button type="button" onclick="changePlayers(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&minus;</button>
+              <button type="button" onclick="changePlayers(-1)" class="pf-stepper-btn w-8 h-8 rounded-xl bg-slate-200 hover:bg-emerald-600 text-slate-900 hover:text-white border border-slate-300 font-extrabold active:scale-95 text-base flex items-center justify-center transition">&minus;</button>
               <span id="player-count" class="font-mono font-black text-base text-brand-lime px-2">4</span>
-              <button type="button" onclick="changePlayers(1)" class="w-8 h-8 rounded-xl bg-white/10 text-white font-black hover:bg-white/20 active:scale-95 text-base flex items-center justify-center">&plus;</button>
+              <button type="button" onclick="changePlayers(1)" class="pf-stepper-btn w-8 h-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold active:scale-95 text-base flex items-center justify-center transition shadow-xs">&plus;</button>
             </div>
           </div>
         </div>
@@ -1958,9 +2156,9 @@
                 <span data-site-price="paddle-std-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-std', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-std', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
                 <input type="number" id="rent-paddle-std" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-paddle-std')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
-                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-std', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-std', 1)" class="pf-stepper-plus w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center active:scale-95 transition shadow-xs">&plus;</button>
               </div>
             </div>
 
@@ -1971,9 +2169,9 @@
                 <span data-site-price="paddle-carbon-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-carbon', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-carbon', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
                 <input type="number" id="rent-paddle-carbon" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-paddle-carbon')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
-                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-carbon', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-carbon', 1)" class="pf-stepper-plus w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center active:scale-95 transition shadow-xs">&plus;</button>
               </div>
             </div>
 
@@ -1984,9 +2182,9 @@
                 <span data-site-price="paddle-branded-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱200.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-branded', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-branded', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
                 <input type="number" id="rent-paddle-branded" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-paddle-branded')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
-                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-branded', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-paddle-branded', 1)" class="pf-stepper-plus w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center active:scale-95 transition shadow-xs">&plus;</button>
               </div>
             </div>
 
@@ -1997,9 +2195,9 @@
                 <span data-site-price="ball-single-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button type="button" onclick="pfChangeDrawerGear('rent-ball-single', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-ball-single', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
                 <input type="number" id="rent-ball-single" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-ball-single')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
-                <button type="button" onclick="pfChangeDrawerGear('rent-ball-single', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-ball-single', 1)" class="pf-stepper-plus w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center active:scale-95 transition shadow-xs">&plus;</button>
               </div>
             </div>
 
@@ -2010,9 +2208,9 @@
                 <span data-site-price="balls-bucket-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button type="button" onclick="pfChangeDrawerGear('rent-balls-bucket', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-balls-bucket', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
                 <input type="number" id="rent-balls-bucket" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-balls-bucket')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
-                <button type="button" onclick="pfChangeDrawerGear('rent-balls-bucket', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-balls-bucket', 1)" class="pf-stepper-plus w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center active:scale-95 transition shadow-xs">&plus;</button>
               </div>
             </div>
 
@@ -2023,9 +2221,9 @@
                 <span data-site-price="machine-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00 / hr</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
-                <button type="button" onclick="pfChangeDrawerGear('rent-machine', -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-95">&minus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-machine', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
                 <input type="number" id="rent-machine" min="0" max="20" value="0" oninput="pfOnDrawerGearInput('rent-machine')" class="w-12 h-8 rounded-lg bg-brand-card border border-white/20 focus:border-brand-lime text-center font-mono text-xs font-black text-white focus:outline-none">
-                <button type="button" onclick="pfChangeDrawerGear('rent-machine', 1)" class="w-7 h-7 rounded-lg bg-brand-lime/20 hover:bg-brand-lime text-brand-lime hover:text-brand-black border border-brand-lime/40 font-black text-sm flex items-center justify-center active:scale-95">&plus;</button>
+                <button type="button" onclick="pfChangeDrawerGear('rent-machine', 1)" class="pf-stepper-plus w-7 h-7 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center active:scale-95 transition shadow-xs">&plus;</button>
               </div>
             </div>
           </div>
@@ -2389,37 +2587,6 @@
     </button>
   </div>
 
-      <!-- Chat Feed Stream (Clean Light/White Studio Feed) -->
-      <div id="public-announcement-feed" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 bg-slate-50 overscroll-contain touch-scroll" style="background:#F8FAFC;">
-        <!-- Dynamically populated by renderPublicAnnouncementBoard() -->
-      </div>
-
-      <!-- Chat Footer (Crisp White Footer Bar) -->
-      <div class="px-4 py-3 bg-white border-t-2 border-slate-200 flex items-center justify-between gap-2 text-[10px] flex-shrink-0" style="background:#FFFFFF;">
-        <span class="text-slate-600 font-mono font-bold flex items-center gap-1.5 truncate">
-          <span class="w-2 h-2 rounded-full bg-[#16A34A]"></span>
-          <span>Broadcast by P&amp;F Admin</span>
-        </span>
-        <button type="button" onclick="toggleAnnouncementBoard(); openBookingDrawer();" class="px-3.5 py-1.5 rounded-xl bg-[#050E1D] hover:bg-[#0E2240] text-[#9BE600] font-black uppercase tracking-wider text-[10px] transition flex-shrink-0 shadow-sm">
-          Book Court →
-        </button>
-      </div>
-    </div>
-
-    <!-- Floating Live Chat-Style Launcher Button (Crisp White Outer Box) -->
-    <button type="button" id="announcement-launcher-btn" onclick="toggleAnnouncementBoard()" class="group relative flex items-center gap-2.5 pl-3 pr-4 py-2.5 sm:py-3 rounded-full bg-white hover:bg-slate-50 text-[#050E1D] border-2 border-[#050E1D] ring-2 ring-[#9BE600] shadow-[0_12px_35px_rgba(0,0,0,0.55)] transition-all active:scale-95" style="background:#FFFFFF;color:#050E1D;border-radius:5px;">
-      <div class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#050E1D] text-[#9BE600] shadow-sm flex-shrink-0" style="border-radius:5px;">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#16A34A] ring-2 ring-white animate-ping"></span>
-      </div>
-      <div class="text-left pr-0.5">
-        <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#0E8A2D] block leading-none">Live Feed</span>
-        <span class="text-xs font-black uppercase tracking-wider text-[#050E1D] block leading-tight mt-0.5">Announcements</span>
-      </div>
-      <span id="ann-floating-badge" class="h-5 min-w-[20px] px-1.5 rounded-full bg-[#9BE600] text-[#050E1D] border border-[#050E1D] text-[10px] font-mono font-black flex items-center justify-center leading-none shadow-sm">1</span>
-    </button>
-  </div>
-
   <!-- Full-Screen Announcement Photo Lightbox Modal (White Outer Frame) -->
   <div id="ann-photo-lightbox" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div onclick="closeAnnouncementLightbox()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
@@ -2471,7 +2638,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261104v2"></script>
+<script src="app.js?v=20261105v5"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -2710,6 +2877,7 @@
     }
 
     // 2. Landing Page Court Timeline Matrix (#schedule-table) — 100% Mobile-Fit (Zero Horizontal Scroll)
+    window.pfEscapeHtml = window.pfEscapeHtml || function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
     function renderLiveScheduleMatrix() {
       const thead = document.getElementById('schedule-table-head');
       const tbody = document.getElementById('schedule-matrix-rows');
@@ -2979,9 +3147,9 @@
         const btn = document.getElementById(`dur-btn-${h}`);
         if (!btn) return;
         if (h === hours) {
-          btn.className = 'px-3 py-1 rounded-lg text-[11px] font-mono font-bold transition bg-[#0D1F18] text-white shadow-sm';
+          btn.className = 'px-3 py-1 rounded-lg text-[11px] font-sans font-bold transition bg-[#0D1F18] text-white shadow-sm';
         } else {
-          btn.className = 'px-3 py-1 rounded-lg text-[11px] font-mono font-semibold transition bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18]';
+          btn.className = 'px-3 py-1 rounded-lg text-[11px] font-sans font-semibold transition bg-[#F2F0E8] text-[#52605A] hover:text-[#0D1F18]';
         }
       });
       if (typeof renderDrawerSlots === 'function') renderDrawerSlots();
@@ -3014,23 +3182,23 @@
 
         if (cat === 'PRIVATE') {
           btn.disabled = true;
-          btn.className = 'py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[11px] font-sans font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#64748B] font-black">Private</span>`;
         } else if (cat === 'HOLD') {
           btn.disabled = true;
-          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] text-[11px] font-sans font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#9A3412] font-black">Hold</span>`;
         } else if (slotInfo.status === 'CLOSED' || cat === 'BLOCKED') {
           btn.disabled = true;
-          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[11px] font-mono font-bold cursor-not-allowed';
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[11px] font-sans font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#991B1B] font-black">Blocked</span>`;
         } else if (slotInfo.status === 'BOOKED') {
           btn.disabled = true;
           if (cat === 'PENDING') {
-            btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-[11px] font-mono font-bold cursor-not-allowed';
+            btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-[11px] font-sans font-bold cursor-not-allowed';
             btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#92400E] font-black">Pending</span>`;
           } else {
-            btn.className = 'py-2.5 px-2 rounded-xl bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[11px] font-mono font-bold cursor-not-allowed';
+            btn.className = 'py-2.5 px-2 rounded-xl bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[11px] font-sans font-bold cursor-not-allowed';
             btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#1E40AF] font-black">Confirmed</span>`;
           }
         } else if (slotInfo.status === 'OPEN_PLAY' || cat === 'OPEN_PLAY') {
@@ -3049,8 +3217,8 @@
             recalculateDrawerTotal();
           };
         } else if (slotInfo.status === 'EXPIRED' || cat === 'PAST') {
-          btn.className = 'pf-cal-slot-past py-2.5 px-2 rounded-xl text-[11px] font-mono font-bold transition leading-tight';
-          btn.innerHTML = `${slot}<span class="block text-[9px] font-mono opacity-80">₱${rate}</span>`;
+          btn.className = 'pf-cal-slot-past py-2.5 px-2 rounded-xl text-[11px] font-sans font-bold transition leading-tight';
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-sans font-bold opacity-80">₱${rate}</span>`;
           btn.onclick = () => {
             if (typeof pfShowExpiredSlotBanner === 'function') {
               pfShowExpiredSlotBanner('drawer-expired-time-error', slot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
@@ -3060,7 +3228,7 @@
           btn.className = isSelected
             ? 'py-2.5 px-2 rounded-xl bg-[#EFECE6] text-[#5C2D0C] border-2 border-[#78350F] text-[11px] font-mono font-black transition leading-tight shadow-md'
             : 'py-2.5 px-2 rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] text-[11px] font-mono font-extrabold transition leading-tight';
-          btn.innerHTML = `${slot}<span class="block text-[9px] font-mono ${isSelected ? 'text-[#5C2D0C] font-black' : 'text-[#065F46]/80'}">${isSelected ? '● Selected' : '₱' + rate}</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-sans font-bold ${isSelected ? 'text-[#5C2D0C] font-black' : 'text-[#065F46]/80'}">${isSelected ? '● Selected' : '₱' + rate}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('drawer-expired-time-error');
             DRAWER_STATE.selectedStartSlot = slot;

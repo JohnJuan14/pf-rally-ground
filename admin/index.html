@@ -670,12 +670,172 @@
       box-shadow: 0 0 6px rgba(239, 68, 68, 0.45);
     }
 
+  
+      /* ===== COURTHUB ENTERPRISE UNIFIED DESIGN SYSTEM OVERRIDES ===== */
+      html[data-adm-theme="light"] body {
+        background: #F8FAFC !important;
+        color: #0F172A !important;
+      }
+      /* Clean SaaS Card Surfaces Across All 10 Tabs */
+      html[data-adm-theme="light"] main .glass-card,
+      html[data-adm-theme="light"] main .rounded-2xl.bg-white\/5,
+      html[data-adm-theme="light"] main .rounded-3xl.bg-white\/5,
+      html[data-adm-theme="light"] main .bg-\[\#071426\],
+      html[data-adm-theme="light"] main .bg-\[\#0B1D36\],
+      html[data-adm-theme="light"] main .bg-\[\#050E1D\]\/90,
+      html[data-adm-theme="light"] main .bg-\[\#050E1D\]\/80,
+      html[data-adm-theme="light"] main .bg-\[\#050E1D\]\/70,
+      html[data-adm-theme="light"] main .bg-\[\#050E1D\]\/60,
+      html[data-adm-theme="light"] main .bg-\[\#050E1D\] {
+        background: #FFFFFF !important;
+        border-color: #E2E8F0 !important;
+        color: #0F172A !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03) !important;
+      }
+      /* Clean Inputs & Selects Across All Tabs */
+      html[data-adm-theme="light"] main input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
+      html[data-adm-theme="light"] main select,
+      html[data-adm-theme="light"] main textarea {
+        background-color: #F8FAFC !important;
+        border: 1px solid #CBD5E1 !important;
+        color: #0F172A !important;
+        border-radius: 0.75rem !important;
+      }
+      html[data-adm-theme="light"] main input:focus,
+      html[data-adm-theme="light"] main select:focus,
+      html[data-adm-theme="light"] main textarea:focus {
+        background-color: #FFFFFF !important;
+        border-color: #10B981 !important;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14) !important;
+        outline: none !important;
+      }
+      /* Convert harsh neon lime buttons in Admin to CourtHub Emerald-600 with crisp white text */
+      html[data-adm-theme="light"] main button.bg-brand-lime,
+      html[data-adm-theme="light"] main a.bg-brand-lime {
+        background: #059669 !important;
+        color: #FFFFFF !important;
+        border-color: #047857 !important;
+        box-shadow: 0 1px 2px rgba(5, 150, 105, 0.2) !important;
+      }
+      html[data-adm-theme="light"] main button.bg-brand-lime:hover,
+      html[data-adm-theme="light"] main a.bg-brand-lime:hover {
+        background: #047857 !important;
+        color: #FFFFFF !important;
+      }
+      html[data-adm-theme="light"] main button.bg-brand-lime *,
+      html[data-adm-theme="light"] main a.bg-brand-lime * {
+        color: #FFFFFF !important;
+      }
+      /* Readable emerald accent text instead of pale lime on white backgrounds */
+      html[data-adm-theme="light"] main .text-brand-lime {
+        color: #059669 !important;
+      }
+      /* Bulletproof Contrast Guard: Any explicit dark/colored button or badge keeps white text */
+      html[data-adm-theme="light"] main .bg-emerald-600,
+      html[data-adm-theme="light"] main .bg-emerald-600 *,
+      html[data-adm-theme="light"] main .bg-indigo-600,
+      html[data-adm-theme="light"] main .bg-indigo-600 *,
+      html[data-adm-theme="light"] main .bg-rose-600,
+      html[data-adm-theme="light"] main .bg-rose-600 *,
+      html[data-adm-theme="light"] main .bg-blue-600,
+      html[data-adm-theme="light"] main .bg-blue-600 *,
+      html[data-adm-theme="light"] main .bg-amber-500,
+      html[data-adm-theme="light"] main .bg-amber-500 * {
+        color: #FFFFFF !important;
+      }
+
+    
+    /* === V2 COURTHUB SAAS ADMIN REVAMP (CRISP LIGHT & DARK MODE CONTRAST + CENTERED PILLS) === */
+    /* Universal Pill Text Centering */
+    span[class*="rounded-full"],
+    span[class*="rounded-lg"],
+    span[class*="rounded-md"],
+    span[class*="rounded-xl"],
+    .cal-cat-pill,
+    .mob-tab-pill,
+    .adm-cal-mode-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      line-height: 1.2 !important;
+      vertical-align: middle !important;
+    }
+
+    /* Protect intentionally dark/gradient cards & buttons in Light Mode so their text stays crisp white */
+    html[data-adm-theme="light"] main .from-indigo-900 h3,
+    html[data-adm-theme="light"] main .from-indigo-900 p,
+    html[data-adm-theme="light"] main .bg-emerald-700,
+    html[data-adm-theme="light"] main .bg-emerald-600,
+    html[data-adm-theme="light"] main .bg-indigo-600,
+    html[data-adm-theme="light"] main .bg-rose-600,
+    html[data-adm-theme="light"] main .bg-blue-600,
+    html[data-adm-theme="light"] main .bg-slate-800 {
+      color: #FFFFFF !important;
+    }
+
+    /* Ensure all standard cards in Light Mode are crisp CourtHub white (#FFFFFF) with slate borders */
+    html[data-adm-theme="light"] #admin-main-col {
+      background-color: #F8FAFC !important;
+      color: #0F172A !important;
+    }
+    html[data-adm-theme="light"] main .bg-brand-card,
+    html[data-adm-theme="light"] main .bg-brand-dark,
+    html[data-adm-theme="light"] main .bg-slate-900:not(.from-indigo-900) {
+      background-color: #FFFFFF !important;
+      border-color: #E2E8F0 !important;
+      color: #0F172A !important;
+      box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05) !important;
+    }
+    html[data-adm-theme="light"] main .bg-brand-black,
+    html[data-adm-theme="light"] main .bg-brand-black\/40,
+    html[data-adm-theme="light"] main .bg-brand-black\/60,
+    html[data-adm-theme="light"] main .bg-brand-black\/70,
+    html[data-adm-theme="light"] main .bg-brand-black\/75,
+    html[data-adm-theme="light"] main .bg-brand-black\/80,
+    html[data-adm-theme="light"] main .bg-brand-black\/90,
+    html[data-adm-theme="light"] main .bg-emerald-950\/50 {
+      background-color: #F8FAFC !important;
+      border-color: #E2E8F0 !important;
+      color: #0F172A !important;
+    }
+
+    /* Ensure Dark Mode (`html[data-adm-theme="dark"]`) converts hardcoded bg-white cards inside main to rich dark slate with light text */
+    html[data-adm-theme="dark"] #admin-main-col {
+      background-color: #0B1310 !important;
+      color: #F1F5F9 !important;
+    }
+    html[data-adm-theme="dark"] main .bg-white:not(button):not(.p-2):not(.p-2\.5),
+    html[data-adm-theme="dark"] main .bg-\[\#f8fafc\],
+    html[data-adm-theme="dark"] main .bg-slate-50,
+    html[data-adm-theme="dark"] main .bg-slate-50\/70 {
+      background-color: #111C18 !important;
+      border-color: #23352E !important;
+      color: #F1F5F9 !important;
+    }
+    html[data-adm-theme="dark"] main .text-slate-900,
+    html[data-adm-theme="dark"] main .text-slate-800,
+    html[data-adm-theme="dark"] main .text-\[\#050E1D\] {
+      color: #F8FAFC !important;
+    }
+    html[data-adm-theme="dark"] main .text-slate-700,
+    html[data-adm-theme="dark"] main .text-slate-600,
+    html[data-adm-theme="dark"] main .text-slate-500 {
+      color: #94A3B8 !important;
+    }
+    html[data-adm-theme="dark"] main input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    html[data-adm-theme="dark"] main select,
+    html[data-adm-theme="dark"] main textarea {
+      background-color: #0D1713 !important;
+      border-color: #2A3F36 !important;
+      color: #F8FAFC !important;
+    }
   </style>
   <!-- Comprehensive Favicon Suite -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
 
@@ -944,7 +1104,7 @@
         <div class="p-5 sm:p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-lg flex flex-col gap-4 w-full">
           <div class="w-full min-w-0">
             <div class="flex flex-wrap items-center gap-2 mb-2">
-              <span class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] text-[10px] font-mono font-black uppercase tracking-widest">MASTER SITE, ASSET &amp; PRICE STUDIO</span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-mono font-black uppercase tracking-widest">MASTER SITE, ASSET &amp; PRICE STUDIO</span>
               <span id="se-header-sync-pill" class="text-[11px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-md">● Real-Time Sync with Main Website</span>
             </div>
             <h2 class="text-lg sm:text-2xl font-black uppercase text-slate-900 tracking-tight leading-snug">Edit Website Text, Hero &amp; Court Pictures, Live Updates &amp; All Prices</h2>
@@ -984,10 +1144,10 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="saveSiteConfigToServer(false)" id="se-save-all-btn" class="px-5 py-2 rounded-md bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow cursor-pointer">
+              <button type="button" onclick="saveSiteConfigToServer(false)" id="se-save-all-btn" class="px-5 py-2 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black text-xs uppercase tracking-wider transition shadow cursor-pointer">
                 Save Changes
               </button>
-              <a href="/index.html" onclick="return openPublicSite(event, 'index.html')" class="px-4 py-2 rounded-md bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5 shadow">
+              <a href="/index.html" onclick="return openPublicSite(event, 'index.html')" class="px-4 py-2 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5 shadow">
                 <span>Live Site ↗</span>
               </a>
             </div>
@@ -1005,7 +1165,7 @@
               <p class="text-xs text-slate-600 font-medium">Upload any photo from your device (automatically optimized &amp; saved to the website server) or pick a preset below.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2 px-4 rounded-md bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border border-[#050E1D] font-black uppercase text-xs transition shadow">
+              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2 px-4 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-xs transition shadow">
                 Save Photos &amp; Banner
               </button>
             </div>
@@ -1020,7 +1180,7 @@
               </label>
               <div class="flex flex-wrap items-center gap-2">
                 <span id="se-banner-autosave-badge" class="text-[10px] font-mono font-bold text-emerald-700">● Live Auto-Sync Active</span>
-                <button type="button" onclick="postBannerTextToAnnouncementBoard()" class="px-3 py-1.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] text-[10px] font-black uppercase transition shadow-sm">
+                <button type="button" onclick="postBannerTextToAnnouncementBoard()" class="px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-black uppercase transition shadow-sm">
                   + Also Post to Live Chat Announcement Board
                 </button>
               </div>
@@ -1038,7 +1198,7 @@
             <div class="pt-1">
               <span class="text-[9px] font-mono uppercase text-slate-500 font-bold block mb-1">Live Website Top Banner Preview:</span>
               <div class="bg-gradient-to-r from-[#050E1D] via-[#0B2240] to-[#050E1D] rounded-xl px-3 py-2 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-2 text-center shadow w-full max-w-full overflow-hidden min-w-0">
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9BE600] text-[#050E1D] font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-mono text-[9px] font-black uppercase tracking-wider flex-shrink-0">LIVE UPDATE</span>
                 <span id="se-live-banner-preview-text" class="text-white font-semibold truncate min-w-0 flex-1">LIVE CLUB UPDATE: Courts 1 – 4 Open Daily 6:00 AM – 12:00 Midnight • Book Online via GCash, Maya, or Bank Transfer!</span>
               </div>
             </div>
@@ -1298,10 +1458,10 @@
               <button type="button" onclick="resetGearPicturesOnly()" class="py-2.5 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
                 🖼️ Reset Gear Photos Only
               </button>
-              <button type="button" onclick="restoreDefaultPricesAndGear()" class="py-2.5 px-4 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border border-[#050E1D] font-black uppercase text-xs transition shadow">
+              <button type="button" onclick="restoreDefaultPricesAndGear()" class="py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-[#050E1D] font-black uppercase text-xs transition shadow">
                 ⭐ Reset Prices to Default
               </button>
-              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-xs transition shadow">
                 💾 Save All Prices &amp; Gear Live →
               </button>
             </div>
@@ -1551,7 +1711,7 @@
                 <h4 class="text-xs font-black uppercase tracking-wider text-emerald-800">C. Custom Pro-Shop &amp; Club Inventory Prices &amp; Photos</h4>
                 <p class="text-[11px] text-slate-600">Edit the price, stock, or photo of any custom product displayed in the Live Club Inventory section on Rates &amp; Gear.</p>
               </div>
-              <button type="button" onclick="openAddInventoryModal()" class="px-3.5 py-1.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[11px] transition shadow-sm">
+              <button type="button" onclick="openAddInventoryModal()" class="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase text-[11px] transition shadow-sm">
                 + Add New Product / Item with Photo
               </button>
             </div>
@@ -1569,10 +1729,10 @@
               <p class="text-xs text-slate-600 font-medium">Customize the text shown on the Hero banner, Court cards, Schedule header, and Navigation/Footer.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="restoreDefaultWebsiteText()" class="py-2.5 px-4 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] border border-[#050E1D] font-black uppercase text-xs transition shadow">
+              <button type="button" onclick="restoreDefaultWebsiteText()" class="py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-[#050E1D] font-black uppercase text-xs transition shadow">
                 ⭐ Default (Main Website Text)
               </button>
-              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+              <button type="button" onclick="saveSiteConfigToServer(false)" class="py-2.5 px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-xs transition shadow">
                 💾 Save Website Text &amp; Logo →
               </button>
             </div>
@@ -1589,7 +1749,7 @@
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <label class="px-3.5 py-2 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border border-[#050E1D] text-[11px] font-black uppercase cursor-pointer shadow-sm transition">
+              <label class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 text-[11px] font-black uppercase cursor-pointer shadow-sm transition">
                 📷 Upload New Logo
                 <input type="file" accept="image/*" onchange="handleWebsiteAssetUpload('clubLogo', 'se-preview-club-logo', 'se-club-logo', event)" class="hidden">
               </label>
@@ -1692,7 +1852,7 @@
           </div>
 
           <div class="pt-4 border-t border-slate-200 flex justify-end">
-            <button type="button" onclick="saveSiteConfigToServer(false)" class="py-3.5 px-8 rounded-2xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-xl">
+            <button type="button" onclick="saveSiteConfigToServer(false)" class="py-3.5 px-8 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-xl">
               💾 Save &amp; Publish All Website Changes Live →
             </button>
           </div>
@@ -1710,7 +1870,7 @@
               <button type="button" onclick="resetChannelQrToDefault('all')" class="py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 font-black uppercase text-xs transition shadow-sm">
                 🔄 Reset All 3 QRs
               </button>
-              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="py-2.5 px-5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow">
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="py-2.5 px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-xs transition shadow">
                 💾 Save &amp; Sync All 3 QRs →
               </button>
             </div>
@@ -1758,7 +1918,7 @@
                 </div>
               </div>
 
-              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[11px] tracking-wider transition">
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase text-[11px] tracking-wider transition">
                 ✓ Save GCash QR &amp; Details
               </button>
             </div>
@@ -1801,7 +1961,7 @@
                 </div>
               </div>
 
-              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[11px] tracking-wider transition">
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase text-[11px] tracking-wider transition">
                 ✓ Save Maya QR &amp; Details
               </button>
             </div>
@@ -1844,7 +2004,7 @@
                 </div>
               </div>
 
-              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[11px] tracking-wider transition">
+              <button type="button" onclick="saveAllEditablePaymentQrs('se')" class="w-full py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase text-[11px] tracking-wider transition">
                 ✓ Save Bank QR &amp; Details
               </button>
             </div>
@@ -2105,7 +2265,7 @@
                 <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold uppercase transition">
                   ↺ Reset 3PM–6PM (₱150)
                 </button>
-                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-[#9BE600] hover:bg-[#bef264] text-[#050E1D] font-black text-xs uppercase transition shadow-lg">
+                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs uppercase transition shadow-lg">
                   💾 Save Open Play Rate &amp; Hours
                 </button>
               </div>
@@ -2116,7 +2276,7 @@
             <div class="p-4 rounded-2xl bg-white text-slate-900 border-2 border-[#84cc16] space-y-4">
               <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200 pb-3">
                 <div>
-                  <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase">🎲 24-PLAYER RANDOM DISTRIBUTION &amp; DEDICATED TIME SLOTS</span>
+                  <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10px] font-black uppercase">🎲 24-PLAYER RANDOM DISTRIBUTION &amp; DEDICATED TIME SLOTS</span>
                   <h4 class="text-sm sm:text-base font-black uppercase text-slate-900 mt-1">Open Play 24-Player Pod Generator (Select 1 – 4 Courts)</h4>
                   <p class="text-[11px] text-slate-600">All 24 players are randomly shuffled into balanced 4-player Doubles Pods (2 vs 2) and assigned a dedicated time slot and court across 3:00 PM – 6:00 PM.</p>
                 </div>
@@ -2126,9 +2286,9 @@
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(1)" data-op-courts="1" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">1 Court</button>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(2)" data-op-courts="2" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">2 Courts</button>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(3)" data-op-courts="3" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">3 Courts</button>
-                    <button type="button" onclick="adminSetOpenPlayCourtsCount(4)" data-op-courts="4" class="px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#050E1D] text-[#9BE600]">4 Courts</button>
+                    <button type="button" onclick="adminSetOpenPlayCourtsCount(4)" data-op-courts="4" class="px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-emerald-50 text-emerald-800 border border-emerald-200">4 Courts</button>
                   </div>
-                  <button type="button" onclick="adminShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-[#9BE600] hover:bg-[#84cc16] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase transition shadow">
+                  <button type="button" onclick="adminShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border-2 border-[#050E1D] font-black text-xs uppercase transition shadow">
                     🎲 Randomly Distribute 24 Players &amp; Sync Live
                   </button>
                 </div>
@@ -2185,7 +2345,7 @@
               <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-300">
                 <button type="button" onclick="shiftAdminCalendarDate(-1)" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-200 text-slate-900 border border-slate-300 font-black text-xs transition" title="Previous Day">← Prev</button>
                 <input type="date" id="adm-matrix-date" onchange="syncAdminCalendarDate(this.value)" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-black text-slate-900">
-                <button type="button" onclick="setAdminCalendarToday()" class="px-2.5 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] font-black text-xs uppercase transition">Today</button>
+                <button type="button" onclick="setAdminCalendarToday()" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-black text-xs uppercase transition">Today</button>
                 <button type="button" onclick="shiftAdminCalendarDate(1)" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-200 text-slate-900 border border-slate-300 font-black text-xs transition" title="Next Day">Next →</button>
               </div>
             </div>
@@ -2193,11 +2353,11 @@
             <!-- Interactive Click-Mode Toolbar -->
             <div class="p-3 rounded-2xl bg-slate-100 border border-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div class="flex items-center gap-2">
-                <span class="px-2 py-1 rounded bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase">CLICK MODE</span>
+                <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10px] font-black uppercase">CLICK MODE</span>
                 <span class="text-xs font-bold text-slate-700">Choose what happens when you click a court slot below:</span>
               </div>
               <div class="flex flex-wrap items-center gap-1.5" id="admin-cal-mode-buttons">
-                <button type="button" onclick="setAdminCalendarClickMode('ASK')" data-mode="ASK" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#050E1D] text-[#9BE600] border-2 border-[#050E1D] text-[11px] font-black uppercase transition shadow-sm">
+                <button type="button" onclick="setAdminCalendarClickMode('ASK')" data-mode="ASK" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 border-2 border-[#050E1D] text-[11px] font-black uppercase transition shadow-sm">
                   🎯 Ask Popup
                 </button>
                 <button type="button" onclick="setAdminCalendarClickMode('OPEN')" data-mode="OPEN" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[11px] font-black uppercase transition">
@@ -2223,8 +2383,8 @@
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <table class="w-full table-fixed sm:table-auto text-xs border-collapse">
                 <thead>
-                  <tr class="bg-[#050E1D] text-white text-[10px] sm:text-[11px] uppercase tracking-wider">
-                    <th class="py-2.5 sm:py-3.5 px-2 sm:px-4 text-left font-black sticky left-0 bg-[#050E1D] z-10 w-[72px] sm:w-[125px]">Time</th>
+                  <tr class="bg-slate-100 text-slate-700 border-b border-slate-200 text-[10px] sm:text-[11px] uppercase tracking-wider">
+                    <th class="py-2.5 sm:py-3.5 px-2 sm:px-4 text-left font-black sticky left-0 bg-slate-100 text-slate-800 z-10 w-[72px] sm:w-[125px]">Time</th>
                     <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center font-black"><span class="sm:hidden">C1</span><span class="hidden sm:inline">Court 01</span></th>
                     <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center font-black"><span class="sm:hidden">C2</span><span class="hidden sm:inline">Court 02</span></th>
                     <th class="py-2.5 sm:py-3.5 px-1 sm:px-3 text-center font-black"><span class="sm:hidden">C3</span><span class="hidden sm:inline">Court 03</span></th>
@@ -2331,7 +2491,7 @@
         
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl bg-white border-2 border-slate-200 shadow-lg">
           <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-2xl bg-[#9BE600] text-[#050E1D] border-2 border-[#050E1D] flex items-center justify-center shadow-md flex-shrink-0">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-700 text-white border border-emerald-800 flex items-center justify-center shadow-md flex-shrink-0">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
             </div>
             <div>
@@ -2340,7 +2500,7 @@
               <p class="text-xs text-slate-600 font-medium">Post, edit, pin, or delete club updates, Open Play alerts, tournament posters, or court advisories with photos directly on the public website's live feed.</p>
             </div>
           </div>
-          <a href="/" onclick="return openPublicSite(event, 'index.html')" class="px-4 py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] text-xs font-black uppercase tracking-wider transition self-start sm:self-auto whitespace-nowrap shadow">
+          <a href="/" onclick="return openPublicSite(event, 'index.html')" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-black uppercase tracking-wider transition self-start sm:self-auto whitespace-nowrap shadow">
             Preview on Website ↗
           </a>
         </div>
@@ -2400,7 +2560,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <button type="submit" id="ann-submit-btn" class="flex-1 py-3.5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-lg">
+              <button type="submit" id="ann-submit-btn" class="flex-1 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-xs tracking-wider transition active:scale-95 shadow-lg">
                 Publish to Live Announcement Board →
               </button>
               <button type="button" id="ann-cancel-edit-btn" onclick="cancelEditAnnouncement()" class="hidden py-3.5 px-4 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold uppercase text-xs transition">
@@ -2437,30 +2597,30 @@
       <section id="tab-pos" class="hidden space-y-6">
         
         <!-- CourtHub POS Header & View Switcher -->
-        <div class="rounded-2xl bg-slate-900 border border-slate-700 p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xl">
+        <div class="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
           <div class="flex items-center gap-3.5">
-            <div class="w-11 h-11 bg-indigo-500 rounded-xl flex items-center justify-center text-xl font-bold text-white shadow-lg flex-shrink-0">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-xl flex items-center justify-center text-xl font-bold shadow-xs flex-shrink-0">
               <i class="fa-solid fa-table-tennis-paddle-ball"></i>
             </div>
             <div>
-              <div class="flex items-center gap-2">
-                <h2 class="text-lg sm:text-xl font-black text-white leading-tight uppercase">CourtHub Rental POS &amp; Analytics</h2>
-                <span class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 font-mono text-[10px] font-bold uppercase">Live POS</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-tight tracking-tight">CourtHub Rental POS &amp; Analytics</h2>
+                <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono text-[10px] font-bold uppercase">Live POS</span>
               </div>
-              <p class="text-xs text-slate-400">Manage court rental transactions, export CSV reports, analyze Monthly/Weekly/Peak Hours charts, and ring up counter sales.</p>
+              <p class="text-xs text-slate-500 mt-0.5">Manage court rental transactions, export CSV reports, analyze Monthly/Weekly/Peak Hours charts, and ring up counter sales.</p>
             </div>
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <button type="button" onclick="switchPosHubView('transactions')" id="poshub-nav-transactions" class="px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow">
+            <button type="button" onclick="switchPosHubView('transactions')" id="poshub-nav-transactions" class="px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition shadow-sm">
               <i class="fa-solid fa-receipt"></i>
               <span>Transactions</span>
             </button>
-            <button type="button" onclick="switchPosHubView('dashboard')" id="poshub-nav-dashboard" class="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition">
+            <button type="button" onclick="switchPosHubView('dashboard')" id="poshub-nav-dashboard" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition">
               <i class="fa-solid fa-chart-pie"></i>
               <span>Analytics Dashboard</span>
             </button>
-            <button type="button" onclick="switchPosHubView('register')" id="poshub-nav-register" class="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition">
+            <button type="button" onclick="switchPosHubView('register')" id="poshub-nav-register" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition">
               <i class="fa-solid fa-cash-register"></i>
               <span>Counter Register</span>
             </button>
@@ -2481,7 +2641,7 @@
                   <i class="fa-solid fa-database"></i>
                   <span id="poshub-seed-toggle-label">Showing: Live + 90-Day Analytics Dataset</span>
                 </button>
-                <button type="button" onclick="openNewBookingModal()" class="px-4 py-2 bg-slate-900 text-[#9BE600] hover:bg-slate-800 rounded-lg flex items-center gap-2 text-xs font-bold uppercase transition shadow-sm">
+                <button type="button" onclick="openNewBookingModal()" class="px-4 py-2 bg-emerald-700 text-white hover:bg-emerald-800 rounded-lg flex items-center gap-2 text-xs font-bold uppercase transition shadow-sm">
                   <i class="fa-solid fa-plus"></i> New Court Rental
                 </button>
                 <button type="button" onclick="exportPosHubCSV()" class="px-4 py-2 bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm text-sm">
@@ -2730,25 +2890,25 @@
 
       <!-- ================= 4B. ADMIN-ONLY 3D PICKLEBALL PRO TOURNAMENT HOST TAB ================= -->
       <section id="tab-tournament" class="hidden space-y-5">
-        <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border-2 border-brand-lime/40 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-2xl">
+        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
           <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-2xl bg-brand-lime text-brand-black flex items-center justify-center text-2xl font-black shadow-lg flex-shrink-0">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center text-2xl font-black shadow-xs flex-shrink-0">
               🏆
             </div>
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded bg-brand-lime text-brand-black font-mono text-[10px] font-black uppercase">🔒 ADMIN-ONLY TOURNAMENT HOST</span>
-                <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono text-[10px] font-bold uppercase">3D Bracket &amp; Live Scorekeeper</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-[10px] font-bold uppercase">🔒 ADMIN-ONLY TOURNAMENT HOST</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono text-[10px] font-bold uppercase">3D Bracket &amp; Live Scorekeeper</span>
               </div>
-              <h2 class="text-lg sm:text-xl font-black uppercase text-white mt-1">P&amp;F Rally Ground 3D Pickleball Tournament Manager</h2>
-              <p class="text-xs text-slate-300">Exclusively restricted to Admin. Register players (with camera/photo avatars), choose Singles (16) or Doubles (8), run The Draw, and score matches live (11 pts, Win by 2).</p>
+              <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">P&amp;F Rally Ground 3D Pickleball Tournament Manager</h2>
+              <p class="text-xs text-slate-500">Exclusively restricted to Admin. Register players (with camera/photo avatars), choose Singles (16) or Doubles (8), run The Draw, and score matches live (11 pts, Win by 2).</p>
             </div>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button type="button" onclick="reloadAdminTournamentArena()" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs font-bold uppercase transition">
+            <button type="button" onclick="reloadAdminTournamentArena()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold uppercase transition">
               ↻ Reset / Reload Arena
             </button>
-            <a href="tournament.html" target="_blank" class="px-4 py-2.5 rounded-xl bg-brand-lime hover:bg-brand-limeHover text-brand-black font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2">
+            <a href="tournament.html" target="_blank" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2">
               <span>⛶ Launch Full-Screen 3D Arena</span>
               <span>↗</span>
             </a>
@@ -2764,10 +2924,10 @@
               <p class="text-xs text-slate-600">Tournaments <b>only appear on the public Home Page when Approved by Admin</b> below. Unapproved tournaments stay hidden in Admin Draft mode.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" id="btn-toggle-home-tournaments-master" onclick="toggleMasterHomeTournamentVisibility()" class="px-4 py-2.5 rounded-xl bg-[#9BE600] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm">
+              <button type="button" id="btn-toggle-home-tournaments-master" onclick="toggleMasterHomeTournamentVisibility()" class="px-4 py-2.5 rounded-xl bg-emerald-700 text-white border border-emerald-800 font-black text-xs uppercase tracking-wider transition shadow-sm">
                 ✅ Homepage Tournaments: APPROVED (VISIBLE)
               </button>
-              <button type="button" id="btn-toggle-live-bracket-approval" onclick="toggleLive3DBracketHomeApproval()" class="px-4 py-2.5 rounded-xl bg-[#050E1D] text-[#9BE600] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm">
+              <button type="button" id="btn-toggle-live-bracket-approval" onclick="toggleLive3DBracketHomeApproval()" class="px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm">
                 🏆 3D Bracket on Home: APPROVED
               </button>
             </div>
@@ -2868,7 +3028,7 @@
         <!-- Top Header & Time Filter Bar (Simple Basic English) -->
         <div class="flex flex-col gap-4 p-5 rounded-3xl bg-white text-[#050E1D] border-2 border-slate-200 shadow-lg w-full">
           <div>
-            <span class="px-2.5 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-mono font-black uppercase tracking-widest inline-block mb-1">EASY MONEY &amp; PROFIT TRACKER</span>
+            <span class="px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-mono font-black uppercase tracking-widest inline-block mb-1">EASY MONEY &amp; PROFIT TRACKER</span>
             <h2 class="text-lg sm:text-2xl font-black uppercase text-[#050E1D]">Sales &amp; Actual Money Earned Report</h2>
             <p class="text-xs sm:text-sm text-slate-600 font-medium">See how much money came in, how much you spent on products and bills, and how much <b>real money you earned</b>.</p>
           </div>
@@ -2876,7 +3036,7 @@
           <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border-2 border-slate-300 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase">⏱️ CUSTOM TIME SPAN PICKER</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10px] font-black uppercase">⏱️ CUSTOM TIME SPAN PICKER</span>
                 <span class="text-xs font-black uppercase text-slate-900">Select Exact Date &amp; Time Range to Filter Sales &amp; Profit:</span>
               </div>
               <span id="rep-active-span-badge" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono text-[11px] font-black">Showing: All Time</span>
@@ -2892,7 +3052,7 @@
                 <input type="datetime-local" id="rep-span-end" onchange="applyCustomReportTimeSpan()" class="w-full bg-white border-2 border-slate-300 focus:border-[#050E1D] rounded-xl px-3 py-2 text-xs font-mono font-black text-slate-900 focus:outline-none">
               </div>
               <div class="lg:col-span-4 flex flex-wrap items-center gap-1.5">
-                <button type="button" onclick="applyCustomReportTimeSpan()" class="flex-1 py-2.5 px-3.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-xs transition shadow">
+                <button type="button" onclick="applyCustomReportTimeSpan()" class="flex-1 py-2.5 px-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase text-xs transition shadow">
                   ✓ Apply Time Span
                 </button>
                 <button type="button" onclick="setReportsPeriodFilter('ALL')" id="rep-period-ALL" class="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold uppercase text-xs transition">
@@ -2911,10 +3071,10 @@
                 <button type="button" onclick="setQuickReportSpanHours(720)" id="rep-period-MONTH" class="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold transition">Last 30 Days</button>
               </div>
               <div class="flex flex-wrap items-center gap-2">
-                <button type="button" onclick="runAiFinancialAudit(true)" class="px-3.5 py-2 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] text-xs font-black uppercase tracking-wider transition shadow-sm">
+                <button type="button" onclick="runAiFinancialAudit(true)" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 text-xs font-black uppercase tracking-wider transition shadow-sm">
                   🤖 Explain My Profit (AI)
                 </button>
-                <button type="button" onclick="exportLedgerToCsv()" class="px-3.5 py-2 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider transition">
+                <button type="button" onclick="exportLedgerToCsv()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold uppercase tracking-wider transition">
                   📥 Download Excel / CSV
                 </button>
                 <button type="button" onclick="resetAllDatabaseData()" class="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-xs font-black uppercase tracking-wider transition">
@@ -2926,21 +3086,21 @@
         </div>
 
         <!-- ================= THE 3 BIG MONEY BOXES: EASY MATH FORMULA (A - B = C) ================= -->
-        <div class="p-4 sm:p-5 rounded-3xl bg-[#050E1D] border-2 border-[#9BE600]/40 shadow-xl space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
-            <span class="text-xs sm:text-sm font-black uppercase text-white tracking-wide">📌 How Your Real Money Is Computed: <span class="text-[#9BE600]">Money Received</span> &minus; <span class="text-amber-300">Buying Cost &amp; Bills</span> = <span class="text-[#9BE600] underline">Actual Money Earned</span></span>
-            <span class="text-xs font-mono text-slate-300" id="rep-total-tx-count">0 sales recorded</span>
+        <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+            <span class="text-xs sm:text-sm font-extrabold uppercase text-slate-900 tracking-wide">📌 Net Profit Formula: <span class="text-sky-700">Money Received</span> &minus; <span class="text-rose-600">Buying Cost &amp; Bills</span> = <span class="text-emerald-700 underline">Actual Money Earned</span></span>
+            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-mono font-bold" id="rep-total-tx-count">0 sales recorded</span>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-11 gap-3.5 items-stretch">
             
             <!-- BOX 1: TOTAL MONEY RECEIVED -->
-            <div class="lg:col-span-3 p-4 sm:p-5 rounded-2xl bg-white text-[#050E1D] border-2 border-slate-200 flex flex-col justify-between">
+            <div class="lg:col-span-3 p-5 rounded-xl bg-slate-50/70 text-slate-900 border border-slate-200 flex flex-col justify-between shadow-xs">
               <div>
-                <span class="inline-block px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-mono font-black text-[10px] uppercase mb-1">STEP 1 &bull; MONEY IN</span>
-                <h3 class="text-sm font-black uppercase text-slate-900">💵 Total Money Received</h3>
-                <p class="text-[11px] text-slate-600 mt-0.5">All payments collected from customers.</p>
-                <span class="text-2xl sm:text-3xl font-black text-[#050E1D] font-mono block my-2.5" id="rep-total-rev">₱0.00</span>
+                <span class="inline-block px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 font-mono font-bold text-[10px] uppercase mb-1">STEP 1 &bull; MONEY IN</span>
+                <h3 class="text-sm font-extrabold uppercase text-slate-900">💵 Total Money Received</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">All payments collected from customers.</p>
+                <span class="text-2xl sm:text-3xl font-black text-slate-900 font-mono block my-2.5" id="rep-total-rev">₱0.00</span>
               </div>
               <div class="pt-2.5 border-t border-slate-200 space-y-1 text-xs">
                 <div class="flex justify-between items-center">
@@ -2956,18 +3116,18 @@
 
             <!-- MINUS SIGN -->
             <div class="lg:col-span-1 flex items-center justify-center">
-              <div class="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white font-black text-2xl flex items-center justify-center shadow">&minus;</div>
+              <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-black text-2xl flex items-center justify-center shadow-xs">&minus;</div>
             </div>
 
             <!-- BOX 2: TOTAL BUYING COST & BILLS -->
-            <div class="lg:col-span-3 p-4 sm:p-5 rounded-2xl bg-white text-[#050E1D] border-2 border-rose-200 flex flex-col justify-between">
+            <div class="lg:col-span-3 p-5 rounded-xl bg-rose-50/40 text-slate-900 border border-rose-200 flex flex-col justify-between shadow-xs">
               <div>
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-100 text-rose-900 font-mono font-black text-[10px] uppercase mb-1">STEP 2 &bull; MONEY SPENT</span>
-                <h3 class="text-sm font-black uppercase text-slate-900">🏷️ Buying Cost &amp; Club Bills</h3>
-                <p class="text-[11px] text-slate-600 mt-0.5">Cost of products sold + club expenses.</p>
+                <span class="inline-block px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-mono font-bold text-[10px] uppercase mb-1">STEP 2 &bull; MONEY SPENT</span>
+                <h3 class="text-sm font-extrabold uppercase text-slate-900">🏷️ Buying Cost &amp; Club Bills</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">Cost of products sold + club expenses.</p>
                 <span class="text-2xl sm:text-3xl font-black text-rose-600 font-mono block my-2.5" id="rep-total-deductions">-₱0.00</span>
               </div>
-              <div class="pt-2.5 border-t border-slate-200 space-y-1 text-xs">
+              <div class="pt-2.5 border-t border-rose-200/70 space-y-1 text-xs">
                 <div class="flex justify-between items-center">
                   <span class="text-slate-600 font-medium">📦 Buying Cost of Sold Items:</span>
                   <b class="font-mono text-rose-700" id="rep-total-cogs">-₱0.00</b>
@@ -2981,28 +3141,28 @@
 
             <!-- EQUALS SIGN -->
             <div class="lg:col-span-1 flex items-center justify-center">
-              <div class="w-10 h-10 rounded-full bg-[#9BE600] text-[#050E1D] font-black text-2xl flex items-center justify-center shadow-lg">=</div>
+              <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-black text-2xl flex items-center justify-center shadow-xs">=</div>
             </div>
 
             <!-- BOX 3: ACTUAL MONEY EARNED (CLEAN TAKE-HOME PROFIT) -->
-            <div class="lg:col-span-3 p-4 sm:p-5 rounded-2xl bg-[#9BE600] text-[#050E1D] border-2 border-white shadow-2xl flex flex-col justify-between">
+            <div class="lg:col-span-3 p-5 rounded-xl bg-emerald-50/80 text-slate-900 border-2 border-emerald-200 shadow-sm flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between gap-1 mb-1">
-                  <span class="inline-block px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono font-black text-[10px] uppercase">STEP 3 &bull; REAL PROFIT</span>
-                  <span id="rep-net-margin-badge" class="px-2 py-0.5 rounded bg-white text-[#050E1D] font-mono font-black text-[10px] border border-[#050E1D]/20">0% Profit</span>
+                  <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-700 text-white font-mono font-bold text-[10px] uppercase">STEP 3 &bull; REAL PROFIT</span>
+                  <span id="rep-net-margin-badge" class="px-2.5 py-0.5 rounded-full bg-white text-emerald-800 font-mono font-bold text-[10px] border border-emerald-200">0% Profit</span>
                 </div>
-                <h3 class="text-sm font-black uppercase text-[#050E1D]">✅ Actual Money We Earned</h3>
-                <p class="text-[11px] text-[#050E1D]/80 font-semibold mt-0.5">Your clean take-home money after all costs!</p>
-                <span class="text-2xl sm:text-3xl font-black text-[#050E1D] font-mono block my-2.5" id="rep-actual-net-income">₱0.00</span>
+                <h3 class="text-sm font-extrabold uppercase text-slate-900">✅ Actual Money We Earned</h3>
+                <p class="text-[11px] text-slate-600 font-medium mt-0.5">Your clean take-home profit after all costs.</p>
+                <span class="text-2xl sm:text-3xl font-black text-emerald-700 font-mono block my-2.5" id="rep-actual-net-income">₱0.00</span>
               </div>
-              <div class="pt-2.5 border-t border-[#050E1D]/20 space-y-1 text-xs font-bold">
+              <div class="pt-2.5 border-t border-emerald-200/80 space-y-1 text-xs font-bold text-slate-700">
                 <div class="flex justify-between items-center">
                   <span>🎾 Profit from Courts:</span>
-                  <span class="font-mono" id="rep-court-profit-sub">₱0.00</span>
+                  <span class="font-mono text-emerald-800" id="rep-court-profit-sub">₱0.00</span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span>🥤 Profit from Products:</span>
-                  <span class="font-mono" id="rep-pos-profit-sub">+₱0.00</span>
+                  <span class="font-mono text-emerald-800" id="rep-pos-profit-sub">+₱0.00</span>
                 </div>
                 <span class="hidden" id="rep-gross-profit-sub"></span>
               </div>
@@ -3103,7 +3263,7 @@
                 </div>
               </div>
 
-              <button type="button" onclick="saveSimulatorProductToInventory()" class="w-full py-3 px-4 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black uppercase text-xs transition shadow-md">
+              <button type="button" onclick="saveSimulatorProductToInventory()" class="w-full py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-xs transition shadow-md">
                 💾 Save This Product &amp; Price to Inventory &rarr;
               </button>
             </div>
@@ -3114,13 +3274,13 @@
             <div class="space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
                 <div class="flex items-center gap-2.5">
-                  <span class="w-9 h-9 rounded-xl bg-[#050E1D] text-[#9BE600] flex items-center justify-center font-black text-base">🤖</span>
+                  <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center font-black text-base">🤖</span>
                   <div>
                     <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">SIMPLE ENGLISH AI REPORT</span>
                     <h3 class="text-base sm:text-lg font-black uppercase text-slate-900">AI Easy Explanation of Your Money</h3>
                   </div>
                 </div>
-                <button type="button" onclick="runAiFinancialAudit(true)" class="px-3.5 py-2 rounded-xl bg-[#050E1D] text-[#9BE600] text-xs font-black uppercase hover:bg-slate-800 transition">
+                <button type="button" onclick="runAiFinancialAudit(true)" class="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-black uppercase hover:bg-slate-800 transition">
                   🔄 Update AI Report
                 </button>
               </div>
@@ -3140,11 +3300,11 @@
         <div id="rep-sec-PRICES" class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 overflow-hidden shadow-lg">
           <div class="p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50">
             <div>
-              <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] text-[10px] font-mono font-black uppercase tracking-wider inline-block mb-1">STEP 2 &bull; SET BUYING &amp; SELLING PRICES FOR ALL ITEMS</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-mono font-black uppercase tracking-wider inline-block mb-1">STEP 2 &bull; SET BUYING &amp; SELLING PRICES FOR ALL ITEMS</span>
               <h3 class="text-base sm:text-lg font-black uppercase text-slate-900">🏷️ All Products: Buying Cost vs. Selling Price (Store Items + Website Gear)</h3>
               <p class="text-xs text-slate-600 mt-0.5">Type how much you bought each item for (by Box or per Piece) and how much you sell it for. Click <b>💾 Save</b> on any row to update your profit report.</p>
             </div>
-            <button type="button" onclick="openAddInventoryModal()" class="px-4 py-2.5 rounded-xl bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase transition shadow-sm">
+            <button type="button" onclick="openAddInventoryModal()" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black text-xs uppercase transition shadow-sm">
               + Add New Product
             </button>
           </div>
@@ -4645,7 +4805,7 @@ function clearFieldError(fieldId) {
 
       document.querySelectorAll('.mob-tab-pill').forEach(btn => {
         if (btn.dataset.tab === tabId) {
-          btn.className = 'mob-tab-pill px-3.5 py-1.5 rounded-lg bg-[#050E1D] text-[#9BE600] border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition';
+          btn.className = 'mob-tab-pill px-3.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 border border-[#050E1D] flex-shrink-0 font-black shadow-sm transition';
           try { btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch (e) {}
         } else {
           btn.className = 'mob-tab-pill px-3.5 py-1.5 rounded-lg bg-white text-[#050E1D] border border-slate-300 flex-shrink-0 font-bold transition';
@@ -5026,7 +5186,7 @@ function clearFieldError(fieldId) {
               <p id="adm-resched-error-msg" class="hidden"></p>
             </div>
             <div class="flex items-center gap-2 pt-2">
-              <button type="button" onclick="adminSubmitReschedule()" class="flex-1 py-3 rounded-xl bg-[#9BE600] text-[#050E1D] font-black uppercase text-xs tracking-wider hover:opacity-95 transition">✓ Save New Schedule</button>
+              <button type="button" onclick="adminSubmitReschedule()" class="flex-1 py-3 rounded-xl bg-emerald-100 text-emerald-900 font-black uppercase text-xs tracking-wider hover:opacity-95 transition">✓ Save New Schedule</button>
               <button type="button" onclick="adminCloseRescheduleModal()" class="py-3 px-4 rounded-xl bg-white/10 text-white font-bold uppercase text-xs">Cancel</button>
             </div>
           </div>
@@ -5481,7 +5641,7 @@ function clearFieldError(fieldId) {
       adminCalendarClickMode = mode || 'ASK';
       document.querySelectorAll('.adm-cal-mode-btn').forEach(btn => {
         if (btn.dataset.mode === adminCalendarClickMode) {
-          btn.className = 'adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#050E1D] text-[#9BE600] border-2 border-[#050E1D] text-[11px] font-black uppercase transition shadow-sm';
+          btn.className = 'adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 border-2 border-[#050E1D] text-[11px] font-black uppercase transition shadow-sm';
         } else {
           btn.className = 'adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-white text-slate-800 border border-slate-300 hover:bg-slate-200 text-[11px] font-bold uppercase transition';
         }
@@ -6030,7 +6190,7 @@ function clearFieldError(fieldId) {
       document.querySelectorAll('#adm-openplay-court-count-btns [data-op-courts]').forEach(btn => {
         const n = Number(btn.getAttribute('data-op-courts'));
         btn.className = (n === cCount)
-          ? 'px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#050E1D] text-[#9BE600]'
+          ? 'px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-emerald-50 text-emerald-800 border border-emerald-200'
           : 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-400';
       });
       const roster = getAdminOpenPlay24Roster();
@@ -6041,7 +6201,7 @@ function clearFieldError(fieldId) {
       grid.innerHTML = pods.map(pod => `
         <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
           <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
-            <span class="px-2 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase">POD ${pod.podNumber} &bull; ${pfEscapeHtml(pod.court)}</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10px] font-black uppercase">POD ${pod.podNumber} &bull; ${pfEscapeHtml(pod.court)}</span>
             <span class="font-mono text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">⏰ ${pfEscapeHtml(pod.timeSlot)}</span>
           </div>
           <div class="space-y-1">
@@ -6295,6 +6455,16 @@ function clearFieldError(fieldId) {
       );
     }
 
+    function parseAdminSlotHour24(slotStr) {
+      const m = String(slotStr || '').trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+      if (!m) return null;
+      let hr = parseInt(m[1], 10);
+      const ap = m[3].toUpperCase();
+      if (ap === 'PM' && hr !== 12) hr += 12;
+      if (ap === 'AM' && hr === 12) hr = 0;
+      return hr;
+    }
+
     function renderScheduleBlocks() {
       const dateYMD = getAdminSelectedDateYMD();
       const todayYMD = getAdminLocalTodayYMD();
@@ -6317,7 +6487,7 @@ function clearFieldError(fieldId) {
               <span class="px-2 py-0.5 rounded bg-rose-600 text-white font-mono text-[10px] font-black uppercase">⏰ EXPIRED DATE VIEW (PAST SCHEDULE)</span>
               <span>You are viewing <b>${dateYMD}</b> (which has already passed). All unbooked time slots on this date are marked <b>Expired</b>.</span>
             </div>
-            <button type="button" onclick="setAdminCalendarToday()" class="px-3 py-1.5 rounded-xl bg-[#050E1D] text-[#9BE600] font-black text-[11px] uppercase whitespace-nowrap">Jump to Today (${todayYMD}) →</button>
+            <button type="button" onclick="setAdminCalendarToday()" class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 font-black text-[11px] uppercase whitespace-nowrap">Jump to Today (${todayYMD}) →</button>
           `;
         } else {
           expBanner.className = 'hidden';
@@ -7735,7 +7905,7 @@ How many boxes/packs are you adding to stock?
             <td class="py-3 px-3 font-mono font-black text-emerald-800">+₱${boxProf.toFixed(0)} / box</td>
             <td class="py-3 px-3 font-mono font-bold text-slate-800">${Number(p.stock || 0)} pcs</td>
             <td class="py-3 px-4 text-right">
-              <button type="button" onclick="saveMatrixInventoryRow('${p.id}')" class="px-3 py-1.5 rounded-lg bg-[#9BE600] hover:bg-[#8ae000] text-[#050E1D] border border-[#050E1D] font-black uppercase text-[10px] shadow-sm">
+              <button type="button" onclick="saveMatrixInventoryRow('${p.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white border border-emerald-800 font-black uppercase text-[10px] shadow-sm">
                 💾 Save
               </button>
             </td>
@@ -7777,7 +7947,7 @@ How many boxes/packs are you adding to stock?
             <td class="py-3 px-3 font-mono text-slate-500">—</td>
             <td class="py-3 px-3 font-mono text-emerald-700 font-bold">Active</td>
             <td class="py-3 px-4 text-right">
-              <button type="button" onclick="saveMatrixWebsiteGearRow('${g.key}', '${g.priceKey}', '${g.costKey}')" class="px-3 py-1.5 rounded-lg bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black uppercase text-[10px] shadow-sm">
+              <button type="button" onclick="saveMatrixWebsiteGearRow('${g.key}', '${g.priceKey}', '${g.costKey}')" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase text-[10px] shadow-sm">
                 💾 Save Gear
               </button>
             </td>
@@ -7921,7 +8091,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         <div class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-400 space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-black text-emerald-950 uppercase text-xs">✅ Simple Summary (${periodLabel})</span>
-            <span class="px-2.5 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono font-black text-[11px]">You keep ${netMarginPct.toFixed(0)}% as profit</span>
+            <span class="px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono font-black text-[11px]">You keep ${netMarginPct.toFixed(0)}% as profit</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
             1. Customers paid you a total of <b>₱${totalGross.toLocaleString('en-PH', {minimumFractionDigits:2})}</b>.<br>
@@ -9713,7 +9883,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-mono font-black uppercase">${pfEscapeHtml(ann.category || 'Club Update')}</span>
-                ${ann.pinned ? '<span class="px-2 py-0.5 rounded bg-[#9BE600] text-[#050E1D] text-[9px] font-mono font-black uppercase">📌 PINNED</span>' : ''}
+                ${ann.pinned ? '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 text-[9px] font-mono font-black uppercase">📌 PINNED</span>' : ''}
                 <span class="text-[10px] font-mono text-slate-500 font-bold">${pfEscapeHtml(ann.createdAt || '')}</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -9991,7 +10161,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         const isCustom = val && val !== defVal;
         if (isCustom) {
           statusBadge.textContent = '✅ Custom Photo Live';
-          statusBadge.className = 'px-2 py-0.5 rounded bg-[#9BE600] text-[#050E1D] border border-[#050E1D] text-[10px] font-mono font-black';
+          statusBadge.className = 'px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-black';
         } else {
           const slideNum = slotKey.replace('heroSlide', '');
           statusBadge.textContent = 'Slide ' + slideNum;
@@ -10298,7 +10468,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
         if (statusBadge) {
           statusBadge.textContent = '✅ Live on Site!';
-          statusBadge.className = 'px-2 py-0.5 rounded bg-[#9BE600] text-[#050E1D] border border-[#050E1D] text-[9px] font-mono font-black';
+          statusBadge.className = 'px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-300 text-[9px] font-mono font-black';
         }
 
         await saveSiteConfigToServer(false);
@@ -10677,7 +10847,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
               <span class="text-slate-500 font-mono text-[10px]">Qty:</span>
               <input type="number" id="se-inv-stock-${item.id}" value="${Number(item.stock || 0)}" min="0" class="w-14 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-slate-900 font-mono font-bold text-xs">
             </div>
-            <button type="button" onclick="saveInlineCustomItemPrice('${item.id}')" class="px-3 py-1.5 rounded-lg bg-[#9BE600] text-[#050E1D] border border-[#050E1D] font-black uppercase text-[10px] hover:bg-[#8ae000] transition">
+            <button type="button" onclick="saveInlineCustomItemPrice('${item.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-900 border border-emerald-300 font-black uppercase text-[10px] hover:bg-[#8ae000] transition">
               Save
             </button>
             <button type="button" onclick="openAddInventoryModal('${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-white text-slate-800 border border-slate-300 font-bold uppercase text-[10px] hover:bg-slate-100 transition">
@@ -11343,13 +11513,13 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (masterBtn) {
         masterBtn.textContent = pubOn ? '✅ Homepage Tournaments: APPROVED (VISIBLE)' : '🔒 Homepage Tournaments: HIDDEN BY ADMIN';
         masterBtn.className = pubOn
-          ? 'px-4 py-2.5 rounded-xl bg-[#9BE600] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm'
+          ? 'px-4 py-2.5 rounded-xl bg-emerald-700 text-white border border-emerald-800 font-black text-xs uppercase tracking-wider transition shadow-sm'
           : 'px-4 py-2.5 rounded-xl bg-rose-600 text-white border-2 border-rose-800 font-black text-xs uppercase tracking-wider transition shadow-sm';
       }
       if (bracketBtn) {
         bracketBtn.textContent = brkOn ? '🏆 3D Bracket on Home: APPROVED' : '🔒 3D Bracket on Home: ADMIN ONLY';
         bracketBtn.className = brkOn
-          ? 'px-4 py-2.5 rounded-xl bg-[#050E1D] text-[#9BE600] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm'
+          ? 'px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm'
           : 'px-4 py-2.5 rounded-xl bg-slate-200 text-slate-700 border-2 border-slate-400 font-black text-xs uppercase tracking-wider transition shadow-sm';
       }
 
@@ -11373,7 +11543,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
               <span class="text-[11px] font-bold ${isApp ? 'text-emerald-800' : 'text-slate-500'}">
                 ${isApp ? 'Visible to customers on Home Page' : 'Hidden from public Home Page'}
               </span>
-              <button type="button" onclick="toggleSingleTournamentApproval('${pfEscapeHtml(t.id)}')" class="px-3.5 py-2 rounded-xl font-black text-[11px] uppercase tracking-wider transition ${t.approved === true ? 'bg-rose-100 hover:bg-rose-600 text-rose-800 hover:text-white border border-rose-300' : 'bg-[#9BE600] hover:bg-[#84cc16] text-[#050E1D] border border-[#050E1D]'}">
+              <button type="button" onclick="toggleSingleTournamentApproval('${pfEscapeHtml(t.id)}')" class="px-3.5 py-2 rounded-xl font-black text-[11px] uppercase tracking-wider transition ${t.approved === true ? 'bg-rose-100 hover:bg-rose-600 text-rose-800 hover:text-white border border-rose-300' : 'bg-emerald-700 hover:bg-emerald-800 text-white border border-[#050E1D]'}">
                 ${t.approved === true ? 'Hide from Home Page' : '📢 Post Tournament on Home Page'}
               </button>
             </div>

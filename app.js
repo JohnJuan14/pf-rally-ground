@@ -2349,7 +2349,7 @@ const DEFAULT_PF_SITE_CONFIG = {
   clubAddress: 'Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Philippines, 4501',
   clubLat: 13.15543,
   clubLng: 123.72471,
-  clubMapPinUrl: 'https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&name=Velasco+St.%2C+Phase+4%2C+Do%C3%B1a+Maria+Subd.%2C+Tagas%2C+Daraga%2C+Philippines%2C+4501&mkt=en-US&fbclid=IwY2xjawVYnBdleHRuA2FlbQIxMABwZG9mBWJyaWQRMTRoaU1vSGFYU01lQlhDQWlzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEfV6cDEdlnoTrV2XY-9GoSklW3i8iwAD-QR-A4aVHbv5si-SDftGv3wAWAItU_aem_ddmZG_qe15MZb6RjEsu8yA&FORM=FBKPL1&q=13.15543%2C+123.72471&cp=13.155430%7E123.724709&lvl=16&style=r',
+  clubMapPinUrl: 'https://www.google.com/maps?q=13.15543,123.72471+(P%26F+Rally+Ground+Pickleball+Club)&t=k&z=18',
   clubPhone: '0999 883 2346',
   clubHours: '6:00 AM – 12:00 AM',
   updatedAt: 0
@@ -2483,10 +2483,6 @@ function applySiteConfig(incomingCfg) {
               </div>
             </div>
           </div>
-          <button type="button" onclick="toggleAnnouncementBoard(true)" class="pf-live-ticker-cta" style="display:inline-flex;align-items:center;gap:4px;background:#0D1F18;color:#FFFFFF;font-size:10px;font-weight:700;padding:4px 10px;border-radius:9999px;flex-shrink:0;white-space:nowrap;">
-            <span class="hidden sm:inline">Club</span>
-            <span>Updates →</span>
-          </button>
         `;
       }
     }
@@ -2611,6 +2607,13 @@ function applySiteConfig(incomingCfg) {
   document.querySelectorAll('[data-site-club-address]').forEach(el => {
     if (cfg.clubAddress) el.textContent = cfg.clubAddress;
   });
+  const mapIframe = document.getElementById('club-location-map-iframe');
+  if (mapIframe) {
+    const satUrl = 'https://maps.google.com/maps?ll=13.15543,123.72471&q=13.15543,123.72471+(P%26F+Rally+Ground+Pickleball+Club)&hl=en&t=k&z=18&output=embed';
+    if (mapIframe.getAttribute('src') !== satUrl) {
+      mapIframe.setAttribute('src', satUrl);
+    }
+  }
 
   // Short labels for Court 1..4
   const sanitizeCourtLabel = (val, num) => {
@@ -3856,9 +3859,15 @@ function pfSetScheduleNavActive(isScheduleActive) {
   const activeMobCls = 'flex items-center justify-between py-3 px-4 rounded-xl border-2 border-[#0E8A2D] bg-[#050E1D] text-[#9BE600] font-black shadow-md transition';
   const inactiveMobCls = 'flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition';
 
-  if (homeLink && schedLink) {
+  if (homeLink) {
     homeLink.className = isScheduleActive ? inactiveDesktopCls : activeDesktopCls;
-    schedLink.className = isScheduleActive ? activeDesktopCls : inactiveDesktopCls;
+  }
+  if (schedLink) {
+    if (schedLink.closest('.pf-nav-dropdown-menu')) {
+      schedLink.className = 'pf-nav-dropdown-item' + (isScheduleActive ? ' active' : '');
+    } else {
+      schedLink.className = isScheduleActive ? activeDesktopCls : inactiveDesktopCls;
+    }
   }
   if (mobHome && mobSched) {
     mobHome.className = isScheduleActive ? inactiveMobCls : activeMobCls;
@@ -4408,107 +4417,221 @@ function pfRenderOpenPlay24Board() {
   const container = document.getElementById('open-play-24-board-container');
   if (!container) return;
 
-  const schedule = pfBuildOpenPlay24Schedule(window.PF_OPEN_PLAY_STATE.courtsCount);
-  const priceVal = schedule.openPlayRate;
-  const priceText = priceVal > 0 ? `₱${priceVal}` : 'Free';
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  if (cfg && cfg.openPlayEnabled === false) {
+    container.innerHTML = '';
+    container.classList.add('hidden');
+    return;
+  }
+  container.classList.remove('hidden');
 
-  const courtButtonsHtml = [1, 2, 3, 4].map(c => {
-    const active = c === schedule.courtsCount;
-    return `<button type="button" onclick="pfSetOpenPlayCourtCount(${c})" class="px-3 py-1.5 rounded-xl text-xs font-black uppercase transition ${active ? 'bg-[#050E1D] text-[#9BE600] shadow-md border-2 border-[#050E1D]' : 'bg-white text-slate-700 border border-slate-300 hover:border-[#050E1D]'}">${c} ${c === 1 ? 'Court' : 'Courts'}</button>`;
-  }).join('');
+  const opRate = Number(cfg.openPlayRate ?? 150);
+  const rateLabel = opRate > 0 ? `₱${opRate}` : 'Free';
+  const scheduleData = pfBuildOpenPlay24Schedule(window.PF_OPEN_PLAY_STATE.courtsCount);
+  const courtsActive = scheduleData.courtsCount;
+  const pods = scheduleData.pods || [];
+  const players = scheduleData.players || [];
+  const bookedPlayersCount = players.filter(p => p && p.isBooked).length;
+  const spotsLeft = Math.max(0, 24 - bookedPlayersCount);
 
-  const podsHtml = schedule.pods.map(pod => `
-    <div class="p-4 rounded-2xl bg-white border-2 border-slate-200 shadow-sm hover:border-[#84cc16] transition space-y-2.5">
-      <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
-        <div class="flex items-center gap-2">
-          <span class="px-2.5 py-1 rounded-lg bg-[#050E1D] text-[#9BE600] font-mono text-[11px] font-black uppercase">${pod.courtLabel}</span>
-          <span class="text-xs font-black uppercase text-slate-900">Match Pod #${pod.podIndex}</span>
+  const sessionBlocks = [
+    {
+      slot: '03:00 PM',
+      timeRange: '3:00 PM – 4:00 PM',
+      tag: 'SESSION BLOCK 1',
+      title: 'Warm-Up & Social Rotation',
+      desc: 'All-levels social doubles across Courts 1 – 4. Great for solo drop-ins and first-hour rallies.',
+      courtsLabel: 'Courts 1 – 4 Active',
+      podNums: 'Pods #1 – #4 on court'
+    },
+    {
+      slot: '04:00 PM',
+      timeRange: '4:00 PM – 5:00 PM',
+      tag: 'SESSION BLOCK 2',
+      title: 'Balanced Skill Pod Play',
+      desc: 'Paddle-stack rotation groups players by similar rally pace (Beginner, Intermediate & Open).',
+      courtsLabel: 'Courts 1 – 4 Active',
+      podNums: 'Pods #3 – #6 rotating'
+    },
+    {
+      slot: '05:00 PM',
+      timeRange: '5:00 PM – 6:00 PM',
+      tag: 'SESSION BLOCK 3',
+      title: 'Sunset Challenge Doubles',
+      desc: 'High-energy doubles games to 11 points (win by 2). Winners stay & split for up to 2 games.',
+      courtsLabel: 'Courts 1 – 4 Active',
+      podNums: 'All 6 Pods next-up stack'
+    }
+  ];
+
+  const sessionCardsHtml = sessionBlocks.map((b) => `
+    <div class="rounded-2xl bg-[#F8FAFC] border border-slate-200/90 p-5 flex flex-col justify-between gap-4 hover:border-emerald-600/50 hover:bg-white transition-all shadow-xs">
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <span class="pf-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-100 text-violet-800 border border-violet-200 text-[10px] font-sans font-extrabold uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-violet-600"></span>
+            <span>${b.tag}</span>
+          </span>
+          <span class="pf-pill inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-sans font-bold">
+            ${b.courtsLabel}
+          </span>
         </div>
-        <span class="px-2 py-0.5 rounded bg-[#d9f99d] text-[#365314] border border-[#84cc16] font-mono text-[10px] font-black">${pod.roundLabel}</span>
+        <div class="pt-0.5">
+          <div class="text-lg sm:text-xl font-extrabold text-slate-900 font-sans tracking-tight">${b.timeRange}</div>
+          <h4 class="text-xs sm:text-sm font-bold text-emerald-800 mt-0.5">${b.title}</h4>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed font-normal">${b.desc}</p>
       </div>
-      <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-        <span class="text-[10px] font-mono font-bold uppercase text-emerald-700 block">⏰ Dedicated Time Slot:</span>
-        <b class="text-slate-900 font-mono text-xs sm:text-sm">${pod.dedicatedTimeSlot}</b>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-        <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
-          <span class="text-[10px] font-mono font-black uppercase text-emerald-800 block mb-1">🟢 Team A (Doubles)</span>
-          ${pod.teamA.map(p => `<div class="font-bold text-slate-900 truncate">• #${p.seedNumber} ${pfEscapeHtml(p.name)}</div>`).join('')}
-        </div>
-        <div class="p-2.5 rounded-xl bg-lime-50/70 border border-lime-300">
-          <span class="text-[10px] font-mono font-black uppercase text-[#365314] block mb-1">🎾 Team B (Doubles)</span>
-          ${pod.teamB.map(p => `<div class="font-bold text-slate-900 truncate">• #${p.seedNumber} ${pfEscapeHtml(p.name)}</div>`).join('')}
-        </div>
+      <div class="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-2">
+        <span class="text-[11px] font-semibold text-slate-600">${rateLabel} / player</span>
+        <button type="button" onclick="openBookingDrawer(1, '${b.slot}')" class="px-3.5 py-2 rounded-xl bg-white hover:bg-emerald-700 text-slate-900 hover:text-white border border-slate-300 hover:border-emerald-700 text-xs font-extrabold transition shadow-2xs">
+          Book ${b.slot} →
+        </button>
       </div>
     </div>
   `).join('');
 
-  const rosterRowsHtml = schedule.roster.map(r => `
-    <tr class="hover:bg-slate-50 transition">
-      <td class="py-2 px-3 font-mono font-black text-slate-900">#${String(r.playerSpot).padStart(2, '0')}</td>
-      <td class="py-2 px-3 font-bold text-slate-900">
-        ${pfEscapeHtml(r.name)}
-        ${r.isBooked ? `<span class="ml-1.5 px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-mono font-black uppercase">Booked</span>` : ''}
-      </td>
-      <td class="py-2 px-3 font-mono font-black text-emerald-800">${r.courtLabel}</td>
-      <td class="py-2 px-3 text-slate-700 font-semibold">Pod #${r.podNumber} (${r.teamLabel})</td>
-      <td class="py-2 px-3 font-mono text-xs font-bold text-slate-900 bg-lime-50/60">${r.dedicatedTimeSlot}</td>
-    </tr>
-  `).join('');
+  const compactPodsHtml = pods.map((pod) => {
+    const cleanPName = (p, idx) => {
+      if (!p || !p.name) return `Open Spot #${(pod.podIndex - 1) * 4 + idx + 1}`;
+      const raw = String(p.name).replace(/\s*\(Spot\s*#\d+\)/i, '').trim();
+      if (/^Player\s*0?\d+$/i.test(raw)) {
+        return `Open Spot #${(pod.podIndex - 1) * 4 + idx + 1}`;
+      }
+      return raw;
+    };
+    const tA1 = cleanPName(pod.teamA[0], 0);
+    const tA2 = cleanPName(pod.teamA[1], 1);
+    const tB1 = cleanPName(pod.teamB[0], 2);
+    const tB2 = cleanPName(pod.teamB[1], 3);
+
+    return `
+      <div class="rounded-xl bg-white border border-slate-200 p-3.5 space-y-2.5 shadow-2xs">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="pf-pill px-2.5 py-0.5 rounded-lg bg-slate-900 text-white text-[10px] font-sans font-extrabold uppercase">Court ${pod.assignedCourt}</span>
+            <span class="text-xs font-extrabold text-slate-900">Group ${pod.podIndex}</span>
+          </div>
+          <span class="text-[11px] font-semibold text-emerald-700">${pod.primarySlot.split('(')[0].trim()}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-[11px]">
+          <div class="p-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
+            <span class="text-[9px] font-extrabold uppercase text-emerald-800 block mb-1">Side A (Doubles)</span>
+            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tA1)}</div>
+            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tA2)}</div>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
+            <span class="text-[9px] font-extrabold uppercase text-slate-600 block mb-1">Side B (Doubles)</span>
+            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tB1)}</div>
+            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tB2)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
   container.innerHTML = `
-    <div class="p-4 sm:p-6 rounded-3xl bg-[#f7fee7] text-slate-900 border-2 border-[#84cc16] shadow-xl space-y-5">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#84cc16]/40 pb-4">
-        <div>
-          <div class="flex flex-wrap items-center gap-2 mb-1">
-            <span class="px-2.5 py-0.5 rounded-full bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase tracking-wider">🎾 24-PLAYER OPEN PLAY RANDOMIZER</span>
-            <span class="px-2.5 py-0.5 rounded-full bg-[#d9f99d] text-[#365314] border border-[#84cc16] font-mono text-xs font-black">Entry Fee: <b data-site-price="open-play-num">${priceText}</b> / player</span>
-            <span class="text-[11px] font-mono font-bold text-slate-600">Capacity: 24 Players • 3:00 PM – 6:00 PM</span>
+    <div class="rounded-3xl bg-white text-slate-900 border border-slate-200 p-5 sm:p-8 shadow-xl space-y-6">
+      <!-- Top Editorial Summary Header -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-200">
+        <div class="space-y-2 max-w-2xl">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-100 text-violet-900 border border-violet-200 text-[11px] font-sans font-extrabold uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-violet-600"></span>
+              <span>DAILY OPEN PLAY • 3:00 PM – 6:00 PM</span>
+            </span>
+            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-sans font-bold">
+              ${spotsLeft} of 24 Spots Open Today
+            </span>
           </div>
-          <h3 class="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 font-display">Open Play 24-Player Random Distribution &amp; Dedicated Time Slots</h3>
-          <p class="text-xs text-slate-600 font-medium mt-0.5">All 24 Open Play players are randomly distributed into balanced 4-player Doubles Pods with a dedicated court and time slot. Select how many courts to allocate below:</p>
+          <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-sans">
+            Drop-In Community Open Play
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+            No partner needed. Join up to 24 players across all 4 covered courts for rotating doubles matches. Play at your own pace with our fair paddle-stack rotation system.
+          </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
-          <div class="flex items-center gap-1 bg-white/80 p-1 rounded-2xl border border-slate-300">
-            <span class="text-[10px] font-mono font-bold uppercase text-slate-600 px-2">Courts:</span>
-            ${courtButtonsHtml}
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-slate-50 border border-slate-200 p-4 rounded-2xl flex-shrink-0">
+          <div class="pr-2">
+            <span class="text-[10px] font-sans font-bold uppercase tracking-wider text-slate-500 block">Open Play Entry</span>
+            <div class="flex items-baseline gap-1.5 mt-0.5">
+              <span class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-sans">${rateLabel}</span>
+              <span class="text-xs font-semibold text-slate-500">/ player</span>
+            </div>
+            <span class="text-[11px] text-emerald-700 font-semibold block">Courts 1 – 4 • Paddle Stack Rotation</span>
           </div>
-          <button type="button" onclick="pfShuffleOpenPlay24Players()" class="px-4 py-2.5 rounded-xl bg-[#050E1D] hover:bg-slate-800 text-[#9BE600] font-black text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5 active:scale-95">
-            <span>🎲 Randomly Distribute 24 Players</span>
-          </button>
-          <button type="button" onclick="openBookingDrawer(1, '03:00 PM')" class="px-4 py-2.5 rounded-xl bg-[#9BE600] hover:bg-[#84cc16] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-md active:scale-95">
-            <span>Join Open Play (${priceText}) →</span>
+          <button type="button" onclick="openBookingDrawer(1, '03:00 PM')" class="py-3.5 px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs sm:text-sm tracking-wide transition shadow-sm flex items-center justify-center gap-2 whitespace-nowrap">
+            <span>Join Open Play</span>
+            <span>→</span>
           </button>
         </div>
       </div>
 
-      <!-- 6 Match Pods Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-        ${podsHtml}
+      <!-- 3 Hourly Session Blocks -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        ${sessionCardsHtml}
       </div>
 
-      <!-- Expandable Full 24-Player Dedicated Time Slot Table -->
-      <details class="group rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm">
-        <summary class="px-4 py-3 cursor-pointer flex items-center justify-between text-xs font-black uppercase text-slate-900 bg-slate-100 hover:bg-slate-200 transition">
-          <span>📋 View Complete 24-Player Dedicated Time Slot &amp; Court Roster (${schedule.courtsCount} ${schedule.courtsCount === 1 ? 'Court' : 'Courts'} Active)</span>
-          <span class="font-mono text-[11px] text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+      <!-- 4-Pillar How Open Play Works Strip -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">1</span>
+          <div>
+            <h4 class="text-xs font-extrabold text-slate-900">Reserve or Walk In</h4>
+            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Book your spot online (${rateLabel}/player) or check in at the front desk before 3:00 PM.</p>
+          </div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">2</span>
+          <div>
+            <h4 class="text-xs font-extrabold text-slate-900">Stack Your Paddle</h4>
+            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Place your paddle in the 4-up rack by skill level so every game is competitive and welcoming.</p>
+          </div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">3</span>
+          <div>
+            <h4 class="text-xs font-extrabold text-slate-900">11-Point Rally Games</h4>
+            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Games are played to 11 points (win by 2). Next 4 paddles rotate onto the open court immediately.</p>
+          </div>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
+          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">4</span>
+          <div>
+            <h4 class="text-xs font-extrabold text-slate-900">Rotate Partners</h4>
+            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Meet the Daraga pickleball community—winners split partners after each match for fresh matchups.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional Clean Expandable Court Matchmaker Tool -->
+      <details class="group rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden">
+        <summary class="cursor-pointer px-4 sm:px-5 py-3.5 text-xs font-extrabold text-slate-700 hover:text-slate-900 flex flex-wrap items-center justify-between gap-2 select-none">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            <span>Optional On-Court Tool: 4-Court Match Pod Shuffler (${bookedPlayersCount} Booked / ${spotsLeft} Open Spots)</span>
+          </div>
+          <span class="text-emerald-700 font-bold text-[11px] group-open:rotate-180 transition-transform">▼ Show / Hide</span>
         </summary>
-        <div class="overflow-x-auto max-h-80 overflow-y-auto">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr class="bg-[#050E1D] text-white uppercase font-mono text-[10px]">
-                <th class="py-2.5 px-3">Spot #</th>
-                <th class="py-2.5 px-3">Player Name</th>
-                <th class="py-2.5 px-3">Assigned Court</th>
-                <th class="py-2.5 px-3">Match Pod &amp; Team</th>
-                <th class="py-2.5 px-3">Dedicated Time Slot</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200">
-              ${rosterRowsHtml}
-            </tbody>
-          </table>
+        <div class="p-4 sm:p-5 border-t border-slate-200 bg-white space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="text-xs text-slate-600">Use this optional shuffler at the courts to randomly assign players into 6 balanced doubles pods across ${courtsActive} active court${courtsActive > 1 ? 's' : ''}.</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px] font-bold">
+                <span class="px-2 text-slate-600">Courts:</span>
+                ${[1, 2, 3, 4].map(c => `
+                  <button type="button" onclick="pfSetOpenPlayCourtCount(${c})" class="px-2.5 py-1 rounded-lg transition ${courtsActive === c ? 'bg-slate-900 text-white font-extrabold' : 'text-slate-600 hover:text-slate-900'}">${c}C</button>
+                `).join('')}
+              </div>
+              <button type="button" onclick="pfShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs transition shadow-2xs">
+                Shuffle Match Pods
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            ${compactPodsHtml}
+          </div>
         </div>
       </details>
     </div>
@@ -4522,7 +4645,8 @@ window.pfRenderOpenPlay24Board = pfRenderOpenPlay24Board;
 
 
 // ================= PICKLEBALL TOURNAMENT HUB & REGISTRATION ENGINE =================
-const DEFAULT_PF_TOURNAMENTS = [
+function pfGetDefaultTournaments() {
+  return [
   {
     id: 'trn-bicol-dupr-open',
     title: 'Bicol Open DUPR Pickleball Cup',
@@ -4591,13 +4715,10 @@ const DEFAULT_PF_TOURNAMENTS = [
     status: 'OPEN FOR REGISTRATION',
     description: 'Full Double-Elimination Championship Bracket (Winners Bracket best 2-of-3 to 11; Consolation Bracket 1 game to 15). Every player/team is guaranteed at least 2 bracket matches before elimination.'
   }
-];
-
-function pfGetDefaultTournaments() {
-  return JSON.parse(JSON.stringify(DEFAULT_PF_TOURNAMENTS));
+  ];
 }
-
-let activePublicTournamentFilter = 'ALL';
+var DEFAULT_PF_TOURNAMENTS = pfGetDefaultTournaments();
+var activePublicTournamentFilter = 'ALL';
 
 function pfGetTournamentsList() {
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
@@ -4621,7 +4742,7 @@ function pfSetTournamentFilter(filterKey) {
 
 function openAdminTournamentHost(event) {
   if (event) event.preventDefault();
-  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (window.location.port === '8088' || port === '8188');
+  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (window.location.port === '8088' || window.location.port === '8188');
   const targetUrl = isLocalSplit
     ? `http://${window.location.hostname}:8189/#tab-tournament`
     : `/admin/#tab-tournament`;
