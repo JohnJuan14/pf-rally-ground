@@ -1425,34 +1425,27 @@
       color: #475569 !important;
     }
     #booking-drawer #drawer-step-1 > div,
-    main section.bg-brand-card,
-    main section[class*="bg-brand-card"] {
+    html[data-theme="light"] main section.bg-brand-card,
+    html[data-theme="light"] main section[class*="bg-brand-card"] {
       background: #FFFFFF !important;
       border: 1px solid #E2E8F0 !important;
       color: #0F172A !important;
       box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
     }
     #booking-drawer #drawer-step-1 .text-brand-lime,
-    main section .text-brand-lime {
+    html[data-theme="light"] main section .text-brand-lime {
       color: #15803D !important;
-    }
-    #booking-drawer #drawer-step-1 .text-white,
-    main section h2.text-white,
-    main section span.text-white,
-    main section b.text-white,
-    main section label.text-white {
-      color: #0F172A !important;
     }
     #booking-drawer #drawer-step-1 .text-slate-300,
     #booking-drawer #drawer-step-1 .text-slate-400,
-    main section .text-slate-300,
-    main section .text-slate-400 {
+    html[data-theme="light"] main section .text-slate-300,
+    html[data-theme="light"] main section .text-slate-400 {
       color: #475569 !important;
     }
     #booking-drawer #drawer-step-1 .bg-brand-black,
     #booking-drawer #drawer-step-1 [class*="bg-brand-black"],
-    main section .bg-brand-black,
-    main section [class*="bg-brand-black"] {
+    html[data-theme="light"] main section .bg-brand-black,
+    html[data-theme="light"] main section [class*="bg-brand-black"] {
       background: #F8FAFC !important;
       border-color: #CBD5E1 !important;
       color: #0F172A !important;
@@ -1461,10 +1454,10 @@
     #booking-drawer #drawer-step-1 input[type="tel"],
     #booking-drawer #drawer-step-1 input[type="email"],
     #booking-drawer #drawer-step-1 input[type="number"],
-    main section input[type="text"],
-    main section input[type="tel"],
-    main section input[type="email"],
-    main section input[type="number"] {
+    html[data-theme="light"] main section input[type="text"],
+    html[data-theme="light"] main section input[type="tel"],
+    html[data-theme="light"] main section input[type="email"],
+    html[data-theme="light"] main section input[type="number"] {
       background: #FFFFFF !important;
       border: 1px solid #CBD5E1 !important;
       color: #0F172A !important;
@@ -1486,13 +1479,191 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
 
-    /* Keep active dark buttons (like Court 1 active button or All 18h active button) white text */
-    #booking-drawer button.bg-\[\#0D1F18\],
-    #booking-drawer button.bg-\[\#0D1F18\] span,
-    #booking-drawer button.bg-emerald-600,
-    #booking-drawer button.bg-emerald-600 span {
+    /* === V2.6 BULLETPROOF BOOKING DRAWER, FULL-PAGE BOOKING & 9-CATEGORY CONNECTED PALETTE === */
+    /* 1. Prevent generic .text-white overrides from breaking active buttons or dark badges */
+    html[data-theme="light"] #booking-drawer #drawer-step-1 h2.text-white,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 h4.text-white,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 label.text-white,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 .pf-gear-qty-card span.text-white,
+    html[data-theme="light"] main section h2.text-white,
+    html[data-theme="light"] main section label.text-white,
+    html[data-theme="light"] main #equipment-grid span.text-white {
+      color: #0F172A !important;
+    }
+
+    /* 2. Active Date Tile (`TODAY 6 Nov`), Active Duration (`1 hr`), Active Court (`Court 1`), Active Period (`ALL 18H`) */
+    html body .white-calendar-rail .date-tile.date-tile-active,
+    html[data-theme="light"] body .white-calendar-rail .date-tile.date-tile-active,
+    html[data-theme="dark"] body .white-calendar-rail .date-tile.date-tile-active,
+    html body #booking-drawer #drawer-date-rail .date-tile.date-tile-active,
+    html body #date-rail-container .date-tile.date-tile-active,
+    html body #date-carousel .date-tile.date-tile-active {
+      background: #0F291E !important;
+      border: 2px solid #15803D !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 8px 20px -4px rgba(15, 41, 30, 0.35) !important;
+    }
+    html body .white-calendar-rail .date-tile.date-tile-active span,
+    html body #booking-drawer #drawer-date-rail .date-tile.date-tile-active span,
+    html body #date-rail-container .date-tile.date-tile-active span,
+    html body #date-carousel .date-tile.date-tile-active span {
       color: #FFFFFF !important;
     }
+    html body .white-calendar-rail .date-tile.date-tile-active .tile-weekday,
+    html body #booking-drawer #drawer-date-rail .date-tile.date-tile-active .tile-weekday,
+    html body #date-rail-container .date-tile.date-tile-active .tile-weekday,
+    html body #date-carousel .date-tile.date-tile-active .tile-weekday {
+      color: #6EE7B7 !important;
+    }
+
+    /* Inactive Date Tiles in White Calendar Rail */
+    html body .white-calendar-rail .date-tile:not(.date-tile-active),
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active),
+    html body #date-rail-container .date-tile:not(.date-tile-active),
+    html body #date-carousel .date-tile:not(.date-tile-active) {
+      background: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html body .white-calendar-rail .date-tile:not(.date-tile-active) .tile-day,
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active) .tile-day,
+    html body #date-rail-container .date-tile:not(.date-tile-active) .tile-day,
+    html body #date-carousel .date-tile:not(.date-tile-active) .tile-day {
+      color: #0F172A !important;
+    }
+    html body .white-calendar-rail .date-tile:not(.date-tile-active) .tile-weekday,
+    html body .white-calendar-rail .date-tile:not(.date-tile-active) .tile-month,
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active) .tile-weekday,
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active) .tile-month,
+    html body #date-rail-container .date-tile:not(.date-tile-active) .tile-weekday,
+    html body #date-rail-container .date-tile:not(.date-tile-active) .tile-month,
+    html body #date-carousel .date-tile:not(.date-tile-active) .tile-weekday,
+    html body #date-carousel .date-tile:not(.date-tile-active) .tile-month {
+      color: #475569 !important;
+    }
+
+    /* Active Dark & Emerald Buttons Inside Drawer & Full-Page Booking */
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#0D1F18\],
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#0D1F18\] *,
+    html body #booking-drawer #drawer-step-1 .drawer-court.active,
+    html body #booking-drawer #drawer-step-1 .drawer-court.active *,
+    html body #booking-drawer #drawer-step-1 button.bg-emerald-600,
+    html body #booking-drawer #drawer-step-1 button.bg-emerald-600 *,
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#15803D\],
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#15803D\] *,
+    html body main button.bg-\[\#0D1F18\],
+    html body main button.bg-\[\#0D1F18\] *,
+    html body main button.bg-emerald-600,
+    html body main button.bg-emerald-600 *,
+    html body main .duration-pill-btn.bg-brand-lime,
+    html body main .duration-pill-btn.bg-\[\#0D1F18\],
+    html body main .court-btn.court-btn-active,
+    html body main .court-btn.court-btn-active * {
+      background-color: #0F291E !important;
+      border-color: #15803D !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Inactive Court & Duration & Period Buttons in Drawer & book.html */
+    html body #booking-drawer #drawer-step-1 .drawer-court:not(.active),
+    html[data-theme="light"] body main .court-btn:not(.court-btn-active) {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html body #booking-drawer #drawer-step-1 .drawer-court:not(.active) span,
+    html[data-theme="light"] body main .court-btn:not(.court-btn-active) b,
+    html[data-theme="light"] body main .court-btn:not(.court-btn-active) span {
+      color: #0F172A !important;
+    }
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) {
+      background-color: #0F231B !important;
+      border: 1px solid rgba(52, 211, 153, 0.25) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) b,
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) span {
+      color: #ECFDF5 !important;
+    }
+
+    /* Full-Page Booking (`book.html`) Hero Feature Badges & Cards in Light vs Dark Mode */
+    html[data-theme="light"] body main .pf-book-feature-pill {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+    }
+    html[data-theme="light"] body main .pf-book-feature-pill span {
+      color: #0F172A !important;
+    }
+    html[data-theme="dark"] body main .pf-book-feature-pill {
+      background-color: #0F231B !important;
+      border: 1px solid rgba(52, 211, 153, 0.3) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main .pf-book-feature-pill span {
+      color: #ECFDF5 !important;
+    }
+
+    /* Full-Page Booking Cards in Dark Mode vs Light Mode */
+    html[data-theme="dark"] body main section.bg-brand-card,
+    html[data-theme="dark"] body main section[class*="bg-brand-card"],
+    html[data-theme="dark"] body main section.bg-white,
+    html[data-theme="dark"] body main .pf-book-summary-card,
+    html[data-theme="dark"] body main .pf-book-verified-card {
+      background-color: #0F231B !important;
+      border: 1px solid rgba(52, 211, 153, 0.25) !important;
+      color: #ECFDF5 !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] body main section h2,
+    html[data-theme="dark"] body main section h3,
+    html[data-theme="dark"] body main .pf-book-summary-card h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body main section .bg-brand-black,
+    html[data-theme="dark"] body main section [class*="bg-brand-black"],
+    html[data-theme="dark"] body main .pf-policy-consent-card {
+      background-color: #091510 !important;
+      border-color: rgba(52, 211, 153, 0.22) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main .pf-policy-consent-card span,
+    html[data-theme="dark"] body main .pf-policy-consent-card b {
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main section input[type="text"],
+    html[data-theme="dark"] body main section input[type="tel"],
+    html[data-theme="dark"] body main section input[type="email"],
+    html[data-theme="dark"] body main section input[type="number"] {
+      background-color: #050E0A !important;
+      border: 1px solid rgba(52, 211, 153, 0.35) !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Full-Page Booking Verified Reservation Protocol Card in Light Mode */
+    html[data-theme="light"] body main .pf-book-verified-card {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+    }
+    html[data-theme="light"] body main .pf-book-verified-card p {
+      color: #334155 !important;
+    }
+
+    /* Footer Admin Portal Button Styling */
+    .pf-footer-admin-btn {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(110, 231, 183, 0.4) !important;
+      color: #A7F3D0 !important;
+    }
+    .pf-footer-admin-btn:hover {
+      background: #15803D !important;
+      border-color: #34D399 !important;
+      color: #FFFFFF !important;
+    }
+
 </style>
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black">
@@ -1999,6 +2170,10 @@
           </button>
           <a href="check-booking.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-bold text-xs transition text-center" style="color:#FFFFFF !important;">
             Check Booking Status
+          </a>
+                  <a href="/admin/" onclick="return openAdminPortal(event)" class="pf-footer-admin-btn w-full py-2.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider transition text-center flex items-center justify-center gap-1.5 shadow-xs">
+            <span>🔒 Admin Portal</span>
+            <span>→</span>
           </a>
         </div>
       </div>
@@ -3101,16 +3276,16 @@
       document.querySelectorAll('#drawer-date-rail .date-tile').forEach(b => {
         b.classList.remove('date-tile-active');
         const spans = b.querySelectorAll('span');
-        if (spans[0]) spans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400';
-        if (spans[1]) spans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-white';
-        if (spans[2]) spans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-slate-400';
+        if (spans[0]) spans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#52605A]';
+        if (spans[1]) spans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-[#0D1F18]';
+        if (spans[2]) spans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-semibold opacity-80 text-[#52605A]';
       });
       if (clickedBtn) {
         clickedBtn.classList.add('date-tile-active');
         const activeSpans = clickedBtn.querySelectorAll('span');
-        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#050E1D]';
-        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-[#050E1D]';
-        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-bold opacity-75 text-[#050E1D]';
+        if (activeSpans[0]) activeSpans[0].className = 'tile-weekday block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#6EE7B7]';
+        if (activeSpans[1]) activeSpans[1].className = 'tile-day mt-0.5 sm:mt-1 block text-lg sm:text-2xl font-black leading-none font-mono text-white';
+        if (activeSpans[2]) activeSpans[2].className = 'tile-month mt-0.5 sm:mt-1 block text-[10px] sm:text-xs font-semibold opacity-90 text-white';
       }
 
       const lbl = document.getElementById('drawer-selected-date-label');

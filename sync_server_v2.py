@@ -588,7 +588,13 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
         elif parsed.path in ("/pricing", "/pricing/"):
             self.path = "/pricing.html"
         elif parsed.path in ("/admin", "/admin/"):
-            self.path = "/admin/index.html"
+            if self.directory and os.path.basename(os.path.normpath(str(self.directory))).lower() == "admin":
+                self.path = "/index.html"
+            else:
+                self.path = "/admin/index.html"
+        elif parsed.path.startswith("/admin/") and self.directory and os.path.basename(os.path.normpath(str(self.directory))).lower() == "admin":
+            stripped = parsed.path[len("/admin"):]
+            self.path = stripped + (("?" + parsed.query) if parsed.query else "")
 
 
         super().do_GET()

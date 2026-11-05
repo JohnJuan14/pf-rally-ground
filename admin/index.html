@@ -2157,16 +2157,16 @@
               <p class="text-xs text-slate-300">Click any court/time slot in the matrix below (or use the form/quick-actions) to set whether a court is <b>Open Court (Available for Booking)</b>, <b>Open Play</b>, or <b>Closed / Blocked</b>.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="adminBulkSetDateStatus('OPEN')" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#050E1D] font-black text-xs uppercase transition shadow">
-                🟢 Open All Courts (Selected Date)
+              <button type="button" onclick="adminBulkSetDateStatus('OPEN')" class="px-3.5 py-2 rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] font-black text-xs uppercase transition shadow-sm">
+                🟢 Available All Courts (Selected Date)
               </button>
-              <button type="button" onclick="adminSetOpenPlayWindowForDate()" class="px-3.5 py-2 rounded-xl bg-[#d9f99d] hover:bg-[#bef264] text-[#365314] border-2 border-[#84cc16] font-black text-xs uppercase transition shadow">
-                🎾 Set 3PM–6PM Open Play (All Courts)
+              <button type="button" onclick="adminSetOpenPlayWindowForDate()" class="px-3.5 py-2 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] font-black text-xs uppercase transition shadow-sm">
+                🟣 Set 3PM–6PM Open Play (All Courts)
               </button>
-              <button type="button" onclick="adminBulkSetDateStatus('CLOSED')" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase transition shadow">
-                🔴 Close All Courts (Selected Date)
+              <button type="button" onclick="adminBulkSetDateStatus('CLOSED')" class="px-3.5 py-2 rounded-xl bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B] border border-[#FCA5A5] font-black text-xs uppercase transition shadow-sm">
+                🔴 Block All Courts (Selected Date)
               </button>
-              <button type="button" onclick="adminResetDateSchedule()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 font-bold text-xs uppercase transition">
+              <button type="button" onclick="adminResetDateSchedule()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs uppercase transition shadow-sm">
                 🔄 Reset Date to Default
               </button>
             </div>
@@ -2240,32 +2240,32 @@
             </div>
           </form>
 
-          <!-- Editable Daily Open Play Schedule, Price (₱150), & 24-Player Random Pod Controller -->
-          <div class="p-4 sm:p-6 rounded-2xl bg-[#1a2e05]/95 border-2 border-[#84cc16] space-y-5 mb-6 shadow-xl">
+          <!-- Editable Daily Open Play Schedule, Price (₱150), & 24-Player Random Pod Controller (Connected to Open Play Lavender Purple #EDE9FE / #5B21B6) -->
+          <div class="p-4 sm:p-6 rounded-2xl bg-white border-2 border-[#C4B5FD] space-y-5 mb-6 shadow-md">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="px-2.5 py-0.5 rounded bg-[#d9f99d] text-[#365314] font-mono text-[10px] font-black uppercase">🎾 EDITABLE OPEN PLAY SCHEDULE &amp; PRICE (ALL 4 COURTS)</span>
-                  <span id="adm-openplay-live-badge" class="text-[11px] font-mono font-bold text-[#bef264]">● Active: 3:00 PM – 6:00 PM • ₱150/player</span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>🟣 OPEN PLAY SCHEDULE &amp; PRICE (ALL 4 COURTS)</span>
+                  <span id="adm-openplay-live-badge" class="text-[11px] font-mono font-bold text-[#5B21B6]">● Active: 3:00 PM – 6:00 PM • ₱150/player</span>
                 </div>
-                <h3 class="text-sm sm:text-base font-black uppercase text-white mt-1">Default Daily Open Play Hours, Editable Price &amp; 24-Player Random Distribution</h3>
-                <p class="text-xs text-slate-200">Edit the Open Play rate per player (default <b>₱150</b>), toggle active hours across Courts 1 – 4, and randomly distribute all <b>24 players</b> into dedicated time slots on <b>1 to 4 courts</b>.</p>
+                <h3 class="text-sm sm:text-base font-black uppercase text-slate-900 mt-1.5">Default Daily Open Play Hours, Editable Price &amp; 24-Player Random Distribution</h3>
+                <p class="text-xs text-slate-600">Edit the Open Play rate per player (default <b>₱150</b>), toggle active hours across Courts 1 – 4, and randomly distribute all <b>24 players</b> into dedicated time slots on <b>1 to 4 courts</b>.</p>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <!-- Editable Open Play Price Input right inside Schedule Tab -->
-                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-slate-900 border-2 border-[#84cc16] shadow">
-                  <span class="text-[10px] font-mono font-black uppercase text-[#365314]">Open Play Price: ₱</span>
-                  <input type="number" id="adm-openplay-rate-input" min="0" step="10" value="150" oninput="syncOpenPlayRateInputs(this.value)" class="w-20 bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-xs font-mono font-black text-slate-900 focus:outline-none">
-                  <span class="text-[10px] font-mono font-bold text-slate-600">/player</span>
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF5FF] text-slate-900 border-2 border-[#C4B5FD] shadow-xs">
+                  <span class="text-[10px] font-mono font-black uppercase text-[#5B21B6]">Open Play Price: ₱</span>
+                  <input type="number" id="adm-openplay-rate-input" min="0" step="10" value="150" oninput="syncOpenPlayRateInputs(this.value)" class="w-20 bg-white border border-[#C4B5FD] rounded-lg px-2 py-1 text-xs font-mono font-black text-slate-900 focus:outline-none">
+                  <span class="text-[10px] font-mono font-bold text-[#5B21B6]">/player</span>
                 </div>
-                <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 border border-[#84cc16]/50 text-xs font-black text-[#d9f99d] cursor-pointer">
-                  <input type="checkbox" id="adm-openplay-enabled-toggle" checked onchange="toggleAdminDefaultOpenPlayEnabled(this.checked)" class="w-4 h-4 accent-[#84cc16]">
+                <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#EDE9FE] border border-[#C4B5FD] text-xs font-black text-[#5B21B6] cursor-pointer">
+                  <input type="checkbox" id="adm-openplay-enabled-toggle" checked onchange="toggleAdminDefaultOpenPlayEnabled(this.checked)" class="w-4 h-4 accent-[#6D28D9]">
                   <span>Enable Daily Open Play</span>
                 </label>
-                <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold uppercase transition">
+                <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-bold uppercase transition">
                   ↺ Reset 3PM–6PM (₱150)
                 </button>
-                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs uppercase transition shadow-lg">
+                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">
                   💾 Save Open Play Rate &amp; Hours
                 </button>
               </div>
@@ -2273,22 +2273,22 @@
             <div id="adm-openplay-hour-pills" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-1.5 pt-1"></div>
 
             <!-- 24-Player Random Distribution & Court Count Selector (1-4 Courts) -->
-            <div class="p-4 rounded-2xl bg-white text-slate-900 border-2 border-[#84cc16] space-y-4">
-              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+            <div class="p-4 rounded-2xl bg-[#FAF5FF] text-slate-900 border border-[#C4B5FD] space-y-4">
+              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#E9D5FF] pb-3">
                 <div>
-                  <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10px] font-black uppercase">🎲 24-PLAYER RANDOM DISTRIBUTION &amp; DEDICATED TIME SLOTS</span>
+                  <span class="px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase">🎲 24-PLAYER RANDOM DISTRIBUTION &amp; DEDICATED TIME SLOTS</span>
                   <h4 class="text-sm sm:text-base font-black uppercase text-slate-900 mt-1">Open Play 24-Player Pod Generator (Select 1 – 4 Courts)</h4>
                   <p class="text-[11px] text-slate-600">All 24 players are randomly shuffled into balanced 4-player Doubles Pods (2 vs 2) and assigned a dedicated time slot and court across 3:00 PM – 6:00 PM.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                  <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-300" id="adm-openplay-court-count-btns">
-                    <span class="text-[10px] font-mono font-bold uppercase text-slate-600 px-2">Courts:</span>
+                  <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-[#C4B5FD]" id="adm-openplay-court-count-btns">
+                    <span class="text-[10px] font-mono font-bold uppercase text-[#5B21B6] px-2">Courts:</span>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(1)" data-op-courts="1" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">1 Court</button>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(2)" data-op-courts="2" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">2 Courts</button>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(3)" data-op-courts="3" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">3 Courts</button>
-                    <button type="button" onclick="adminSetOpenPlayCourtsCount(4)" data-op-courts="4" class="px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-emerald-50 text-emerald-800 border border-emerald-200">4 Courts</button>
+                    <button type="button" onclick="adminSetOpenPlayCourtsCount(4)" data-op-courts="4" class="px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD]">4 Courts</button>
                   </div>
-                  <button type="button" onclick="adminShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white border-2 border-[#050E1D] font-black text-xs uppercase transition shadow">
+                  <button type="button" onclick="adminShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">
                     🎲 Randomly Distribute 24 Players &amp; Sync Live
                   </button>
                 </div>
@@ -2296,30 +2296,30 @@
               <div id="adm-openplay-24-schedule-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
             </div>
 
-            <div id="adm-calendar-action-feedback" class="hidden p-2.5 rounded-xl bg-[#d9f99d] text-[#365314] border border-[#84cc16] text-xs font-black"></div>
+            <div id="adm-calendar-action-feedback" class="hidden p-2.5 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-xs font-black"></div>
           </div>
 
-          <!-- Editable Pickleball Tournaments Manager -->
-          <div class="p-4 sm:p-6 rounded-2xl bg-brand-black/90 border-2 border-brand-lime/40 space-y-4 mb-6 shadow-xl">
-            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+          <!-- Editable Pickleball Tournaments Manager (Clean High-Contrast CourtHub SaaS Card) -->
+          <div class="p-5 sm:p-6 rounded-2xl bg-white border-2 border-slate-200 space-y-5 mb-6 shadow-md">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
               <div>
-                <span class="px-2.5 py-0.5 rounded bg-brand-lime text-brand-black font-mono text-[10px] font-black uppercase">🏆 PICKLEBALL TOURNAMENTS MANAGER (LIVE ON WEBSITE)</span>
-                <h3 class="text-sm sm:text-base font-black uppercase text-white mt-1">Manage Official Pickleball Tournaments &amp; Formats</h3>
-                <p class="text-xs text-slate-300">Add, edit, or remove Pickleball tournaments (Round Robin + Playoffs, King of the Court, MLP Team Rally, Double Elimination). Synced live to the <b>#tournaments</b> section on the public website.</p>
+                <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1.5">🏆 OFFICIAL PICKLEBALL TOURNAMENTS MANAGER (LIVE ON WEBSITE)</span>
+                <h3 class="text-base sm:text-lg font-black uppercase text-slate-900 mt-1.5">Manage Official Pickleball Tournaments &amp; Formats</h3>
+                <p class="text-xs text-slate-600">Add, edit, or remove official Pickleball tournaments (Round Robin + Playoffs, King of the Court, MLP Team Rally, Double Elimination). Synced live to the <b>#tournaments</b> section and the <b>Admin Live Scorekeeper</b>.</p>
               </div>
               <div class="flex flex-wrap items-center gap-2">
-                <button type="button" onclick="adminResetDefaultTournaments()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold uppercase transition">
+                <button type="button" onclick="adminResetDefaultTournaments()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-extrabold uppercase transition shadow-2xs">
                   ↺ Restore 4 Default Formats
                 </button>
-                <button type="button" onclick="switchTab('tournament')" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase transition shadow-lg">
-                  🎮 Host 3D Tournament Bracket (Admin Only)
+                <button type="button" onclick="switchTab('tournament')" class="px-4 py-2.5 rounded-xl bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-black text-xs uppercase transition shadow-md flex items-center gap-1.5" style="color:#FFFFFF !important;">
+                  <span>🎯 Host Tournament &amp; Live Scorekeeper</span>
                 </button>
-                <button type="button" onclick="adminOpenTournamentEditorModal()" class="px-4 py-2 rounded-xl bg-brand-lime hover:bg-brand-limeHover text-brand-black font-black text-xs uppercase transition shadow-lg">
+                <button type="button" onclick="adminOpenTournamentEditorModal()" class="px-4 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">
                   + Add New Tournament
                 </button>
               </div>
             </div>
-            <div id="admin-tournaments-manager-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs"></div>
+            <div id="admin-tournaments-manager-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs"></div>
           </div>
 
           <!-- Active Calendar Overrides & Blocks List -->
@@ -5032,10 +5032,10 @@ function clearFieldError(fieldId) {
         const isConfirmed = bStat === 'CONFIRMED';
         const isDeclined = bStat === 'DECLINED' || bStat === 'CANCELLED';
         const badgeStyle = isConfirmed
-          ? 'bg-brand-lime/15 text-brand-lime border border-brand-lime/30'
+          ? 'bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD]'
           : isDeclined
-            ? 'bg-brand-clay/20 text-brand-clay border border-brand-clay/40'
-            : 'bg-amber-500/20 text-amber-300 border border-amber-400/40 animate-pulse';
+            ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]'
+            : 'bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] animate-pulse';
 
         return `
         <tr class="hover:bg-white/5 transition ${!isConfirmed && !isDeclined ? 'bg-amber-500/5' : ''}">
@@ -5840,8 +5840,12 @@ function clearFieldError(fieldId) {
       }
 
       const defaultReason = statusType === 'OPEN'
-        ? 'Open Court'
-        : (statusType === 'OPEN_PLAY' ? 'Open Play Session' : 'Closed');
+        ? 'Available Court'
+        : (statusType === 'OPEN_PLAY'
+            ? 'Open Play Session'
+            : (statusType === 'HOLD'
+                ? 'On Hold'
+                : (statusType === 'PRIVATE' ? 'Private Session' : 'Blocked')));
 
       const newBlock = {
         id: 'blk-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
@@ -5908,8 +5912,21 @@ function clearFieldError(fieldId) {
       const reasonEl = document.getElementById('adm-slot-modal-reason');
       const reasonText = reasonEl ? reasonEl.value : '';
       const courtLabel = 'Court 0' + currentEditingSlot.courtNum;
+      const dateYMD = currentEditingSlot.dateYMD;
+      const timeStr = currentEditingSlot.timeStr;
       closeAdminSlotDecisionModal();
-      await applyAdminSlotOverride(courtLabel, currentEditingSlot.dateYMD, currentEditingSlot.timeStr, statusType, reasonText);
+      if (statusType === 'RESET') {
+        openDeleteConfirmModal({
+          title: 'Reset Court Slot to Default Schedule?',
+          itemName: `${courtLabel} • ${dateYMD} at ${timeStr}`,
+          extraInfo: 'This will remove any custom override or booking on this slot and restore the default schedule.',
+          onConfirm: async () => {
+            await applyAdminSlotOverride(courtLabel, dateYMD, timeStr, 'RESET', '');
+          }
+        });
+        return;
+      }
+      await applyAdminSlotOverride(courtLabel, dateYMD, timeStr, statusType, reasonText);
     }
 
     async function adminBulkSetDateStatus(statusType) {
@@ -5999,13 +6016,13 @@ function clearFieldError(fieldId) {
       }
       wrap.innerHTML = calendarHours.map(h => {
         const isOn = enabled && activeSlots.includes(h.time);
-        return `<button type="button" onclick="toggleAdminOpenPlayHourSlot('${h.time}')" class="py-2 px-2 rounded-xl font-mono text-[10px] sm:text-[11px] font-black transition border-2 ${
+        return `<button type="button" onclick="toggleAdminOpenPlayHourSlot('${h.time}')" class="py-2 px-2 rounded-xl font-mono text-[10px] sm:text-[11px] font-black transition border ${
           isOn
-            ? 'bg-[#d9f99d] text-[#365314] border-[#84cc16] shadow-md'
-            : 'bg-black/40 text-slate-300 border-white/15 hover:border-[#84cc16]/60'
+            ? 'bg-[#EDE9FE] text-[#5B21B6] border-2 border-[#8B5CF6] shadow-sm'
+            : 'bg-white text-slate-700 border-slate-200 hover:border-[#C4B5FD]'
         }">
-          <span>${isOn ? '🎾 ' : ''}${h.time}</span>
-          <span class="block text-[8px] font-sans uppercase ${isOn ? 'text-[#365314]' : 'text-slate-400'}">${isOn ? 'Open Play' : 'Regular'}</span>
+          <span>${isOn ? '🟣 ' : ''}${h.time}</span>
+          <span class="block text-[8px] font-sans uppercase font-bold ${isOn ? 'text-[#5B21B6]' : 'text-slate-400'}">${isOn ? 'Open Play' : 'Regular'}</span>
         </button>`;
       }).join('');
     }
@@ -6030,7 +6047,7 @@ function clearFieldError(fieldId) {
       renderScheduleBlocks();
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback(`✅ Updated Open Play Schedule across all 4 courts (${slots.length ? slots.join(', ') : 'None'}) — Synced live to website!`);
+      showAdminCalendarFeedback(`🟣 Updated Open Play Schedule across all 4 courts (${slots.length ? slots.join(', ') : 'None'}) — Synced live to website!`);
     }
 
     async function toggleAdminDefaultOpenPlayEnabled(isChecked) {
@@ -6044,19 +6061,26 @@ function clearFieldError(fieldId) {
       renderScheduleBlocks();
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback(isChecked ? '✅ Enabled Daily Open Play across all 4 courts!' : '🟢 Disabled default Open Play (All slots set to regular Open Court).');
+      showAdminCalendarFeedback(isChecked ? '🟣 Enabled Daily Open Play across all 4 courts!' : '🟢 Disabled default Open Play (All slots set to regular Available Court).');
     }
 
-    async function resetAdminDefaultOpenPlay3to6() {
-      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
-      currentSiteConfig.openPlayEnabled = true;
-      currentSiteConfig.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
-      currentSiteConfig.updatedAt = Date.now();
-      renderAdminOpenPlayPills();
-      renderScheduleBlocks();
-      broadcastSiteConfigLive(currentSiteConfig);
-      await postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback('🎾 Restored Open Play across 3:00 PM – 6:00 PM on all 4 courts!');
+    function resetAdminDefaultOpenPlay3to6() {
+      openDeleteConfirmModal({
+        title: 'Reset Open Play Schedule to Default (3:00 PM – 6:00 PM)?',
+        itemName: 'Daily Open Play Hours (Courts 1 – 4)',
+        extraInfo: 'This will restore the default 3:00 PM – 6:00 PM Open Play window across all 4 courts.',
+        onConfirm: async () => {
+          if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+          currentSiteConfig.openPlayEnabled = true;
+          currentSiteConfig.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+          currentSiteConfig.updatedAt = Date.now();
+          renderAdminOpenPlayPills();
+          renderScheduleBlocks();
+          broadcastSiteConfigLive(currentSiteConfig);
+          await postSiteConfigToEndpoints(currentSiteConfig);
+          showAdminCalendarFeedback('🟣 Restored Open Play across 3:00 PM – 6:00 PM on all 4 courts!');
+        }
+      });
     }
 
     function syncOpenPlayRateInputs(val) {
@@ -6142,7 +6166,7 @@ function clearFieldError(fieldId) {
       renderAdminOpenPlay24Board();
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback(`🎾 Open Play set to ${cCount} Court${cCount > 1 ? 's' : ''} for 24-Player Rotation — Synced live!`);
+      showAdminCalendarFeedback(`🟣 Open Play set to ${cCount} Court${cCount > 1 ? 's' : ''} for 24-Player Rotation — Synced live!`);
     }
 
     async function adminShuffleOpenPlay24Players() {
@@ -6169,11 +6193,53 @@ function clearFieldError(fieldId) {
       const roster = getAdminOpenPlay24Roster().map(p => ({ ...p }));
       const target = roster.find(p => Number(p.slotNum) === Number(slotNum));
       if (!target) return;
-      const newName = prompt(`Edit Player Name for Open Play Slot #${slotNum} (leave blank to reset to Open Slot):`, target.name.includes('(Open Slot)') ? '' : target.name);
-      if (newName === null) return;
-      const clean = newName.trim();
-      target.name = clean ? clean : `Player #${String(slotNum).padStart(2, '0')} (Open Slot)`;
-      target.status = clean ? 'CONFIRMED' : 'OPEN';
+      let modal = document.getElementById('admin-op-player-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'admin-op-player-modal';
+        modal.className = 'fixed inset-0 z-[95] hidden flex items-center justify-center p-4';
+        modal.innerHTML = `
+          <div onclick="document.getElementById('admin-op-player-modal').classList.add('hidden')" class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
+          <div class="relative z-10 w-full max-w-md rounded-2xl bg-white text-slate-900 border-2 border-[#8B5CF6] p-5 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[10px] font-mono font-black uppercase text-[#5B21B6] block">🟣 OPEN PLAY ROSTER SLOT</span>
+                <h4 id="adm-op-player-modal-title" class="text-base font-black uppercase text-slate-900">Edit Player Slot</h4>
+              </div>
+              <button type="button" onclick="document.getElementById('admin-op-player-modal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs">✕</button>
+            </div>
+            <input type="hidden" id="adm-op-player-slot-num" value="">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Player Full Name / Nickname (leave blank for Open Slot):</label>
+              <input type="text" id="adm-op-player-name-inp" placeholder="e.g. Marco R. (DUPR 3.6)" class="w-full bg-slate-50 border-2 border-[#C4B5FD] focus:border-[#5B21B6] rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 focus:outline-none">
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
+              <button type="button" onclick="document.getElementById('adm-op-player-name-inp').value='';adminSaveOpenPlayPlayerModal();" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 font-bold text-xs uppercase transition">Reset to Open Slot</button>
+              <button type="button" onclick="adminSaveOpenPlayPlayerModal()" class="px-4 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">✓ Save Player</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+      document.getElementById('adm-op-player-slot-num').value = String(slotNum);
+      document.getElementById('adm-op-player-modal-title').textContent = `Edit Open Play Slot #${slotNum}`;
+      document.getElementById('adm-op-player-name-inp').value = target.name.includes('(Open Slot)') ? '' : target.name;
+      modal.classList.remove('hidden');
+      setTimeout(() => document.getElementById('adm-op-player-name-inp')?.focus(), 50);
+    }
+
+    async function adminSaveOpenPlayPlayerModal() {
+      const slotNum = Number(document.getElementById('adm-op-player-slot-num')?.value || 0);
+      const rawName = (document.getElementById('adm-op-player-name-inp')?.value || '').trim();
+      const modal = document.getElementById('admin-op-player-modal');
+      if (modal) modal.classList.add('hidden');
+      if (!slotNum) return;
+      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+      const roster = getAdminOpenPlay24Roster().map(p => ({ ...p }));
+      const target = roster.find(p => Number(p.slotNum) === Number(slotNum));
+      if (!target) return;
+      target.name = rawName ? rawName : `Player #${String(slotNum).padStart(2, '0')} (Open Slot)`;
+      target.status = rawName ? 'CONFIRMED' : 'OPEN';
       const cCount = Math.max(1, Math.min(4, Number(currentSiteConfig.openPlayCourtsCount || 4)));
       currentSiteConfig.openPlayRoster = roster;
       currentSiteConfig.openPlaySchedule = buildAdminOpenPlay24Pods(roster, cCount);
@@ -6181,6 +6247,7 @@ function clearFieldError(fieldId) {
       renderAdminOpenPlay24Board();
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
+      showAdminCalendarFeedback(`🟣 Updated Open Play Slot #${slotNum} (${target.name}) live!`);
     }
 
     function renderAdminOpenPlay24Board() {
@@ -6190,8 +6257,8 @@ function clearFieldError(fieldId) {
       document.querySelectorAll('#adm-openplay-court-count-btns [data-op-courts]').forEach(btn => {
         const n = Number(btn.getAttribute('data-op-courts'));
         btn.className = (n === cCount)
-          ? 'px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-emerald-50 text-emerald-800 border border-emerald-200'
-          : 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-slate-400';
+          ? 'px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD]'
+          : 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-[#C4B5FD]';
       });
       const roster = getAdminOpenPlay24Roster();
       const pods = (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySchedule) && currentSiteConfig.openPlaySchedule.length === 6)
@@ -6199,25 +6266,25 @@ function clearFieldError(fieldId) {
         : buildAdminOpenPlay24Pods(roster, cCount);
 
       grid.innerHTML = pods.map(pod => `
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-          <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
-            <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10px] font-black uppercase">POD ${pod.podNumber} &bull; ${pfEscapeHtml(pod.court)}</span>
-            <span class="font-mono text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">⏰ ${pfEscapeHtml(pod.timeSlot)}</span>
+        <div class="p-3.5 rounded-xl bg-white border border-[#C4B5FD] space-y-2 text-xs shadow-2xs">
+          <div class="flex items-center justify-between border-b border-[#E9D5FF] pb-2">
+            <span class="px-2.5 py-0.5 rounded-lg bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase">POD ${pod.podNumber} &bull; ${pfEscapeHtml(pod.court)}</span>
+            <span class="font-mono text-[10px] font-black text-[#5B21B6] bg-[#FAF5FF] border border-[#C4B5FD] px-2 py-0.5 rounded-lg">⏰ ${pfEscapeHtml(pod.timeSlot)}</span>
           </div>
           <div class="space-y-1">
-            <div class="text-[9px] font-mono font-black uppercase text-slate-500">Team A (Click player to edit)</div>
+            <div class="text-[9px] font-mono font-black uppercase text-[#5B21B6]">Team A (Click player to edit)</div>
             ${pod.teamA.map(p => `
-              <button type="button" onclick="adminPromptEditOpenPlayPlayer(${p.slotNum})" class="w-full text-left px-2 py-1 rounded bg-white hover:bg-emerald-50 border border-slate-200 flex items-center justify-between gap-1 text-[11px]">
+              <button type="button" onclick="adminPromptEditOpenPlayPlayer(${p.slotNum})" class="w-full text-left px-2.5 py-1.5 rounded-lg bg-[#FAF5FF] hover:bg-[#EDE9FE] border border-[#E9D5FF] flex items-center justify-between gap-1 text-[11px] transition">
                 <span class="font-bold text-slate-900 truncate">#${p.slotNum} ${pfEscapeHtml(p.name)}</span>
-                <span class="text-[9px] font-mono text-emerald-700">✏️</span>
+                <span class="text-[9px] font-mono text-[#5B21B6] font-bold">✏️ Edit</span>
               </button>
             `).join('')}
-            <div class="text-center text-[9px] font-mono font-black text-slate-400">VS</div>
-            <div class="text-[9px] font-mono font-black uppercase text-slate-500">Team B (Click player to edit)</div>
+            <div class="text-center text-[9px] font-mono font-black text-[#8B5CF6]">VS</div>
+            <div class="text-[9px] font-mono font-black uppercase text-[#5B21B6]">Team B (Click player to edit)</div>
             ${pod.teamB.map(p => `
-              <button type="button" onclick="adminPromptEditOpenPlayPlayer(${p.slotNum})" class="w-full text-left px-2 py-1 rounded bg-white hover:bg-emerald-50 border border-slate-200 flex items-center justify-between gap-1 text-[11px]">
+              <button type="button" onclick="adminPromptEditOpenPlayPlayer(${p.slotNum})" class="w-full text-left px-2.5 py-1.5 rounded-lg bg-[#FAF5FF] hover:bg-[#EDE9FE] border border-[#E9D5FF] flex items-center justify-between gap-1 text-[11px] transition">
                 <span class="font-bold text-slate-900 truncate">#${p.slotNum} ${pfEscapeHtml(p.name)}</span>
-                <span class="text-[9px] font-mono text-emerald-700">✏️</span>
+                <span class="text-[9px] font-mono text-[#5B21B6] font-bold">✏️ Edit</span>
               </button>
             `).join('')}
           </div>
@@ -6230,62 +6297,62 @@ function clearFieldError(fieldId) {
       {
         id: 'trn-bicol-dupr-open',
         title: 'Bicol Open DUPR Pickleball Cup',
-        format: 'Pool Play Round-Robin + Single-Elimination Medal Bracket',
+        format: 'Round Robin + Medal Playoffs',
         division: "Men's, Women's & Mixed Doubles (DUPR 2.5 – 4.5+)",
         date: '2026-11-21',
-        time: '08:00 AM – 06:00 PM',
+        time: '08:00 AM – 05:00 PM',
         courts: 'All 4 Pro Covered Courts (Courts 1 – 4)',
-        entryFee: 600,
-        prizePool: '₱25,000 Cash + Trophies & Official Medals',
+        entryFee: 850,
+        prizePool: '₱25,000 + Trophies & Official DUPR Submission',
         maxTeams: 24,
-        registeredTeams: 14,
+        registeredTeams: 0,
         status: 'OPEN FOR REGISTRATION',
-        description: 'USA Pickleball sanctioned rules. Guaranteed 4 pool-play games (rally scoring to 15) followed by top-seed Quarterfinals, Semifinals, and Gold/Bronze Medal matches (2 out of 3 sets to 11, win by 2).'
+        description: 'Guaranteed 4 Round-Robin pool matches (1 game to 11 pts) per team. Top 4 teams in each division advance to Single-Elimination Semifinals and Gold/Bronze Medal Matches (to 15 pts, win by 2).'
       },
       {
         id: 'trn-mayon-king-of-court',
         title: 'Mayon Smash: King & Queen of the Court',
-        format: 'Dynamic Ladder Up/Down Split-Partner Rotation',
+        format: 'Ladder Split Rotation (Individual Points)',
         division: 'Open All-Levels Individual Entry (24 Players)',
         date: '2026-11-14',
-        time: '04:00 PM – 09:00 PM',
+        time: '05:00 PM – 09:00 PM',
         courts: 'Courts 1 – 4 (Challenger to Championship Court 1)',
         entryFee: 350,
-        prizePool: '₱8,000 + Pro Carbon Paddle & Champion Jersey',
+        prizePool: '₱6,000 Cash + Carbon Pro Paddle & Medals',
         maxTeams: 24,
-        registeredTeams: 18,
+        registeredTeams: 0,
         status: 'OPEN FOR REGISTRATION',
-        description: 'Fast-paced 12-minute timed games! Winners move up toward Court 1 (King Court) and split partners; runners-up move down. Top cumulative point scorers advance to the Grand Finale.'
+        description: '24 players randomly seeded across 4 courts. Play 12-minute timed rounds: winners move UP a court and split partners; losers move DOWN a court and split. Most cumulative points after 6 rounds wins!'
       },
       {
         id: 'trn-daraga-mlp-team-rally',
         title: 'Daraga MLP-Style Team Rally Showdown',
-        format: 'Major League Pickleball (MLP) 4-Player Squad Format + Dreambreaker',
+        format: 'MLP 4-Player Co-Ed Squad Format (Rally Scoring)',
         division: '4-Player Co-Ed Squads (2 Men + 2 Women per Team)',
         date: '2026-11-28',
-        time: '09:00 AM – 07:00 PM',
-        courts: 'All 4 Courts',
-        entryFee: 1200,
-        prizePool: '₱30,000 Cash + Club Championship Banner',
+        time: '09:00 AM – 06:00 PM',
+        courts: 'All 4 Courts (Courts 1 – 4)',
+        entryFee: 2000,
+        prizePool: '₱18,000 Cash + Club Championship Banner',
         maxTeams: 12,
-        registeredTeams: 8,
+        registeredTeams: 0,
         status: 'OPEN FOR REGISTRATION',
-        description: "Each team tie features 4 games to 21 (rally scoring): Women's Doubles, Men's Doubles, and two Mixed Doubles sets. Tied 2–2 matches are decided by an electrifying 1v1 Singles Dreambreaker to 21!"
+        description: "Major League Pickleball format! Each squad clash features 4 games to 21 (rally scoring): Women's Doubles, Men's Doubles, and 2 Mixed Doubles sets. Tied 2–2 matches go to a 1v1 Dreambreaker Singles tiebreak!"
       },
       {
         id: 'trn-albay-novice-classic',
-        title: 'Albay Beginners & Intermediate Double-Elimination Classic',
-        format: 'Double-Elimination Bracket (2-Match Guarantee)',
-        division: 'Beginner (2.5–3.0) & Intermediate (3.0–3.5) Doubles',
+        title: 'Albay Double-Elimination Knockout Classic',
+        format: 'USA Pickleball Double Elimination Bracket',
+        division: 'Intermediate (3.5) & Advanced (4.0+) Doubles',
         date: '2026-12-03',
-        time: '01:00 PM – 08:00 PM',
-        courts: 'Courts 1 – 4',
-        entryFee: 450,
-        prizePool: '₱12,000 + Official P&F Gear Packages',
-        maxTeams: 16,
-        registeredTeams: 10,
+        time: '08:00 AM – 04:00 PM',
+        courts: 'All 4 Courts (Courts 1 – 4)',
+        entryFee: 600,
+        prizePool: '₱15,000 Cash + Official Championship Medals',
+        maxTeams: 24,
+        registeredTeams: 0,
         status: 'OPEN FOR REGISTRATION',
-        description: 'Perfect for rising club players! Double-elimination bracket ensures every pair plays in the Main Draw and has a full Redemption Bracket path back to the Championship.'
+        description: 'Full Double-Elimination Championship Bracket (Winners Bracket best 2-of-3 to 11; Consolation Bracket 1 game to 15). Every player/team is guaranteed at least 2 bracket matches before elimination.'
       }
     ];
 
@@ -6300,84 +6367,217 @@ function clearFieldError(fieldId) {
       const grid = document.getElementById('admin-tournaments-manager-grid');
       if (!grid) return;
       const list = getAdminTournamentsList();
-      grid.innerHTML = list.map(t => `
-        <div class="p-4 rounded-2xl bg-brand-card border border-white/15 flex flex-col justify-between space-y-3">
-          <div class="space-y-1.5">
+      grid.innerHTML = list.map(t => {
+        const regCount = Number(t.registeredTeams ?? t.registeredCount ?? 0);
+        const maxCount = Number(t.maxTeams || 24);
+        return `
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-400 transition flex flex-col justify-between space-y-3.5 shadow-2xs">
+          <div class="space-y-2">
             <div class="flex items-center justify-between gap-2">
-              <span class="px-2 py-0.5 rounded bg-brand-lime/20 text-brand-lime font-mono text-[10px] font-black uppercase">${pfEscapeHtml(t.format)}</span>
-              <span class="font-mono font-black text-brand-lime text-sm">₱${Number(t.entryFee || 0).toLocaleString()}</span>
+              <span class="px-2.5 py-1 rounded-lg bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">${pfEscapeHtml(t.format)}</span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-900 text-white font-mono font-black text-xs">₱${Number(t.entryFee || 0).toLocaleString()}</span>
             </div>
-            <h4 class="text-sm font-black uppercase text-white">${pfEscapeHtml(t.title)}</h4>
-            <p class="text-[11px] text-slate-300 font-mono">📅 ${pfEscapeHtml(t.date)} • ⏰ ${pfEscapeHtml(t.time)} • 🏆 ${pfEscapeHtml(t.prizePool)}</p>
-            <p class="text-[11px] text-slate-400 line-clamp-2">${pfEscapeHtml(t.description || '')}</p>
+            <h4 class="text-sm sm:text-base font-black uppercase text-slate-900 leading-snug">${pfEscapeHtml(t.title)}</h4>
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-700 font-mono font-semibold">
+              <span>📅 ${pfEscapeHtml(t.date)}</span>
+              <span>⏰ ${pfEscapeHtml(t.time)}</span>
+              <span class="text-emerald-800 font-bold">🏆 ${pfEscapeHtml(t.prizePool)}</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">${pfEscapeHtml(t.description || '')}</p>
           </div>
-          <div class="pt-2 border-t border-white/10 flex items-center justify-between gap-2">
-            <span class="text-[10px] font-mono text-emerald-400 font-bold">Slots: ${Number(t.registeredTeams || 0)}/${Number(t.maxTeams || 24)}</span>
+          <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full bg-white border border-slate-300 text-[10px] font-mono text-slate-800 font-bold">Slots: ${regCount}/${maxCount}</span>
+              <span class="px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-mono text-blue-800 font-bold">${pfEscapeHtml(t.courts || 'Courts 1–4')}</span>
+            </div>
             <div class="flex items-center gap-1.5">
-              <button type="button" onclick="adminOpenTournamentEditorModal('${pfEscapeHtml(t.id)}')" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-brand-lime hover:text-brand-black text-white font-bold uppercase text-[10px] transition">✏️ Edit</button>
-              <button type="button" onclick="adminDeleteTournament('${pfEscapeHtml(t.id)}')" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white font-bold uppercase text-[10px] transition">Delete</button>
+              <button type="button" onclick="adminLaunchTournamentInScorekeeper('${pfEscapeHtml(t.id)}')" class="px-3 py-1.5 rounded-lg bg-[#DBEAFE] hover:bg-[#1E40AF] text-[#1E40AF] hover:text-white border border-[#93C5FD] font-extrabold uppercase text-[10px] transition">🎯 Host &amp; Score</button>
+              <button type="button" onclick="adminOpenTournamentEditorModal('${pfEscapeHtml(t.id)}')" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-900 text-slate-800 hover:text-white border border-slate-300 font-extrabold uppercase text-[10px] transition">✏️ Edit</button>
+              <button type="button" onclick="adminDeleteTournament('${pfEscapeHtml(t.id)}')" class="px-3 py-1.5 rounded-lg bg-[#FEE2E2] hover:bg-rose-600 text-[#991B1B] hover:text-white border border-[#FCA5A5] font-extrabold uppercase text-[10px] transition">🗑️ Delete</button>
             </div>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
-    async function adminResetDefaultTournaments() {
-      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
-      currentSiteConfig.tournaments = DEFAULT_ADMIN_TOURNAMENTS.map(t => ({ ...t }));
-      currentSiteConfig.updatedAt = Date.now();
-      renderAdminTournamentsManager();
-      broadcastSiteConfigLive(currentSiteConfig);
-      await postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback('🏆 Restored all 4 official Pickleball Tournament formats and synced live!');
+    function adminLaunchTournamentInScorekeeper(trnId) {
+      try {
+        localStorage.setItem('pf_active_host_tournament_id', String(trnId || ''));
+      } catch (e) {}
+      switchTab('tournament');
+      const ifr = document.getElementById('admin-3d-tournament-iframe');
+      if (ifr) {
+        ifr.src = 'tournament.html?embed=admin&trnId=' + encodeURIComponent(trnId || '') + '&t=' + Date.now();
+      }
     }
 
-    async function adminDeleteTournament(trnId) {
-      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
-      const list = getAdminTournamentsList().filter(t => t.id !== trnId);
-      currentSiteConfig.tournaments = list;
-      currentSiteConfig.updatedAt = Date.now();
-      renderAdminTournamentsManager();
-      broadcastSiteConfigLive(currentSiteConfig);
-      await postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback('🗑️ Removed tournament and synced live to website.');
+    function adminResetDefaultTournaments() {
+      openDeleteConfirmModal({
+        title: 'Restore 4 Default Pickleball Tournament Formats?',
+        itemName: 'Official Club Tournament Lineup (4 Formats)',
+        extraInfo: 'This will reset the tournament list to the 4 official Pickleball tournament formats (DUPR Round Robin, King of the Court, MLP Team Rally, and Double Elimination).',
+        onConfirm: async () => {
+          if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+          currentSiteConfig.tournaments = DEFAULT_ADMIN_TOURNAMENTS.map(t => ({ ...t }));
+          currentSiteConfig.updatedAt = Date.now();
+          renderAdminTournamentsManager();
+          if (typeof renderAdminTournamentApprovalGate === 'function') renderAdminTournamentApprovalGate();
+          broadcastSiteConfigLive(currentSiteConfig);
+          await postSiteConfigToEndpoints(currentSiteConfig);
+          showAdminCalendarFeedback('🏆 Restored all 4 official Pickleball Tournament formats and synced live!');
+        }
+      });
+    }
+
+    function adminDeleteTournament(trnId) {
+      const list = getAdminTournamentsList();
+      const target = list.find(t => t.id === trnId);
+      openDeleteConfirmModal({
+        title: 'Delete Official Tournament?',
+        itemName: target ? target.title : `Tournament #${trnId}`,
+        extraInfo: target ? `Format: ${target.format} • Date: ${target.date} • Entry Fee: ₱${target.entryFee}` : 'This tournament will be removed from the club schedule.',
+        onConfirm: async () => {
+          if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+          const nextList = getAdminTournamentsList().filter(t => t.id !== trnId);
+          currentSiteConfig.tournaments = nextList;
+          currentSiteConfig.updatedAt = Date.now();
+          renderAdminTournamentsManager();
+          if (typeof renderAdminTournamentApprovalGate === 'function') renderAdminTournamentApprovalGate();
+          broadcastSiteConfigLive(currentSiteConfig);
+          await postSiteConfigToEndpoints(currentSiteConfig);
+          showAdminCalendarFeedback('🗑️ Removed tournament and synced live to website.');
+        }
+      });
     }
 
     function adminOpenTournamentEditorModal(editId) {
       const list = getAdminTournamentsList();
       const existing = editId ? list.find(t => t.id === editId) : null;
-      const title = prompt('Tournament Title:', existing ? existing.title : 'Bicol Pickleball Open Showdown');
-      if (!title || !title.trim()) return;
-      const format = prompt('Tournament Format (e.g. Round Robin + Playoffs, King of the Court, MLP Team Rally, Double Elimination):', existing ? existing.format : 'Pool Play Round-Robin + Medal Playoffs');
-      if (format === null) return;
-      const date = prompt('Tournament Date (YYYY-MM-DD):', existing ? existing.date : '2026-11-25');
-      if (date === null) return;
-      const time = prompt('Tournament Time:', existing ? existing.time : '08:00 AM – 06:00 PM');
-      if (time === null) return;
-      const entryFeeRaw = prompt('Entry Fee (₱):', existing ? String(existing.entryFee || 500) : '500');
-      if (entryFeeRaw === null) return;
-      const prizePool = prompt('Prize Pool & Awards:', existing ? existing.prizePool : '₱20,000 Cash + Trophies');
-      if (prizePool === null) return;
-      const maxTeamsRaw = prompt('Max Players / Teams:', existing ? String(existing.maxTeams || 24) : '24');
-      if (maxTeamsRaw === null) return;
-      const desc = prompt('Tournament Description & Rules:', existing ? existing.description : 'USA Pickleball official rules across Courts 1 – 4.');
-      if (desc === null) return;
+      let modal = document.getElementById('admin-tournament-editor-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'admin-tournament-editor-modal';
+        modal.className = 'fixed inset-0 z-[95] hidden flex items-center justify-center p-4';
+        modal.innerHTML = `
+          <div onclick="document.getElementById('admin-tournament-editor-modal').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+          <div class="relative z-10 w-full max-w-lg rounded-2xl bg-white text-slate-900 border-2 border-slate-300 p-6 shadow-2xl space-y-4 max-h-[90dvh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[10px] font-mono font-black uppercase text-emerald-700 block">🏆 OFFICIAL PICKLEBALL TOURNAMENT EDITOR</span>
+                <h4 id="adm-trn-modal-heading" class="text-base sm:text-lg font-black uppercase text-slate-900">Add / Edit Tournament</h4>
+              </div>
+              <button type="button" onclick="document.getElementById('admin-tournament-editor-modal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs">✕</button>
+            </div>
+            <input type="hidden" id="adm-trn-edit-id" value="">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="sm:col-span-2">
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Tournament Title *</label>
+                <input type="text" id="adm-trn-title" placeholder="e.g. Bicol Open DUPR Pickleball Cup" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-emerald-600">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Tournament Format *</label>
+                <select id="adm-trn-format" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-emerald-600">
+                  <option value="Round Robin + Medal Playoffs">Round Robin + Medal Playoffs (Pool Play + Single-Elimination)</option>
+                  <option value="Ladder Split Rotation (Individual Points)">King &amp; Queen of the Court (Ladder Split Rotation)</option>
+                  <option value="MLP 4-Player Co-Ed Squad Format (Rally Scoring)">MLP 4-Player Co-Ed Squad Format (Rally Scoring + Dreambreaker)</option>
+                  <option value="USA Pickleball Double Elimination Bracket">USA Pickleball Double Elimination Bracket</option>
+                  <option value="Single-Elimination Championship Knockout">Single-Elimination Championship Knockout</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Division / Skill Level</label>
+                <input type="text" id="adm-trn-division" placeholder="e.g. Men's, Women's & Mixed Doubles" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-semibold">
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Assigned Courts</label>
+                <input type="text" id="adm-trn-courts" placeholder="All 4 Courts (Courts 1 – 4)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-semibold">
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Date (YYYY-MM-DD)</label>
+                <input type="date" id="adm-trn-date" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Time Window</label>
+                <input type="text" id="adm-trn-time" placeholder="08:00 AM – 05:00 PM" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Entry Fee (₱)</label>
+                <input type="number" id="adm-trn-fee" min="0" step="50" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-black">
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Max Teams / Players</label>
+                <input type="number" id="adm-trn-max" min="2" max="128" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-black">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Prize Pool &amp; Awards</label>
+                <input type="text" id="adm-trn-prize" placeholder="₱25,000 + Trophies & Official DUPR Submission" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-bold">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Rules &amp; Format Description</label>
+                <textarea id="adm-trn-desc" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-medium"></textarea>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
+              <button type="button" onclick="document.getElementById('admin-tournament-editor-modal').classList.add('hidden')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold uppercase text-xs">Cancel</button>
+              <button type="button" onclick="adminSaveTournamentFromModal()" class="px-5 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black uppercase text-xs shadow-md" style="color:#FFFFFF !important;">💾 Save &amp; Publish Tournament</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+      document.getElementById('adm-trn-modal-heading').textContent = existing ? `Edit Tournament: ${existing.title}` : 'Add New Official Pickleball Tournament';
+      document.getElementById('adm-trn-edit-id').value = existing ? existing.id : '';
+      document.getElementById('adm-trn-title').value = existing ? existing.title : 'Bicol Pickleball Open Showdown';
+      const fmtSel = document.getElementById('adm-trn-format');
+      if (fmtSel) {
+        const curFmt = existing ? existing.format : 'Round Robin + Medal Playoffs';
+        if (!Array.from(fmtSel.options).some(o => o.value === curFmt)) {
+          const opt = document.createElement('option');
+          opt.value = curFmt;
+          opt.textContent = curFmt;
+          fmtSel.appendChild(opt);
+        }
+        fmtSel.value = curFmt;
+      }
+      document.getElementById('adm-trn-division').value = existing ? (existing.division || 'Open Doubles & Mixed Divisions') : 'Open Doubles & Mixed Divisions';
+      document.getElementById('adm-trn-courts').value = existing ? (existing.courts || 'All 4 Pro Covered Courts (Courts 1 – 4)') : 'All 4 Pro Covered Courts (Courts 1 – 4)';
+      document.getElementById('adm-trn-date').value = existing ? existing.date : '2026-11-25';
+      document.getElementById('adm-trn-time').value = existing ? existing.time : '08:00 AM – 05:00 PM';
+      document.getElementById('adm-trn-fee').value = existing ? String(existing.entryFee ?? 500) : '500';
+      document.getElementById('adm-trn-max').value = existing ? String(existing.maxTeams || 24) : '24';
+      document.getElementById('adm-trn-prize').value = existing ? existing.prizePool : '₱20,000 Cash + Trophies';
+      document.getElementById('adm-trn-desc').value = existing ? (existing.description || '') : 'USA Pickleball official rules across Courts 1 – 4.';
+      modal.classList.remove('hidden');
+    }
 
+    function adminSaveTournamentFromModal() {
+      const editId = (document.getElementById('adm-trn-edit-id')?.value || '').trim();
+      const title = (document.getElementById('adm-trn-title')?.value || '').trim();
+      if (!title) {
+        alert('Please enter a Tournament Title.');
+        return;
+      }
+      const list = getAdminTournamentsList();
+      const existing = editId ? list.find(t => t.id === editId) : null;
       const updatedItem = {
         id: existing ? existing.id : ('trn-' + Date.now()),
-        title: title.trim(),
-        format: (format || 'Round Robin + Playoffs').trim(),
-        division: existing ? existing.division : 'Open Doubles & Mixed Divisions',
-        date: (date || '2026-11-25').trim(),
-        time: (time || '08:00 AM – 06:00 PM').trim(),
-        courts: existing ? existing.courts : 'All 4 Pro Covered Courts (Courts 1 – 4)',
-        entryFee: Math.max(0, Number(entryFeeRaw) || 500),
-        prizePool: (prizePool || '₱20,000 Cash + Trophies').trim(),
-        maxTeams: Math.max(2, Number(maxTeamsRaw) || 24),
+        title: title,
+        format: (document.getElementById('adm-trn-format')?.value || 'Round Robin + Medal Playoffs').trim(),
+        division: (document.getElementById('adm-trn-division')?.value || 'Open Doubles & Mixed Divisions').trim(),
+        courts: (document.getElementById('adm-trn-courts')?.value || 'All 4 Courts (Courts 1 – 4)').trim(),
+        date: (document.getElementById('adm-trn-date')?.value || '2026-11-25').trim(),
+        time: (document.getElementById('adm-trn-time')?.value || '08:00 AM – 05:00 PM').trim(),
+        entryFee: Math.max(0, Number(document.getElementById('adm-trn-fee')?.value) || 0),
+        maxTeams: Math.max(2, Number(document.getElementById('adm-trn-max')?.value) || 24),
+        prizePool: (document.getElementById('adm-trn-prize')?.value || '₱20,000 Cash + Trophies').trim(),
         registeredTeams: existing ? Number(existing.registeredTeams || 0) : 0,
+        approved: existing ? Boolean(existing.approved !== false) : true,
         status: 'OPEN FOR REGISTRATION',
-        description: (desc || '').trim()
+        description: (document.getElementById('adm-trn-desc')?.value || '').trim()
       };
+      const modal = document.getElementById('admin-tournament-editor-modal');
+      if (modal) modal.classList.add('hidden');
 
       const nextList = [...list];
       const idx = nextList.findIndex(t => t.id === updatedItem.id);
@@ -6388,9 +6588,10 @@ function clearFieldError(fieldId) {
       currentSiteConfig.tournaments = nextList;
       currentSiteConfig.updatedAt = Date.now();
       renderAdminTournamentsManager();
+      if (typeof renderAdminTournamentApprovalGate === 'function') renderAdminTournamentApprovalGate();
       broadcastSiteConfigLive(currentSiteConfig);
       postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback(`🏆 Saved tournament "${updatedItem.title}" and published live to website!`);
+      showAdminCalendarFeedback(`🏆 Saved tournament "${updatedItem.title}" and synced live!`);
     }
 
     async function adminSetOpenPlayWindowForDate() {
@@ -6497,24 +6698,29 @@ function clearFieldError(fieldId) {
 
       if (container) {
         if (courtBlocks.length === 0) {
-          container.innerHTML = `<div class="p-3 rounded-xl bg-brand-black/40 border border-white/5 text-center text-xs text-slate-400">No custom overrides set. All 4 courts are currently following the standard Open Court schedule (6:00 AM – 12:00 Midnight).</div>`;
+          container.innerHTML = `<div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-600 font-medium">No custom overrides set. All 4 courts are following the standard schedule (Available 6:00 AM – 12:00 MN • Open Play 3:00 PM – 6:00 PM).</div>`;
         } else {
           container.innerHTML = courtBlocks.map(b => {
             const st = String(b.statusType || 'CLOSED').toUpperCase();
-            const badge = (st === 'OPEN' || st === 'AVAILABLE')
-              ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-mono text-[10px] font-black">🟢 OPEN COURT</span>`
-              : st === 'OPEN_PLAY'
-                ? `<span class="px-2 py-0.5 rounded bg-brand-lime/20 text-brand-lime border border-brand-lime/40 font-mono text-[10px] font-black">🎾 OPEN PLAY</span>`
-                : `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-400/40 font-mono text-[10px] font-black">🔴 CLOSED</span>`;
+            let badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] font-mono text-[10px] font-black">🔴 Blocked</span>`;
+            if (st === 'OPEN' || st === 'AVAILABLE') {
+              badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black">🟢 Available</span>`;
+            } else if (st === 'OPEN_PLAY') {
+              badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black">🟣 Open Play</span>`;
+            } else if (st === 'HOLD') {
+              badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] font-mono text-[10px] font-black">🟠 Hold</span>`;
+            } else if (st === 'PRIVATE') {
+              badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] font-mono text-[10px] font-black">⚪ Private</span>`;
+            }
             return `
-            <div class="p-3 rounded-xl bg-brand-black/70 border border-white/15 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="p-3 rounded-xl bg-white border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs shadow-2xs">
               <div class="flex flex-wrap items-center gap-2">
                 ${badge}
-                <span class="font-black text-white">${pfEscapeHtml(b.court)}</span>
-                <span class="text-slate-300 font-mono text-[11px]">${pfEscapeHtml(b.date)} • ${pfEscapeHtml(b.hours)}</span>
-                <span class="text-slate-400">(${pfEscapeHtml(b.reason)})</span>
+                <span class="font-black text-slate-900">${pfEscapeHtml(b.court)}</span>
+                <span class="text-slate-700 font-mono text-[11px] font-semibold">${pfEscapeHtml(b.date)} • ${pfEscapeHtml(b.hours)}</span>
+                <span class="text-slate-500">(${pfEscapeHtml(b.reason)})</span>
               </div>
-              <button onclick="removeAdminBlock('${b.id}')" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-rose-600 text-slate-200 hover:text-white text-[10px] font-bold uppercase transition">Remove Rule</button>
+              <button type="button" onclick="removeAdminBlock('${b.id}')" class="px-3 py-1 rounded-lg bg-[#FEE2E2] hover:bg-rose-600 text-[#991B1B] hover:text-white border border-[#FCA5A5] text-[10px] font-extrabold uppercase transition">🗑️ Remove Rule</button>
             </div>
           `;
           }).join('');
@@ -6625,18 +6831,26 @@ function clearFieldError(fieldId) {
       syncAdminCalendarDate(date);
     }
 
-    async function removeAdminBlock(blockId) {
-      blocksMutationLockUntil = Date.now() + 8000;
-      courtBlocks = courtBlocks.filter(b => b.id !== blockId);
-      saveAdminState(true);
-      renderScheduleBlocks();
-      try {
-        await fetch('/api/blocks', {
-          method: 'POST',
-          headers: getAdminAuthHeaders(),
-          body: JSON.stringify({ action: 'remove', id: blockId, updatedAt: Date.now() })
-        });
-      } catch (err) {}
+    function removeAdminBlock(blockId) {
+      const target = (courtBlocks || []).find(b => b.id === blockId);
+      openDeleteConfirmModal({
+        title: 'Remove Custom Court Calendar Rule?',
+        itemName: target ? `${target.court} • ${target.date} (${target.hours})` : `Calendar Rule #${blockId}`,
+        extraInfo: target ? `Status: ${target.statusType} • Reason: ${target.reason || 'Custom Override'}` : 'This slot will return to the default court schedule.',
+        onConfirm: async () => {
+          blocksMutationLockUntil = Date.now() + 8000;
+          courtBlocks = courtBlocks.filter(b => b.id !== blockId);
+          saveAdminState(true);
+          renderScheduleBlocks();
+          try {
+            await fetch('/api/blocks', {
+              method: 'POST',
+              headers: getAdminAuthHeaders(),
+              body: JSON.stringify({ action: 'remove', id: blockId, updatedAt: Date.now() })
+            });
+          } catch (err) {}
+        }
+      });
     }
 
     // ================= CUSTOM INVENTORY MANAGEMENT (WITH PICTURE UPLOAD) =================

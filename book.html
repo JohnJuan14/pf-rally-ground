@@ -1226,34 +1226,27 @@
       color: #475569 !important;
     }
     #booking-drawer #drawer-step-1 > div,
-    main section.bg-brand-card,
-    main section[class*="bg-brand-card"] {
+    html[data-theme="light"] main section.bg-brand-card,
+    html[data-theme="light"] main section[class*="bg-brand-card"] {
       background: #FFFFFF !important;
       border: 1px solid #E2E8F0 !important;
       color: #0F172A !important;
       box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
     }
     #booking-drawer #drawer-step-1 .text-brand-lime,
-    main section .text-brand-lime {
+    html[data-theme="light"] main section .text-brand-lime {
       color: #15803D !important;
-    }
-    #booking-drawer #drawer-step-1 .text-white,
-    main section h2.text-white,
-    main section span.text-white,
-    main section b.text-white,
-    main section label.text-white {
-      color: #0F172A !important;
     }
     #booking-drawer #drawer-step-1 .text-slate-300,
     #booking-drawer #drawer-step-1 .text-slate-400,
-    main section .text-slate-300,
-    main section .text-slate-400 {
+    html[data-theme="light"] main section .text-slate-300,
+    html[data-theme="light"] main section .text-slate-400 {
       color: #475569 !important;
     }
     #booking-drawer #drawer-step-1 .bg-brand-black,
     #booking-drawer #drawer-step-1 [class*="bg-brand-black"],
-    main section .bg-brand-black,
-    main section [class*="bg-brand-black"] {
+    html[data-theme="light"] main section .bg-brand-black,
+    html[data-theme="light"] main section [class*="bg-brand-black"] {
       background: #F8FAFC !important;
       border-color: #CBD5E1 !important;
       color: #0F172A !important;
@@ -1262,10 +1255,10 @@
     #booking-drawer #drawer-step-1 input[type="tel"],
     #booking-drawer #drawer-step-1 input[type="email"],
     #booking-drawer #drawer-step-1 input[type="number"],
-    main section input[type="text"],
-    main section input[type="tel"],
-    main section input[type="email"],
-    main section input[type="number"] {
+    html[data-theme="light"] main section input[type="text"],
+    html[data-theme="light"] main section input[type="tel"],
+    html[data-theme="light"] main section input[type="email"],
+    html[data-theme="light"] main section input[type="number"] {
       background: #FFFFFF !important;
       border: 1px solid #CBD5E1 !important;
       color: #0F172A !important;
@@ -1287,13 +1280,191 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
 
-    /* Keep active dark buttons (like Court 1 active button or All 18h active button) white text */
-    #booking-drawer button.bg-\[\#0D1F18\],
-    #booking-drawer button.bg-\[\#0D1F18\] span,
-    #booking-drawer button.bg-emerald-600,
-    #booking-drawer button.bg-emerald-600 span {
+    /* === V2.6 BULLETPROOF BOOKING DRAWER, FULL-PAGE BOOKING & 9-CATEGORY CONNECTED PALETTE === */
+    /* 1. Prevent generic .text-white overrides from breaking active buttons or dark badges */
+    html[data-theme="light"] #booking-drawer #drawer-step-1 h2.text-white,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 h4.text-white,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 label.text-white,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 .pf-gear-qty-card span.text-white,
+    html[data-theme="light"] main section h2.text-white,
+    html[data-theme="light"] main section label.text-white,
+    html[data-theme="light"] main #equipment-grid span.text-white {
+      color: #0F172A !important;
+    }
+
+    /* 2. Active Date Tile (`TODAY 6 Nov`), Active Duration (`1 hr`), Active Court (`Court 1`), Active Period (`ALL 18H`) */
+    html body .white-calendar-rail .date-tile.date-tile-active,
+    html[data-theme="light"] body .white-calendar-rail .date-tile.date-tile-active,
+    html[data-theme="dark"] body .white-calendar-rail .date-tile.date-tile-active,
+    html body #booking-drawer #drawer-date-rail .date-tile.date-tile-active,
+    html body #date-rail-container .date-tile.date-tile-active,
+    html body #date-carousel .date-tile.date-tile-active {
+      background: #0F291E !important;
+      border: 2px solid #15803D !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 8px 20px -4px rgba(15, 41, 30, 0.35) !important;
+    }
+    html body .white-calendar-rail .date-tile.date-tile-active span,
+    html body #booking-drawer #drawer-date-rail .date-tile.date-tile-active span,
+    html body #date-rail-container .date-tile.date-tile-active span,
+    html body #date-carousel .date-tile.date-tile-active span {
       color: #FFFFFF !important;
     }
+    html body .white-calendar-rail .date-tile.date-tile-active .tile-weekday,
+    html body #booking-drawer #drawer-date-rail .date-tile.date-tile-active .tile-weekday,
+    html body #date-rail-container .date-tile.date-tile-active .tile-weekday,
+    html body #date-carousel .date-tile.date-tile-active .tile-weekday {
+      color: #6EE7B7 !important;
+    }
+
+    /* Inactive Date Tiles in White Calendar Rail */
+    html body .white-calendar-rail .date-tile:not(.date-tile-active),
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active),
+    html body #date-rail-container .date-tile:not(.date-tile-active),
+    html body #date-carousel .date-tile:not(.date-tile-active) {
+      background: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html body .white-calendar-rail .date-tile:not(.date-tile-active) .tile-day,
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active) .tile-day,
+    html body #date-rail-container .date-tile:not(.date-tile-active) .tile-day,
+    html body #date-carousel .date-tile:not(.date-tile-active) .tile-day {
+      color: #0F172A !important;
+    }
+    html body .white-calendar-rail .date-tile:not(.date-tile-active) .tile-weekday,
+    html body .white-calendar-rail .date-tile:not(.date-tile-active) .tile-month,
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active) .tile-weekday,
+    html body #booking-drawer #drawer-date-rail .date-tile:not(.date-tile-active) .tile-month,
+    html body #date-rail-container .date-tile:not(.date-tile-active) .tile-weekday,
+    html body #date-rail-container .date-tile:not(.date-tile-active) .tile-month,
+    html body #date-carousel .date-tile:not(.date-tile-active) .tile-weekday,
+    html body #date-carousel .date-tile:not(.date-tile-active) .tile-month {
+      color: #475569 !important;
+    }
+
+    /* Active Dark & Emerald Buttons Inside Drawer & Full-Page Booking */
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#0D1F18\],
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#0D1F18\] *,
+    html body #booking-drawer #drawer-step-1 .drawer-court.active,
+    html body #booking-drawer #drawer-step-1 .drawer-court.active *,
+    html body #booking-drawer #drawer-step-1 button.bg-emerald-600,
+    html body #booking-drawer #drawer-step-1 button.bg-emerald-600 *,
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#15803D\],
+    html body #booking-drawer #drawer-step-1 button.bg-\[\#15803D\] *,
+    html body main button.bg-\[\#0D1F18\],
+    html body main button.bg-\[\#0D1F18\] *,
+    html body main button.bg-emerald-600,
+    html body main button.bg-emerald-600 *,
+    html body main .duration-pill-btn.bg-brand-lime,
+    html body main .duration-pill-btn.bg-\[\#0D1F18\],
+    html body main .court-btn.court-btn-active,
+    html body main .court-btn.court-btn-active * {
+      background-color: #0F291E !important;
+      border-color: #15803D !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Inactive Court & Duration & Period Buttons in Drawer & book.html */
+    html body #booking-drawer #drawer-step-1 .drawer-court:not(.active),
+    html[data-theme="light"] body main .court-btn:not(.court-btn-active) {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html body #booking-drawer #drawer-step-1 .drawer-court:not(.active) span,
+    html[data-theme="light"] body main .court-btn:not(.court-btn-active) b,
+    html[data-theme="light"] body main .court-btn:not(.court-btn-active) span {
+      color: #0F172A !important;
+    }
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) {
+      background-color: #0F231B !important;
+      border: 1px solid rgba(52, 211, 153, 0.25) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) b,
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) span {
+      color: #ECFDF5 !important;
+    }
+
+    /* Full-Page Booking (`book.html`) Hero Feature Badges & Cards in Light vs Dark Mode */
+    html[data-theme="light"] body main .pf-book-feature-pill {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+    }
+    html[data-theme="light"] body main .pf-book-feature-pill span {
+      color: #0F172A !important;
+    }
+    html[data-theme="dark"] body main .pf-book-feature-pill {
+      background-color: #0F231B !important;
+      border: 1px solid rgba(52, 211, 153, 0.3) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main .pf-book-feature-pill span {
+      color: #ECFDF5 !important;
+    }
+
+    /* Full-Page Booking Cards in Dark Mode vs Light Mode */
+    html[data-theme="dark"] body main section.bg-brand-card,
+    html[data-theme="dark"] body main section[class*="bg-brand-card"],
+    html[data-theme="dark"] body main section.bg-white,
+    html[data-theme="dark"] body main .pf-book-summary-card,
+    html[data-theme="dark"] body main .pf-book-verified-card {
+      background-color: #0F231B !important;
+      border: 1px solid rgba(52, 211, 153, 0.25) !important;
+      color: #ECFDF5 !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] body main section h2,
+    html[data-theme="dark"] body main section h3,
+    html[data-theme="dark"] body main .pf-book-summary-card h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body main section .bg-brand-black,
+    html[data-theme="dark"] body main section [class*="bg-brand-black"],
+    html[data-theme="dark"] body main .pf-policy-consent-card {
+      background-color: #091510 !important;
+      border-color: rgba(52, 211, 153, 0.22) !important;
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main .pf-policy-consent-card span,
+    html[data-theme="dark"] body main .pf-policy-consent-card b {
+      color: #ECFDF5 !important;
+    }
+    html[data-theme="dark"] body main section input[type="text"],
+    html[data-theme="dark"] body main section input[type="tel"],
+    html[data-theme="dark"] body main section input[type="email"],
+    html[data-theme="dark"] body main section input[type="number"] {
+      background-color: #050E0A !important;
+      border: 1px solid rgba(52, 211, 153, 0.35) !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Full-Page Booking Verified Reservation Protocol Card in Light Mode */
+    html[data-theme="light"] body main .pf-book-verified-card {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+    }
+    html[data-theme="light"] body main .pf-book-verified-card p {
+      color: #334155 !important;
+    }
+
+    /* Footer Admin Portal Button Styling */
+    .pf-footer-admin-btn {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(110, 231, 183, 0.4) !important;
+      color: #A7F3D0 !important;
+    }
+    .pf-footer-admin-btn:hover {
+      background: #15803D !important;
+      border-color: #34D399 !important;
+      color: #FFFFFF !important;
+    }
+
 </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#050E1D] text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
@@ -1397,6 +1568,12 @@
       <!-- Right Action Buttons -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
         
+        <!-- Client Theme Toggle (Light / Dark Mode) -->
+        <button type="button" onclick="pfToggleClientTheme()" id="pf-theme-toggle-btn" class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-[#F2F0E8] hover:bg-[#E6E4DC] border border-[#D5D3CC] text-[#0D1F18] flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 flex-shrink-0" title="Switch Light / Dark Mode">
+          <span id="pf-theme-toggle-icon" class="text-sm leading-none">☀️</span>
+          <span id="pf-theme-toggle-label" class="hidden xl:inline font-mono text-[10px] uppercase tracking-wider font-bold">Light</span>
+        </button>
+
         <!-- Live Announcements Board Button -->
         <button type="button" onclick="toggleAnnouncementBoard()" class="whitespace-nowrap h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#9BE600]/40 text-white hidden md:flex items-center gap-1.5 transition active:scale-95 shadow-md relative flex-shrink-0" title="Open Live Club Announcement Board">
           <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
@@ -1497,15 +1674,15 @@
 
       <!-- Feature Badges -->
       <div class="flex flex-wrap items-center gap-2 sm:gap-3 mt-5">
-        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+        <span class="pf-book-feature-pill px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-800 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
           <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span>6 AM&ndash;12 midnight</span>
         </span>
-        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+        <span class="pf-book-feature-pill px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-800 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
           <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           <span>30-day window</span>
         </span>
-        <span class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+        <span class="pf-book-feature-pill px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-800 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
           <svg class="w-3.5 h-3.5 text-brand-lime" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
           <span>4 premium courts</span>
         </span>
@@ -1555,11 +1732,11 @@
               <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 2</span>
               <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Select a court</h2>
             </div>
-            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300">4 Courts Available</span>
+            <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-bold text-emerald-800">4 Courts Available</span>
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="court-selector">
-            <button type="button" onclick="selectCourt(1)" class="court-btn py-3.5 px-4 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition active:scale-95 shadow-md flex items-center justify-between" data-court="1">
+            <button type="button" onclick="selectCourt(1)" class="court-btn court-btn-active py-3.5 px-4 rounded-2xl border-2 border-[#15803D] bg-[#0F291E] text-white text-left transition active:scale-95 shadow-md flex items-center justify-between" data-court="1">
               <b class="text-sm sm:text-base font-black text-brand-lime block">Court 1</b>
               <span class="text-brand-lime font-mono text-xs">→</span>
             </button>
@@ -1606,12 +1783,16 @@
             <div id="book-expired-time-error" class="hidden"></div>
           </div>
 
-          <div class="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-slate-300 font-mono">
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-lime"></span> Selected</span>
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-brand-card border border-white/25"></span> Available</span>
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-[#d9f99d] border border-[#84cc16]"></span> <span class="text-[#b7f34a]">Open Play (<b data-site-price="open-play-badge">₱150</b>)</span></span>
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-100 border border-rose-400"></span> <span class="text-rose-400">Booked</span></span>
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-800 border border-slate-600"></span> <span class="text-slate-400">Closed</span></span>
+          <div class="pt-3.5 border-t border-slate-200/80 flex flex-wrap items-center gap-2 text-[11px] font-sans">
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-bold"><span class="w-2 h-2 rounded-full bg-[#10B981]"></span>Available</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#5C2D0C] border border-[#C8BCA8] font-bold"><span class="w-2 h-2 rounded-full bg-[#78350F]"></span>Selected</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span>Confirmed</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-bold"><span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Pending</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] font-bold"><span class="w-2 h-2 rounded-full bg-[#F97316]"></span>Hold</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] font-bold"><span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>Blocked</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] font-bold"><span class="w-2 h-2 rounded-full bg-[#64748B]"></span>Private</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>Open Play (<b data-site-price="open-play-badge">₱150</b>)</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] font-bold opacity-75"><span class="w-2 h-2 rounded-full bg-[#CBD5E1]"></span>Past</span>
           </div>
         </section>
 
@@ -1638,7 +1819,7 @@
               <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 5 &bull; Optional Add-ons</span>
               <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Equipment rentals</h2>
             </div>
-            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300" id="gear-subtotal-badge">₱0.00 Total</span>
+            <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-bold text-emerald-800" id="gear-subtotal-badge">₱0.00 Total</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="equipment-grid">
@@ -1921,7 +2102,7 @@
 
       <!-- RIGHT COLUMN: Sticky Live Reservation Summary (4 Cols) -->
       <div class="lg:col-span-4 sticky top-28 space-y-5">
-        <div class="p-6 rounded-3xl bg-brand-card/95 border border-brand-lime/30 shadow-2xl space-y-5 backdrop-blur-xl">
+        <div class="pf-book-summary-card p-6 rounded-3xl bg-brand-card/95 border border-brand-lime/30 shadow-2xl space-y-5 backdrop-blur-xl">
           <div class="border-b border-white/10 pb-4">
             <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Live Reservation</span>
             <h3 class="text-xl font-black uppercase tracking-tight text-white font-display">Booking Summary</h3>
@@ -1975,7 +2156,7 @@
           </p>
         </div>
 
-        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-slate-300 space-y-2">
+        <div class="pf-book-verified-card p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-700 space-y-2 shadow-sm">
           <div class="flex items-center gap-2 text-brand-lime font-bold">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             <span>Verified Reservation Protocol</span>
@@ -2067,6 +2248,10 @@
           </button>
           <a href="check-booking.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-bold text-xs transition text-center" style="color:#FFFFFF !important;">
             Check Booking Status
+          </a>
+                  <a href="/admin/" onclick="return openAdminPortal(event)" class="pf-footer-admin-btn w-full py-2.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider transition text-center flex items-center justify-center gap-1.5 shadow-xs">
+            <span>🔒 Admin Portal</span>
+            <span>→</span>
           </a>
         </div>
       </div>
@@ -2794,10 +2979,11 @@
         btn.className = `date-tile ${dayObj.value === selectedDateValue ? "date-tile-active" : ""}`;
         btn.onclick = () => selectDate(dayObj.value, btn);
 
+        const isAct = dayObj.value === selectedDateValue;
         btn.innerHTML = `
-          <span class="tile-weekday block text-[10px] font-black uppercase tracking-widest ${dayObj.value === selectedDateValue ? 'text-[#050E1D]' : 'text-slate-400'}">${dayObj.weekday}</span>
-          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${dayObj.value === selectedDateValue ? 'text-[#050E1D]' : 'text-white'}">${dayObj.day}</span>
-          <span class="tile-month mt-1 block text-xs font-bold opacity-75 ${dayObj.value === selectedDateValue ? 'text-[#050E1D]' : 'text-slate-400'}">${dayObj.month}</span>
+          <span class="tile-weekday block text-[10px] font-bold uppercase tracking-widest ${isAct ? 'text-[#6EE7B7]' : 'text-slate-500'}">${dayObj.weekday}</span>
+          <span class="tile-day mt-1 block text-2xl font-black leading-none font-mono ${isAct ? 'text-white' : 'text-slate-900'}">${dayObj.day}</span>
+          <span class="tile-month mt-1 block text-xs font-semibold opacity-85 ${isAct ? 'text-white' : 'text-slate-500'}">${dayObj.month}</span>
         `;
         container.appendChild(btn);
       });
@@ -2827,16 +3013,16 @@
       document.querySelectorAll("#date-rail-container .date-tile").forEach(b => {
         b.classList.remove("date-tile-active");
         const spans = b.querySelectorAll("span");
-        if (spans[0]) spans[0].className = "tile-weekday block text-[10px] font-black uppercase tracking-widest text-slate-400";
-        if (spans[1]) spans[1].className = "tile-day mt-1 block text-2xl font-black leading-none font-mono text-white";
-        if (spans[2]) spans[2].className = "tile-month mt-1 block text-xs font-bold opacity-75 text-slate-400";
+        if (spans[0]) spans[0].className = "tile-weekday block text-[10px] font-bold uppercase tracking-widest text-slate-500";
+        if (spans[1]) spans[1].className = "tile-day mt-1 block text-2xl font-black leading-none font-mono text-slate-900";
+        if (spans[2]) spans[2].className = "tile-month mt-1 block text-xs font-semibold opacity-85 text-slate-500";
       });
       if (clickedBtn) {
         clickedBtn.classList.add("date-tile-active");
         const activeSpans = clickedBtn.querySelectorAll("span");
-        if (activeSpans[0]) activeSpans[0].className = "tile-weekday block text-[10px] font-black uppercase tracking-widest text-[#050E1D]";
-        if (activeSpans[1]) activeSpans[1].className = "tile-day mt-1 block text-2xl font-black leading-none font-mono text-[#050E1D]";
-        if (activeSpans[2]) activeSpans[2].className = "tile-month mt-1 block text-xs font-bold opacity-75 text-[#050E1D]";
+        if (activeSpans[0]) activeSpans[0].className = "tile-weekday block text-[10px] font-bold uppercase tracking-widest text-[#6EE7B7]";
+        if (activeSpans[1]) activeSpans[1].className = "tile-day mt-1 block text-2xl font-black leading-none font-mono text-white";
+        if (activeSpans[2]) activeSpans[2].className = "tile-month mt-1 block text-xs font-semibold opacity-90 text-white";
       }
 
       const lbl = document.getElementById("selected-date-label");
@@ -2849,6 +3035,31 @@
     }
 
     // 3. Court Selection
+    
+    function pfSyncThemeToggleButtons(mode) {
+      const isDark = mode === 'dark';
+      document.querySelectorAll('.pf-theme-toggle-btn').forEach(btn => {
+        const sun = btn.querySelector('.pf-theme-icon-sun');
+        const moon = btn.querySelector('.pf-theme-icon-moon');
+        const lbl = btn.querySelector('.pf-theme-label');
+        if (sun) sun.classList.toggle('hidden', !isDark);
+        if (moon) moon.classList.toggle('hidden', isDark);
+        if (lbl) lbl.textContent = isDark ? 'Dark' : 'Light';
+      });
+    }
+    function pfToggleClientTheme() {
+      const root = document.documentElement;
+      const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('pf_client_theme', next); } catch (e) {}
+      pfSyncThemeToggleButtons(next);
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const cur = document.documentElement.getAttribute('data-theme') || 'light';
+      pfSyncThemeToggleButtons(cur);
+    });
+
     function selectCourt(cNum) {
       selectedCourt = Math.max(1, Math.min(4, Number(cNum) || 1));
       if (typeof DRAWER_STATE !== 'undefined') DRAWER_STATE.selectedCourt = selectedCourt;
@@ -2857,13 +3068,13 @@
         const bEl = btn.querySelector("b");
         const spEl = btn.querySelector("span");
         if (c === cNum) {
-          btn.className = "court-btn py-3.5 px-4 rounded-2xl border-2 border-brand-lime bg-brand-lime/15 text-left transition active:scale-95 shadow-md flex items-center justify-between";
-          if (bEl) bEl.className = "text-sm sm:text-base font-black text-brand-lime block";
-          if (spEl) spEl.className = "text-brand-lime font-mono text-xs";
+          btn.className = "court-btn court-btn-active py-3.5 px-4 rounded-2xl border-2 border-[#15803D] bg-[#0F291E] text-white text-left transition active:scale-95 shadow-md flex items-center justify-between";
+          if (bEl) bEl.className = "text-sm sm:text-base font-extrabold text-white block";
+          if (spEl) spEl.className = "text-[#6EE7B7] font-mono text-xs font-bold";
         } else {
-          btn.className = "court-btn py-3.5 px-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95 flex items-center justify-between";
-          if (bEl) bEl.className = "text-sm sm:text-base font-black text-white block";
-          if (spEl) spEl.className = "text-slate-400 font-mono text-xs";
+          btn.className = "court-btn py-3.5 px-4 rounded-2xl border border-slate-300 bg-slate-50 hover:border-[#15803D] text-slate-900 text-left transition active:scale-95 flex items-center justify-between";
+          if (bEl) bEl.className = "text-sm sm:text-base font-bold text-slate-900 block";
+          if (spEl) spEl.className = "text-slate-500 font-mono text-xs";
         }
       });
       renderTimeChips();
@@ -2876,9 +3087,9 @@
       document.querySelectorAll(".duration-pill-btn").forEach(btn => {
         const d = Number(btn.getAttribute("data-dur"));
         if (d === dur) {
-          btn.className = "duration-pill-btn px-3 py-1 rounded-lg bg-brand-lime text-brand-black font-black";
+          btn.className = "duration-pill-btn px-3 py-1 rounded-lg bg-[#0F291E] text-white font-black shadow-sm";
         } else {
-          btn.className = "duration-pill-btn px-3 py-1 rounded-lg text-slate-300 hover:text-white font-bold";
+          btn.className = "duration-pill-btn px-3 py-1 rounded-lg text-slate-700 hover:text-slate-900 font-bold";
         }
       });
       renderTimeChips();

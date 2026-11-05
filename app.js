@@ -4465,11 +4465,11 @@ function pfRenderOpenPlay24Board() {
   ];
 
   const sessionCardsHtml = sessionBlocks.map((b) => `
-    <div class="rounded-2xl bg-[#F8FAFC] border border-slate-200/90 p-5 flex flex-col justify-between gap-4 hover:border-emerald-600/50 hover:bg-white transition-all shadow-xs">
+    <div class="rounded-2xl bg-[#F8FAFC] border border-slate-200/90 p-5 flex flex-col justify-between gap-4 hover:border-[#8B5CF6] hover:bg-white transition-all shadow-xs">
       <div class="space-y-2.5">
         <div class="flex items-center justify-between gap-2">
-          <span class="pf-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-100 text-violet-800 border border-violet-200 text-[10px] font-sans font-extrabold uppercase tracking-wider">
-            <span class="w-1.5 h-1.5 rounded-full bg-violet-600"></span>
+          <span class="pf-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-sans font-extrabold uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#8B5CF6]"></span>
             <span>${b.tag}</span>
           </span>
           <span class="pf-pill inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-sans font-bold">
@@ -4478,13 +4478,13 @@ function pfRenderOpenPlay24Board() {
         </div>
         <div class="pt-0.5">
           <div class="text-lg sm:text-xl font-extrabold text-slate-900 font-sans tracking-tight">${b.timeRange}</div>
-          <h4 class="text-xs sm:text-sm font-bold text-emerald-800 mt-0.5">${b.title}</h4>
+          <h4 class="text-xs sm:text-sm font-bold text-[#5B21B6] mt-0.5">${b.title}</h4>
         </div>
         <p class="text-xs text-slate-600 leading-relaxed font-normal">${b.desc}</p>
       </div>
       <div class="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-2">
         <span class="text-[11px] font-semibold text-slate-600">${rateLabel} / player</span>
-        <button type="button" onclick="openBookingDrawer(1, '${b.slot}')" class="px-3.5 py-2 rounded-xl bg-white hover:bg-emerald-700 text-slate-900 hover:text-white border border-slate-300 hover:border-emerald-700 text-xs font-extrabold transition shadow-2xs">
+        <button type="button" onclick="openBookingDrawer(1, '${b.slot}')" class="px-3.5 py-2 rounded-xl bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#5B21B6] hover:text-white border border-[#C4B5FD] hover:border-[#5B21B6] text-xs font-extrabold transition shadow-2xs">
           Book ${b.slot} →
         </button>
       </div>
@@ -4536,8 +4536,8 @@ function pfRenderOpenPlay24Board() {
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-200">
         <div class="space-y-2 max-w-2xl">
           <div class="flex flex-wrap items-center gap-2">
-            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-100 text-violet-900 border border-violet-200 text-[11px] font-sans font-extrabold uppercase tracking-wider">
-              <span class="w-2 h-2 rounded-full bg-violet-600"></span>
+            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-sans font-extrabold uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>
               <span>DAILY OPEN PLAY • 3:00 PM – 6:00 PM</span>
             </span>
             <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-sans font-bold">
@@ -4561,7 +4561,7 @@ function pfRenderOpenPlay24Board() {
             </div>
             <span class="text-[11px] text-emerald-700 font-semibold block">Courts 1 – 4 • Paddle Stack Rotation</span>
           </div>
-          <button type="button" onclick="openBookingDrawer(1, '03:00 PM')" class="py-3.5 px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs sm:text-sm tracking-wide transition shadow-sm flex items-center justify-center gap-2 whitespace-nowrap">
+          <button type="button" onclick="openBookingDrawer(1, '03:00 PM')" class="py-3.5 px-5 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-extrabold text-xs sm:text-sm tracking-wide transition shadow-sm flex items-center justify-center gap-2 whitespace-nowrap">
             <span>Join Open Play</span>
             <span>→</span>
           </button>
@@ -4576,28 +4576,28 @@ function pfRenderOpenPlay24Board() {
       <!-- 4-Pillar How Open Play Works Strip -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">1</span>
+          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">1</span>
           <div>
             <h4 class="text-xs font-extrabold text-slate-900">Reserve or Walk In</h4>
             <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Book your spot online (${rateLabel}/player) or check in at the front desk before 3:00 PM.</p>
           </div>
         </div>
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">2</span>
+          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">2</span>
           <div>
             <h4 class="text-xs font-extrabold text-slate-900">Stack Your Paddle</h4>
             <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Place your paddle in the 4-up rack by skill level so every game is competitive and welcoming.</p>
           </div>
         </div>
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">3</span>
+          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">3</span>
           <div>
             <h4 class="text-xs font-extrabold text-slate-900">11-Point Rally Games</h4>
             <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Games are played to 11 points (win by 2). Next 4 paddles rotate onto the open court immediately.</p>
           </div>
         </div>
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center flex-shrink-0">4</span>
+          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">4</span>
           <div>
             <h4 class="text-xs font-extrabold text-slate-900">Rotate Partners</h4>
             <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Meet the Daraga pickleball community—winners split partners after each match for fresh matchups.</p>
@@ -4624,7 +4624,7 @@ function pfRenderOpenPlay24Board() {
                   <button type="button" onclick="pfSetOpenPlayCourtCount(${c})" class="px-2.5 py-1 rounded-lg transition ${courtsActive === c ? 'bg-slate-900 text-white font-extrabold' : 'text-slate-600 hover:text-slate-900'}">${c}C</button>
                 `).join('')}
               </div>
-              <button type="button" onclick="pfShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs transition shadow-2xs">
+              <button type="button" onclick="pfShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-extrabold text-xs transition shadow-2xs">
                 Shuffle Match Pods
               </button>
             </div>
