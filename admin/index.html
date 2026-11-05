@@ -6913,6 +6913,49 @@ function clearFieldError(fieldId) {
     }
 
     // ================= ADMIN PICKLEBALL TOURNAMENTS MANAGER =================
+    const ADMIN_OPEN_SEED_LABELS = [
+      'Open Seed #1 — Available',
+      'Open Seed #8 — Available',
+      'Open Seed #4 — Available',
+      'Open Seed #5 — Available',
+      'Open Seed #2 — Available',
+      'Open Seed #7 — Available',
+      'Open Seed #3 — Available',
+      'Open Seed #6 — Available'
+    ];
+    const ADMIN_SEED_SLOT_NUMBERS = [1, 8, 4, 5, 2, 7, 3, 6];
+
+    const DEMO_SAMPLE_TOURNAMENT_PLAYERS = [
+      'Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)',
+      'Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)',
+      'Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)',
+      'Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)',
+      'Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)',
+      'Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)',
+      'Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)',
+      'Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)'
+    ];
+
+    function adminIsOpenSeedSlot(str) {
+      const s = String(str || '').trim();
+      if (!s) return true;
+      return /^(Open Seed|Open Slot|Available|Empty|TBD|Waiting|Slot #\d+\s*[—\-]\s*Open)/i.test(s);
+    }
+    window.pfIsOpenSeedSlot = adminIsOpenSeedSlot;
+
+    function adminCountFilledBracketSeeds(players) {
+      if (!Array.isArray(players)) return 0;
+      return players.filter(p => !adminIsOpenSeedSlot(p)).length;
+    }
+
+    function adminCountRealTournamentTeams(t) {
+      if (!t) return 0;
+      const regs = Array.isArray(t.registrations) ? t.registrations : [];
+      const filledSeeds = adminCountFilledBracketSeeds(t.players);
+      if (regs.length === 0 && filledSeeds === 0) return 0;
+      return Math.max(regs.length, filledSeeds);
+    }
+
     const DEFAULT_ADMIN_TOURNAMENTS = [
   {
     "id": "trn-bicol-dupr-open",
@@ -6924,10 +6967,17 @@ function clearFieldError(fieldId) {
     "date": "2026-11-21",
     "time": "08:00 AM – 05:00 PM",
     "courts": "All 4 Courts (Courts 1 – 4)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 850,
     "prizePool": "₱25,000 + Trophies & Official DUPR Submission",
     "maxTeams": 24,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
     "published": true,
     "showCourtsOnSite": true,
@@ -6935,14 +6985,14 @@ function clearFieldError(fieldId) {
     "status": "OPEN FOR REGISTRATION",
     "description": "Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 – 4.",
     "players": [
-      "Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)",
-      "Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)",
-      "Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)",
-      "Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)",
-      "Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)",
-      "Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)",
-      "Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)",
-      "Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -6950,15 +7000,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)",
-        "teamB": "Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -6966,15 +7016,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)",
-        "teamB": "Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -6982,15 +7032,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)",
-        "teamB": "Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -6998,15 +7048,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)",
-        "teamB": "Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7069,10 +7119,17 @@ function clearFieldError(fieldId) {
     "date": "2026-11-14",
     "time": "05:00 PM – 09:00 PM",
     "courts": "4 Courts (Challenger to Crown Court)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 350,
     "prizePool": "₱6,000 Cash + Carbon Pro Paddle & Medals",
     "maxTeams": 24,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
     "published": false,
     "showCourtsOnSite": true,
@@ -7080,14 +7137,14 @@ function clearFieldError(fieldId) {
     "status": "OPEN FOR REGISTRATION",
     "description": "Play 12-minute timed ladder rounds across Courts 1 – 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!",
     "players": [
-      "Seed #1 • Carlo Imperial & Sofia Locsin",
-      "Seed #8 • Ryan Beltran & Hannah Gomez",
-      "Seed #4 • Jerome Uy & Camille Chua",
-      "Seed #5 • Patrick Go & Denise Ramos",
-      "Seed #2 • Lance Vergara & Nina Pineda",
-      "Seed #7 • Mark Tolentino & Alyssa Cruz",
-      "Seed #3 • Adrian Dizon & Kyla Bautista",
-      "Seed #6 • Christian Sy & Mica Mendoza"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -7095,15 +7152,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Carlo Imperial & Sofia Locsin",
-        "teamB": "Seed #8 • Ryan Beltran & Hannah Gomez",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7111,15 +7168,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Jerome Uy & Camille Chua",
-        "teamB": "Seed #5 • Patrick Go & Denise Ramos",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7127,15 +7184,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Lance Vergara & Nina Pineda",
-        "teamB": "Seed #7 • Mark Tolentino & Alyssa Cruz",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7143,15 +7200,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Adrian Dizon & Kyla Bautista",
-        "teamB": "Seed #6 • Christian Sy & Mica Mendoza",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7214,23 +7271,32 @@ function clearFieldError(fieldId) {
     "date": "2026-11-28",
     "time": "09:00 AM – 06:00 PM",
     "courts": "All 4 Courts (Courts 1 – 4)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 2000,
     "prizePool": "₱18,000 Cash + Club Championship Banner",
     "maxTeams": 12,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
+    "published": false,
+    "showCourtsOnSite": true,
     "scoringTarget": 21,
     "status": "OPEN FOR REGISTRATION",
     "description": "Major League Pickleball 4-player squad format! Each clash features Women's Doubles, Men's Doubles, and Mixed Doubles to 21 points (rally scoring) plus Dreambreaker tiebreak.",
     "players": [
-      "Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)",
-      "Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)",
-      "Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)",
-      "Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)",
-      "Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)",
-      "Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)",
-      "Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)",
-      "Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -7238,15 +7304,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)",
-        "teamB": "Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7254,15 +7320,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)",
-        "teamB": "Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7270,15 +7336,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)",
-        "teamB": "Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7286,15 +7352,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)",
-        "teamB": "Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7357,10 +7423,17 @@ function clearFieldError(fieldId) {
     "date": "2026-12-03",
     "time": "08:00 AM – 04:00 PM",
     "courts": "All 4 Courts (Courts 1 – 4)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 600,
     "prizePool": "₱15,000 Cash + Official Championship Medals",
     "maxTeams": 24,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
     "published": false,
     "showCourtsOnSite": true,
@@ -7368,14 +7441,14 @@ function clearFieldError(fieldId) {
     "status": "OPEN FOR REGISTRATION",
     "description": "Full USA Pickleball Championship Bracket across Courts 1 – 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.",
     "players": [
-      "Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)",
-      "Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)",
-      "Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)",
-      "Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)",
-      "Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)",
-      "Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)",
-      "Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)",
-      "Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -7383,15 +7456,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)",
-        "teamB": "Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7399,15 +7472,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)",
-        "teamB": "Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7415,15 +7488,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)",
-        "teamB": "Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7431,15 +7504,15 @@ function clearFieldError(fieldId) {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)",
-        "teamB": "Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -7494,19 +7567,23 @@ function clearFieldError(fieldId) {
   }
 ];
 
-    function adminBuildBracketForPlayers(players) {
-      const p = (Array.isArray(players) && players.length >= 8) ? players : [
-        'Seed #1 • Pair 1', 'Seed #8 • Pair 8', 'Seed #4 • Pair 4', 'Seed #5 • Pair 5',
-        'Seed #2 • Pair 2', 'Seed #7 • Pair 7', 'Seed #3 • Pair 3', 'Seed #6 • Pair 6'
-      ];
+    function adminBuildBracketForPlayers(players, courts) {
+      const p = (Array.isArray(players) && players.length >= 8) ? players : [...ADMIN_OPEN_SEED_LABELS];
+      const c = (Array.isArray(courts) && courts.length > 0) ? courts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      const getMatchStatus = (teamA, teamB, isFirst) => {
+        const openA = adminIsOpenSeedSlot(teamA);
+        const openB = adminIsOpenSeedSlot(teamB);
+        if (!openA && !openB) return isFirst ? 'LIVE' : 'READY';
+        return 'PENDING';
+      };
       return [
-        { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: 'Court 1', teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'LIVE', winner: null },
-        { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: 'Court 2', teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'READY', winner: null },
-        { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: 'Court 3', teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'READY', winner: null },
-        { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: 'Court 4', teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'READY', winner: null },
-        { id: 'SF1', stage: 'Semifinals', label: 'Semifinal 1', court: 'Court 1', teamA: 'Winner QF1', teamB: 'Winner QF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-        { id: 'SF2', stage: 'Semifinals', label: 'Semifinal 2', court: 'Court 2', teamA: 'Winner QF3', teamB: 'Winner QF4', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-        { id: 'FIN', stage: 'Championship Final', label: 'Gold Medal Final', court: 'Court 1', teamA: 'Winner SF1', teamB: 'Winner SF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null }
+        { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: c[0 % c.length], teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[0], p[1], true), winner: null },
+        { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: c[1 % c.length], teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[2], p[3], false), winner: null },
+        { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: c[2 % c.length], teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[4], p[5], false), winner: null },
+        { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: c[3 % c.length], teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[6], p[7], false), winner: null },
+        { id: 'SF1', stage: 'Semifinals', label: 'Semifinal 1', court: c[0 % c.length], teamA: 'Winner QF1', teamB: 'Winner QF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
+        { id: 'SF2', stage: 'Semifinals', label: 'Semifinal 2', court: c[1 % c.length], teamA: 'Winner QF3', teamB: 'Winner QF4', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
+        { id: 'FIN', stage: 'Championship Final', label: 'Gold Medal Final', court: c[0 % c.length], teamA: 'Winner SF1', teamB: 'Winner SF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null }
       ];
     }
 
@@ -7520,9 +7597,18 @@ function clearFieldError(fieldId) {
       }
       currentSiteConfig.tournaments = currentSiteConfig.tournaments.map((t, idx) => {
         const defT = DEFAULT_ADMIN_TOURNAMENTS.find(d => d.id === t.id) || DEFAULT_ADMIN_TOURNAMENTS[idx % DEFAULT_ADMIN_TOURNAMENTS.length];
-        const players = (Array.isArray(t.players) && t.players.length >= 8) ? t.players : JSON.parse(JSON.stringify(defT.players));
-        const bracket = (Array.isArray(t.bracket) && t.bracket.length === 7) ? t.bracket : adminBuildBracketForPlayers(players);
-        return Object.assign({}, defT, t, { players, bracket, approved: t.approved !== false });
+        const players = (Array.isArray(t.players) && t.players.length >= 8) ? t.players : [...ADMIN_OPEN_SEED_LABELS];
+        const dc = (Array.isArray(t.designatedCourts) && t.designatedCourts.length > 0) ? t.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+        const bracket = (Array.isArray(t.bracket) && t.bracket.length === 7) ? t.bracket : adminBuildBracketForPlayers(players, dc);
+        const registrations = Array.isArray(t.registrations) ? t.registrations : [];
+        const realCount = adminCountRealTournamentTeams({ players, registrations });
+        return Object.assign({}, defT, t, {
+          players,
+          bracket,
+          registrations,
+          registeredCount: realCount,
+          approved: t.approved !== false
+        });
       });
       return currentSiteConfig.tournaments;
     }
@@ -7549,7 +7635,6 @@ function clearFieldError(fieldId) {
       }
       const pubCount = list.filter(t => t.published !== false).length;
 
-      // Render Top Flexible Website Event Selector Bar (1 Default, 2, 3, 4, or Pick Any Combination!)
       if (visBar) {
         const countButtonsHtml = [1, 2, 3, 4].map(cnt => {
           const isCurrentCnt = pubCount === cnt;
@@ -7597,9 +7682,10 @@ function clearFieldError(fieldId) {
 
       grid.innerHTML = list.map((t, idx) => {
         const fee = Number(t.entryFee || 0);
-        const players = Array.isArray(t.players) ? t.players : [];
-        const regCount = Math.max(players.length, Number(t.registeredCount || players.length));
-        const maxCount = Math.max(regCount, Number(t.maxTeams || 24));
+        const players = Array.isArray(t.players) ? t.players : [...ADMIN_OPEN_SEED_LABELS];
+        const filledSeeds = adminCountFilledBracketSeeds(players);
+        const regCount = adminCountRealTournamentTeams(t);
+        const maxCount = Math.max(8, Number(t.maxTeams || 24));
         const isSelectedForBracket = t.id === adminActiveBracketTrnId;
         const isPub = t.published !== false;
         const showCourts = t.showCourtsOnSite !== false;
@@ -7625,10 +7711,11 @@ function clearFieldError(fieldId) {
           `;
         }).join('');
 
+        const realPreviewList = players.filter(p => !adminIsOpenSeedSlot(p));
+
         return `
         <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 ${isSelectedForBracket ? 'border-[#8B5CF6] ring-2 ring-[#8B5CF6]/20' : (isPub ? 'border-slate-200' : 'border-dashed border-slate-300 opacity-75')} flex flex-col justify-between space-y-4 transition shadow-xs">
           <div class="space-y-3">
-            <!-- Top Row: Event # + Format Badge + Show/Hide Website Toggle + High-Contrast Price Pill -->
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex flex-wrap items-center gap-1.5">
                 <span class="px-2 py-0.5 rounded-md bg-[#0F291E] text-white font-mono text-[10px] font-black" style="background:#0F291E !important;color:#A3E635 !important;">EVENT #${idx + 1}</span>
@@ -7649,12 +7736,12 @@ function clearFieldError(fieldId) {
               </div>
             </div>
 
-            <!-- OPTIONAL DESIGNATED COURTS CONTROLLER (SHOW/HIDE ON SITE + PICK 1, 2, 3, OR 4 COURTS) -->
+            <!-- OPTIONAL DESIGNATED COURTS CONTROLLER -->
             <div class="p-3 rounded-xl bg-white border border-slate-200 space-y-2.5">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                   <span class="text-[10px] font-mono font-extrabold uppercase text-[#0369A1]">🏟️ Designated Courts (${dcList.length} of 4)</span>
-                  <button type="button" onclick="adminToggleShowCourtsOnSite('${pfEscapeHtml(t.id)}')" class="${showCourts ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-2 py-0.5 rounded-md font-mono text-[9px] uppercase transition" title="Optional: Show or hide court badges on the public tournament card">
+                  <button type="button" onclick="adminToggleShowCourtsOnSite('${pfEscapeHtml(t.id)}')" class="${showCourts ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-2 py-0.5 rounded-md font-mono text-[9px] uppercase transition">
                     ${showCourts ? '👁️ Court Badge: Shown' : '🙈 Court Badge: Hidden'}
                   </button>
                 </div>
@@ -7684,24 +7771,33 @@ function clearFieldError(fieldId) {
               </div>
             </div>
 
-            <!-- REGISTERED PLAYERS PREVIEW IN THIS TOURNAMENT -->
-            <div class="p-3 rounded-xl bg-white border border-slate-200 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] font-mono font-extrabold uppercase text-[#5B21B6]">👥 Registered Players &amp; Seeds (${players.length})</span>
-                <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="text-[10px] font-mono font-bold text-[#5B21B6] hover:underline">✏️ Edit Players</button>
+            <!-- REAL REGISTERED PLAYERS PREVIEW (0 FILLERS BY DEFAULT) -->
+            <div class="p-3 rounded-xl bg-white border border-slate-200 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-[10px] font-mono font-extrabold uppercase text-[#5B21B6]">👥 Real Registered Teams: ${regCount} / ${maxCount} (${filledSeeds}/8 Bracket Seeds Filled)</span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="px-2 py-0.5 rounded bg-[#EDE9FE] text-[#5B21B6] font-mono text-[10px] font-extrabold hover:underline">+ Add / Edit Players</button>
+                  ${regCount > 0 ? `<button type="button" onclick="adminClearTournamentPlayersToZero('${pfEscapeHtml(t.id)}')" class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-mono text-[9px] font-bold">Clear to 0</button>` : ''}
+                </div>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-700 font-semibold">
-                ${players.slice(0, 4).map(p => `<div class="truncate">• ${pfEscapeHtml(p)}</div>`).join('')}
-              </div>
-              ${players.length > 4 ? `<div class="text-[10px] font-mono text-slate-500">+ ${players.length - 4} more seeded pairs in bracket</div>` : ''}
+              ${realPreviewList.length === 0 ? `
+                <div class="p-2 rounded-lg bg-emerald-50/70 border border-dashed border-emerald-300 text-[11px] text-emerald-900 font-semibold">
+                  🟢 <b>0 Teams Joined Yet (No Fake Filler Data)</b> — Website honestly displays <b>0 / ${maxCount} Teams</b> &amp; <b>8 Open Bracket Seeds</b> until real community players register or you add them.
+                </div>
+              ` : `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-800 font-bold">
+                  ${realPreviewList.slice(0, 4).map(p => `<div class="truncate">✓ ${pfEscapeHtml(p)}</div>`).join('')}
+                </div>
+                ${realPreviewList.length > 4 ? `<div class="text-[10px] font-mono text-slate-500">+ ${realPreviewList.length - 4} more real teams in bracket</div>` : ''}
+              `}
             </div>
           </div>
 
           <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
-            <span class="px-2.5 py-1 rounded-full bg-white border border-slate-300 text-[10px] font-mono text-slate-800 font-bold">Entries: ${regCount}/${maxCount} • ${pubCount} Shown on Site</span>
+            <span class="px-2.5 py-1 rounded-full bg-white border border-slate-300 text-[10px] font-mono text-slate-800 font-bold">Real Entries: ${regCount}/${maxCount} • ${8 - filledSeeds} Open Seeds</span>
             <div class="flex flex-wrap items-center gap-1.5">
               <button type="button" onclick="adminSelectActiveBracketTournament('${pfEscapeHtml(t.id)}', true)" class="pf-trn-btn-violet px-3 py-1.5 rounded-lg uppercase text-[10px] transition">🏆 Bracket &amp; Scorekeeper</button>
-              <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-royal px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">👥 Players</button>
+              <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-royal px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">👥 Roster (${regCount})</button>
               <button type="button" onclick="adminOpenTournamentEditorModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-secondary px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">✏️ Edit</button>
               <button type="button" onclick="adminDeleteTournament('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-danger px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">🗑️ Delete</button>
             </div>
@@ -7820,12 +7916,11 @@ function clearFieldError(fieldId) {
       adminSelectActiveBracketTournament(trnId, true);
     }
 
-    
     function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath, phaseFilter) {
       const mode = phaseFilter || 'ALL';
       const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : [];
       const getM = (id, fallbackLabel, fallbackCourt) => matches.find(m => m.id === id) || {
-        id, label: fallbackLabel, court: fallbackCourt, teamA: 'TBD', teamB: 'TBD', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
+        id, label: fallbackLabel, court: fallbackCourt, teamA: 'Open Seed — Available', teamB: 'Open Seed — Available', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
       };
 
       const qf1 = getM('QF1', 'Quarterfinal 1', 'Court 1');
@@ -7839,18 +7934,19 @@ function clearFieldError(fieldId) {
       const champName = fin.winner ? (fin.winner === 'A' ? fin.teamA : fin.teamB) : null;
 
       const renderSlot = (teamName, score, isWin, isAwaiting, dir) => {
+        const isOpenSlot = adminIsOpenSeedSlot(teamName);
         const cls = [
           'pf-sym-slot',
           dir === 'right' ? 'dir-right' : 'dir-left',
           isWin ? 'is-winner' : '',
-          isAwaiting ? 'is-awaiting' : ''
+          (isAwaiting || isOpenSlot) ? 'is-awaiting' : ''
         ].filter(Boolean).join(' ');
 
         return `
           <div class="${cls}" title="${pfEscapeHtml(teamName || 'TBD')}">
             <div class="pf-sym-score-box">${Number(score || 0)}</div>
-            <div class="pf-sym-banner-bar">
-              <span class="truncate">${isWin ? '🏆 ' : ''}${pfEscapeHtml(teamName || 'TBD')}</span>
+            <div class="pf-sym-banner-bar" style="${isOpenSlot ? 'border-style:dashed !important;border-color:#64748B !important;' : ''}">
+              <span class="truncate" style="${isOpenSlot ? 'color:#CBD5E1 !important;font-style:italic;' : ''}">${isWin ? '🏆 ' : (isOpenSlot ? '🟢 ' : '')}${pfEscapeHtml(teamName || 'TBD')}</span>
               <span class="pf-sym-diamond"></span>
             </div>
           </div>
@@ -7862,6 +7958,8 @@ function clearFieldError(fieldId) {
         const isDone = m.status === 'COMPLETED';
         const waitA = String(m.teamA || '').startsWith('Winner ');
         const waitB = String(m.teamB || '').startsWith('Winner ');
+        const bothOpen = adminIsOpenSeedSlot(m.teamA) && adminIsOpenSeedSlot(m.teamB);
+        const anyOpen = adminIsOpenSeedSlot(m.teamA) || adminIsOpenSeedSlot(m.teamB);
         const clickAttr = isAdminInteractive
           ? `onclick="adminSelectBracketMatch('${m.id}', true)"`
           : '';
@@ -7869,6 +7967,10 @@ function clearFieldError(fieldId) {
         let statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-extrabold uppercase" style="background:#064E3B !important;color:#A7F3D0 !important;">🟢 Ready</span>`;
         if (isDone) {
           statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#0C4A6E] border border-[#38BDF8] font-mono text-[9px] font-extrabold uppercase" style="background:#0C4A6E !important;color:#BAE6FD !important;">✓ Final</span>`;
+        } else if (bothOpen) {
+          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#64748B] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#BEF264 !important;">🟢 2 Open Slots</span>`;
+        } else if (anyOpen) {
+          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#38BDF8] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#BAE6FD !important;">🟢 1 Open Slot</span>`;
         } else if (isAct || m.status === 'LIVE') {
           statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#A3E635] font-mono text-[9px] font-black uppercase shadow-xs" style="background:#A3E635 !important;color:#05140D !important;">🟣 On Court</span>`;
         } else if (m.status === 'PENDING') {
@@ -7889,7 +7991,6 @@ function clearFieldError(fieldId) {
         `;
       };
 
-      // Center Crest with Proper Generous Spacing (`gap-3.5` + `whitespace-nowrap` on the pill!)
       const centerCrestHtml = `
         <div class="pf-center-crest-wrap">
           <div class="pf-center-court-crest">
@@ -7903,14 +8004,13 @@ function clearFieldError(fieldId) {
         </div>
       `;
 
-      // Focused Phase Slide 1: QUARTERFINALS (1/4 STAGE)
       if (mode === 'QF') {
         return `
           <div class="pf-phase-slide-panel space-y-5 py-2">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               <div class="lg:col-span-5 space-y-4">
                 <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; LEFT BRACKET (COURTS 1 &amp; 2)</span>
+                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; LEFT BRACKET (QF1 &amp; QF2)</span>
                 </div>
                 ${renderMatchNode(qf1, 'left', 'QUARTERFINAL 1 (QF1)')}
                 ${renderMatchNode(qf2, 'left', 'QUARTERFINAL 2 (QF2)')}
@@ -7920,7 +8020,7 @@ function clearFieldError(fieldId) {
               </div>
               <div class="lg:col-span-5 space-y-4">
                 <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; RIGHT BRACKET (COURTS 3 &amp; 4)</span>
+                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; RIGHT BRACKET (QF3 &amp; QF4)</span>
                 </div>
                 ${renderMatchNode(qf3, 'right', 'QUARTERFINAL 3 (QF3)')}
                 ${renderMatchNode(qf4, 'right', 'QUARTERFINAL 4 (QF4)')}
@@ -7930,14 +8030,13 @@ function clearFieldError(fieldId) {
         `;
       }
 
-      // Focused Phase Slide 2: SEMIFINALS (1/2 STAGE — Fixed Spacing Around Center Logo!)
       if (mode === 'SF') {
         return `
           <div class="pf-phase-slide-panel space-y-5 max-w-6xl mx-auto py-3">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               <div class="lg:col-span-5 space-y-4">
                 <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1 (COURT 1)</span>
+                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1 (${pfEscapeHtml(sf1.court || 'Court 1')})</span>
                 </div>
                 ${renderMatchNode(sf1, 'left', 'SEMIFINAL 1 (WINNERS QF1 vs QF2)')}
               </div>
@@ -7946,7 +8045,7 @@ function clearFieldError(fieldId) {
               </div>
               <div class="lg:col-span-5 space-y-4">
                 <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2 (COURT 2)</span>
+                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2 (${pfEscapeHtml(sf2.court || 'Court 2')})</span>
                 </div>
                 ${renderMatchNode(sf2, 'right', 'SEMIFINAL 2 (WINNERS QF3 vs QF4)')}
               </div>
@@ -7995,7 +8094,6 @@ function clearFieldError(fieldId) {
         </div>
       `;
 
-      // Focused Phase Slide 3: GRAND CHAMPIONSHIP FINAL
       if (mode === 'FIN') {
         return `
           <div class="pf-phase-slide-panel space-y-5 py-2">
@@ -8005,12 +8103,9 @@ function clearFieldError(fieldId) {
         `;
       }
 
-      // Default 'ALL': Complete Symmetrical Tree (1/4 -> 1/2 -> Center Crest + Grand Final)
       return `
         <div class="pf-phase-slide-panel space-y-7">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-
-            <!-- FAR LEFT WING: 1/4 QUARTERFINALS (QF1 & QF2) -->
             <div class="lg:col-span-3 space-y-4">
               <div class="text-center mb-1">
                 <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS A &amp; B</span>
@@ -8021,7 +8116,6 @@ function clearFieldError(fieldId) {
               </div>
             </div>
 
-            <!-- INNER LEFT WING: 1/2 SEMIFINAL 1 (SF1) -->
             <div class="lg:col-span-2 space-y-4 relative">
               <div class="text-center mb-1">
                 <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1</span>
@@ -8029,7 +8123,6 @@ function clearFieldError(fieldId) {
               ${renderMatchNode(sf1, 'left', 'SF1')}
             </div>
 
-            <!-- CENTERPIECE: FITTED RECTANGULAR P&F RALLY GROUND COURT CREST (2 COLS FOR GENEROUS BREATHING ROOM!) -->
             <div class="lg:col-span-2 py-3 flex flex-col items-center justify-center">
               ${centerCrestHtml}
               <div class="hidden lg:flex flex-col items-center pt-2">
@@ -8043,7 +8136,6 @@ function clearFieldError(fieldId) {
               </div>
             </div>
 
-            <!-- INNER RIGHT WING: 1/2 SEMIFINAL 2 (SF2) -->
             <div class="lg:col-span-2 space-y-4 relative">
               <div class="text-center mb-1">
                 <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2</span>
@@ -8051,7 +8143,6 @@ function clearFieldError(fieldId) {
               ${renderMatchNode(sf2, 'right', 'SF2')}
             </div>
 
-            <!-- FAR RIGHT WING: 1/4 QUARTERFINALS (QF3 & QF4) -->
             <div class="lg:col-span-3 space-y-4">
               <div class="text-center mb-1">
                 <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS C &amp; D</span>
@@ -8061,7 +8152,6 @@ function clearFieldError(fieldId) {
                 ${renderMatchNode(qf4, 'right', 'QF4')}
               </div>
             </div>
-
           </div>
 
           ${grandFinalCardHtml}
@@ -8148,7 +8238,7 @@ function clearFieldError(fieldId) {
 
       const selEl = document.getElementById('adm-brk-trn-select');
       if (selEl) {
-        selEl.innerHTML = getAdminTournamentsList().map(t => `<option value="${pfEscapeHtml(t.id)}" ${t.id === trn.id ? 'selected' : ''}>${pfEscapeHtml(t.title)} (₱${Number(t.entryFee || 0).toLocaleString()})</option>`).join('');
+        selEl.innerHTML = getAdminTournamentsList().map(t => `<option value="${pfEscapeHtml(t.id)}" ${t.id === trn.id ? 'selected' : ''}>${pfEscapeHtml(t.title)} (${adminCountRealTournamentTeams(t)}/${t.maxTeams || 24} Joined)</option>`).join('');
       }
       const targetPts = Number(trn.scoringTarget || 11);
       const targetEl = document.getElementById('adm-brk-target-select');
@@ -8161,7 +8251,8 @@ function clearFieldError(fieldId) {
       const arenaSubFmt = document.getElementById('adm-arena-sub-format');
       if (arenaSubFmt) arenaSubFmt.textContent = (trn.format || 'OFFICIAL FORMAT').toUpperCase();
       const feePill = document.getElementById('adm-brk-fee-pill');
-      if (feePill) feePill.textContent = `Entry: ₱${Number(trn.entryFee || 0).toLocaleString()} • ${trn.prizePool || ''}`;
+      const realCnt = adminCountRealTournamentTeams(trn);
+      if (feePill) feePill.textContent = `Entry: ₱${Number(trn.entryFee || 0).toLocaleString()} • ${realCnt}/${trn.maxTeams || 24} Teams Joined`;
       const titleEl = document.getElementById('adm-brk-title');
       if (titleEl) titleEl.textContent = trn.title;
       const arenaBannerTitle = document.getElementById('adm-arena-banner-title');
@@ -8171,16 +8262,21 @@ function clearFieldError(fieldId) {
 
       const playersStrip = document.getElementById('adm-brk-players-strip');
       if (playersStrip) {
-        playersStrip.innerHTML = (trn.players || []).map((pName, idx) => `
-          <div onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(trn.id)}')" class="cursor-pointer p-2.5 rounded-xl bg-white border border-slate-200 hover:border-[#8B5CF6] flex items-center gap-2 shadow-2xs transition">
-            <span class="w-6 h-6 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-extrabold flex items-center justify-center flex-shrink-0" style="background:#0F291E !important;color:#FFFFFF !important;">#${idx + 1}</span>
-            <span class="font-bold text-slate-900 truncate">${pfEscapeHtml(pName)}</span>
-          </div>
-        `).join('');
+        playersStrip.innerHTML = (trn.players || []).map((pName, idx) => {
+          const isOpen = adminIsOpenSeedSlot(pName);
+          const seedNum = ADMIN_SEED_SLOT_NUMBERS[idx] || (idx + 1);
+          return `
+            <div onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(trn.id)}')" class="cursor-pointer p-2.5 rounded-xl ${isOpen ? 'bg-slate-50 border border-dashed border-slate-300 text-slate-500' : 'bg-white border-2 border-[#15803D] text-slate-900'} hover:border-[#8B5CF6] flex items-center gap-2 shadow-2xs transition">
+              <span class="w-6 h-6 rounded-lg ${isOpen ? 'bg-slate-200 text-slate-700' : 'bg-[#0F291E] text-white'} font-mono text-[10px] font-extrabold flex items-center justify-center flex-shrink-0" style="${isOpen ? '' : 'background:#0F291E !important;color:#FFFFFF !important;'}">#${seedNum}</span>
+              <span class="font-bold truncate">${pfEscapeHtml(pName)}</span>
+            </div>
+          `;
+        }).join('');
       }
 
       const stagesGrid = document.getElementById('adm-brk-stages-grid');
-      const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : adminBuildBracketForPlayers(trn.players);
+      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : adminBuildBracketForPlayers(trn.players, dc);
       trn.bracket = matches;
       const doneCount = matches.filter(m => m.status === 'COMPLETED').length;
       const progPill = document.getElementById('adm-brk-progress-pill');
@@ -8192,7 +8288,6 @@ function clearFieldError(fieldId) {
         stagesGrid.innerHTML = phBar + pfBuildSymmetricalBracketTreeHtml(trn, adminActiveBracketMatchId, true, '../assets/logo.png', curPh.key);
       }
 
-      // Render Quick Match Switcher Pills in Pro Scoring Portal (High-Contrast Locked Classes)
       const quickPills = document.getElementById('adm-sk-quick-match-pills');
       if (quickPills) {
         quickPills.innerHTML = matches.map(m => {
@@ -8255,7 +8350,6 @@ function clearFieldError(fieldId) {
           }
         }
 
-        // Game Point / Match Point Alert
         const ptAlert = document.getElementById('adm-sk-point-alert');
         if (ptAlert) {
           const scA = Number(activeM.scoreA || 0);
@@ -8428,7 +8522,7 @@ function clearFieldError(fieldId) {
       openDeleteConfirmModal({
         title: `Shuffle All 8 Seeds in ${trn.title}?`,
         itemName: trn.title,
-        extraInfo: 'This will randomly re-seed all 8 player pairs across Quarterfinals 1–4 and reset match scores to 0 – 0.',
+        extraInfo: 'This will randomly re-seed all 8 bracket slots across Quarterfinals 1–4 and reset match scores to 0 – 0.',
         onConfirm: async () => {
           const shuffled = [...(trn.players || [])];
           for (let i = shuffled.length - 1; i > 0; i--) {
@@ -8436,7 +8530,8 @@ function clearFieldError(fieldId) {
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
           }
           trn.players = shuffled;
-          trn.bracket = adminBuildBracketForPlayers(shuffled);
+          const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+          trn.bracket = adminBuildBracketForPlayers(shuffled, dc);
           adminActiveBracketMatchId = 'QF1';
           await saveAndSyncAdminTournaments(`🔀 Shuffled 8 seeds for "${trn.title}"!`);
         }
@@ -8449,13 +8544,111 @@ function clearFieldError(fieldId) {
       openDeleteConfirmModal({
         title: `Reset Entire Bracket for ${trn.title}?`,
         itemName: trn.title,
-        extraInfo: 'All Quarterfinal, Semifinal, and Final match scores will be reset to 0 – 0 while keeping your registered player names.',
+        extraInfo: 'All Quarterfinal, Semifinal, and Final match scores will be reset to 0 – 0 while keeping your current bracket seed slots.',
         onConfirm: async () => {
-          trn.bracket = adminBuildBracketForPlayers(trn.players);
+          const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+          trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
           adminActiveBracketMatchId = 'QF1';
-          await saveAndSyncAdminTournaments(`↺ Reset bracket for "${trn.title}"!`);
+          await saveAndSyncAdminTournaments(`↺ Reset bracket scores for "${trn.title}"!`);
         }
       });
+    }
+
+    async function adminClearTournamentPlayersToZero(trnId) {
+      const list = getAdminTournamentsList();
+      const trn = trnId ? list.find(t => t.id === trnId) : getActiveAdminBracketTournament();
+      if (!trn) return;
+      trn.players = [...ADMIN_OPEN_SEED_LABELS];
+      trn.registrations = [];
+      trn.registeredCount = 0;
+      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
+      const modal = document.getElementById('admin-trn-players-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        adminOpenTournamentPlayersModal(trn.id);
+      }
+      await saveAndSyncAdminTournaments(`🧹 Cleared "${trn.title}" to 0 players (All 8 seeds are now Open)!`);
+    }
+
+    async function adminLoadDemoTournamentPlayers(trnId) {
+      const list = getAdminTournamentsList();
+      const trn = trnId ? list.find(t => t.id === trnId) : getActiveAdminBracketTournament();
+      if (!trn) return;
+      trn.players = [...DEMO_SAMPLE_TOURNAMENT_PLAYERS];
+      trn.registeredCount = 8;
+      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
+      const modal = document.getElementById('admin-trn-players-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        adminOpenTournamentPlayersModal(trn.id);
+      }
+      await saveAndSyncAdminTournaments(`🧪 Loaded 8 demo test pairs into "${trn.title}" (Click "Clear All to 0" anytime to reset)!`);
+    }
+
+    async function adminQuickAddRealTeamToTournament() {
+      const trn = getActiveAdminBracketTournament();
+      if (!trn) return;
+      const p1 = (document.getElementById('adm-quick-add-p1')?.value || '').trim();
+      const p2 = (document.getElementById('adm-quick-add-p2')?.value || '').trim();
+      const ph = (document.getElementById('adm-quick-add-phone')?.value || '').trim();
+      const dv = (document.getElementById('adm-quick-add-div')?.value || 'Intermediate 3.5').trim();
+      if (!p1) {
+        alert('Please enter Player 1 / Team Name.');
+        return;
+      }
+      const pairLabel = p2 ? `${p1} & ${p2}` : p1;
+      if (!Array.isArray(trn.players) || trn.players.length < 8) trn.players = [...ADMIN_OPEN_SEED_LABELS];
+      if (!Array.isArray(trn.registrations)) trn.registrations = [];
+
+      const openIdx = trn.players.findIndex(p => adminIsOpenSeedSlot(p));
+      const seedNum = openIdx >= 0 ? (ADMIN_SEED_SLOT_NUMBERS[openIdx] || (openIdx + 1)) : (trn.registrations.length + 1);
+      const bracketLabel = `Seed #${seedNum} • ${pairLabel} (${dv})`;
+      if (openIdx >= 0) {
+        trn.players[openIdx] = bracketLabel;
+        const slotInp = document.getElementById('adm-trn-player-inp-' + openIdx);
+        if (slotInp) slotInp.value = bracketLabel;
+      }
+      trn.registrations.push({
+        id: 'ADM-ENT-' + Date.now().toString().slice(-5),
+        teamName: pairLabel,
+        player1: p1,
+        partner: p2 || 'N/A',
+        phone: ph || 'Walk-In / Desk',
+        division: dv,
+        paymentMethod: 'Desk / Verified',
+        paymentRef: 'ADMIN-VERIFIED',
+        status: 'CONFIRMED',
+        seedNumber: seedNum,
+        registeredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      trn.registeredCount = adminCountRealTournamentTeams(trn);
+      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
+
+      document.getElementById('adm-quick-add-p1').value = '';
+      document.getElementById('adm-quick-add-p2').value = '';
+      document.getElementById('adm-quick-add-phone').value = '';
+
+      adminOpenTournamentPlayersModal(trn.id);
+      await saveAndSyncAdminTournaments(`✅ Added "${pairLabel}" as Seed #${seedNum} (${trn.registeredCount}/${trn.maxTeams || 24} Teams)!`);
+    }
+
+    async function adminRemoveSingleRegistration(regId) {
+      const trn = getActiveAdminBracketTournament();
+      if (!trn || !Array.isArray(trn.registrations)) return;
+      const targetReg = trn.registrations.find(r => r.id === regId);
+      trn.registrations = trn.registrations.filter(r => r.id !== regId);
+      if (targetReg && Array.isArray(trn.players)) {
+        trn.players = trn.players.map((p, idx) => {
+          if (p.includes(targetReg.teamName)) return ADMIN_OPEN_SEED_LABELS[idx] || `Open Seed #${idx + 1} — Available`;
+          return p;
+        });
+      }
+      trn.registeredCount = adminCountRealTournamentTeams(trn);
+      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
+      adminOpenTournamentPlayersModal(trn.id);
+      await saveAndSyncAdminTournaments(`🗑️ Removed entrant from "${trn.title}"`);
     }
 
     function adminOpenTournamentPlayersModal(trnId) {
@@ -8469,33 +8662,99 @@ function clearFieldError(fieldId) {
         modal.className = 'fixed inset-0 z-[96] hidden flex items-center justify-center p-4';
         modal.innerHTML = `
           <div onclick="document.getElementById('admin-trn-players-modal').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-          <div class="relative z-10 w-full max-w-2xl rounded-3xl bg-white text-slate-900 border-2 border-slate-300 p-6 shadow-2xl space-y-4 max-h-[90dvh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div class="relative z-10 w-full max-w-3xl rounded-3xl bg-white text-slate-900 border-2 border-slate-300 p-6 shadow-2xl space-y-4 max-h-[92dvh] overflow-y-auto">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
               <div>
-                <span class="text-[10px] font-mono font-black uppercase text-[#5B21B6] block">👥 REGISTERED PLAYERS &amp; SEEDING ROSTER</span>
-                <h4 id="adm-trn-players-heading" class="text-base sm:text-lg font-black uppercase text-slate-900">Edit Tournament Players</h4>
+                <span class="text-[10px] font-mono font-black uppercase text-[#5B21B6] block">👥 OFFICIAL COMMUNITY ROSTER &amp; 8 BRACKET SEEDS MANAGER</span>
+                <h4 id="adm-trn-players-heading" class="text-base sm:text-lg font-black uppercase text-slate-900">Manage Tournament Players</h4>
               </div>
-              <button type="button" onclick="document.getElementById('admin-trn-players-modal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs">✕</button>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="adminClearTournamentPlayersToZero()" class="pf-trn-btn-danger px-3 py-1.5 rounded-xl font-mono text-[10px] uppercase">🧹 Clear All to 0 Players</button>
+                <button type="button" onclick="adminLoadDemoTournamentPlayers()" class="pf-trn-btn-secondary px-3 py-1.5 rounded-xl font-mono text-[10px] uppercase">🧪 Load 8 Demo Pairs (Test)</button>
+                <button type="button" onclick="document.getElementById('admin-trn-players-modal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs">✕</button>
+              </div>
             </div>
-            <p class="text-xs text-slate-600">Enter the player or doubles pair names for each of the 8 bracket seeds below. Saving updates both the public tournament card and the Quarterfinal bracket matchups.</p>
-            <div id="adm-trn-players-inputs" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs"></div>
+
+            <!-- Quick Add Real Walk-In / Verified Entrant Form -->
+            <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2.5 text-xs">
+              <div class="font-mono text-[10px] font-black uppercase text-emerald-900">+ Add Real Registered Player / Doubles Pair (Auto-Assigns Next Open Seed):</div>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+                <div class="sm:col-span-3">
+                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Player 1 Name *</label>
+                  <input type="text" id="adm-quick-add-p1" placeholder="e.g. Juan Dela Cruz" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
+                </div>
+                <div class="sm:col-span-3">
+                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Partner / Squad</label>
+                  <input type="text" id="adm-quick-add-p2" placeholder="e.g. Carlo Reyes" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Phone</label>
+                  <input type="text" id="adm-quick-add-phone" placeholder="0917..." class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-mono text-slate-900">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Division</label>
+                  <input type="text" id="adm-quick-add-div" value="Intermediate 3.5" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
+                </div>
+                <div class="sm:col-span-2">
+                  <button type="button" onclick="adminQuickAddRealTeamToTournament()" class="pf-trn-btn-emerald w-full py-1.5 px-2.5 rounded-lg font-mono text-[10px] uppercase">+ Add Team</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Community Entrants Log -->
+            <div id="adm-trn-real-registrations-box" class="space-y-2 text-xs"></div>
+
+            <!-- 8 Bracket Seed Slots -->
+            <div>
+              <div class="text-[10px] font-mono font-extrabold uppercase text-slate-600 mb-2">8 Championship Bracket Seed Slots (Leave as "Open Seed #X — Available" for unfilled slots):</div>
+              <div id="adm-trn-players-inputs" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs"></div>
+            </div>
+
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
               <button type="button" onclick="document.getElementById('admin-trn-players-modal').classList.add('hidden')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold uppercase text-xs">Cancel</button>
-              <button type="button" onclick="adminSaveTournamentPlayersFromModal()" class="px-5 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black uppercase text-xs shadow-md" style="color:#FFFFFF !important;">💾 Save Players &amp; Update Bracket</button>
+              <button type="button" onclick="adminSaveTournamentPlayersFromModal()" class="px-5 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black uppercase text-xs shadow-md" style="color:#FFFFFF !important;">💾 Save Roster &amp; Update Bracket</button>
             </div>
           </div>
         `;
         document.body.appendChild(modal);
       }
-      document.getElementById('adm-trn-players-heading').textContent = `Players & Seeds: ${trn.title}`;
+      const realCnt = adminCountRealTournamentTeams(trn);
+      document.getElementById('adm-trn-players-heading').textContent = `${trn.title} (${realCnt} / ${trn.maxTeams || 24} Real Teams Joined)`;
+
+      const regBox = document.getElementById('adm-trn-real-registrations-box');
+      const regs = Array.isArray(trn.registrations) ? trn.registrations : [];
+      if (regBox) {
+        if (regs.length === 0) {
+          regBox.innerHTML = `<div class="p-3 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-600 text-xs font-semibold">🟢 <b>0 Online Registrations Yet</b> — When players register on the website (or you add them above), their full name, partner, mobile number, division, and GCash/Maya reference number appear here automatically.</div>`;
+        } else {
+          regBox.innerHTML = `
+            <div class="font-mono text-[10px] font-black uppercase text-[#0F291E]">📋 Verified Community Entrants (${regs.length}):</div>
+            <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+              ${regs.map((r, i) => `
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span class="font-black text-slate-900">#${i + 1} ${pfEscapeHtml(r.teamName)}</span>
+                    <span class="text-[11px] font-mono text-slate-600 ml-2">📞 ${pfEscapeHtml(r.phone)} • ${pfEscapeHtml(r.division)} • ${pfEscapeHtml(r.paymentMethod)} (Ref: ${pfEscapeHtml(r.paymentRef)})</span>
+                  </div>
+                  <button type="button" onclick="adminRemoveSingleRegistration('${pfEscapeHtml(r.id)}')" class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-mono text-[10px] font-bold">✕ Remove</button>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+      }
+
       const inputsWrap = document.getElementById('adm-trn-players-inputs');
-      const players = Array.isArray(trn.players) && trn.players.length >= 8 ? trn.players : DEFAULT_ADMIN_TOURNAMENTS[0].players;
-      inputsWrap.innerHTML = players.slice(0, 8).map((pName, idx) => `
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Bracket Slot #${idx + 1} (QF${Math.floor(idx / 2) + 1})</label>
-          <input type="text" id="adm-trn-player-inp-${idx}" value="${pfEscapeHtml(pName)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-bold focus:outline-none focus:border-emerald-600">
-        </div>
-      `).join('');
+      const players = Array.isArray(trn.players) && trn.players.length >= 8 ? trn.players : [...ADMIN_OPEN_SEED_LABELS];
+      inputsWrap.innerHTML = players.slice(0, 8).map((pName, idx) => {
+        const seedNum = ADMIN_SEED_SLOT_NUMBERS[idx] || (idx + 1);
+        return `
+          <div>
+            <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Seed #${seedNum} Slot (QF${Math.floor(idx / 2) + 1})</label>
+            <input type="text" id="adm-trn-player-inp-${idx}" value="${pfEscapeHtml(pName)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-bold focus:outline-none focus:border-emerald-600">
+          </div>
+        `;
+      }).join('');
       modal.classList.remove('hidden');
     }
 
@@ -8505,28 +8764,31 @@ function clearFieldError(fieldId) {
       const updatedPlayers = [];
       for (let i = 0; i < 8; i++) {
         const inp = document.getElementById('adm-trn-player-inp-' + i);
-        const val = inp && inp.value.trim() ? inp.value.trim() : `Seed #${i + 1} Pair`;
+        const seedNum = ADMIN_SEED_SLOT_NUMBERS[i] || (i + 1);
+        const val = inp && inp.value.trim() ? inp.value.trim() : `Open Seed #${seedNum} — Available`;
         updatedPlayers.push(val);
       }
       trn.players = updatedPlayers;
-      trn.bracket = adminBuildBracketForPlayers(updatedPlayers);
+      trn.registeredCount = adminCountRealTournamentTeams(trn);
+      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      trn.bracket = adminBuildBracketForPlayers(updatedPlayers, dc);
       const modal = document.getElementById('admin-trn-players-modal');
       if (modal) modal.classList.add('hidden');
-      await saveAndSyncAdminTournaments(`👥 Saved 8 player pairs & updated bracket for "${trn.title}"!`);
+      await saveAndSyncAdminTournaments(`👥 Saved roster (${trn.registeredCount} real teams) & updated bracket for "${trn.title}"!`);
     }
 
     function adminResetDefaultTournaments() {
       openDeleteConfirmModal({
-        title: 'Restore 4 Default Pickleball Tournament Formats?',
-        itemName: 'Official Club Tournament Lineup (4 Formats)',
-        extraInfo: 'This will restore the 4 official Pickleball tournaments with their default entry fees, player rosters, and brackets.',
+        title: 'Restore Default Tournament Lineup (0 Fake Players • Show 1 Event)?',
+        itemName: 'Official Club Tournament Lineup (Clean 0-Player Start)',
+        extraInfo: 'This restores the 4 official Pickleball tournaments with 0 fake filler players (all 8 bracket seeds Open & Available) and shows Event #1 by default.',
         onConfirm: async () => {
           if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
           currentSiteConfig.tournaments = JSON.parse(JSON.stringify(DEFAULT_ADMIN_TOURNAMENTS));
           currentSiteConfig.tournamentsPublishedOnHome = true;
           adminActiveBracketTrnId = currentSiteConfig.tournaments[0].id;
           adminActiveBracketMatchId = 'QF1';
-          await saveAndSyncAdminTournaments('🏆 Restored all 4 official Pickleball Tournament formats, player rosters & brackets!');
+          await saveAndSyncAdminTournaments('🏆 Restored clean tournament lineup (0 fake players, all seeds open)!');
         }
       });
     }
@@ -8636,7 +8898,7 @@ function clearFieldError(fieldId) {
         fmtSel.value = curFmt;
       }
       document.getElementById('adm-trn-division').value = existing ? (existing.division || 'Open Doubles & Mixed Divisions') : 'Open Doubles & Mixed Divisions';
-      document.getElementById('adm-trn-courts').value = existing ? (existing.courts || 'All 4 Pro Covered Courts (Courts 1 – 4)') : 'All 4 Pro Covered Courts (Courts 1 – 4)';
+      document.getElementById('adm-trn-courts').value = existing ? (existing.courts || 'All 4 Courts (Courts 1 – 4)') : 'All 4 Courts (Courts 1 – 4)';
       document.getElementById('adm-trn-date').value = existing ? existing.date : '2026-11-25';
       document.getElementById('adm-trn-time').value = existing ? existing.time : '08:00 AM – 05:00 PM';
       document.getElementById('adm-trn-fee').value = existing ? String(existing.entryFee ?? 500) : '500';
@@ -8655,20 +8917,26 @@ function clearFieldError(fieldId) {
       }
       const list = getAdminTournamentsList();
       const existing = editId ? list.find(t => t.id === editId) : null;
-      const defaultPlayers = existing && Array.isArray(existing.players) ? existing.players : JSON.parse(JSON.stringify(DEFAULT_ADMIN_TOURNAMENTS[0].players));
-      const defaultBracket = existing && Array.isArray(existing.bracket) ? existing.bracket : adminBuildBracketForPlayers(defaultPlayers);
+      const defaultPlayers = existing && Array.isArray(existing.players) ? existing.players : [...ADMIN_OPEN_SEED_LABELS];
+      const dc = existing && Array.isArray(existing.designatedCourts) ? existing.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      const defaultBracket = existing && Array.isArray(existing.bracket) ? existing.bracket : adminBuildBracketForPlayers(defaultPlayers, dc);
+      const registrations = existing && Array.isArray(existing.registrations) ? existing.registrations : [];
       const updatedItem = {
         id: existing ? existing.id : ('trn-' + Date.now()),
         title: title,
         format: (document.getElementById('adm-trn-format')?.value || 'Round Robin + Medal Playoffs').trim(),
         division: (document.getElementById('adm-trn-division')?.value || 'Open Doubles & Mixed Divisions').trim(),
         courts: (document.getElementById('adm-trn-courts')?.value || 'All 4 Courts (Courts 1 – 4)').trim(),
+        designatedCourts: dc,
+        showCourtsOnSite: existing ? (existing.showCourtsOnSite !== false) : true,
+        published: existing ? (existing.published !== false) : true,
         date: (document.getElementById('adm-trn-date')?.value || '2026-11-25').trim(),
         time: (document.getElementById('adm-trn-time')?.value || '08:00 AM – 05:00 PM').trim(),
         entryFee: Math.max(0, Number(document.getElementById('adm-trn-fee')?.value) || 0),
         maxTeams: Math.max(2, Number(document.getElementById('adm-trn-max')?.value) || 24),
         prizePool: (document.getElementById('adm-trn-prize')?.value || '₱20,000 Cash + Trophies').trim(),
-        registeredCount: existing ? Number(existing.registeredCount || defaultPlayers.length) : defaultPlayers.length,
+        registrations: registrations,
+        registeredCount: adminCountRealTournamentTeams({ players: defaultPlayers, registrations }),
         approved: existing ? Boolean(existing.approved !== false) : true,
         scoringTarget: existing ? Number(existing.scoringTarget || 11) : 11,
         players: defaultPlayers,

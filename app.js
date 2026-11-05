@@ -4732,19 +4732,57 @@ window.pfRenderOpenPlay24Board = pfRenderOpenPlay24Board;
 
 
 // ================= PICKLEBALL TOURNAMENT HUB & REGISTRATION ENGINE =================
-function pfBuildDefaultBracketForPlayers(players) {
-  const p = (Array.isArray(players) && players.length >= 8) ? players : [
-    'Seed #1 • Team 1', 'Seed #8 • Team 8', 'Seed #4 • Team 4', 'Seed #5 • Team 5',
-    'Seed #2 • Team 2', 'Seed #7 • Team 7', 'Seed #3 • Team 3', 'Seed #6 • Team 6'
-  ];
+const PF_OPEN_SEED_LABELS = [
+  'Open Seed #1 — Available',
+  'Open Seed #8 — Available',
+  'Open Seed #4 — Available',
+  'Open Seed #5 — Available',
+  'Open Seed #2 — Available',
+  'Open Seed #7 — Available',
+  'Open Seed #3 — Available',
+  'Open Seed #6 — Available'
+];
+const PF_SEED_SLOT_NUMBERS = [1, 8, 4, 5, 2, 7, 3, 6];
+
+function pfIsOpenSeedSlot(str) {
+  const s = String(str || '').trim();
+  if (!s) return true;
+  return /^(Open Seed|Open Slot|Available|Empty|TBD|Waiting|Slot #\d+\s*[—\-]\s*Open)/i.test(s);
+}
+window.pfIsOpenSeedSlot = pfIsOpenSeedSlot;
+
+function pfCountFilledBracketSeeds(players) {
+  if (!Array.isArray(players)) return 0;
+  return players.filter(p => !pfIsOpenSeedSlot(p)).length;
+}
+window.pfCountFilledBracketSeeds = pfCountFilledBracketSeeds;
+
+function pfCountRealTournamentTeams(t) {
+  if (!t) return 0;
+  const regs = Array.isArray(t.registrations) ? t.registrations : [];
+  const filledSeeds = pfCountFilledBracketSeeds(t.players);
+  if (regs.length === 0 && filledSeeds === 0) return 0;
+  return Math.max(regs.length, filledSeeds);
+}
+window.pfCountRealTournamentTeams = pfCountRealTournamentTeams;
+
+function pfBuildDefaultBracketForPlayers(players, courts) {
+  const p = (Array.isArray(players) && players.length >= 8) ? players : [...PF_OPEN_SEED_LABELS];
+  const c = (Array.isArray(courts) && courts.length > 0) ? courts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+  const getMatchStatus = (teamA, teamB, isFirst) => {
+    const openA = pfIsOpenSeedSlot(teamA);
+    const openB = pfIsOpenSeedSlot(teamB);
+    if (!openA && !openB) return isFirst ? 'LIVE' : 'READY';
+    return 'PENDING';
+  };
   return [
-    { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: 'Court 1', teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, status: 'LIVE', winner: null },
-    { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: 'Court 2', teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, status: 'READY', winner: null },
-    { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: 'Court 3', teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, status: 'READY', winner: null },
-    { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: 'Court 4', teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, status: 'READY', winner: null },
-    { id: 'SF1', stage: 'Semifinals', label: 'Semifinal 1', court: 'Court 1', teamA: 'Winner QF1', teamB: 'Winner QF2', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null },
-    { id: 'SF2', stage: 'Semifinals', label: 'Semifinal 2', court: 'Court 2', teamA: 'Winner QF3', teamB: 'Winner QF4', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null },
-    { id: 'FIN', stage: 'Championship Final', label: 'Gold Medal Final', court: 'Court 1', teamA: 'Winner SF1', teamB: 'Winner SF2', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null }
+    { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: c[0 % c.length], teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[0], p[1], true), winner: null },
+    { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: c[1 % c.length], teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[2], p[3], false), winner: null },
+    { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: c[2 % c.length], teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[4], p[5], false), winner: null },
+    { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: c[3 % c.length], teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[6], p[7], false), winner: null },
+    { id: 'SF1', stage: 'Semifinals', label: 'Semifinal 1', court: c[0 % c.length], teamA: 'Winner QF1', teamB: 'Winner QF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
+    { id: 'SF2', stage: 'Semifinals', label: 'Semifinal 2', court: c[1 % c.length], teamA: 'Winner QF3', teamB: 'Winner QF4', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
+    { id: 'FIN', stage: 'Championship Final', label: 'Gold Medal Final', court: c[0 % c.length], teamA: 'Winner SF1', teamB: 'Winner SF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null }
   ];
 }
 
@@ -4760,10 +4798,17 @@ function pfGetDefaultTournaments() {
     "date": "2026-11-21",
     "time": "08:00 AM – 05:00 PM",
     "courts": "All 4 Courts (Courts 1 – 4)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 850,
     "prizePool": "₱25,000 + Trophies & Official DUPR Submission",
     "maxTeams": 24,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
     "published": true,
     "showCourtsOnSite": true,
@@ -4771,14 +4816,14 @@ function pfGetDefaultTournaments() {
     "status": "OPEN FOR REGISTRATION",
     "description": "Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 – 4.",
     "players": [
-      "Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)",
-      "Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)",
-      "Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)",
-      "Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)",
-      "Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)",
-      "Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)",
-      "Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)",
-      "Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -4786,15 +4831,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)",
-        "teamB": "Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -4802,15 +4847,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)",
-        "teamB": "Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -4818,15 +4863,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)",
-        "teamB": "Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -4834,15 +4879,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)",
-        "teamB": "Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -4905,10 +4950,17 @@ function pfGetDefaultTournaments() {
     "date": "2026-11-14",
     "time": "05:00 PM – 09:00 PM",
     "courts": "4 Courts (Challenger to Crown Court)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 350,
     "prizePool": "₱6,000 Cash + Carbon Pro Paddle & Medals",
     "maxTeams": 24,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
     "published": false,
     "showCourtsOnSite": true,
@@ -4916,14 +4968,14 @@ function pfGetDefaultTournaments() {
     "status": "OPEN FOR REGISTRATION",
     "description": "Play 12-minute timed ladder rounds across Courts 1 – 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!",
     "players": [
-      "Seed #1 • Carlo Imperial & Sofia Locsin",
-      "Seed #8 • Ryan Beltran & Hannah Gomez",
-      "Seed #4 • Jerome Uy & Camille Chua",
-      "Seed #5 • Patrick Go & Denise Ramos",
-      "Seed #2 • Lance Vergara & Nina Pineda",
-      "Seed #7 • Mark Tolentino & Alyssa Cruz",
-      "Seed #3 • Adrian Dizon & Kyla Bautista",
-      "Seed #6 • Christian Sy & Mica Mendoza"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -4931,15 +4983,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Carlo Imperial & Sofia Locsin",
-        "teamB": "Seed #8 • Ryan Beltran & Hannah Gomez",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -4947,15 +4999,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Jerome Uy & Camille Chua",
-        "teamB": "Seed #5 • Patrick Go & Denise Ramos",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -4963,15 +5015,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Lance Vergara & Nina Pineda",
-        "teamB": "Seed #7 • Mark Tolentino & Alyssa Cruz",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -4979,15 +5031,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Adrian Dizon & Kyla Bautista",
-        "teamB": "Seed #6 • Christian Sy & Mica Mendoza",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5050,23 +5102,32 @@ function pfGetDefaultTournaments() {
     "date": "2026-11-28",
     "time": "09:00 AM – 06:00 PM",
     "courts": "All 4 Courts (Courts 1 – 4)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 2000,
     "prizePool": "₱18,000 Cash + Club Championship Banner",
     "maxTeams": 12,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
+    "published": false,
+    "showCourtsOnSite": true,
     "scoringTarget": 21,
     "status": "OPEN FOR REGISTRATION",
     "description": "Major League Pickleball 4-player squad format! Each clash features Women's Doubles, Men's Doubles, and Mixed Doubles to 21 points (rally scoring) plus Dreambreaker tiebreak.",
     "players": [
-      "Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)",
-      "Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)",
-      "Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)",
-      "Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)",
-      "Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)",
-      "Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)",
-      "Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)",
-      "Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -5074,15 +5135,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)",
-        "teamB": "Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5090,15 +5151,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)",
-        "teamB": "Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5106,15 +5167,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)",
-        "teamB": "Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5122,15 +5183,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)",
-        "teamB": "Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5193,10 +5254,17 @@ function pfGetDefaultTournaments() {
     "date": "2026-12-03",
     "time": "08:00 AM – 04:00 PM",
     "courts": "All 4 Courts (Courts 1 – 4)",
+    "designatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
     "entryFee": 600,
     "prizePool": "₱15,000 Cash + Official Championship Medals",
     "maxTeams": 24,
-    "registeredCount": 8,
+    "registeredCount": 0,
+    "registrations": [],
     "approved": true,
     "published": false,
     "showCourtsOnSite": true,
@@ -5204,14 +5272,14 @@ function pfGetDefaultTournaments() {
     "status": "OPEN FOR REGISTRATION",
     "description": "Full USA Pickleball Championship Bracket across Courts 1 – 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.",
     "players": [
-      "Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)",
-      "Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)",
-      "Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)",
-      "Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)",
-      "Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)",
-      "Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)",
-      "Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)",
-      "Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)"
+      "Open Seed #1 — Available",
+      "Open Seed #8 — Available",
+      "Open Seed #4 — Available",
+      "Open Seed #5 — Available",
+      "Open Seed #2 — Available",
+      "Open Seed #7 — Available",
+      "Open Seed #3 — Available",
+      "Open Seed #6 — Available"
     ],
     "bracket": [
       {
@@ -5219,15 +5287,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 1",
         "court": "Court 1",
-        "teamA": "Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)",
-        "teamB": "Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)",
+        "teamA": "Open Seed #1 — Available",
+        "teamB": "Open Seed #8 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "LIVE",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5235,15 +5303,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 2",
         "court": "Court 2",
-        "teamA": "Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)",
-        "teamB": "Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)",
+        "teamA": "Open Seed #4 — Available",
+        "teamB": "Open Seed #5 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5251,15 +5319,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 3",
         "court": "Court 3",
-        "teamA": "Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)",
-        "teamB": "Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)",
+        "teamA": "Open Seed #2 — Available",
+        "teamB": "Open Seed #7 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5267,15 +5335,15 @@ function pfGetDefaultTournaments() {
         "stage": "Quarterfinals",
         "label": "Quarterfinal 4",
         "court": "Court 4",
-        "teamA": "Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)",
-        "teamB": "Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)",
+        "teamA": "Open Seed #3 — Available",
+        "teamB": "Open Seed #6 — Available",
         "scoreA": 0,
         "scoreB": 0,
         "serverSide": "A",
         "serverNum": 2,
         "toA": 2,
         "toB": 2,
-        "status": "READY",
+        "status": "PENDING",
         "winner": null
       },
       {
@@ -5339,9 +5407,17 @@ function pfGetTournamentsList() {
   if (Array.isArray(cfg.tournaments) && cfg.tournaments.length > 0) {
     return cfg.tournaments.map((t, idx) => {
       const defMatch = defaults.find(d => d.id === t.id) || defaults[idx % defaults.length];
-      const players = (Array.isArray(t.players) && t.players.length > 0) ? t.players : (defMatch ? defMatch.players : []);
-      const bracket = (Array.isArray(t.bracket) && t.bracket.length > 0) ? t.bracket : pfBuildDefaultBracketForPlayers(players);
-      return Object.assign({}, defMatch || {}, t, { players, bracket });
+      const players = (Array.isArray(t.players) && t.players.length >= 8) ? t.players : [...PF_OPEN_SEED_LABELS];
+      const dc = (Array.isArray(t.designatedCourts) && t.designatedCourts.length > 0) ? t.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      const bracket = (Array.isArray(t.bracket) && t.bracket.length >= 7) ? t.bracket : pfBuildDefaultBracketForPlayers(players, dc);
+      const registrations = Array.isArray(t.registrations) ? t.registrations : [];
+      const realCnt = pfCountRealTournamentTeams({ players, registrations });
+      return Object.assign({}, defMatch || {}, t, {
+        players,
+        bracket,
+        registrations,
+        registeredCount: realCnt
+      });
     });
   }
   return defaults;
@@ -5349,13 +5425,6 @@ function pfGetTournamentsList() {
 
 function pfSetTournamentFilter(filterKey) {
   activePublicTournamentFilter = filterKey || 'ALL';
-  document.querySelectorAll('.pf-trn-filter-btn').forEach(btn => {
-    if (btn.dataset.filter === activePublicTournamentFilter) {
-      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-[#0F291E] text-white font-black text-xs uppercase tracking-wider transition shadow-md';
-    } else {
-      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:text-slate-900 border border-slate-300 font-bold text-xs uppercase tracking-wider transition';
-    }
-  });
   pfRenderPublicTournaments();
 }
 
@@ -5378,254 +5447,255 @@ function pfRenderLiveSpectatorBracketBanner() {
   }
 }
 
+function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath, phaseFilter) {
+  const mode = phaseFilter || 'ALL';
+  const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : [];
+  const getM = (id, fallbackLabel, fallbackCourt) => matches.find(m => m.id === id) || {
+    id, label: fallbackLabel, court: fallbackCourt, teamA: 'Open Seed — Available', teamB: 'Open Seed — Available', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
+  };
 
-    function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath, phaseFilter) {
-      const mode = phaseFilter || 'ALL';
-      const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : [];
-      const getM = (id, fallbackLabel, fallbackCourt) => matches.find(m => m.id === id) || {
-        id, label: fallbackLabel, court: fallbackCourt, teamA: 'TBD', teamB: 'TBD', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
-      };
+  const qf1 = getM('QF1', 'Quarterfinal 1', 'Court 1');
+  const qf2 = getM('QF2', 'Quarterfinal 2', 'Court 2');
+  const qf3 = getM('QF3', 'Quarterfinal 3', 'Court 3');
+  const qf4 = getM('QF4', 'Quarterfinal 4', 'Court 4');
+  const sf1 = getM('SF1', 'Semifinal 1', 'Court 1');
+  const sf2 = getM('SF2', 'Semifinal 2', 'Court 2');
+  const fin = getM('FIN', 'Gold Medal Final', 'Court 1');
 
-      const qf1 = getM('QF1', 'Quarterfinal 1', 'Court 1');
-      const qf2 = getM('QF2', 'Quarterfinal 2', 'Court 2');
-      const qf3 = getM('QF3', 'Quarterfinal 3', 'Court 3');
-      const qf4 = getM('QF4', 'Quarterfinal 4', 'Court 4');
-      const sf1 = getM('SF1', 'Semifinal 1', 'Court 1');
-      const sf2 = getM('SF2', 'Semifinal 2', 'Court 2');
-      const fin = getM('FIN', 'Gold Medal Final', 'Court 1');
+  const champName = fin.winner ? (fin.winner === 'A' ? fin.teamA : fin.teamB) : null;
 
-      const champName = fin.winner ? (fin.winner === 'A' ? fin.teamA : fin.teamB) : null;
+  const renderSlot = (teamName, score, isWin, isAwaiting, dir) => {
+    const isOpenSlot = pfIsOpenSeedSlot(teamName);
+    const cls = [
+      'pf-sym-slot',
+      dir === 'right' ? 'dir-right' : 'dir-left',
+      isWin ? 'is-winner' : '',
+      (isAwaiting || isOpenSlot) ? 'is-awaiting' : ''
+    ].filter(Boolean).join(' ');
 
-      const renderSlot = (teamName, score, isWin, isAwaiting, dir) => {
-        const cls = [
-          'pf-sym-slot',
-          dir === 'right' ? 'dir-right' : 'dir-left',
-          isWin ? 'is-winner' : '',
-          isAwaiting ? 'is-awaiting' : ''
-        ].filter(Boolean).join(' ');
+    const slotClick = (!isAdminInteractive && isOpenSlot && trn && trn.id)
+      ? `onclick="pfRegisterForTournament('${pfEscapeHtml(trn.id)}')" style="cursor:pointer;"`
+      : '';
+    const displayLabel = isOpenSlot && !isAdminInteractive
+      ? `${teamName} • Click to Claim`
+      : (teamName || 'TBD');
 
-        return `
-          <div class="${cls}" title="${pfEscapeHtml(teamName || 'TBD')}">
-            <div class="pf-sym-score-box">${Number(score || 0)}</div>
-            <div class="pf-sym-banner-bar">
-              <span class="truncate">${isWin ? '🏆 ' : ''}${pfEscapeHtml(teamName || 'TBD')}</span>
-              <span class="pf-sym-diamond"></span>
-            </div>
-          </div>
-        `;
-      };
-
-      const renderMatchNode = (m, dir, stageTag) => {
-        const isAct = isAdminInteractive && m.id === activeMatchId;
-        const isDone = m.status === 'COMPLETED';
-        const waitA = String(m.teamA || '').startsWith('Winner ');
-        const waitB = String(m.teamB || '').startsWith('Winner ');
-        const clickAttr = isAdminInteractive
-          ? `onclick="adminSelectBracketMatch('${m.id}', true)"`
-          : '';
-
-        let statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-extrabold uppercase" style="background:#064E3B !important;color:#A7F3D0 !important;">🟢 Ready</span>`;
-        if (isDone) {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#0C4A6E] border border-[#38BDF8] font-mono text-[9px] font-extrabold uppercase" style="background:#0C4A6E !important;color:#BAE6FD !important;">✓ Final</span>`;
-        } else if (isAct || m.status === 'LIVE') {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#A3E635] font-mono text-[9px] font-black uppercase shadow-xs" style="background:#A3E635 !important;color:#05140D !important;">🟣 On Court</span>`;
-        } else if (m.status === 'PENDING') {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#475569] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#E2E8F0 !important;">⏳ Awaiting</span>`;
-        }
-
-        return `
-          <div ${clickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${isAct ? 'is-active-match' : ''} ${isDone ? 'is-completed-match' : ''} space-y-2.5">
-            <div class="flex items-center justify-between gap-2 px-0.5">
-              <span class="font-mono text-[10px] font-black uppercase tracking-wider" style="color:#BEF264 !important;">${pfEscapeHtml(stageTag)} &bull; ${pfEscapeHtml(m.court || 'Court 1')}</span>
-              ${statusPill}
-            </div>
-            <div class="space-y-2.5">
-              ${renderSlot(m.teamA, m.scoreA, m.winner === 'A', waitA, dir)}
-              ${renderSlot(m.teamB, m.scoreB, m.winner === 'B', waitB, dir)}
-            </div>
-          </div>
-        `;
-      };
-
-      // Center Crest with Proper Generous Spacing (`gap-3.5` + `whitespace-nowrap` on the pill!)
-      const centerCrestHtml = `
-        <div class="pf-center-crest-wrap">
-          <div class="pf-center-court-crest">
-            <div class="pf-center-court-crest-inner">
-              <img src="${logoPath}" alt="P&amp;F Rally Ground Official Crest">
-            </div>
-          </div>
-          <div class="px-3.5 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest shadow-md whitespace-nowrap" style="background:#A3E635 !important;color:#04120B !important;">
-            P&amp;F RALLY GROUND
-          </div>
+    return `
+      <div class="${cls}" ${slotClick} title="${pfEscapeHtml(displayLabel)}">
+        <div class="pf-sym-score-box">${Number(score || 0)}</div>
+        <div class="pf-sym-banner-bar" style="${isOpenSlot ? 'border-style:dashed !important;border-color:#64748B !important;' : ''}">
+          <span class="truncate" style="${isOpenSlot ? 'color:#CBD5E1 !important;font-style:italic;' : ''}">${isWin ? '🏆 ' : (isOpenSlot ? '🟢 ' : '')}${pfEscapeHtml(displayLabel)}</span>
+          <span class="pf-sym-diamond"></span>
         </div>
-      `;
+      </div>
+    `;
+  };
 
-      // Focused Phase Slide 1: QUARTERFINALS (1/4 STAGE)
-      if (mode === 'QF') {
-        return `
-          <div class="pf-phase-slide-panel space-y-5 py-2">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; LEFT BRACKET (COURTS 1 &amp; 2)</span>
-                </div>
-                ${renderMatchNode(qf1, 'left', 'QUARTERFINAL 1 (QF1)')}
-                ${renderMatchNode(qf2, 'left', 'QUARTERFINAL 2 (QF2)')}
-              </div>
-              <div class="lg:col-span-2 flex flex-col items-center justify-center py-3">
-                ${centerCrestHtml}
-              </div>
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; RIGHT BRACKET (COURTS 3 &amp; 4)</span>
-                </div>
-                ${renderMatchNode(qf3, 'right', 'QUARTERFINAL 3 (QF3)')}
-                ${renderMatchNode(qf4, 'right', 'QUARTERFINAL 4 (QF4)')}
-              </div>
-            </div>
-          </div>
-        `;
-      }
+  const renderMatchNode = (m, dir, stageTag) => {
+    const isAct = isAdminInteractive && m.id === activeMatchId;
+    const isDone = m.status === 'COMPLETED';
+    const waitA = String(m.teamA || '').startsWith('Winner ');
+    const waitB = String(m.teamB || '').startsWith('Winner ');
+    const bothOpen = pfIsOpenSeedSlot(m.teamA) && pfIsOpenSeedSlot(m.teamB);
+    const anyOpen = pfIsOpenSeedSlot(m.teamA) || pfIsOpenSeedSlot(m.teamB);
+    const clickAttr = isAdminInteractive
+      ? `onclick="adminSelectBracketMatch('${m.id}', true)"`
+      : '';
 
-      // Focused Phase Slide 2: SEMIFINALS (1/2 STAGE — Fixed Spacing Around Center Logo!)
-      if (mode === 'SF') {
-        return `
-          <div class="pf-phase-slide-panel space-y-5 max-w-6xl mx-auto py-3">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1 (COURT 1)</span>
-                </div>
-                ${renderMatchNode(sf1, 'left', 'SEMIFINAL 1 (WINNERS QF1 vs QF2)')}
-              </div>
-              <div class="lg:col-span-2 flex flex-col items-center justify-center py-3">
-                ${centerCrestHtml}
-              </div>
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2 (COURT 2)</span>
-                </div>
-                ${renderMatchNode(sf2, 'right', 'SEMIFINAL 2 (WINNERS QF3 vs QF4)')}
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      const finIsAct = isAdminInteractive && fin.id === activeMatchId;
-      const finClickAttr = isAdminInteractive ? `onclick="adminSelectBracketMatch('FIN', true)"` : '';
-      const finWaitA = String(fin.teamA || '').startsWith('Winner ');
-      const finWaitB = String(fin.teamB || '').startsWith('Winner ');
-
-      const grandFinalCardHtml = `
-        <div class="max-w-3xl mx-auto pt-3">
-          <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-5 sm:p-6 border-2 border-[#A3E635] shadow-2xl">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <span class="px-3.5 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest" style="background:#A3E635 !important;color:#04120B !important;">
-                🏆 GRAND CHAMPIONSHIP FINAL &bull; ${pfEscapeHtml(fin.court || 'Court 1')}
-              </span>
-              <span class="font-mono text-[10px] font-extrabold uppercase" style="color:#A7F3D0 !important;">
-                ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : (isAdminInteractive ? 'CLICK TO SCORE FINAL MATCH' : 'GOLD MEDAL CHAMPIONSHIP'))}
-              </span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-center">
-              <div class="md:col-span-5">
-                ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
-              </div>
-              <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
-                <span class="px-3 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[10px] font-black" style="background:#04120B !important;color:#BEF264 !important;">VS</span>
-              </div>
-              <div class="md:col-span-5">
-                ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
-              </div>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
-              <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em]" style="color:#FFFFFF !important;">FINAL</div>
-              ${champName
-                ? `<div class="px-4 py-1.5 rounded-full bg-[#A3E635] font-mono text-xs font-black uppercase shadow-lg" style="background:#A3E635 !important;color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
-                : `<div class="text-xs font-mono" style="color:#E2E8F0 !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
-              }
-            </div>
-          </div>
-        </div>
-      `;
-
-      // Focused Phase Slide 3: GRAND CHAMPIONSHIP FINAL
-      if (mode === 'FIN') {
-        return `
-          <div class="pf-phase-slide-panel space-y-5 py-2">
-            <div class="flex justify-center">${centerCrestHtml}</div>
-            ${grandFinalCardHtml}
-          </div>
-        `;
-      }
-
-      // Default 'ALL': Complete Symmetrical Tree (1/4 -> 1/2 -> Center Crest + Grand Final)
-      return `
-        <div class="pf-phase-slide-panel space-y-7">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-
-            <!-- FAR LEFT WING: 1/4 QUARTERFINALS (QF1 & QF2) -->
-            <div class="lg:col-span-3 space-y-4">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS A &amp; B</span>
-              </div>
-              <div class="space-y-4">
-                ${renderMatchNode(qf1, 'left', 'QF1')}
-                ${renderMatchNode(qf2, 'left', 'QF2')}
-              </div>
-            </div>
-
-            <!-- INNER LEFT WING: 1/2 SEMIFINAL 1 (SF1) -->
-            <div class="lg:col-span-2 space-y-4 relative">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1</span>
-              </div>
-              ${renderMatchNode(sf1, 'left', 'SF1')}
-            </div>
-
-            <!-- CENTERPIECE: FITTED RECTANGULAR P&F RALLY GROUND COURT CREST (2 COLS FOR GENEROUS BREATHING ROOM!) -->
-            <div class="lg:col-span-2 py-3 flex flex-col items-center justify-center">
-              ${centerCrestHtml}
-              <div class="hidden lg:flex flex-col items-center pt-2">
-                <div class="flex items-center">
-                  <span class="w-6 h-0.5 bg-[#A3E635]"></span>
-                  <span class="w-2.5 h-2.5 rotate-45 bg-[#A3E635] border border-slate-950"></span>
-                  <span class="w-6 h-0.5 bg-[#A3E635]"></span>
-                </div>
-                <div class="w-0.5 h-8 bg-gradient-to-b from-[#A3E635] to-[#38BDF8]"></div>
-                <span class="w-2.5 h-2.5 rotate-45 bg-[#38BDF8] border border-slate-950"></span>
-              </div>
-            </div>
-
-            <!-- INNER RIGHT WING: 1/2 SEMIFINAL 2 (SF2) -->
-            <div class="lg:col-span-2 space-y-4 relative">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2</span>
-              </div>
-              ${renderMatchNode(sf2, 'right', 'SF2')}
-            </div>
-
-            <!-- FAR RIGHT WING: 1/4 QUARTERFINALS (QF3 & QF4) -->
-            <div class="lg:col-span-3 space-y-4">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS C &amp; D</span>
-              </div>
-              <div class="space-y-4">
-                ${renderMatchNode(qf3, 'right', 'QF3')}
-                ${renderMatchNode(qf4, 'right', 'QF4')}
-              </div>
-            </div>
-
-          </div>
-
-          ${grandFinalCardHtml}
-        </div>
-      `;
+    let statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-extrabold uppercase" style="background:#064E3B !important;color:#A7F3D0 !important;">🟢 Ready</span>`;
+    if (isDone) {
+      statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#0C4A6E] border border-[#38BDF8] font-mono text-[9px] font-extrabold uppercase" style="background:#0C4A6E !important;color:#BAE6FD !important;">✓ Final</span>`;
+    } else if (bothOpen) {
+      statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#64748B] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#BEF264 !important;">🟢 2 Open Slots</span>`;
+    } else if (anyOpen) {
+      statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#38BDF8] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#BAE6FD !important;">🟢 1 Open Slot</span>`;
+    } else if (isAct || m.status === 'LIVE') {
+      statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#A3E635] font-mono text-[9px] font-black uppercase shadow-xs" style="background:#A3E635 !important;color:#05140D !important;">🟣 On Court</span>`;
+    } else if (m.status === 'PENDING') {
+      statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#475569] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#E2E8F0 !important;">⏳ Awaiting</span>`;
     }
+
+    return `
+      <div ${clickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${isAct ? 'is-active-match' : ''} ${isDone ? 'is-completed-match' : ''} space-y-2.5">
+        <div class="flex items-center justify-between gap-2 px-0.5">
+          <span class="font-mono text-[10px] font-black uppercase tracking-wider" style="color:#BEF264 !important;">${pfEscapeHtml(stageTag)} &bull; ${pfEscapeHtml(m.court || 'Court 1')}</span>
+          ${statusPill}
+        </div>
+        <div class="space-y-2.5">
+          ${renderSlot(m.teamA, m.scoreA, m.winner === 'A', waitA, dir)}
+          ${renderSlot(m.teamB, m.scoreB, m.winner === 'B', waitB, dir)}
+        </div>
+      </div>
+    `;
+  };
+
+  const centerCrestHtml = `
+    <div class="pf-center-crest-wrap">
+      <div class="pf-center-court-crest">
+        <div class="pf-center-court-crest-inner">
+          <img src="${logoPath}" alt="P&amp;F Rally Ground Official Crest">
+        </div>
+      </div>
+      <div class="px-3.5 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest shadow-md whitespace-nowrap" style="background:#A3E635 !important;color:#04120B !important;">
+        P&amp;F RALLY GROUND
+      </div>
+    </div>
+  `;
+
+  if (mode === 'QF') {
+    return `
+      <div class="pf-phase-slide-panel space-y-5 py-2">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+          <div class="lg:col-span-5 space-y-4">
+            <div class="text-center mb-1">
+              <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; LEFT BRACKET (QF1 &amp; QF2)</span>
+            </div>
+            ${renderMatchNode(qf1, 'left', 'QUARTERFINAL 1 (QF1)')}
+            ${renderMatchNode(qf2, 'left', 'QUARTERFINAL 2 (QF2)')}
+          </div>
+          <div class="lg:col-span-2 flex flex-col items-center justify-center py-3">
+            ${centerCrestHtml}
+          </div>
+          <div class="lg:col-span-5 space-y-4">
+            <div class="text-center mb-1">
+              <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; RIGHT BRACKET (QF3 &amp; QF4)</span>
+            </div>
+            ${renderMatchNode(qf3, 'right', 'QUARTERFINAL 3 (QF3)')}
+            ${renderMatchNode(qf4, 'right', 'QUARTERFINAL 4 (QF4)')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (mode === 'SF') {
+    return `
+      <div class="pf-phase-slide-panel space-y-5 max-w-6xl mx-auto py-3">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+          <div class="lg:col-span-5 space-y-4">
+            <div class="text-center mb-1">
+              <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1 (${pfEscapeHtml(sf1.court || 'Court 1')})</span>
+            </div>
+            ${renderMatchNode(sf1, 'left', 'SEMIFINAL 1 (WINNERS QF1 vs QF2)')}
+          </div>
+          <div class="lg:col-span-2 flex flex-col items-center justify-center py-3">
+            ${centerCrestHtml}
+          </div>
+          <div class="lg:col-span-5 space-y-4">
+            <div class="text-center mb-1">
+              <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2 (${pfEscapeHtml(sf2.court || 'Court 2')})</span>
+            </div>
+            ${renderMatchNode(sf2, 'right', 'SEMIFINAL 2 (WINNERS QF3 vs QF4)')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const finIsAct = isAdminInteractive && fin.id === activeMatchId;
+  const finClickAttr = isAdminInteractive ? `onclick="adminSelectBracketMatch('FIN', true)"` : '';
+  const finWaitA = String(fin.teamA || '').startsWith('Winner ');
+  const finWaitB = String(fin.teamB || '').startsWith('Winner ');
+
+  const grandFinalCardHtml = `
+    <div class="max-w-3xl mx-auto pt-3">
+      <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-5 sm:p-6 border-2 border-[#A3E635] shadow-2xl">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <span class="px-3.5 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest" style="background:#A3E635 !important;color:#04120B !important;">
+            🏆 GRAND CHAMPIONSHIP FINAL &bull; ${pfEscapeHtml(fin.court || 'Court 1')}
+          </span>
+          <span class="font-mono text-[10px] font-extrabold uppercase" style="color:#A7F3D0 !important;">
+            ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : (isAdminInteractive ? 'CLICK TO SCORE FINAL MATCH' : 'GOLD MEDAL CHAMPIONSHIP'))}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-center">
+          <div class="md:col-span-5">
+            ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
+          </div>
+          <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
+            <span class="px-3 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[10px] font-black" style="background:#04120B !important;color:#BEF264 !important;">VS</span>
+          </div>
+          <div class="md:col-span-5">
+            ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
+          <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em]" style="color:#FFFFFF !important;">FINAL</div>
+          ${champName
+            ? `<div class="px-4 py-1.5 rounded-full bg-[#A3E635] font-mono text-xs font-black uppercase shadow-lg" style="background:#A3E635 !important;color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
+            : `<div class="text-xs font-mono" style="color:#E2E8F0 !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
+          }
+        </div>
+      </div>
+    </div>
+  `;
+
+  if (mode === 'FIN') {
+    return `
+      <div class="pf-phase-slide-panel space-y-5 py-2">
+        <div class="flex justify-center">${centerCrestHtml}</div>
+        ${grandFinalCardHtml}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="pf-phase-slide-panel space-y-7">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+        <div class="lg:col-span-3 space-y-4">
+          <div class="text-center mb-1">
+            <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS A &amp; B</span>
+          </div>
+          <div class="space-y-4">
+            ${renderMatchNode(qf1, 'left', 'QF1')}
+            ${renderMatchNode(qf2, 'left', 'QF2')}
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-4 relative">
+          <div class="text-center mb-1">
+            <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1</span>
+          </div>
+          ${renderMatchNode(sf1, 'left', 'SF1')}
+        </div>
+
+        <div class="lg:col-span-2 py-3 flex flex-col items-center justify-center">
+          ${centerCrestHtml}
+          <div class="hidden lg:flex flex-col items-center pt-2">
+            <div class="flex items-center">
+              <span class="w-6 h-0.5 bg-[#A3E635]"></span>
+              <span class="w-2.5 h-2.5 rotate-45 bg-[#A3E635] border border-slate-950"></span>
+              <span class="w-6 h-0.5 bg-[#A3E635]"></span>
+            </div>
+            <div class="w-0.5 h-8 bg-gradient-to-b from-[#A3E635] to-[#38BDF8]"></div>
+            <span class="w-2.5 h-2.5 rotate-45 bg-[#38BDF8] border border-slate-950"></span>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-4 relative">
+          <div class="text-center mb-1">
+            <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2</span>
+          </div>
+          ${renderMatchNode(sf2, 'right', 'SF2')}
+        </div>
+
+        <div class="lg:col-span-3 space-y-4">
+          <div class="text-center mb-1">
+            <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS C &amp; D</span>
+          </div>
+          <div class="space-y-4">
+            ${renderMatchNode(qf3, 'right', 'QF3')}
+            ${renderMatchNode(qf4, 'right', 'QF4')}
+          </div>
+        </div>
+      </div>
+
+      ${grandFinalCardHtml}
+    </div>
+  `;
+}
 
 let pfActivePublicTrnIndex = 0;
 let pfActivePublicPhaseIndex = 0;
@@ -5635,11 +5705,11 @@ const PF_TOURNAMENT_PHASES = [
   { key: 'QF',      num: '02', label: 'Phase 1: Quarterfinals (1/4)', sub: 'Courts 1 – 4 Matchups' },
   { key: 'SF',      num: '03', label: 'Phase 2: Semifinals (1/2)',    sub: 'Courts 1 & 2 Clash' },
   { key: 'FIN',     num: '04', label: 'Phase 3: Championship Final',  sub: 'Gold Medal Court 1' },
-  { key: 'PLAYERS', num: '05', label: 'Seeded Players (8 Seeds)',     sub: 'Official Tournament Roster' }
+  { key: 'PLAYERS', num: '05', label: 'Community Roster & Seeds',     sub: 'Live Registered Teams' }
 ];
 
 function pfSelectPublicTournamentEvent(idx) {
-  const list = pfGetTournamentsList().filter(t => t && t.approved !== false);
+  const list = pfGetTournamentsList().filter(t => t && t.approved !== false && t.published !== false);
   if (!list.length) return;
   pfActivePublicTrnIndex = ((idx % list.length) + list.length) % list.length;
   pfRenderPublicTournaments();
@@ -5769,23 +5839,26 @@ function pfRenderPublicTournaments() {
   if (pfActivePublicTrnIndex >= list.length) pfActivePublicTrnIndex = 0;
   const t = list[pfActivePublicTrnIndex] || list[0];
   const fee = Number(t.entryFee || 0);
-  const players = Array.isArray(t.players) ? t.players : [];
-  const bracket = Array.isArray(t.bracket) ? t.bracket : pfBuildDefaultBracketForPlayers(players);
-  t.bracket = bracket;
-  const maxT = Math.max(players.length, Number(t.maxTeams || 24));
-  const regT = Math.min(maxT, Math.max(players.length, Number(t.registeredCount || players.length)));
-  const spotsLeft = Math.max(0, maxT - regT);
-  const pct = Math.min(100, Math.round((regT / maxT) * 100));
-  const courtsLabel = pfFormatDesignatedCourtsLabel(t);
+  const players = (Array.isArray(t.players) && t.players.length >= 8) ? t.players : [...PF_OPEN_SEED_LABELS];
   const dcList = Array.isArray(t.designatedCourts) && t.designatedCourts.length
     ? t.designatedCourts
     : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+  const bracket = Array.isArray(t.bracket) && t.bracket.length >= 7 ? t.bracket : pfBuildDefaultBracketForPlayers(players, dcList);
+  t.bracket = bracket;
+
+  const realRegistrations = Array.isArray(t.registrations) ? t.registrations : [];
+  const filledSeeds = pfCountFilledBracketSeeds(players);
+  const openSeedsLeft = Math.max(0, 8 - filledSeeds);
+  const maxT = Math.max(8, Number(t.maxTeams || 24));
+  const regT = Math.min(maxT, pfCountRealTournamentTeams(t));
+  const spotsLeft = Math.max(0, maxT - regT);
+  const pct = maxT > 0 ? Math.min(100, Math.round((regT / maxT) * 100)) : 0;
+  const courtsLabel = pfFormatDesignatedCourtsLabel(t);
 
   const finMatch = bracket.find(m => m.stage === 'Championship Final' || m.id === 'FIN') || null;
   const champName = (finMatch && finMatch.winner) ? (finMatch.winner === 'A' ? finMatch.teamA : finMatch.teamB) : null;
   const activePhase = PF_TOURNAMENT_PHASES[pfActivePublicPhaseIndex] || PF_TOURNAMENT_PHASES[0];
 
-  // Event Selector Bar (Shown when 2+ tournaments are published; automatically hidden if only 1 tournament is active!)
   const colsClass = list.length === 2 ? 'sm:grid-cols-2' : (list.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4');
   const eventSelectorBarHtml = list.length > 1 ? `
     <div class="p-3.5 sm:p-4 rounded-3xl bg-white border-2 border-[#E2E0D8] shadow-sm space-y-3">
@@ -5803,12 +5876,14 @@ function pfRenderPublicTournaments() {
         ${list.map((item, idx) => {
           const isAct = idx === pfActivePublicTrnIndex;
           const itemFee = Number(item.entryFee || 0);
+          const itemReg = pfCountRealTournamentTeams(item);
+          const itemMax = Math.max(8, Number(item.maxTeams || 24));
           return `
             <button type="button" onclick="pfSelectPublicTournamentEvent(${idx})" class="${isAct ? 'pf-trn-btn-primary' : 'pf-trn-btn-secondary'} px-3.5 py-2.5 rounded-2xl text-left transition flex items-center gap-2.5 min-w-0">
               <span class="w-6 h-6 rounded-lg ${isAct ? 'bg-[#A3E635] text-[#04120B]' : 'bg-[#EFECE6] text-[#0F291E]'} font-mono text-[11px] font-black flex items-center justify-center flex-shrink-0" style="${isAct ? 'background:#A3E635 !important;color:#04120B !important;' : ''}">0${idx + 1}</span>
               <div class="min-w-0 flex-1">
                 <div class="text-xs font-extrabold truncate">${pfEscapeHtml(item.title)}</div>
-                <div class="text-[10px] font-mono opacity-85 truncate">${pfEscapeHtml(pfFormatTournamentDateNice(item.date))} &bull; ${itemFee > 0 ? '₱' + itemFee.toLocaleString() : 'Free'}</div>
+                <div class="text-[10px] font-mono opacity-85 truncate">${pfEscapeHtml(pfFormatTournamentDateNice(item.date))} &bull; ${itemFee > 0 ? '₱' + itemFee.toLocaleString() : 'Free'} &bull; ${itemReg}/${itemMax} Teams</div>
               </div>
             </button>
           `;
@@ -5817,51 +5892,133 @@ function pfRenderPublicTournaments() {
     </div>
   ` : '';
 
-  // Phase Selector Slides Bar
   const phaseTabsHtml = PF_TOURNAMENT_PHASES.map((ph, pIdx) => {
     const isAct = pIdx === pfActivePublicPhaseIndex;
+    const lblText = ph.key === 'PLAYERS' ? `Community Roster (${regT} Joined)` : ph.label;
     return `
       <button type="button" onclick="pfSelectPublicTournamentPhase(${pIdx})" class="${isAct ? 'pf-trn-btn-volt' : 'pf-trn-btn-arena-ghost'} px-3.5 py-2 rounded-xl font-mono text-xs transition flex items-center gap-2">
         <span class="text-[10px] font-black opacity-80">${ph.num}</span>
-        <span>${ph.label}</span>
+        <span>${lblText}</span>
       </button>
     `;
   }).join('');
 
-  // Phase Content Body
+  // Build Live Community Roster Strip (Shown directly on card so community sees exact real entrants or 0 joined!)
+  const liveCommunityRosterBoxHtml = regT === 0 ? `
+    <div class="p-4 rounded-2xl bg-[#F0FDF4] border-2 border-dashed border-[#86EFAC] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-start sm:items-center gap-3">
+        <span class="w-9 h-9 rounded-xl bg-[#15803D] text-white font-mono text-xs font-black flex items-center justify-center flex-shrink-0" style="background:#15803D !important;color:#FFFFFF !important;">0/${maxT}</span>
+        <div>
+          <div class="text-xs sm:text-sm font-black text-[#064E3B] uppercase">0 Teams Registered Yet — All 8 Bracket Seeds &amp; ${maxT} Spots Are Open!</div>
+          <p class="text-[11px] text-[#166534] font-medium">No filler or fake names. Be the first pair/squad in the community to register and claim <b>Seed #1</b> on the official bracket!</p>
+        </div>
+      </div>
+      <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-emerald px-4 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0">
+        🏓 Claim Seed #1 Now →
+      </button>
+    </div>
+  ` : `
+    <div class="p-4 rounded-2xl bg-[#F8FAFC] border-2 border-[#CBD5E1] space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="pf-pill px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase">🟢 LIVE COMMUNITY ENTRANTS (${regT} / ${maxT} CONFIRMED)</span>
+          <span class="text-xs font-bold text-[#475569]">${openSeedsLeft > 0 ? openSeedsLeft + ' Bracket Seed Slots Still Open' : 'All 8 Bracket Seeds Filled'}</span>
+        </div>
+        <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-emerald px-3 py-1 rounded-lg font-mono text-[10px] uppercase">
+          + Join Roster (${spotsLeft} Spots Left)
+        </button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+        ${players.map((pName, idx) => {
+          const isOpen = pfIsOpenSeedSlot(pName);
+          const seedNum = PF_SEED_SLOT_NUMBERS[idx] || (idx + 1);
+          if (isOpen) {
+            return `
+              <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="p-2.5 rounded-xl bg-white hover:bg-[#F0FDF4] border border-dashed border-[#94A3B8] hover:border-[#15803D] text-left flex items-center justify-between gap-2 transition">
+                <span class="font-mono text-[11px] font-bold text-[#64748B] truncate">🟢 Open Seed #${seedNum}</span>
+                <span class="px-2 py-0.5 rounded bg-[#DCFCE7] text-[#166534] font-mono text-[9px] font-black uppercase flex-shrink-0">Claim →</span>
+              </button>
+            `;
+          }
+          return `
+            <div class="p-2.5 rounded-xl bg-[#0F291E] text-white border border-[#15803D] flex items-center gap-2 shadow-2xs" style="background:#0F291E !important;color:#FFFFFF !important;">
+              <span class="px-1.5 py-0.5 rounded bg-[#A3E635] text-[#04120B] font-mono text-[9px] font-black flex-shrink-0" style="background:#A3E635 !important;color:#04120B !important;">✓ #${seedNum}</span>
+              <span class="text-xs font-extrabold truncate" title="${pfEscapeHtml(pName)}">${pfEscapeHtml(pName)}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
   let phaseSlideBodyHtml = '';
   if (activePhase.key === 'PLAYERS') {
     phaseSlideBodyHtml = `
       <div class="pf-phase-slide-panel space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/15 pb-3">
           <div>
-            <span class="text-[10px] font-mono font-black uppercase tracking-widest block" style="color:#A3E635 !important;">OFFICIAL TOURNAMENT SEEDING ROSTER</span>
-            <h4 class="text-lg sm:text-xl font-black uppercase" style="color:#FFFFFF !important;">8 Seeded Player Pairs &amp; Squads &bull; ${pfEscapeHtml(t.title)}</h4>
+            <span class="text-[10px] font-mono font-black uppercase tracking-widest block" style="color:#A3E635 !important;">OFFICIAL COMMUNITY ROSTER &amp; 8 BRACKET SEEDS</span>
+            <h4 class="text-lg sm:text-xl font-black uppercase" style="color:#FFFFFF !important;">${regT} Confirmed Team${regT === 1 ? '' : 's'} &bull; ${openSeedsLeft} Open Bracket Seeds Available</h4>
           </div>
-          <span class="px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-extrabold" style="background:#04120B !important;color:#BEF264 !important;">${regT} / ${maxT} Registered (${pct}% Full)</span>
+          <div class="flex items-center gap-2">
+            <span class="px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-extrabold" style="background:#04120B !important;color:#BEF264 !important;">${regT} / ${maxT} Teams (${pct}% Full)</span>
+            <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-volt px-3.5 py-1.5 rounded-xl font-mono text-xs uppercase">+ Register Team</button>
+          </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           ${players.map((pName, idx) => {
             const qfIdx = Math.floor(idx / 2);
             const assignedCourt = dcList[qfIdx % dcList.length] || 'Court 1';
+            const isOpen = pfIsOpenSeedSlot(pName);
+            const seedNum = PF_SEED_SLOT_NUMBERS[idx] || (idx + 1);
+            if (isOpen) {
+              return `
+                <div onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="cursor-pointer p-3.5 rounded-2xl bg-[#04120B]/75 hover:bg-[#071D14] border-2 border-dashed border-[#64748B] hover:border-[#A3E635] flex items-center justify-between gap-3 transition">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <span class="w-8 h-8 rounded-xl bg-[#1E293B] border border-[#64748B] font-mono text-xs font-black flex items-center justify-center flex-shrink-0" style="color:#CBD5E1 !important;">#${seedNum}</span>
+                    <div class="min-w-0">
+                      <span class="text-[9px] font-mono uppercase block" style="color:#94A3B8 !important;">QF${qfIdx + 1} &bull; ${pfEscapeHtml(assignedCourt)}</span>
+                      <div class="text-xs font-extrabold truncate" style="color:#E2E8F0 !important;">Open Seed #${seedNum} — Available</div>
+                    </div>
+                  </div>
+                  <span class="px-2.5 py-1 rounded-lg bg-[#A3E635] font-mono text-[9px] font-black uppercase flex-shrink-0" style="background:#A3E635 !important;color:#04120B !important;">Join →</span>
+                </div>
+              `;
+            }
             return `
-              <div class="p-3.5 rounded-2xl bg-[#071D14] border-2 border-[#15803D] flex items-center gap-3 shadow-md">
-                <span class="w-8 h-8 rounded-xl bg-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0" style="background:#A3E635 !important;color:#04120B !important;">#${idx + 1}</span>
+              <div class="p-3.5 rounded-2xl bg-[#071D14] border-2 border-[#A3E635] flex items-center gap-3 shadow-md">
+                <span class="w-8 h-8 rounded-xl bg-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0" style="background:#A3E635 !important;color:#04120B !important;">#${seedNum}</span>
                 <div class="min-w-0">
-                  <span class="text-[9px] font-mono uppercase block" style="color:#6EE7B7 !important;">QF${qfIdx + 1} &bull; ${pfEscapeHtml(assignedCourt)}</span>
+                  <span class="text-[9px] font-mono uppercase block" style="color:#6EE7B7 !important;">✓ CONFIRMED &bull; QF${qfIdx + 1} (${pfEscapeHtml(assignedCourt)})</span>
                   <div class="text-xs font-extrabold truncate" style="color:#FFFFFF !important;" title="${pfEscapeHtml(pName)}">${pfEscapeHtml(pName)}</div>
                 </div>
               </div>
             `;
           }).join('')}
         </div>
+
+        ${realRegistrations.length > 0 ? `
+          <div class="pt-3 border-t border-white/15 space-y-2.5">
+            <span class="text-[10px] font-mono font-black uppercase tracking-widest block" style="color:#38BDF8 !important;">📋 OFFICIAL TIMESTAMPED COMMUNITY REGISTRATION LOG (${realRegistrations.length})</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              ${realRegistrations.map((r, rIdx) => `
+                <div class="p-3 rounded-xl bg-[#04120B]/90 border border-white/15 flex items-center justify-between gap-2 text-xs">
+                  <div class="min-w-0">
+                    <div class="font-extrabold truncate" style="color:#FFFFFF !important;">${rIdx + 1}. ${pfEscapeHtml(r.teamName || r.player1)}</div>
+                    <div class="text-[10px] font-mono" style="color:#A7F3D0 !important;">${pfEscapeHtml(r.division || 'Open Division')} &bull; Joined ${pfEscapeHtml(r.registeredAt || 'Today')}</div>
+                  </div>
+                  <span class="px-2.5 py-1 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-black uppercase flex-shrink-0" style="background:#064E3B !important;color:#A7F3D0 !important;">✓ ${pfEscapeHtml(r.status || 'CONFIRMED')}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
       </div>
     `;
   } else {
     phaseSlideBodyHtml = pfBuildSymmetricalBracketTreeHtml(t, null, false, 'assets/logo.png', activePhase.key);
   }
 
-  // Designated Court Badges HTML
   const designatedCourtPillsHtml = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
     const isActiveCourt = dcList.includes(cName);
     return isActiveCourt
@@ -5874,32 +6031,29 @@ function pfRenderPublicTournaments() {
       ${eventSelectorBarHtml}
 
       <!-- FEATURED TOURNAMENT STAGE (GRAPHIC DESIGNER EDITORIAL POSTER + VIP ENTRY TICKET + ARENA BRACKET) -->
-      <div class="rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-8 shadow-xl space-y-7 text-[#0D1F18]">
+      <div class="rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-8 shadow-xl space-y-6 text-[#0D1F18]">
 
         <!-- 12-COLUMN EDITORIAL SPORTS EVENT POSTER HEADER -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
 
-          <!-- LEFT 8 COLUMNS: EVENT BRANDING, HEADLINE & ARCHITECTURAL 3-PILLAR SPEC GRID -->
+          <!-- LEFT 8 COLUMNS: EVENT BRANDING, HEADLINE & ARCHITECTURAL SPEC GRID -->
           <div class="xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-3xl p-5 sm:p-7 border border-[#E2E0D8]">
             <div class="space-y-3.5">
-              <!-- Top Status & Format Ribbon -->
               <div class="flex flex-wrap items-center gap-2">
                 <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Official Tournament')}</span>
                 ${t.showCourtsOnSite !== false ? `<span class="pf-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-extrabold uppercase">🏟️ ${pfEscapeHtml(courtsLabel)}</span>` : ''}
                 ${champName
                   ? `<span class="pf-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">👑 Champion: ${pfEscapeHtml(champName)}</span>`
-                  : `<span class="pf-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase">${spotsLeft} Spots Available</span>`
+                  : `<span class="pf-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase">🟢 ${regT} Joined &bull; ${spotsLeft} Spots Open</span>`
                 }
               </div>
 
-              <!-- Bold Editorial Tournament Title & Deck -->
               <div class="space-y-2">
                 <h3 class="text-2xl sm:text-4xl font-black tracking-tight text-[#0D1F18] leading-[1.1]">${pfEscapeHtml(t.title)}</h3>
                 <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">${pfEscapeHtml(t.description || '')}</p>
               </div>
             </div>
 
-            <!-- Structured Architectural Spec Bar (Adapts to 2 or 3 Columns when Court Display is Optional!) -->
             <div class="pt-4 border-t border-[#DEDAD0] grid grid-cols-1 ${t.showCourtsOnSite !== false ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4">
               <div class="space-y-1 md:pr-3 md:border-r md:border-[#DEDAD0]">
                 <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Event Date &amp; Hours</span>
@@ -5924,9 +6078,8 @@ function pfRenderPublicTournaments() {
             </div>
           </div>
 
-          <!-- RIGHT 4 COLUMNS: OFFICIAL VIP TOURNAMENT ENTRY PASS CARD (WITH FITTED P&F LOGO CREST) -->
+          <!-- RIGHT 4 COLUMNS: OFFICIAL VIP TOURNAMENT ENTRY PASS CARD -->
           <div class="xl:col-span-4 rounded-3xl bg-gradient-to-br from-[#071912] via-[#0F291E] to-[#06150E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl relative overflow-hidden" style="background:linear-gradient(145deg,#071912 0%,#0F291E 55%,#06150E 100%) !important;color:#FFFFFF !important;">
-            <!-- Top Row: P&F Rectangular Court Crest + Official Entry Pass Tag & Fee -->
             <div class="flex items-center justify-between gap-3.5">
               <div class="flex items-center gap-3">
                 <div class="pf-rect-logo-badge" style="width:54px;height:66px;">
@@ -5944,21 +6097,23 @@ function pfRenderPublicTournaments() {
               </div>
             </div>
 
-            <!-- Middle Row: Championship Prize Pool Highlight Box -->
             <div class="p-3.5 rounded-2xl bg-black/35 border border-[#A3E635]/35 space-y-1">
               <span class="text-[9px] font-mono font-black uppercase tracking-widest block" style="color:#FDE047 !important;">🏆 CHAMPIONSHIP PRIZE POOL &amp; PERKS</span>
               <div class="text-xs sm:text-sm font-extrabold leading-snug" style="color:#FFFFFF !important;">${pfEscapeHtml(t.prizePool)}</div>
             </div>
 
-            <!-- Registration Meter + Action Buttons -->
             <div class="space-y-3">
               <div>
                 <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
                   <span style="color:#CBD5E1 !important;">Confirmed Roster: <b style="color:#FFFFFF !important;">${regT} / ${maxT} Teams</b></span>
-                  <span class="font-bold" style="color:#A3E635 !important;">${pct}% Full</span>
+                  <span class="font-bold" style="color:#A3E635 !important;">${regT === 0 ? 'All Spots Open (0%)' : pct + '% Full'}</span>
                 </div>
                 <div class="w-full h-2 rounded-full bg-black/50 overflow-hidden border border-white/15">
                   <div class="h-full rounded-full bg-gradient-to-r from-[#10B981] to-[#A3E635]" style="width:${pct}%"></div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] font-mono mt-1.5" style="color:#A7F3D0 !important;">
+                  <span>🟢 ${filledSeeds} / 8 Bracket Seeds Claimed</span>
+                  <span>${spotsLeft} Spots Left</span>
                 </div>
               </div>
 
@@ -5975,6 +6130,9 @@ function pfRenderPublicTournaments() {
 
         </div>
 
+        <!-- LIVE COMMUNITY ENTRANTS & OPEN SEEDS BAR (SHOWS REAL PLAYERS OR 0 JOINED) -->
+        ${liveCommunityRosterBoxHtml}
+
         <!-- INTERACTIVE PHASE-BY-PHASE BRACKET ARENA SLIDER -->
         <div class="pf-arena-stage p-5 sm:p-8">
           <div class="pf-arena-shard-tl"></div>
@@ -5983,7 +6141,6 @@ function pfRenderPublicTournaments() {
           <div class="pf-arena-shard-br"></div>
 
           <div class="relative z-10 space-y-6">
-            <!-- Phase Carousel Controls Bar -->
             <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 bg-[#04120B]/85 p-3.5 rounded-2xl border border-[#A3E635]/40">
               <div class="flex flex-wrap items-center gap-2">
                 ${phaseTabsHtml}
@@ -5995,12 +6152,11 @@ function pfRenderPublicTournaments() {
               </div>
             </div>
 
-            <!-- Arena Title Banner -->
             <div class="text-center space-y-1.5 pt-1">
               <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[10px] font-black uppercase tracking-widest" style="background:#04120B !important;color:#38BDF8 !important;">
                 <span>${pfEscapeHtml(activePhase.label)}</span>
                 <span>&bull;</span>
-                <span style="color:#BEF264 !important;">${pfEscapeHtml(courtsLabel)}</span>
+                <span style="color:#BEF264 !important;">${regT} Registered / ${openSeedsLeft} Open Seeds</span>
               </div>
               <div class="flex items-center justify-center gap-3.5">
                 <span class="hidden sm:inline-block w-14 h-1 rounded-full bg-gradient-to-r from-transparent via-[#38BDF8] to-[#A3E635]"></span>
@@ -6009,7 +6165,6 @@ function pfRenderPublicTournaments() {
               </div>
             </div>
 
-            <!-- Active Phase Slide Content -->
             ${phaseSlideBodyHtml}
           </div>
         </div>
@@ -6019,12 +6174,48 @@ function pfRenderPublicTournaments() {
 }
 window.renderPublicTournaments = pfRenderPublicTournaments;
 
+function pfSwitchTournamentPayMethod(methodKey) {
+  const m = methodKey || 'GCash';
+  const hiddenInp = document.getElementById('trn-reg-pay-method');
+  if (hiddenInp) hiddenInp.value = m;
+  ['GCash', 'Maya', 'BDO', 'Venue'].forEach(k => {
+    const btn = document.getElementById('trn-pay-btn-' + k);
+    if (btn) {
+      btn.className = (k === m)
+        ? 'pf-trn-btn-primary py-2 px-3 rounded-xl font-mono text-xs uppercase transition'
+        : 'pf-trn-btn-secondary py-2 px-3 rounded-xl font-mono text-xs uppercase transition';
+    }
+  });
+  const qrWrap = document.getElementById('trn-reg-qr-box');
+  const refWrap = document.getElementById('trn-reg-ref-wrap');
+  const qrImg = document.getElementById('trn-reg-qr-img');
+  const qrAcc = document.getElementById('trn-reg-qr-acc');
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  if (m === 'Venue') {
+    if (qrWrap) qrWrap.classList.add('hidden');
+    if (refWrap) refWrap.classList.add('hidden');
+  } else {
+    if (qrWrap) qrWrap.classList.remove('hidden');
+    if (refWrap) refWrap.classList.remove('hidden');
+    if (qrImg) {
+      if (m === 'GCash') qrImg.src = cfg.qrGcash || 'assets/qr-gcash.jpg';
+      else if (m === 'Maya') qrImg.src = cfg.qrMaya || 'assets/qr-maya.jpg';
+      else qrImg.src = cfg.qrBdo || 'assets/qr-bdo.jpg';
+    }
+    if (qrAcc) {
+      qrAcc.textContent = m === 'BDO'
+        ? 'BDO Bank Transfer • Scan Official Club QR Code'
+        : `${m} Express Send: 0999 883 2346 (P&F Rally Ground)`;
+    }
+  }
+}
+window.pfSwitchTournamentPayMethod = pfSwitchTournamentPayMethod;
+
 function pfRegisterForTournament(tournamentId) {
   const list = pfGetTournamentsList();
   const trn = list.find(t => String(t.id) === String(tournamentId)) || list[0];
   if (!trn) return;
 
-  // Open tournament registration modal
   let modal = document.getElementById('pf-tournament-reg-modal');
   if (!modal) {
     modal = document.createElement('div');
@@ -6032,21 +6223,27 @@ function pfRegisterForTournament(tournamentId) {
     modal.className = 'fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4';
     modal.innerHTML = `
       <div onclick="pfCloseTournamentRegModal()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
-      <div class="relative z-10 w-full max-w-xl max-h-[92dvh] overflow-y-auto rounded-3xl bg-white text-slate-900 border-2 border-[#9BE600] p-5 sm:p-7 shadow-2xl space-y-4 touch-scroll">
+      <div class="relative z-10 w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-3xl bg-white text-slate-900 border-2 border-[#15803D] p-5 sm:p-7 shadow-2xl space-y-4 touch-scroll">
         <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
-          <div>
-            <span class="px-2.5 py-0.5 rounded bg-[#050E1D] text-[#9BE600] font-mono text-[10px] font-black uppercase">🏆 OFFICIAL PICKLEBALL TOURNAMENT ENTRY</span>
-            <h3 id="trn-reg-modal-title" class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1">Tournament Registration</h3>
-            <p id="trn-reg-modal-meta" class="text-xs font-mono text-emerald-700 font-bold"></p>
+          <div class="flex items-center gap-3">
+            <div class="pf-rect-logo-badge" style="width:46px;height:56px;"><img src="assets/logo.png" alt="P&amp;F Logo"></div>
+            <div>
+              <span class="px-2.5 py-0.5 rounded bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase" style="background:#0F291E !important;color:#A3E635 !important;">🏆 OFFICIAL COMMUNITY TOURNAMENT ENTRY</span>
+              <h3 id="trn-reg-modal-title" class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1">Tournament Registration</h3>
+              <p id="trn-reg-modal-meta" class="text-xs font-mono text-emerald-700 font-bold"></p>
+            </div>
           </div>
           <button type="button" onclick="pfCloseTournamentRegModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white font-black text-xs">✕</button>
         </div>
 
         <input type="hidden" id="trn-reg-id" value="">
+        <input type="hidden" id="trn-reg-pay-method" value="GCash">
+
+        <div id="trn-reg-seed-banner" class="p-3 rounded-2xl bg-[#F0FDF4] border border-[#86EFAC] text-xs font-bold text-[#065F46]"></div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div>
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Primary Player Full Name *</label>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Player 1 Full Name (Team Captain) *</label>
             <input type="text" id="trn-reg-name" placeholder="e.g. Juan Dela Cruz" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold">
           </div>
           <div>
@@ -6054,35 +6251,60 @@ function pfRegisterForTournament(tournamentId) {
             <input type="tel" id="trn-reg-phone" placeholder="0917 123 4567" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-mono font-bold">
           </div>
           <div>
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Doubles Partner / Squad Name</label>
-            <input type="text" id="trn-reg-partner" placeholder="Partner Name or N/A (Solo)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-semibold">
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Doubles Partner / Squad Name *</label>
+            <input type="text" id="trn-reg-partner" placeholder="e.g. Carlo Reyes (or Solo / Looking)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-semibold">
           </div>
           <div>
             <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Select Skill Division *</label>
             <select id="trn-reg-division" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold">
-              <option value="Novice / Beginner (2.5–3.0)">Novice / Beginner (2.5–3.0)</option>
+              <option value="Novice (2.5–3.0)">Novice / Beginner (2.5–3.0)</option>
               <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
-              <option value="Advanced / Open (4.0+)">Advanced / Open (4.0+)</option>
-              <option value="Mixed Doubles / Co-Ed Squad">Mixed Doubles / Co-Ed Squad</option>
+              <option value="Open (4.0+)">Advanced / Open (4.0+)</option>
+              <option value="Mixed Doubles">Mixed Doubles / Co-Ed Squad</option>
             </select>
           </div>
         </div>
 
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-          <div class="font-black text-slate-900 uppercase text-xs">Policies and guest consent</div>
+        <!-- Payment Channel & Instant QR Verification -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="font-mono text-[10px] font-black uppercase text-slate-700">Select Entry Fee Payment Method:</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full sm:w-auto">
+              <button type="button" id="trn-pay-btn-GCash" onclick="pfSwitchTournamentPayMethod('GCash')" class="pf-trn-btn-primary py-2 px-3 rounded-xl font-mono text-xs uppercase transition">GCash QR</button>
+              <button type="button" id="trn-pay-btn-Maya" onclick="pfSwitchTournamentPayMethod('Maya')" class="pf-trn-btn-secondary py-2 px-3 rounded-xl font-mono text-xs uppercase transition">Maya QR</button>
+              <button type="button" id="trn-pay-btn-BDO" onclick="pfSwitchTournamentPayMethod('BDO')" class="pf-trn-btn-secondary py-2 px-3 rounded-xl font-mono text-xs uppercase transition">BDO QR</button>
+              <button type="button" id="trn-pay-btn-Venue" onclick="pfSwitchTournamentPayMethod('Venue')" class="pf-trn-btn-secondary py-2 px-3 rounded-xl font-mono text-xs uppercase transition">Pay at Desk</button>
+            </div>
+          </div>
+
+          <div id="trn-reg-qr-box" class="flex flex-col sm:flex-row items-center gap-4 p-3 rounded-xl bg-white border border-slate-200">
+            <img id="trn-reg-qr-img" src="assets/qr-gcash.jpg" alt="Official Payment QR" class="w-28 h-28 object-contain rounded-lg border border-slate-200 flex-shrink-0">
+            <div class="space-y-1 text-center sm:text-left">
+              <div id="trn-reg-qr-acc" class="font-mono text-xs font-black text-slate-900">GCash Express Send: 0999 883 2346 (P&amp;F Rally Ground)</div>
+              <p class="text-[11px] text-slate-600">Scan the official club QR code above and enter your 6+ digit Reference Number below, or choose <b>Pay at Desk</b> to reserve your bracket seed and settle upon check-in.</p>
+            </div>
+          </div>
+
+          <div id="trn-reg-ref-wrap">
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Payment Reference No. (Last 6–13 Digits)</label>
+            <input type="text" id="trn-reg-ref" placeholder="e.g. 9012847561 (or switch to Pay at Desk)" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs">
           <label class="flex items-start gap-2.5 cursor-pointer">
-            <input type="checkbox" id="trn-consent-all" checked class="mt-0.5 w-4 h-4 rounded accent-[#050E1D]">
-            <span class="text-slate-600 text-[11px] leading-snug">I accept the facility waiver, court conduct rules, tournament bracket rules, and non-refundable registration terms.</span>
+            <input type="checkbox" id="trn-consent-all" checked class="mt-0.5 w-4 h-4 rounded accent-[#0F291E]">
+            <span class="text-slate-600 text-[11px] leading-snug">I confirm that our team names are accurate and agree to display our pair/squad on the live P&amp;F Rally Ground Community Tournament Roster &amp; Bracket.</span>
           </label>
         </div>
 
-        <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#050E1D] text-white">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-[#0F291E] text-white" style="background:#0F291E !important;color:#FFFFFF !important;">
           <div>
-            <span class="text-[10px] font-mono uppercase text-slate-400 block">Tournament Entry Fee</span>
-            <b id="trn-reg-fee-display" class="text-xl font-mono font-black text-[#9BE600]">₱850.00</b>
+            <span class="text-[10px] font-mono uppercase block" style="color:#A7F3D0 !important;">Tournament Entry Fee</span>
+            <b id="trn-reg-fee-display" class="text-2xl font-mono font-black" style="color:#A3E635 !important;">₱850.00</b>
           </div>
-          <button type="button" onclick="pfProceedTournamentToPayment()" class="px-5 py-3 rounded-xl bg-[#9BE600] hover:bg-[#b4ff00] text-[#050E1D] font-black uppercase text-xs tracking-wider transition shadow-lg">
-            Proceed to QR Payment →
+          <button type="button" onclick="pfProceedTournamentToPayment()" class="pf-trn-btn-volt w-full sm:w-auto px-6 py-3.5 rounded-xl font-black uppercase text-xs tracking-wider transition shadow-lg">
+            🏓 Confirm Registration &amp; Claim Bracket Seed →
           </button>
         </div>
       </div>
@@ -6090,10 +6312,23 @@ function pfRegisterForTournament(tournamentId) {
     document.body.appendChild(modal);
   }
 
+  const players = Array.isArray(trn.players) ? trn.players : [...PF_OPEN_SEED_LABELS];
+  const openIdx = players.findIndex(p => pfIsOpenSeedSlot(p));
+  const nextSeedNum = openIdx >= 0 ? (PF_SEED_SLOT_NUMBERS[openIdx] || (openIdx + 1)) : (pfCountRealTournamentTeams(trn) + 1);
+  const regCnt = pfCountRealTournamentTeams(trn);
+  const maxCnt = Math.max(8, Number(trn.maxTeams || 24));
+
   document.getElementById('trn-reg-id').value = trn.id;
   document.getElementById('trn-reg-modal-title').textContent = trn.title;
   document.getElementById('trn-reg-modal-meta').textContent = `${trn.format} • ${trn.date} (${trn.time})`;
   document.getElementById('trn-reg-fee-display').textContent = `₱${Number(trn.entryFee || 0).toLocaleString()}.00`;
+  const seedBanner = document.getElementById('trn-reg-seed-banner');
+  if (seedBanner) {
+    seedBanner.innerHTML = openIdx >= 0
+      ? `🟢 <b>Live Roster Status:</b> ${regCnt} / ${maxCnt} Teams Confirmed. Registering now automatically assigns your team to <b>Bracket Seed #${nextSeedNum}</b>!`
+      : `🟢 <b>Live Roster Status:</b> ${regCnt} / ${maxCnt} Teams Confirmed. Registering now adds your team to the official tournament pool!`;
+  }
+  pfSwitchTournamentPayMethod('GCash');
   modal.classList.remove('hidden');
 }
 
@@ -6102,20 +6337,24 @@ function pfCloseTournamentRegModal() {
   if (modal) modal.classList.add('hidden');
 }
 
-function pfProceedTournamentToPayment() {
+async function pfProceedTournamentToPayment() {
   const id = document.getElementById('trn-reg-id')?.value;
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   const list = pfGetTournamentsList();
-  const trn = list.find(t => String(t.id) === String(id)) || list[0];
+  const trnIdx = list.findIndex(t => String(t.id) === String(id));
+  const trn = trnIdx >= 0 ? list[trnIdx] : list[0];
   if (!trn) return;
 
   const name = (document.getElementById('trn-reg-name')?.value || '').trim();
   const phone = (document.getElementById('trn-reg-phone')?.value || '').trim();
   const partner = (document.getElementById('trn-reg-partner')?.value || '').trim();
   const division = (document.getElementById('trn-reg-division')?.value || 'Intermediate (3.5)').trim();
+  const payMethod = (document.getElementById('trn-reg-pay-method')?.value || 'GCash').trim();
+  const payRef = (document.getElementById('trn-reg-ref')?.value || '').trim();
   const consent = document.getElementById('trn-consent-all')?.checked;
 
   if (!name || name.length < 3) {
-    alert('Please enter the Primary Player Full Name.');
+    alert('Please enter Player 1 Full Name.');
     document.getElementById('trn-reg-name')?.focus();
     return;
   }
@@ -6124,43 +6363,118 @@ function pfProceedTournamentToPayment() {
     document.getElementById('trn-reg-phone')?.focus();
     return;
   }
+  if (payMethod !== 'Venue' && payRef.replace(/[^A-Za-z0-9]/g, '').length < 4) {
+    alert('Please enter your GCash/Maya/BDO Reference Number, or select "Pay at Desk".');
+    document.getElementById('trn-reg-ref')?.focus();
+    return;
+  }
   if (!consent) {
-    alert('Please accept the tournament waiver & registration consent checkbox.');
+    alert('Please accept the tournament registration consent checkbox.');
     return;
   }
 
   const fee = Number(trn.entryFee || 0);
-  const fullLabel = partner ? `${name} & ${partner}` : name;
+  const pairLabel = partner && partner.toLowerCase() !== 'n/a' ? `${name} & ${partner}` : name;
 
-  if (typeof pendingOrderData !== 'undefined') {
-    pendingOrderData = {
-      name: fullLabel,
-      phone: phone,
-      email: 'tournament@pfrally.ph',
-      court: `Tournament • ${trn.title}`,
-      time: `${trn.time}`,
-      date: trn.date,
-      total: fee,
-      courtCost: fee,
-      isTournament: true,
-      tournamentId: trn.id,
-      items: [`🏆 Tournament Entry: ${trn.title} (${division}) — ₱${fee}`]
-    };
+  if (!Array.isArray(trn.players) || trn.players.length < 8) {
+    trn.players = [...PF_OPEN_SEED_LABELS];
+  }
+  if (!Array.isArray(trn.registrations)) {
+    trn.registrations = [];
   }
 
-  const summaryCourt = document.getElementById('modal-summary-court');
-  if (summaryCourt) {
-    summaryCourt.textContent = `🏆 ${trn.title} • ${division}`;
+  // Find first open seed slot in the 8-seed bracket
+  const openSlotIdx = trn.players.findIndex(p => pfIsOpenSeedSlot(p));
+  const assignedSeedNum = openSlotIdx >= 0 ? (PF_SEED_SLOT_NUMBERS[openSlotIdx] || (openSlotIdx + 1)) : (trn.registrations.length + 1);
+  const formattedBracketLabel = `Seed #${assignedSeedNum} • ${pairLabel} (${division})`;
+
+  if (openSlotIdx >= 0) {
+    trn.players[openSlotIdx] = formattedBracketLabel;
   }
-  const modalName = document.getElementById('modal-cust-name');
-  const modalPhone = document.getElementById('modal-cust-phone');
-  if (modalName) modalName.value = fullLabel;
-  if (modalPhone) modalPhone.value = phone;
+
+  const regEntry = {
+    id: 'TRN-ENT-' + Date.now().toString().slice(-6),
+    teamName: pairLabel,
+    player1: name,
+    partner: partner || 'Solo / Partner TBD',
+    phone: phone,
+    division: division,
+    paymentMethod: payMethod,
+    paymentRef: payMethod === 'Venue' ? 'PAY-AT-DESK' : payRef,
+    status: payMethod === 'Venue' ? 'RESERVED (PAY AT DESK)' : 'CONFIRMED',
+    seedNumber: assignedSeedNum,
+    registeredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  };
+  trn.registrations.push(regEntry);
+  trn.registeredCount = pfCountRealTournamentTeams(trn);
+
+  const dcList = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length
+    ? trn.designatedCourts
+    : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+  trn.bracket = pfBuildDefaultBracketForPlayers(trn.players, dcList);
+
+  // Persist updated tournament roster & bracket to siteConfig and sync with server
+  cfg.tournaments = list;
+  cfg.updatedAt = Date.now();
+  window.PF_SITE_CONFIG = cfg;
+  try { localStorage.setItem('pf_site_config', JSON.stringify(cfg)); } catch (e) {}
+
+  const cfgEndpoints = pfGetApiEndpoints('/api/site-config');
+  for (const url of cfgEndpoints) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cfg)
+      });
+      if (r.ok) break;
+    } catch (e) {}
+  }
+
+  // Also record a booking transaction so Admin Bookings & POS see this tournament entry
+  const bookingRecord = {
+    ref: 'PF-TRN-' + Math.floor(100000 + Math.random() * 900000),
+    name: pairLabel,
+    phone: phone,
+    email: 'tournament@pfrally.ph',
+    court: `Tournament • ${trn.title} (Seed #${assignedSeedNum})`,
+    date: trn.date,
+    time: trn.time,
+    total: fee,
+    courtCost: fee,
+    paymentMode: payMethod,
+    paymentRef: regEntry.paymentRef,
+    status: payMethod === 'Venue' ? 'Pending Verification' : 'Confirmed',
+    isTournament: true,
+    tournamentId: trn.id,
+    items: [`🏆 ${trn.title} — Seed #${assignedSeedNum}: ${pairLabel} (${division})`],
+    createdAt: new Date().toISOString()
+  };
+  const stateEndpoints = pfGetApiEndpoints('/api/bookings');
+  for (const url of stateEndpoints) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingRecord)
+      });
+      if (r.ok) break;
+    } catch (e) {}
+  }
+
+  // Clear form & close modal
+  const nameInp = document.getElementById('trn-reg-name');
+  const phoneInp = document.getElementById('trn-reg-phone');
+  const partInp = document.getElementById('trn-reg-partner');
+  const refInp = document.getElementById('trn-reg-ref');
+  if (nameInp) nameInp.value = '';
+  if (phoneInp) phoneInp.value = '';
+  if (partInp) partInp.value = '';
+  if (refInp) refInp.value = '';
 
   pfCloseTournamentRegModal();
-  if (typeof openPaymentModal === 'function') {
-    openPaymentModal();
-  }
+  pfRenderPublicTournaments();
+  alert(`🎉 Official Tournament Registration Confirmed!\n\nTeam: ${pairLabel}\nAssigned Seed: Seed #${assignedSeedNum}\nTournament: ${trn.title}\nTotal Confirmed Teams: ${trn.registeredCount} / ${trn.maxTeams || 24}\n\nYour team is now live on the Community Roster & Championship Bracket!`);
 }
 
 window.pfGetDefaultTournaments = pfGetDefaultTournaments;
