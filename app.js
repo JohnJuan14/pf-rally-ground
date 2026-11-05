@@ -5372,6 +5372,238 @@ function pfRenderLiveSpectatorBracketBanner() {
   }
 }
 
+
+    function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath) {
+      const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : [];
+      const getM = (id, fallbackLabel, fallbackCourt) => matches.find(m => m.id === id) || {
+        id, label: fallbackLabel, court: fallbackCourt, teamA: 'TBD', teamB: 'TBD', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
+      };
+
+      const qf1 = getM('QF1', 'Quarterfinal 1', 'Court 1');
+      const qf2 = getM('QF2', 'Quarterfinal 2', 'Court 2');
+      const qf3 = getM('QF3', 'Quarterfinal 3', 'Court 3');
+      const qf4 = getM('QF4', 'Quarterfinal 4', 'Court 4');
+      const sf1 = getM('SF1', 'Semifinal 1', 'Court 1');
+      const sf2 = getM('SF2', 'Semifinal 2', 'Court 2');
+      const fin = getM('FIN', 'Gold Medal Final', 'Court 1');
+
+      const champName = fin.winner ? (fin.winner === 'A' ? fin.teamA : fin.teamB) : null;
+
+      const renderSlot = (teamName, score, isWin, isAwaiting, dir) => {
+        const cls = [
+          'pf-sym-slot',
+          dir === 'right' ? 'dir-right' : 'dir-left',
+          isWin ? 'is-winner' : '',
+          isAwaiting ? 'is-awaiting' : ''
+        ].filter(Boolean).join(' ');
+
+        return `
+          <div class="${cls}">
+            <div class="pf-sym-score-box">${Number(score || 0)}</div>
+            <div class="pf-sym-banner-bar">
+              <span class="truncate">${isWin ? '🏆 ' : ''}${pfEscapeHtml(teamName || 'TBD')}</span>
+              <span class="pf-sym-diamond"></span>
+            </div>
+          </div>
+        `;
+      };
+
+      const renderMatchNode = (m, dir, stageTag) => {
+        const isAct = isAdminInteractive && m.id === activeMatchId;
+        const isDone = m.status === 'COMPLETED';
+        const waitA = String(m.teamA || '').startsWith('Winner ');
+        const waitB = String(m.teamB || '').startsWith('Winner ');
+        const clickAttr = isAdminInteractive
+          ? `onclick="adminSelectBracketMatch('${m.id}', true)"`
+          : '';
+
+        let statusPill = `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-mono text-[9px] font-extrabold uppercase" style="color:#6EE7B7 !important;">🟢 Ready</span>`;
+        if (isDone) {
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-sky-500/25 text-sky-200 border border-sky-400/50 font-mono text-[9px] font-extrabold uppercase" style="color:#BAE6FD !important;">✓ Final</span>`;
+        } else if (isAct || m.status === 'LIVE') {
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-mono text-[9px] font-black uppercase shadow-xs" style="background:#FBBF24 !important;color:#05140D !important;">🟣 On Court</span>`;
+        } else if (m.status === 'PENDING') {
+          statusPill = `<span class="px-2 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/15 font-mono text-[9px] font-bold uppercase" style="color:#CBD5E1 !important;">⏳ Awaiting</span>`;
+        }
+
+        return `
+          <div ${clickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${isAct ? 'is-active-match' : ''} ${isDone ? 'is-completed-match' : ''} space-y-2">
+            <div class="flex items-center justify-between gap-1.5 px-0.5">
+              <span class="font-mono text-[10px] font-black uppercase tracking-wider text-amber-300" style="color:#FCD34D !important;">${pfEscapeHtml(stageTag)} • ${pfEscapeHtml(m.court || 'Court 1')}</span>
+              ${statusPill}
+            </div>
+            <div class="space-y-2">
+              ${renderSlot(m.teamA, m.scoreA, m.winner === 'A', waitA, dir)}
+              ${renderSlot(m.teamB, m.scoreB, m.winner === 'B', waitB, dir)}
+            </div>
+          </div>
+        `;
+      };
+
+      const finIsAct = isAdminInteractive && fin.id === activeMatchId;
+      const finClickAttr = isAdminInteractive ? `onclick="adminSelectBracketMatch('FIN', true)"` : '';
+      const finWaitA = String(fin.teamA || '').startsWith('Winner ');
+      const finWaitB = String(fin.teamB || '').startsWith('Winner ');
+
+      return `
+        <div class="space-y-6">
+          <!-- UPPER SYMMETRICAL WINGS: [1/4 LEFT] ── [1/2 LEFT] ── [P&F LOGO CENTER] ── [1/2 RIGHT] ── [1/4 RIGHT] -->
+          <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 lg:gap-3 items-center">
+
+            <!-- FAR LEFT WING: 1/4 QUARTERFINALS (QF1 & QF2) -->
+            <div class="lg:col-span-3 space-y-4">
+              <div class="text-center">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-amber-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/4 • QUARTERFINALS A &amp; B</span>
+              </div>
+              <div class="space-y-4">
+                ${renderMatchNode(qf1, 'left', 'QF1')}
+                ${renderMatchNode(qf2, 'left', 'QF2')}
+              </div>
+            </div>
+
+            <!-- INNER LEFT WING: 1/2 SEMIFINAL 1 (SF1) -->
+            <div class="lg:col-span-2 space-y-4 relative">
+              <div class="text-center">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-emerald-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/2 • SEMIFINAL 1</span>
+              </div>
+              <!-- Connector indicator lines on desktop -->
+              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono text-emerald-300/80 px-1" style="color:#6EE7B7 !important;">
+                <span>◆ QF1 / QF2</span>
+                <span>SF1 ◆</span>
+              </div>
+              ${renderMatchNode(sf1, 'left', 'SF1')}
+            </div>
+
+            <!-- CENTERPIECE: P&F RALLY GROUND LOGO IN THE MIDDLE + T-BRIDGE DOWN TO FINAL -->
+            <div class="lg:col-span-1 py-2 flex flex-col items-center justify-center">
+              <div class="pf-center-crest-wrap space-y-2">
+                <div class="pf-center-crest-ring">
+                  <div class="pf-center-crest-inner p-2">
+                    <img src="${logoPath}" alt="P&amp;F Rally Ground Logo" class="w-full h-full object-contain drop-shadow">
+                  </div>
+                </div>
+                <div class="px-2.5 py-0.5 rounded-md bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-mono text-[9px] font-black uppercase tracking-widest shadow" style="color:#04120B !important;">
+                  P&amp;F RALLY GROUND
+                </div>
+                <!-- Central T-Bridge Line dropping to FINAL -->
+                <div class="hidden lg:flex flex-col items-center pt-1">
+                  <div class="flex items-center">
+                    <span class="w-5 h-0.5 bg-amber-400"></span>
+                    <span class="w-2.5 h-2.5 rotate-45 bg-amber-400 border border-slate-950"></span>
+                    <span class="w-5 h-0.5 bg-amber-400"></span>
+                  </div>
+                  <div class="w-0.5 h-10 bg-gradient-to-b from-amber-400 to-emerald-400"></div>
+                  <span class="w-2.5 h-2.5 rotate-45 bg-emerald-400 border border-slate-950"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- INNER RIGHT WING: 1/2 SEMIFINAL 2 (SF2) -->
+            <div class="lg:col-span-2 space-y-4 relative">
+              <div class="text-center">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-emerald-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/2 • SEMIFINAL 2</span>
+              </div>
+              <div class="hidden lg:flex items-center justify-between text-[10px] font-mono text-emerald-300/80 px-1" style="color:#6EE7B7 !important;">
+                <span>◆ SF2</span>
+                <span>QF3 / QF4 ◆</span>
+              </div>
+              ${renderMatchNode(sf2, 'right', 'SF2')}
+            </div>
+
+            <!-- FAR RIGHT WING: 1/4 QUARTERFINALS (QF3 & QF4) -->
+            <div class="lg:col-span-3 space-y-4">
+              <div class="text-center">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-amber-400/40 font-mono text-sm font-black uppercase tracking-widest text-white shadow-xs" style="color:#FFFFFF !important;">1/4 • QUARTERFINALS C &amp; D</span>
+              </div>
+              <div class="space-y-4">
+                ${renderMatchNode(qf3, 'right', 'QF3')}
+                ${renderMatchNode(qf4, 'right', 'QF4')}
+              </div>
+            </div>
+
+          </div>
+
+          <!-- BOTTOM CENTER: GRAND CHAMPIONSHIP FINAL (DIRECTLY UNDER P&F LOGO LIKE REFERENCE IMAGE) -->
+          <div class="max-w-3xl mx-auto pt-2">
+            <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-4 sm:p-5 border-2 border-amber-400/75 shadow-2xl">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <span class="px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-mono text-[10px] font-black uppercase tracking-widest" style="background:#FBBF24 !important;color:#04120B !important;">
+                  🏆 GRAND CHAMPIONSHIP FINAL • ${pfEscapeHtml(fin.court || 'Court 1')}
+                </span>
+                <span class="font-mono text-[10px] font-extrabold uppercase text-emerald-300" style="color:#6EE7B7 !important;">
+                  ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : 'CLICK TO SCORE FINAL MATCH')}
+                </span>
+              </div>
+
+              <!-- Opposing Left vs Right Finalist Banners (Reference Image Bottom FINAL Style) -->
+              <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
+                <div class="md:col-span-5">
+                  ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
+                </div>
+                <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
+                  <span class="px-2.5 py-1 rounded-full bg-black/70 border border-amber-400 font-mono text-[10px] font-black text-amber-300" style="color:#FCD34D !important;">VS</span>
+                </div>
+                <div class="md:col-span-5">
+                  ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
+                </div>
+              </div>
+
+              <div class="mt-3 pt-2.5 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
+                <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em] text-white" style="color:#FFFFFF !important;">FINAL</div>
+                ${champName
+                  ? `<div class="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-mono text-xs font-black uppercase shadow-lg" style="color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
+                  : `<div class="text-xs font-mono text-amber-200/90" style="color:#FDE68A !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+function pfOpenFullBracketModal(trnId) {
+  const list = pfGetTournamentsList();
+  const trn = list.find(t => String(t.id) === String(trnId)) || list[0];
+  if (!trn) return;
+  let modal = document.getElementById('pf-public-full-bracket-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pf-public-full-bracket-modal';
+    modal.className = 'fixed inset-0 z-[95] hidden flex items-center justify-center p-3 sm:p-5';
+    modal.innerHTML = `
+      <div onclick="document.getElementById('pf-public-full-bracket-modal').classList.add('hidden')" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+      <div class="relative z-10 w-full max-w-7xl max-h-[92dvh] overflow-y-auto pf-arena-stage p-5 sm:p-8 shadow-2xl">
+        <div class="pf-arena-shard-tl"></div>
+        <div class="pf-arena-shard-tr"></div>
+        <div class="pf-arena-shard-bl"></div>
+        <div class="pf-arena-shard-br"></div>
+        <div class="relative z-10 space-y-6">
+          <div class="flex items-center justify-between gap-3 border-b border-white/15 pb-3">
+            <div class="flex items-center gap-2.5">
+              <img src="assets/logo.png" alt="P&amp;F Logo" class="w-9 h-9 rounded-lg object-contain bg-black/40 p-1 border border-amber-400/50">
+              <div>
+                <span id="pf-modal-brk-format" class="text-[10px] font-mono font-extrabold uppercase text-amber-300 block" style="color:#FCD34D !important;">OFFICIAL CHAMPIONSHIP BRACKET</span>
+                <h3 id="pf-modal-brk-title" class="text-lg sm:text-2xl font-black uppercase text-white" style="color:#FFFFFF !important;">Tournament Bracket</h3>
+              </div>
+            </div>
+            <button type="button" onclick="document.getElementById('pf-public-full-bracket-modal').classList.add('hidden')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-xs font-extrabold uppercase border border-white/20" style="color:#FFFFFF !important;">✕ Close Arena</button>
+          </div>
+          <div id="pf-modal-brk-body"></div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  const fmtEl = document.getElementById('pf-modal-brk-format');
+  if (fmtEl) fmtEl.textContent = `${trn.format || 'Official Tournament'} • ${trn.date} • ${trn.courts || 'Courts 1 – 4'}`;
+  const titleEl = document.getElementById('pf-modal-brk-title');
+  if (titleEl) titleEl.textContent = trn.title;
+  const bodyEl = document.getElementById('pf-modal-brk-body');
+  if (bodyEl) bodyEl.innerHTML = pfBuildSymmetricalBracketTreeHtml(trn, null, false, 'assets/logo.png');
+  modal.classList.remove('hidden');
+}
+window.pfOpenFullBracketModal = pfOpenFullBracketModal;
+
 function pfRenderPublicTournaments() {
   try { pfRenderLiveSpectatorBracketBanner(); } catch (e) {}
   const sec = document.getElementById('tournaments');
@@ -5432,71 +5664,49 @@ function pfRenderPublicTournaments() {
     const fee = Number(t.entryFee || 0);
     const players = Array.isArray(t.players) ? t.players : [];
     const bracket = Array.isArray(t.bracket) ? t.bracket : pfBuildDefaultBracketForPlayers(players);
+    t.bracket = bracket;
     const maxT = Math.max(players.length, Number(t.maxTeams || 24));
     const regT = Math.min(maxT, Math.max(players.length, Number(t.registeredCount || players.length)));
     const spotsLeft = Math.max(0, maxT - regT);
     const pct = Math.min(100, Math.round((regT / maxT) * 100));
 
-    const qfMatches = bracket.filter(m => m.stage === 'Quarterfinals');
-    const sfMatches = bracket.filter(m => m.stage === 'Semifinals');
-    const finMatches = bracket.filter(m => m.stage === 'Championship Final' || m.id === 'FIN');
-    const finMatch = finMatches[0] || null;
+    const finMatch = bracket.find(m => m.stage === 'Championship Final' || m.id === 'FIN') || null;
     const champName = (finMatch && finMatch.winner) ? (finMatch.winner === 'A' ? finMatch.teamA : finMatch.teamB) : null;
-
-    const renderBracketMatchMini = (m) => {
-      const winA = m.winner === 'A';
-      const winB = m.winner === 'B';
-      let stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[9px] font-mono font-bold">🟢 Ready</span>`;
-      if (m.status === 'COMPLETED') {
-        stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[9px] font-mono font-bold">🔵 Final</span>`;
-      } else if (m.status === 'LIVE') {
-        stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[9px] font-mono font-bold">🟣 Live</span>`;
-      } else if (m.status === 'PENDING') {
-        stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-[9px] font-mono font-bold">🟡 Awaiting</span>`;
-      }
-      return `
-        <div class="rounded-xl bg-white border border-[#E2E0D8] p-2.5 space-y-1.5 shadow-2xs">
-          <div class="flex items-center justify-between gap-1.5">
-            <span class="text-[9px] font-mono font-extrabold uppercase text-[#0D1F18] bg-[#EFECE6] px-2 py-0.5 rounded">${pfEscapeHtml(m.court || 'Court 1')} • ${pfEscapeHtml(m.label || m.id)}</span>
-            ${stBadge}
-          </div>
-          <div class="space-y-1 text-[11px]">
-            <div class="flex items-center justify-between gap-2 px-2 py-1 rounded-lg ${winA ? 'bg-[#D1FAE5] text-[#065F46] font-extrabold border border-[#6EE7B7]' : 'bg-[#F8F7F3] text-[#0D1F18] font-semibold'}">
-              <span class="truncate">${winA ? '🏆 ' : ''}${pfEscapeHtml(m.teamA)}</span>
-              <span class="font-mono font-extrabold">${Number(m.scoreA || 0)}</span>
-            </div>
-            <div class="flex items-center justify-between gap-2 px-2 py-1 rounded-lg ${winB ? 'bg-[#D1FAE5] text-[#065F46] font-extrabold border border-[#6EE7B7]' : 'bg-[#F8F7F3] text-[#0D1F18] font-semibold'}">
-              <span class="truncate">${winB ? '🏆 ' : ''}${pfEscapeHtml(m.teamB)}</span>
-              <span class="font-mono font-extrabold">${Number(m.scoreB || 0)}</span>
-            </div>
-          </div>
-        </div>
-      `;
-    };
 
     const playersGridHtml = players.map((pName, idx) => `
       <div class="flex items-center gap-2 p-2 rounded-xl bg-white border border-[#E2E0D8] text-xs shadow-2xs">
-        <span class="w-6 h-6 rounded-lg bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
+        <span class="w-6 h-6 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-extrabold flex items-center justify-center flex-shrink-0" style="background:#0F291E !important;color:#FFFFFF !important;">#${idx + 1}</span>
         <span class="font-bold text-[#0D1F18] truncate">${pfEscapeHtml(pName)}</span>
       </div>
     `).join('');
 
     return `
-      <div class="rounded-3xl bg-white border border-[#E2E0D8] hover:border-[#15803D] transition-all p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4 text-[#0D1F18]">
-        <div class="space-y-3.5">
+      <div class="col-span-full rounded-3xl bg-white border-2 border-[#E2E0D8] hover:border-[#15803D] transition-all p-5 sm:p-7 shadow-lg flex flex-col justify-between space-y-5 text-[#0D1F18]">
+        <div class="space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
-            <div class="flex items-center gap-1.5">
-              ${champName ? `<span class="pf-pill px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">👑 Champion: ${pfEscapeHtml(champName)}</span>` : `<span class="pf-pill px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] font-mono text-[10px] font-extrabold uppercase">${spotsLeft} Spots Left</span>`}
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
+              <span class="pf-pill px-3 py-1 rounded-full bg-[#0F291E] text-white font-mono text-xs font-black" style="background:#0F291E !important;color:#FFFFFF !important;">Entry: ${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              ${champName ? `<span class="pf-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">👑 Champion: ${pfEscapeHtml(champName)}</span>` : `<span class="pf-pill px-3 py-1 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] font-mono text-[10px] font-extrabold uppercase">${spotsLeft} Spots Left</span>`}
+              <button type="button" onclick="pfOpenFullBracketModal('${pfEscapeHtml(t.id)}')" class="px-3 py-1.5 rounded-xl bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#5B21B6] hover:text-white border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase transition">
+                🔍 Full-Screen Arena
+              </button>
             </div>
           </div>
 
-          <div>
-            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight text-[#0D1F18] leading-tight">${pfEscapeHtml(t.title)}</h3>
-            <p class="text-xs text-[#52605A] leading-relaxed mt-1">${pfEscapeHtml(t.description || '')}</p>
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl sm:text-2xl font-black tracking-tight text-[#0D1F18] leading-tight">${pfEscapeHtml(t.title)}</h3>
+              <p class="text-xs text-[#52605A] leading-relaxed mt-1 max-w-3xl">${pfEscapeHtml(t.description || '')}</p>
+            </div>
+            <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="px-5 py-3 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white font-extrabold text-xs tracking-wide transition active:scale-95 shadow-md flex items-center justify-center gap-2 flex-shrink-0" style="background:#0F291E !important;color:#FFFFFF !important;">
+              <span>Register for Tournament (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}) →</span>
+            </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
             <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
               <span class="text-[10px] font-mono uppercase text-[#52605A] block">Date &amp; Time</span>
               <b class="text-[#0D1F18] font-mono">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)}</b>
@@ -5510,64 +5720,48 @@ function pfRenderPublicTournaments() {
               <b class="text-[#C85A32]">${pfEscapeHtml(t.prizePool)}</b>
             </div>
             <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
-              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Registration Fee</span>
-              <b class="text-[#15803D] font-mono text-base">${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</b>
+              <span class="text-[10px] font-mono uppercase text-[#52605A] block">Registered Entries</span>
+              <b class="text-[#15803D] font-mono">${regT} / ${maxT} (${pct}% Full)</b>
             </div>
           </div>
 
           <!-- REGISTERED PLAYERS & SEEDED TEAMS ROSTER -->
           <div class="rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8] p-3.5 space-y-2.5">
             <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2">
-                <span class="pf-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-mono font-extrabold uppercase">👥 Registered Players &amp; Seeds (${players.length})</span>
-              </div>
-              <span class="text-[10px] font-mono font-bold text-[#52605A]">${regT} / ${maxT} Entries</span>
+              <span class="pf-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-mono font-extrabold uppercase">👥 Official Seeded Players &amp; Pairs (${players.length})</span>
+              <span class="text-[10px] font-mono font-bold text-[#52605A]">Courts 1 – 4</span>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
               ${playersGridHtml}
             </div>
           </div>
 
-          <!-- INTERACTIVE TOURNAMENT BRACKET SYSTEM (QUARTERFINALS -> SEMIFINALS -> GOLD MEDAL FINAL) -->
-          <details class="group rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8] overflow-hidden" open>
-            <summary class="cursor-pointer px-4 py-3 flex items-center justify-between gap-2 select-none bg-white border-b border-[#E2E0D8]">
-              <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[#15803D]"></span>
-                <span class="text-xs font-extrabold text-[#0D1F18] uppercase tracking-wider">🏆 Official Championship Bracket (Courts 1 – 4)</span>
+          <!-- SYMMETRICAL LOGO-CENTER CHAMPIONSHIP BRACKET ARENA -->
+          <details class="group rounded-3xl overflow-hidden border-2 border-[#0F291E]" open>
+            <summary class="cursor-pointer px-5 py-3.5 flex items-center justify-between gap-2 select-none bg-[#0F291E] text-white" style="background:#0F291E !important;color:#FFFFFF !important;">
+              <div class="flex items-center gap-2.5">
+                <img src="assets/logo.png" alt="Logo" class="w-6 h-6 rounded object-contain">
+                <span class="text-xs font-black uppercase tracking-wider text-white" style="color:#FFFFFF !important;">🏆 Official Championship Bracket Arena (1/4 • 1/2 • FINAL)</span>
               </div>
-              <span class="text-[11px] font-mono font-bold text-[#15803D] group-open:rotate-180 transition-transform">▼ Show / Hide Bracket</span>
+              <span class="text-[11px] font-mono font-bold text-amber-300" style="color:#FCD34D !important;">▼ Show / Hide Live Bracket Tree</span>
             </summary>
-            <div class="p-3.5 grid grid-cols-1 lg:grid-cols-3 gap-3">
-              <div class="space-y-2">
-                <div class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#52605A] px-1">Quarterfinals (4 Matches)</div>
-                ${qfMatches.map(renderBracketMatchMini).join('')}
-              </div>
-              <div class="space-y-2">
-                <div class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#5B21B6] px-1">Semifinals (2 Matches)</div>
-                ${sfMatches.map(renderBracketMatchMini).join('')}
-              </div>
-              <div class="space-y-2">
-                <div class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#065F46] px-1">🏆 Gold Medal Final</div>
-                ${finMatches.map(renderBracketMatchMini).join('')}
+            <div class="pf-arena-stage rounded-none border-0 p-4 sm:p-6">
+              <div class="pf-arena-shard-tl"></div>
+              <div class="pf-arena-shard-tr"></div>
+              <div class="pf-arena-shard-bl"></div>
+              <div class="pf-arena-shard-br"></div>
+              <div class="relative z-10 space-y-4">
+                <div class="text-center">
+                  <div class="flex items-center justify-center gap-3">
+                    <span class="hidden sm:inline-block w-12 h-0.5 bg-amber-400"></span>
+                    <h4 class="text-lg sm:text-2xl font-black uppercase tracking-wider text-white" style="color:#FFFFFF !important;">${pfEscapeHtml(t.title)}</h4>
+                    <span class="hidden sm:inline-block w-12 h-0.5 bg-amber-400"></span>
+                  </div>
+                </div>
+                ${pfBuildSymmetricalBracketTreeHtml(t, null, false, 'assets/logo.png')}
               </div>
             </div>
           </details>
-        </div>
-
-        <div class="pt-3 border-t border-[#E2E0D8] space-y-3">
-          <div>
-            <div class="flex justify-between text-[11px] font-mono mb-1">
-              <span class="text-[#52605A]">Registered Entries: <b class="text-[#0D1F18]">${regT} / ${maxT}</b></span>
-              <span class="text-[#15803D] font-bold">${pct}% Full</span>
-            </div>
-            <div class="w-full h-2 rounded-full bg-[#EFECE6] overflow-hidden border border-[#E2E0D8]">
-              <div class="h-full bg-[#15803D] rounded-full" style="width:${pct}%"></div>
-            </div>
-          </div>
-
-          <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="w-full py-3.5 px-5 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white font-extrabold text-xs tracking-wide transition active:scale-95 shadow-sm flex items-center justify-center gap-2" style="color:#FFFFFF !important;">
-            <span>Register for Tournament (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}) →</span>
-          </button>
         </div>
       </div>
     `;

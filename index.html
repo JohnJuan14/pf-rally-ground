@@ -1831,7 +1831,235 @@
       color: #FFFFFF !important;
     }
 
-</style>
+
+
+/* === P&F RALLY GROUND SYMMETRICAL LOGO-CENTER TOURNAMENT BRACKET & SCORING PORTAL === */
+.pf-arena-stage {
+  position: relative;
+  background: radial-gradient(circle at 50% 32%, rgba(16, 185, 129, 0.22) 0%, rgba(15, 41, 30, 0.96) 52%, #06130D 100%);
+  border: 2px solid rgba(16, 185, 129, 0.45);
+  border-radius: 28px;
+  overflow: hidden;
+  color: #FFFFFF !important;
+  box-shadow: 0 24px 60px -15px rgba(4, 18, 12, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.pf-arena-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(110, 231, 183, 0.16) 1.25px, transparent 1.25px),
+    linear-gradient(125deg, rgba(245, 158, 11, 0.08) 0%, transparent 35%, transparent 65%, rgba(16, 185, 129, 0.10) 100%);
+  background-size: 20px 20px, 100% 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Corner Shard Accents (like reference image, in P&F Gold & Emerald) */
+.pf-arena-shard-tl,
+.pf-arena-shard-tr,
+.pf-arena-shard-bl,
+.pf-arena-shard-br {
+  position: absolute;
+  width: 180px;
+  height: 90px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+}
+.pf-arena-shard-tl {
+  top: -18px;
+  left: -28px;
+  background: linear-gradient(135deg, #F59E0B 0%, #10B981 65%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 58% 42%, 82% 42%, 0 100%);
+}
+.pf-arena-shard-tr {
+  top: -18px;
+  right: -28px;
+  background: linear-gradient(225deg, #F59E0B 0%, #10B981 65%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 18% 42%, 42% 42%);
+}
+.pf-arena-shard-bl {
+  bottom: -18px;
+  left: -28px;
+  background: linear-gradient(45deg, #F59E0B 0%, #15803D 65%, transparent 100%);
+  clip-path: polygon(0 0, 72% 58%, 45% 58%, 100% 100%, 0 100%);
+}
+.pf-arena-shard-br {
+  bottom: -18px;
+  right: -28px;
+  background: linear-gradient(315deg, #F59E0B 0%, #15803D 65%, transparent 100%);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 55% 58%, 28% 58%);
+}
+
+/* Match Container in Symmetrical Tree */
+.pf-sym-match-card {
+  position: relative;
+  border-radius: 18px;
+  padding: 10px;
+  background: rgba(7, 25, 17, 0.82);
+  border: 1.5px solid rgba(110, 231, 183, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+}
+.pf-sym-match-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.75);
+  box-shadow: 0 10px 26px -6px rgba(245, 158, 11, 0.28);
+}
+.pf-sym-match-card.is-active-match {
+  border: 2px solid #F59E0B !important;
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.16) 0%, rgba(15, 41, 30, 0.94) 100%) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.22), 0 14px 30px -6px rgba(0, 0, 0, 0.65) !important;
+}
+.pf-sym-match-card.is-completed-match {
+  border-color: rgba(16, 185, 129, 0.55);
+}
+
+/* Slot Row (Score Box + Team Banner Bar like Reference Image) */
+.pf-sym-slot {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+.pf-sym-slot.dir-right {
+  flex-direction: row-reverse;
+}
+.pf-sym-score-box {
+  width: 42px;
+  height: 40px;
+  border-radius: 11px;
+  background: #040E09 !important;
+  border: 2px solid #F59E0B;
+  box-shadow: 0 0 0 2px rgba(4, 14, 9, 0.95), 0 0 0 3.5px rgba(245, 158, 11, 0.45), inset 0 2px 6px rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 900;
+  color: #FFFFFF !important;
+  flex-shrink: 0;
+  z-index: 2;
+}
+.pf-sym-slot.is-winner .pf-sym-score-box {
+  background: #064E3B !important;
+  border-color: #34D399 !important;
+  box-shadow: 0 0 0 2px #040E09, 0 0 12px rgba(52, 211, 153, 0.65);
+  color: #A7F3D0 !important;
+}
+.pf-sym-banner-bar {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: linear-gradient(90deg, #D97706 0%, #F59E0B 48%, #FBBF24 100%);
+  color: #05140D !important;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-bottom: 1.5px solid rgba(180, 83, 9, 0.85);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+.pf-sym-slot.dir-left .pf-sym-banner-bar {
+  margin-left: -4px;
+  padding-left: 12px;
+  border-radius: 0 9px 9px 0;
+  border-right: 2px solid #FEF3C7;
+}
+.pf-sym-slot.dir-right .pf-sym-banner-bar {
+  margin-right: -4px;
+  padding-right: 12px;
+  border-radius: 9px 0 0 9px;
+  border-left: 2px solid #FEF3C7;
+  background: linear-gradient(270deg, #D97706 0%, #F59E0B 48%, #FBBF24 100%);
+}
+.pf-sym-slot.is-winner .pf-sym-banner-bar {
+  background: linear-gradient(90deg, #059669 0%, #10B981 55%, #34D399 100%) !important;
+  color: #03150D !important;
+  border-color: #A7F3D0 !important;
+}
+.pf-sym-slot.is-awaiting .pf-sym-banner-bar {
+  background: linear-gradient(90deg, #1E293B 0%, #334155 100%) !important;
+  color: #E2E8F0 !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+}
+.pf-sym-slot.is-awaiting .pf-sym-banner-bar span {
+  color: #E2E8F0 !important;
+}
+.pf-sym-slot:not(.is-awaiting) .pf-sym-banner-bar span {
+  color: #04120B !important;
+}
+
+/* Diamond Connector Pin on Inner Tip of Each Slot */
+.pf-sym-diamond {
+  width: 8px;
+  height: 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #040E09;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+}
+
+/* Center Club Crest Shield */
+.pf-center-crest-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.pf-center-crest-ring {
+  width: 108px;
+  height: 108px;
+  border-radius: 9999px;
+  padding: 5px;
+  background: conic-gradient(from 0deg, #F59E0B, #10B981, #FBBF24, #059669, #F59E0B);
+  box-shadow: 0 0 35px rgba(16, 185, 129, 0.45), 0 0 60px rgba(245, 158, 11, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf-center-crest-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: #06150E;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Pro Broadcast Scoring Console */
+.pf-scoring-portal {
+  background: linear-gradient(155deg, #071911 0%, #0E291D 55%, #06140E 100%) !important;
+  border: 2px solid rgba(16, 185, 129, 0.45) !important;
+  border-radius: 28px;
+  color: #FFFFFF !important;
+  box-shadow: 0 22px 50px -12px rgba(4, 18, 12, 0.8);
+}
+.pf-led-digits {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 22px rgba(52, 211, 153, 0.45);
+}
+.pf-led-digits-gold {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 22px rgba(251, 191, 36, 0.45);
+}
+
+  </style>
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black overflow-x-hidden">
 
