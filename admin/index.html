@@ -10546,8 +10546,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         prizePool: '₱25,000 Cash + Official Medals & Paddles',
         maxTeams: 16,
         registeredCount: 6,
-        approved: true,
-        status: 'APPROVED FOR HOME PAGE',
+        approved: false,
+        status: 'DRAFT (POST WHEN AVAILABLE)',
         description: 'Official USA Pickleball 2026 rules. Guaranteed 3 pool-play games (games to 11, win by 2). Top 2 teams per pool advance to the Gold/Silver/Bronze playoff bracket.'
       },
       {
@@ -10564,8 +10564,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         prizePool: '₱8,000 Cash + Pro Shop Gear Vouchers & Free Court Hours',
         maxTeams: 24,
         registeredCount: 11,
-        approved: true,
-        status: 'APPROVED FOR HOME PAGE',
+        approved: false,
+        status: 'DRAFT (POST WHEN AVAILABLE)',
         description: 'Fast-paced 12-minute timed games across all 4 courts! Winners move UP toward Championship Court 1 and split partners; losing pair moves down. Top 4 cumulative point scorers play a final medal match!'
       },
       {
@@ -10582,8 +10582,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         prizePool: '₱18,000 Cash + Club Championship Banner',
         maxTeams: 12,
         registeredCount: 8,
-        approved: true,
-        status: 'APPROVED FOR HOME PAGE',
+        approved: false,
+        status: 'DRAFT (POST WHEN AVAILABLE)',
         description: "Major League Pickleball format! Each squad clash features 4 games to 21 (rally scoring): Women's Doubles, Men's Doubles, and 2 Mixed Doubles sets. Tied 2–2 matches go to a 1v1 Dreambreaker Singles tiebreak!"
       },
       {
@@ -10600,8 +10600,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         prizePool: '₱15,000 Cash + Official Championship Medals',
         maxTeams: 24,
         registeredCount: 10,
-        approved: true,
-        status: 'APPROVED FOR HOME PAGE',
+        approved: false,
+        status: 'DRAFT (POST WHEN AVAILABLE)',
         description: 'Full Double-Elimination Championship Bracket (Winners Bracket best 2-of-3 to 11; Consolation Bracket 1 game to 15). Every player/team is guaranteed at least 2 bracket matches before elimination.'
       }
     ];
@@ -10616,7 +10616,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         });
       }
       if (currentSiteConfig.tournamentsPublishedOnHome === undefined) {
-        currentSiteConfig.tournamentsPublishedOnHome = true;
+        currentSiteConfig.tournamentsPublishedOnHome = false;
       }
       if (currentSiteConfig.liveBracketApproved === undefined) {
         currentSiteConfig.liveBracketApproved = true;
@@ -10629,7 +10629,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const masterBtn = document.getElementById('btn-toggle-home-tournaments-master');
       const bracketBtn = document.getElementById('btn-toggle-live-bracket-approval');
 
-      const pubOn = currentSiteConfig.tournamentsPublishedOnHome !== false;
+      const pubOn = currentSiteConfig.tournamentsPublishedOnHome === true;
       const brkOn = currentSiteConfig.liveBracketApproved !== false;
 
       if (masterBtn) {
@@ -10648,7 +10648,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (!container) return;
       const list = currentSiteConfig.tournaments || [];
       container.innerHTML = list.map((t) => {
-        const isApp = t.approved !== false && pubOn;
+        const isApp = t.approved === true && pubOn;
         return `
           <div class="p-4 rounded-2xl border-2 ${isApp ? 'border-emerald-500 bg-emerald-50/40' : 'border-slate-300 bg-slate-100 opacity-80'} flex flex-col justify-between gap-3">
             <div>
@@ -10665,8 +10665,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
               <span class="text-[11px] font-bold ${isApp ? 'text-emerald-800' : 'text-slate-500'}">
                 ${isApp ? 'Visible to customers on Home Page' : 'Hidden from public Home Page'}
               </span>
-              <button type="button" onclick="toggleSingleTournamentApproval('${pfEscapeHtml(t.id)}')" class="px-3.5 py-2 rounded-xl font-black text-[11px] uppercase tracking-wider transition ${t.approved !== false ? 'bg-rose-100 hover:bg-rose-600 text-rose-800 hover:text-white border border-rose-300' : 'bg-[#9BE600] hover:bg-[#84cc16] text-[#050E1D] border border-[#050E1D]'}">
-                ${t.approved !== false ? 'Unapprove / Hide' : '✓ Approve for Home Page'}
+              <button type="button" onclick="toggleSingleTournamentApproval('${pfEscapeHtml(t.id)}')" class="px-3.5 py-2 rounded-xl font-black text-[11px] uppercase tracking-wider transition ${t.approved === true ? 'bg-rose-100 hover:bg-rose-600 text-rose-800 hover:text-white border border-rose-300' : 'bg-[#9BE600] hover:bg-[#84cc16] text-[#050E1D] border border-[#050E1D]'}">
+                ${t.approved === true ? 'Hide from Home Page' : '📢 Post Tournament on Home Page'}
               </button>
             </div>
           </div>
@@ -10688,7 +10688,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
 
     async function toggleMasterHomeTournamentVisibility() {
       ensureAdminTournamentsInitialized();
-      currentSiteConfig.tournamentsPublishedOnHome = !(currentSiteConfig.tournamentsPublishedOnHome !== false);
+      currentSiteConfig.tournamentsPublishedOnHome = !(currentSiteConfig.tournamentsPublishedOnHome === true);
       await persistAdminTournamentApprovals();
     }
 
@@ -10702,7 +10702,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       ensureAdminTournamentsInitialized();
       const target = (currentSiteConfig.tournaments || []).find(t => String(t.id) === String(trnId));
       if (!target) return;
-      target.approved = !(target.approved !== false);
+      target.approved = !(target.approved === true);
+      if (target.approved) currentSiteConfig.tournamentsPublishedOnHome = true;
       target.status = target.approved ? 'APPROVED FOR HOME PAGE' : 'DRAFT (ADMIN ONLY)';
       await persistAdminTournamentApprovals();
     }

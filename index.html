@@ -941,7 +941,7 @@
       <nav class="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 text-[11px] xl:text-xs uppercase tracking-wider flex-shrink-0">
         <a href="index.html" id="nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-brand-black bg-brand-lime font-black shadow-md shadow-brand-lime/20">Home</a>
         <a href="#schedule" id="nav-link-schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">Schedule &amp; Open Play</a>
-        <a href="#tournaments" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">🏆 Tournaments</a>
+        <a href="#tournaments" id="nav-link-tournaments" class="hidden whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">🏆 Tournaments</a>
         <a href="#location" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold transition-all duration-200">📍 Location Map</a>
         <a href="pricing.html" class="whitespace-nowrap px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-slate-200 hover:text-brand-lime hover:bg-white/5 font-bold">Rates &amp; Gear</a>
         <span class="h-3.5 w-px bg-white/15 mx-1"></span>
@@ -985,7 +985,7 @@
         <a href="#schedule" id="mob-nav-link-schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
           <span>Live Court Schedule &amp; 24-Player Open Play</span> <span id="mob-nav-badge-schedule" class="text-[#0E8A2D] font-mono font-black">→</span>
         </a>
-        <a href="#tournaments" onclick="toggleMobileMenu()" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
+        <a href="#tournaments" id="mob-nav-link-tournaments" onclick="toggleMobileMenu()" class="hidden flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
           <span>🏆 Pickleball Tournaments</span> <span class="text-[#0E8A2D] font-mono font-black">→</span>
         </a>
         <a href="#location" onclick="toggleMobileMenu()" class="flex items-center justify-between py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-[#9BE600]/20 hover:border-[#0E8A2D] text-[#050E1D] font-extrabold transition">
@@ -1257,7 +1257,7 @@
     </div>
   </section>
   <!-- ================= PICKLEBALL TOURNAMENTS & CHAMPIONSHIP HUB (ADMIN-HOSTED ONLY) ================= -->
-  <section id="tournaments" class="py-16 sm:py-20 bg-brand-black border-t border-white/10 scroll-mt-28" style="scroll-margin-top: 118px;">
+  <section id="tournaments" class="hidden py-16 sm:py-20 bg-brand-black border-t border-white/10 scroll-mt-28" style="scroll-margin-top: 118px;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div>

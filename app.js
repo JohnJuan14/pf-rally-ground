@@ -4674,16 +4674,24 @@ function pfRenderPublicTournaments() {
   if (!grid) return;
 
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
-  const masterPublished = cfg.tournamentsPublishedOnHome !== false;
-  const list = pfGetTournamentsList().filter(t => t && t.approved !== false);
+  const masterPublished = cfg.tournamentsPublishedOnHome === true;
+  const list = pfGetTournamentsList().filter(t => t && t.approved === true);
 
-  // If Admin disabled Homepage Tournaments or unapproved all tournaments, hide from public view
-  if (!masterPublished || list.length === 0) {
+  const navTrn = document.getElementById('nav-link-tournaments');
+  const mobNavTrn = document.getElementById('mob-nav-link-tournaments');
+  const hasLiveBracket = Boolean(cfg.liveBracketApproved === true && cfg.liveBracketState && cfg.liveBracketState.phase && cfg.liveBracketState.phase !== 'SETUP');
+
+  // Only show the #tournaments section on the Home Page when Admin explicitly posts/approves an available tournament!
+  if ((!masterPublished || list.length === 0) && !hasLiveBracket) {
     if (sec) sec.classList.add('hidden');
+    if (navTrn) navTrn.classList.add('hidden');
+    if (mobNavTrn) mobNavTrn.classList.add('hidden');
     grid.innerHTML = '';
     return;
   }
   if (sec) sec.classList.remove('hidden');
+  if (navTrn) navTrn.classList.remove('hidden');
+  if (mobNavTrn) mobNavTrn.classList.remove('hidden');
 
   const filtered = list.filter(t => {
     if (!activePublicTournamentFilter || activePublicTournamentFilter === 'ALL') return true;
