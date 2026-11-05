@@ -2128,6 +2128,27 @@
           </div>
         </div>
 
+        <!-- ADMIN HOMEPAGE TOURNAMENT APPROVAL & VISIBILITY GATE -->
+        <div class="p-5 rounded-2xl bg-white text-slate-900 border-2 border-slate-200 shadow-xl space-y-4">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3.5">
+            <div>
+              <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-700 block">🛡️ HOMEPAGE VISIBILITY &amp; ADMIN APPROVAL GATE</span>
+              <h3 class="text-base sm:text-lg font-black uppercase text-slate-900">Approve Which Tournaments Appear on the Public Home Page</h3>
+              <p class="text-xs text-slate-600">Tournaments <b>only appear on the public Home Page when Approved by Admin</b> below. Unapproved tournaments stay hidden in Admin Draft mode.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" id="btn-toggle-home-tournaments-master" onclick="toggleMasterHomeTournamentVisibility()" class="px-4 py-2.5 rounded-xl bg-[#9BE600] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm">
+                ✅ Homepage Tournaments: APPROVED (VISIBLE)
+              </button>
+              <button type="button" id="btn-toggle-live-bracket-approval" onclick="toggleLive3DBracketHomeApproval()" class="px-4 py-2.5 rounded-xl bg-[#050E1D] text-[#9BE600] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm">
+                🏆 3D Bracket on Home: APPROVED
+              </button>
+            </div>
+          </div>
+
+          <div id="admin-tournament-approval-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"></div>
+        </div>
+
         <!-- Embedded 3D Tournament Simulator Arena -->
         <div class="rounded-2xl overflow-hidden border-2 border-brand-lime/40 shadow-2xl bg-[#020617] relative" style="height: 780px;">
           <iframe id="admin-3d-tournament-iframe" src="tournament.html?embed=admin" title="Admin-Only 3D Pickleball Tournament Manager" class="w-full h-full border-0" allow="camera; microphone"></iframe>
@@ -4039,6 +4060,7 @@ function clearFieldError(fieldId) {
       if (tabId === 'schedule') renderScheduleBlocks();
       if (tabId === 'announcements' && typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
       if (tabId === 'pos') { renderPosCatalog(); renderPosOrder(); if (typeof refreshPosHubFromLiveState === 'function') refreshPosHubFromLiveState(); }
+      if (tabId === 'tournament' && typeof renderAdminTournamentApprovalGate === 'function') { renderAdminTournamentApprovalGate(); }
       if (tabId === 'inventory') renderInventoryTable();
       if (tabId === 'reports') renderReportsLedger();
     }
@@ -10507,6 +10529,182 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (ifr) {
         ifr.src = 'tournament.html?embed=admin&t=' + Date.now();
       }
+    }
+
+    const ADMIN_DEFAULT_TOURNAMENTS = [
+      {
+        id: 'trn-mayon-cup-open',
+        title: 'Mayon Cup DUPR Open & Divisional Championship',
+        format: 'DUPR Round-Robin Pools + Single-Elimination Medal Bracket',
+        formatKey: 'ROUND_ROBIN',
+        division: 'Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)',
+        category: "Men's, Women's & Mixed Doubles",
+        date: '2026-11-14',
+        time: '08:00 AM – 05:00 PM',
+        courts: 'All 4 Courts (Courts 1 – 4)',
+        entryFee: 850,
+        prizePool: '₱25,000 Cash + Official Medals & Paddles',
+        maxTeams: 16,
+        registeredCount: 6,
+        approved: true,
+        status: 'APPROVED FOR HOME PAGE',
+        description: 'Official USA Pickleball 2026 rules. Guaranteed 3 pool-play games (games to 11, win by 2). Top 2 teams per pool advance to the Gold/Silver/Bronze playoff bracket.'
+      },
+      {
+        id: 'trn-king-of-court-friday',
+        title: 'Daraga Friday Night Lights: King & Queen of the Court',
+        format: 'King of the Court Ladder Split-Partner Rotation',
+        formatKey: 'KING_COURT',
+        division: 'All Skill Levels (Open Social Competitive)',
+        category: 'Individual Entry (Rotating Doubles Partners)',
+        date: '2026-11-20',
+        time: '06:00 PM – 10:00 PM',
+        courts: 'All 4 Courts (Courts 1 – 4)',
+        entryFee: 350,
+        prizePool: '₱8,000 Cash + Pro Shop Gear Vouchers & Free Court Hours',
+        maxTeams: 24,
+        registeredCount: 11,
+        approved: true,
+        status: 'APPROVED FOR HOME PAGE',
+        description: 'Fast-paced 12-minute timed games across all 4 courts! Winners move UP toward Championship Court 1 and split partners; losing pair moves down. Top 4 cumulative point scorers play a final medal match!'
+      },
+      {
+        id: 'trn-bicol-mlp-squads',
+        title: 'Bicol Club Squads MLP-Style Team Rally',
+        format: 'MLP 4-Player Team Format (2 Men + 2 Women) + Dreambreaker',
+        formatKey: 'MLP_TEAM',
+        division: 'Club Squads (2 Men + 2 Women per Squad)',
+        category: 'Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)',
+        date: '2026-11-28',
+        time: '09:00 AM – 06:00 PM',
+        courts: 'All 4 Courts (Courts 1 – 4)',
+        entryFee: 2000,
+        prizePool: '₱18,000 Cash + Club Championship Banner',
+        maxTeams: 12,
+        registeredCount: 8,
+        approved: true,
+        status: 'APPROVED FOR HOME PAGE',
+        description: "Major League Pickleball format! Each squad clash features 4 games to 21 (rally scoring): Women's Doubles, Men's Doubles, and 2 Mixed Doubles sets. Tied 2–2 matches go to a 1v1 Dreambreaker Singles tiebreak!"
+      },
+      {
+        id: 'trn-albay-double-elim',
+        title: 'Albay Double-Elimination Knockout Classic',
+        format: 'USA Pickleball Double Elimination Bracket',
+        formatKey: 'DOUBLE_ELIM',
+        division: 'Intermediate (3.5) & Advanced (4.0+)',
+        category: "Men's Singles & Mixed Doubles",
+        date: '2026-12-03',
+        time: '08:00 AM – 04:00 PM',
+        courts: 'All 4 Courts (Courts 1 – 4)',
+        entryFee: 600,
+        prizePool: '₱15,000 Cash + Official Championship Medals',
+        maxTeams: 24,
+        registeredCount: 10,
+        approved: true,
+        status: 'APPROVED FOR HOME PAGE',
+        description: 'Full Double-Elimination Championship Bracket (Winners Bracket best 2-of-3 to 11; Consolation Bracket 1 game to 15). Every player/team is guaranteed at least 2 bracket matches before elimination.'
+      }
+    ];
+
+    function ensureAdminTournamentsInitialized() {
+      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
+      if (!Array.isArray(currentSiteConfig.tournaments) || currentSiteConfig.tournaments.length === 0) {
+        currentSiteConfig.tournaments = JSON.parse(JSON.stringify(ADMIN_DEFAULT_TOURNAMENTS));
+      } else {
+        currentSiteConfig.tournaments.forEach(t => {
+          if (t.approved === undefined) t.approved = true;
+        });
+      }
+      if (currentSiteConfig.tournamentsPublishedOnHome === undefined) {
+        currentSiteConfig.tournamentsPublishedOnHome = true;
+      }
+      if (currentSiteConfig.liveBracketApproved === undefined) {
+        currentSiteConfig.liveBracketApproved = true;
+      }
+    }
+
+    function renderAdminTournamentApprovalGate() {
+      ensureAdminTournamentsInitialized();
+      const container = document.getElementById('admin-tournament-approval-cards');
+      const masterBtn = document.getElementById('btn-toggle-home-tournaments-master');
+      const bracketBtn = document.getElementById('btn-toggle-live-bracket-approval');
+
+      const pubOn = currentSiteConfig.tournamentsPublishedOnHome !== false;
+      const brkOn = currentSiteConfig.liveBracketApproved !== false;
+
+      if (masterBtn) {
+        masterBtn.textContent = pubOn ? '✅ Homepage Tournaments: APPROVED (VISIBLE)' : '🔒 Homepage Tournaments: HIDDEN BY ADMIN';
+        masterBtn.className = pubOn
+          ? 'px-4 py-2.5 rounded-xl bg-[#9BE600] text-[#050E1D] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm'
+          : 'px-4 py-2.5 rounded-xl bg-rose-600 text-white border-2 border-rose-800 font-black text-xs uppercase tracking-wider transition shadow-sm';
+      }
+      if (bracketBtn) {
+        bracketBtn.textContent = brkOn ? '🏆 3D Bracket on Home: APPROVED' : '🔒 3D Bracket on Home: ADMIN ONLY';
+        bracketBtn.className = brkOn
+          ? 'px-4 py-2.5 rounded-xl bg-[#050E1D] text-[#9BE600] border-2 border-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-sm'
+          : 'px-4 py-2.5 rounded-xl bg-slate-200 text-slate-700 border-2 border-slate-400 font-black text-xs uppercase tracking-wider transition shadow-sm';
+      }
+
+      if (!container) return;
+      const list = currentSiteConfig.tournaments || [];
+      container.innerHTML = list.map((t) => {
+        const isApp = t.approved !== false && pubOn;
+        return `
+          <div class="p-4 rounded-2xl border-2 ${isApp ? 'border-emerald-500 bg-emerald-50/40' : 'border-slate-300 bg-slate-100 opacity-80'} flex flex-col justify-between gap-3">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black uppercase ${isApp ? 'bg-emerald-600 text-white' : 'bg-slate-600 text-white'}">
+                  ${isApp ? '✅ APPROVED ON HOME PAGE' : '🔒 HIDDEN (UNAPPROVED)'}
+                </span>
+                <span class="font-mono text-xs font-black text-emerald-800">₱${Number(t.entryFee || 0).toLocaleString()}</span>
+              </div>
+              <h4 class="font-black text-slate-900 text-sm uppercase">${pfEscapeHtml(t.title)}</h4>
+              <p class="text-[11px] text-slate-600 font-mono mt-0.5">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)} • ${pfEscapeHtml(t.division)}</p>
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200">
+              <span class="text-[11px] font-bold ${isApp ? 'text-emerald-800' : 'text-slate-500'}">
+                ${isApp ? 'Visible to customers on Home Page' : 'Hidden from public Home Page'}
+              </span>
+              <button type="button" onclick="toggleSingleTournamentApproval('${pfEscapeHtml(t.id)}')" class="px-3.5 py-2 rounded-xl font-black text-[11px] uppercase tracking-wider transition ${t.approved !== false ? 'bg-rose-100 hover:bg-rose-600 text-rose-800 hover:text-white border border-rose-300' : 'bg-[#9BE600] hover:bg-[#84cc16] text-[#050E1D] border border-[#050E1D]'}">
+                ${t.approved !== false ? 'Unapprove / Hide' : '✓ Approve for Home Page'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function persistAdminTournamentApprovals() {
+      currentSiteConfig.updatedAt = Date.now();
+      broadcastSiteConfigLive(currentSiteConfig);
+      renderAdminTournamentApprovalGate();
+      if (typeof postSiteConfigToEndpoints === 'function') {
+        await postSiteConfigToEndpoints(currentSiteConfig);
+      }
+      if (typeof showPosHubToast === 'function') {
+        showPosHubToast('Homepage Tournament Approval synced live!');
+      }
+    }
+
+    async function toggleMasterHomeTournamentVisibility() {
+      ensureAdminTournamentsInitialized();
+      currentSiteConfig.tournamentsPublishedOnHome = !(currentSiteConfig.tournamentsPublishedOnHome !== false);
+      await persistAdminTournamentApprovals();
+    }
+
+    async function toggleLive3DBracketHomeApproval() {
+      ensureAdminTournamentsInitialized();
+      currentSiteConfig.liveBracketApproved = !(currentSiteConfig.liveBracketApproved !== false);
+      await persistAdminTournamentApprovals();
+    }
+
+    async function toggleSingleTournamentApproval(trnId) {
+      ensureAdminTournamentsInitialized();
+      const target = (currentSiteConfig.tournaments || []).find(t => String(t.id) === String(trnId));
+      if (!target) return;
+      target.approved = !(target.approved !== false);
+      target.status = target.approved ? 'APPROVED FOR HOME PAGE' : 'DRAFT (ADMIN ONLY)';
+      await persistAdminTournamentApprovals();
     }
 
   </script>

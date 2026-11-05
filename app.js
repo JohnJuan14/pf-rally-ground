@@ -4626,7 +4626,7 @@ function pfRenderLiveSpectatorBracketBanner() {
       bracket = JSON.parse(localStorage.getItem('pf_live_tournament_bracket') || 'null');
     } catch (e) {}
   }
-  if (!bracket || !bracket.matches || bracket.phase === 'SETUP') {
+  if (!bracket || !bracket.matches || bracket.phase === 'SETUP' || cfg.liveBracketApproved === false || cfg.tournamentsPublishedOnHome === false) {
     banner.classList.add('hidden');
     banner.innerHTML = '';
     return;
@@ -4669,10 +4669,22 @@ function pfRenderLiveSpectatorBracketBanner() {
 
 function pfRenderPublicTournaments() {
   try { pfRenderLiveSpectatorBracketBanner(); } catch (e) {}
+  const sec = document.getElementById('tournaments');
   const grid = document.getElementById('public-tournaments-grid');
   if (!grid) return;
 
-  const list = pfGetTournamentsList();
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const masterPublished = cfg.tournamentsPublishedOnHome !== false;
+  const list = pfGetTournamentsList().filter(t => t && t.approved !== false);
+
+  // If Admin disabled Homepage Tournaments or unapproved all tournaments, hide from public view
+  if (!masterPublished || list.length === 0) {
+    if (sec) sec.classList.add('hidden');
+    grid.innerHTML = '';
+    return;
+  }
+  if (sec) sec.classList.remove('hidden');
+
   const filtered = list.filter(t => {
     if (!activePublicTournamentFilter || activePublicTournamentFilter === 'ALL') return true;
     const fk = String(t.formatKey || t.format || '').toUpperCase();
