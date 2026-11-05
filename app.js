@@ -331,9 +331,13 @@ async function syncStateFromServer() {
               try { renderTimeChips(); } catch (e) {}
             }
           }
-          if (Array.isArray(data.announcements) && data.announcements.length > 0) {
+          if (Array.isArray(data.announcements) && (data.announcements.length > 0 || Number(data.announcementsUpdatedAt || 0) > 0)) {
             sharedServerState.announcements = data.announcements;
+            sharedServerState.announcementsUpdatedAt = Number(data.announcementsUpdatedAt || 0);
             localStorage.setItem('pf_announcements', JSON.stringify(data.announcements));
+            if (data.announcementsUpdatedAt) {
+              localStorage.setItem('pf_announcements_updated_at', String(data.announcementsUpdatedAt));
+            }
           } else if (!Array.isArray(sharedServerState.announcements) || sharedServerState.announcements.length === 0) {
             sharedServerState.announcements = getDefaultWelcomeAnnouncements();
           }
@@ -483,7 +487,15 @@ function openBookingDrawer(preSelectCourt = null, preSelectTime = null) {
     }
   }
   const drawer = document.getElementById('booking-drawer');
-  if (!drawer) return;
+  if (!drawer) {
+    const rail = document.getElementById('date-rail-container');
+    if (rail) {
+      rail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      window.location.href = 'book.html';
+    }
+    return;
+  }
   drawer.classList.remove('hidden');
   document.body.classList.add('overflow-hidden');
   initDrawerSlots();
@@ -1993,6 +2005,9 @@ function startCarouselTimer() {
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof applySiteConfig === 'function') applySiteConfig();
   if (typeof applyPaymentConfigToPublicDom === 'function') applyPaymentConfigToPublicDom();
+  if (typeof renderPublicAnnouncementBoard === 'function') {
+    try { renderPublicAnnouncementBoard(); } catch (e) {}
+  }
   initDrawerSlots();
   renderCartUI();
   syncStateFromServer();
@@ -2121,7 +2136,7 @@ function getDefaultWelcomeAnnouncements() {
     },
     {
       id: 'open-play-pf-2026',
-      title: 'Daily Open Play • 3:00 PM – 6:00 PM (₱150)',
+      title: 'Daily Open Play • 3:00 PM – 6:00 PM (₱150/player)',
       message: 'Join our daily community Open Play session across Courts 1 – 4 from 3:00 PM to 6:00 PM! All skill levels are welcome — bring your paddle or rent pro gear at the club.',
       category: 'Open Play Alert',
       img: '',
@@ -2132,15 +2147,68 @@ function getDefaultWelcomeAnnouncements() {
   ];
 }
 
+function sanitizeAnnouncementItem(item) {
+  if (!item || typeof item !== 'object') return null;
+  const copy = Object.assign({}, item);
+  if (typeof copy.title === 'string') {
+    copy.title = copy.title.replace(/\(Free\)/gi, '(₱150/player)').replace(/Free Open Play/gi, 'Open Play (₱150/player)');
+  }
+  if (typeof copy.message === 'string') {
+    copy.message = copy.message.replace(/\(Free\)/gi, '(₱150/player)').replace(/Free court entry/gi, '₱150/player entry');
+  }
+  return copy;
+}
+
 function getLiveAnnouncementsList() {
   try {
-    if (sharedServerState && Array.isArray(sharedServerState.announcements) && sharedServerState.announcements.length > 0) {
-      return sharedServerState.announcements;
+    const srvUpdatedAt = Number((sharedServerState && sharedServerState.announcementsUpdatedAt) || localStorage.getItem('pf_announcements_updated_at') || 0);
+    if (sharedServerState && Array.isArray(sharedServerState.announcements)) {
+      if (sharedServerState.announcements.length > 0 || srvUpdatedAt > 0) {
+        return sharedServerState.announcements.map(sanitizeAnnouncementItem).filter(Boolean);
+      }
     }
     const cached = JSON.parse(localStorage.getItem('pf_announcements') || 'null');
-    if (Array.isArray(cached) && cached.length > 0) return cached;
+    if (Array.isArray(cached) && (cached.length > 0 || srvUpdatedAt > 0)) {
+      return cached.map(sanitizeAnnouncementItem).filter(Boolean);
+    }
   } catch (e) {}
   return getDefaultWelcomeAnnouncements();
+}
+
+function getSharedAnnouncements() {
+  return getLiveAnnouncementsList();
+}
+
+function escapeAnnouncementHtml(str) {
+  if (typeof pfEscapeHtml === 'function') return pfEscapeHtml(str);
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatAnnouncementTime(rawTime) {
+  if (!rawTime) return 'Official Broadcast';
+  return String(rawTime);
+}
+
+function getAnnouncementCategoryBadgeStyle(catRaw) {
+  const c = String(catRaw || 'Club Update').toUpperCase();
+  if (c.includes('OPEN PLAY')) {
+    return 'bg-[#EDE9FE] text-[#5B21B6] border-[#C4B5FD]';
+  }
+  if (c.includes('TOURNAMENT') || c.includes('EVENT')) {
+    return 'bg-[#DBEAFE] text-[#1E40AF] border-[#93C5FD]';
+  }
+  if (c.includes('ADVISORY') || c.includes('WEATHER')) {
+    return 'bg-[#FEF3C7] text-[#92400E] border-[#FCD34D]';
+  }
+  if (c.includes('PROMO') || c.includes('RATE')) {
+    return 'bg-[#FFEDD5] text-[#9A3412] border-[#FDBA74]';
+  }
+  return 'bg-[#D1FAE5] text-[#065F46] border-[#6EE7B7]';
 }
 
 try {
@@ -2169,7 +2237,11 @@ try {
     const bc = new BroadcastChannel('pf_live_sync');
     bc.onmessage = (ev) => {
       if (ev.data && Array.isArray(ev.data.announcements)) {
-        if (sharedServerState) sharedServerState.announcements = ev.data.announcements;
+        if (sharedServerState) {
+          sharedServerState.announcements = ev.data.announcements;
+          sharedServerState.announcementsUpdatedAt = Date.now();
+        }
+        try { localStorage.setItem('pf_announcements', JSON.stringify(ev.data.announcements)); } catch (e) {}
         renderPublicAnnouncementBoard();
       }
       if (ev.data && Array.isArray(ev.data.inventory)) {
@@ -2200,6 +2272,11 @@ function toggleAnnouncementBoard(forceState) {
   win.classList.toggle('hidden', !isAnnouncementBoardOpen);
   if (isAnnouncementBoardOpen) {
     renderPublicAnnouncementBoard();
+    if (typeof syncStateFromServer === 'function') {
+      syncStateFromServer().then(() => {
+        renderPublicAnnouncementBoard();
+      }).catch(() => {});
+    }
     try {
       const list = getLiveAnnouncementsList();
       if (list.length > 0 && list[0].id) {
@@ -2226,7 +2303,8 @@ function closeAnnouncementLightbox() {
 
 function renderPublicAnnouncementBoard() {
   const feedEl = document.getElementById('public-announcement-feed');
-  const list = getSharedAnnouncements();
+  const rawList = getLiveAnnouncementsList();
+  const list = [...rawList].sort((a, b) => (b && b.pinned ? 1 : 0) - (a && a.pinned ? 1 : 0));
 
   const headerBadge = document.getElementById('header-ann-badge');
   const floatBadge = document.getElementById('ann-floating-badge');
@@ -2234,8 +2312,10 @@ function renderPublicAnnouncementBoard() {
   const dropdownBadge = document.getElementById('dropdown-ann-badge');
   [headerBadge, floatBadge, floatBadgeAlt, dropdownBadge].forEach(b => {
     if (!b) return;
-    b.textContent = list.length;
-    b.style.display = list.length > 0 ? 'inline-flex' : 'none';
+    b.textContent = String(list.length);
+    if (b.id !== 'floating-ann-badge') {
+      b.style.display = list.length > 0 ? 'inline-flex' : 'none';
+    }
   });
 
   if (!feedEl) return;
@@ -2243,7 +2323,7 @@ function renderPublicAnnouncementBoard() {
   if (list.length === 0) {
     feedEl.innerHTML = `
       <div class="p-6 text-center rounded-2xl bg-white border border-[#E2E0D8] text-[#52605A] text-xs shadow-sm">
-        <p class="font-bold text-[#0D1F18] mb-1">No Club Updates Yet</p>
+        <p class="font-bold text-[#0D1F18] mb-1">No Active Club Advisories</p>
         <p>Official news, Open Play schedules, and court advisories from P&amp;F Rally Ground will appear here.</p>
       </div>
     `;
@@ -2252,12 +2332,15 @@ function renderPublicAnnouncementBoard() {
 
   feedEl.innerHTML = list.map(item => {
     const safeTitle = escapeAnnouncementHtml(item.title || 'Club Update');
-    const safeTag = escapeAnnouncementHtml(item.tag || 'CLUB UPDATE');
-    const safeAuthor = escapeAnnouncementHtml(item.author || 'P&F Rally Ground');
+    const rawCat = item.category || item.tag || 'Club Update';
+    const safeTag = escapeAnnouncementHtml(rawCat);
+    const badgeColorCls = getAnnouncementCategoryBadgeStyle(rawCat);
+    const safeAuthor = escapeAnnouncementHtml(item.author || 'P&F Rally Ground Admin');
     const safeMsg = escapeAnnouncementHtml(item.message || '');
     const timeStr = formatAnnouncementTime(item.createdAt);
-    const hasPhoto = Boolean(item.imageDataUrl && String(item.imageDataUrl).trim());
-    const safeImg = hasPhoto ? escapeAnnouncementHtml(item.imageDataUrl) : '';
+    const photoUrl = String(item.img || item.imageDataUrl || '').trim();
+    const hasPhoto = Boolean(photoUrl);
+    const safeImg = hasPhoto ? escapeAnnouncementHtml(photoUrl) : '';
 
     return `
       <article class="rounded-2xl bg-white border border-[#E2E0D8] p-3.5 sm:p-4 shadow-sm space-y-2.5 text-[#0D1F18] transition hover:border-[#15803D]/50">
@@ -2267,12 +2350,12 @@ function renderPublicAnnouncementBoard() {
             <div class="min-w-0">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-xs font-bold text-[#0D1F18] truncate">${safeAuthor}</span>
-                <span class="px-2 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[9px] font-mono font-bold uppercase tracking-wider">${safeTag}</span>
+                <span class="pf-pill px-2 py-0.5 rounded-full border text-[9px] font-mono font-bold uppercase tracking-wider ${badgeColorCls}">${safeTag}</span>
               </div>
               <span class="text-[10px] font-mono text-[#52605A] block font-medium">${escapeAnnouncementHtml(timeStr)}</span>
             </div>
           </div>
-          ${item.pinned ? '<span class="px-2 py-0.5 rounded-full bg-[#EFECE6] text-[#0D1F18] border border-[#D5D3CC] text-[9px] font-mono font-bold uppercase flex-shrink-0">Pinned</span>' : ''}
+          ${item.pinned ? '<span class="pf-pill px-2 py-0.5 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] text-[9px] font-mono font-bold uppercase flex-shrink-0">📌 Pinned</span>' : ''}
         </div>
 
         <div class="space-y-1">
@@ -2282,7 +2365,7 @@ function renderPublicAnnouncementBoard() {
 
         ${hasPhoto ? `
           <div class="pt-1">
-            <div onclick="openAnnouncementLightbox('${safeImg.replace(/'/g, "\\'")}', '${safeTitle.replace(/'/g, "\\'")}')" class="group relative rounded-xl overflow-hidden border border-[#E2E0D8] bg-[#F6F5F0] cursor-pointer max-h-56 flex items-center justify-center">
+            <div onclick="openAnnouncementLightbox('${safeImg.replace(/'/g, "\\'")}', '${safeTitle.replace(/'/g, "\\'") }')" class="group relative rounded-xl overflow-hidden border border-[#E2E0D8] bg-[#F6F5F0] cursor-pointer max-h-56 flex items-center justify-center">
               <img src="${safeImg}" alt="${safeTitle}" class="w-full max-h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300">
               <span class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-[#0D1F18]/85 text-white text-[9px] font-mono font-bold uppercase backdrop-blur-sm">View Photo</span>
             </div>
@@ -2293,6 +2376,10 @@ function renderPublicAnnouncementBoard() {
   }).join('');
 }
 
+window.getLiveAnnouncementsList = getLiveAnnouncementsList;
+window.getSharedAnnouncements = getSharedAnnouncements;
+window.renderPublicAnnouncementBoard = renderPublicAnnouncementBoard;
+window.toggleAnnouncementBoard = toggleAnnouncementBoard;
 
 // ================= LIVE WEBSITE, HERO PHOTO, LIVE BANNER & MASTER PRICE EDITOR ENGINE =================
 const DEFAULT_PF_SITE_CONFIG = {
@@ -4645,96 +4732,622 @@ window.pfRenderOpenPlay24Board = pfRenderOpenPlay24Board;
 
 
 // ================= PICKLEBALL TOURNAMENT HUB & REGISTRATION ENGINE =================
+function pfBuildDefaultBracketForPlayers(players) {
+  const p = (Array.isArray(players) && players.length >= 8) ? players : [
+    'Seed #1 • Team 1', 'Seed #8 • Team 8', 'Seed #4 • Team 4', 'Seed #5 • Team 5',
+    'Seed #2 • Team 2', 'Seed #7 • Team 7', 'Seed #3 • Team 3', 'Seed #6 • Team 6'
+  ];
+  return [
+    { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: 'Court 1', teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, status: 'LIVE', winner: null },
+    { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: 'Court 2', teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, status: 'READY', winner: null },
+    { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: 'Court 3', teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, status: 'READY', winner: null },
+    { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: 'Court 4', teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, status: 'READY', winner: null },
+    { id: 'SF1', stage: 'Semifinals', label: 'Semifinal 1', court: 'Court 1', teamA: 'Winner QF1', teamB: 'Winner QF2', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null },
+    { id: 'SF2', stage: 'Semifinals', label: 'Semifinal 2', court: 'Court 2', teamA: 'Winner QF3', teamB: 'Winner QF4', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null },
+    { id: 'FIN', stage: 'Championship Final', label: 'Gold Medal Final', court: 'Court 1', teamA: 'Winner SF1', teamB: 'Winner SF2', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null }
+  ];
+}
+
 function pfGetDefaultTournaments() {
   return [
   {
-    id: 'trn-bicol-dupr-open',
-    title: 'Bicol Open DUPR Pickleball Cup',
-    format: 'Round Robin + Medal Playoffs',
-    formatKey: 'ROUND_ROBIN',
-    division: 'Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)',
-    category: "Men's, Women's & Mixed Doubles",
-    date: '2026-11-21',
-    time: '08:00 AM – 05:00 PM',
-    courts: 'All 4 Courts (Courts 1 – 4)',
-    entryFee: 850,
-    prizePool: '₱25,000 + Trophies & Official DUPR Submission',
-    maxTeams: 24,
-    registeredCount: 14,
-    status: 'OPEN FOR REGISTRATION',
-    description: 'Guaranteed 4 Round-Robin pool matches (1 game to 11 pts) per team. Top 4 teams in each division advance to Single-Elimination Semifinals and Gold/Bronze Medal Matches (to 15 pts, win by 2).'
+    "id": "trn-bicol-dupr-open",
+    "title": "Bicol Open DUPR Pickleball Cup",
+    "format": "Round Robin + Medal Playoffs",
+    "formatKey": "ROUND_ROBIN",
+    "division": "Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)",
+    "category": "Men's, Women's & Mixed Doubles",
+    "date": "2026-11-21",
+    "time": "08:00 AM – 05:00 PM",
+    "courts": "All 4 Courts (Courts 1 – 4)",
+    "entryFee": 850,
+    "prizePool": "₱25,000 + Trophies & Official DUPR Submission",
+    "maxTeams": 24,
+    "registeredCount": 8,
+    "approved": true,
+    "scoringTarget": 11,
+    "status": "OPEN FOR REGISTRATION",
+    "description": "Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 – 4.",
+    "players": [
+      "Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)",
+      "Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)",
+      "Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)",
+      "Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)",
+      "Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)",
+      "Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)",
+      "Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)",
+      "Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)"
+    ],
+    "bracket": [
+      {
+        "id": "QF1",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 1",
+        "court": "Court 1",
+        "teamA": "Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)",
+        "teamB": "Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "LIVE",
+        "winner": null
+      },
+      {
+        "id": "QF2",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 2",
+        "court": "Court 2",
+        "teamA": "Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)",
+        "teamB": "Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF3",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 3",
+        "court": "Court 3",
+        "teamA": "Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)",
+        "teamB": "Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF4",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 4",
+        "court": "Court 4",
+        "teamA": "Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)",
+        "teamB": "Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "SF1",
+        "stage": "Semifinals",
+        "label": "Semifinal 1",
+        "court": "Court 1",
+        "teamA": "Winner QF1",
+        "teamB": "Winner QF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "SF2",
+        "stage": "Semifinals",
+        "label": "Semifinal 2",
+        "court": "Court 2",
+        "teamA": "Winner QF3",
+        "teamB": "Winner QF4",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "FIN",
+        "stage": "Championship Final",
+        "label": "Gold Medal Final",
+        "court": "Court 1",
+        "teamA": "Winner SF1",
+        "teamB": "Winner SF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      }
+    ]
   },
   {
-    id: 'trn-mayon-king-court',
-    title: 'Mayon Smash: King & Queen of the Court',
-    format: 'Ladder Split Rotation (Individual Points)',
-    formatKey: 'KING_COURT',
-    division: 'All-Levels Social & Competitive (3.0–3.8)',
-    category: 'Individual Entry (Rotating Doubles Partners)',
-    date: '2026-11-14',
-    time: '05:00 PM – 09:00 PM',
-    courts: '4 Courts (Challenger to Crown Court)',
-    entryFee: 350,
-    prizePool: '₱6,000 Cash + Carbon Pro Paddle & Medals',
-    maxTeams: 24,
-    registeredCount: 18,
-    status: 'OPEN FOR REGISTRATION',
-    description: '24 players randomly seeded across 4 courts. Play 12-minute timed rounds: winners move UP a court and split partners; losers move DOWN a court and split. Most cumulative points after 6 rounds wins!'
+    "id": "trn-mayon-king-court",
+    "title": "Mayon Smash: King & Queen of the Court",
+    "format": "Ladder Split Rotation (Individual Points)",
+    "formatKey": "KING_COURT",
+    "division": "All-Levels Social & Competitive (3.0–3.8)",
+    "category": "Individual Entry (Rotating Doubles Partners)",
+    "date": "2026-11-14",
+    "time": "05:00 PM – 09:00 PM",
+    "courts": "4 Courts (Challenger to Crown Court)",
+    "entryFee": 350,
+    "prizePool": "₱6,000 Cash + Carbon Pro Paddle & Medals",
+    "maxTeams": 24,
+    "registeredCount": 8,
+    "approved": true,
+    "scoringTarget": 11,
+    "status": "OPEN FOR REGISTRATION",
+    "description": "Play 12-minute timed ladder rounds across Courts 1 – 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!",
+    "players": [
+      "Seed #1 • Carlo Imperial & Sofia Locsin",
+      "Seed #8 • Ryan Beltran & Hannah Gomez",
+      "Seed #4 • Jerome Uy & Camille Chua",
+      "Seed #5 • Patrick Go & Denise Ramos",
+      "Seed #2 • Lance Vergara & Nina Pineda",
+      "Seed #7 • Mark Tolentino & Alyssa Cruz",
+      "Seed #3 • Adrian Dizon & Kyla Bautista",
+      "Seed #6 • Christian Sy & Mica Mendoza"
+    ],
+    "bracket": [
+      {
+        "id": "QF1",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 1",
+        "court": "Court 1",
+        "teamA": "Seed #1 • Carlo Imperial & Sofia Locsin",
+        "teamB": "Seed #8 • Ryan Beltran & Hannah Gomez",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "LIVE",
+        "winner": null
+      },
+      {
+        "id": "QF2",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 2",
+        "court": "Court 2",
+        "teamA": "Seed #4 • Jerome Uy & Camille Chua",
+        "teamB": "Seed #5 • Patrick Go & Denise Ramos",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF3",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 3",
+        "court": "Court 3",
+        "teamA": "Seed #2 • Lance Vergara & Nina Pineda",
+        "teamB": "Seed #7 • Mark Tolentino & Alyssa Cruz",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF4",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 4",
+        "court": "Court 4",
+        "teamA": "Seed #3 • Adrian Dizon & Kyla Bautista",
+        "teamB": "Seed #6 • Christian Sy & Mica Mendoza",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "SF1",
+        "stage": "Semifinals",
+        "label": "Semifinal 1",
+        "court": "Court 1",
+        "teamA": "Winner QF1",
+        "teamB": "Winner QF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "SF2",
+        "stage": "Semifinals",
+        "label": "Semifinal 2",
+        "court": "Court 2",
+        "teamA": "Winner QF3",
+        "teamB": "Winner QF4",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "FIN",
+        "stage": "Championship Final",
+        "label": "Gold Medal Final",
+        "court": "Court 1",
+        "teamA": "Winner SF1",
+        "teamB": "Winner SF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      }
+    ]
   },
   {
-    id: 'trn-daraga-mlp-rally',
-    title: 'Daraga MLP-Style Team Rally Showdown',
-    format: 'MLP 4-Player Co-Ed Squad Format (Rally Scoring)',
-    formatKey: 'MLP_TEAM',
-    division: 'Club Squads (2 Men + 2 Women per Squad)',
-    category: 'Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)',
-    date: '2026-11-28',
-    time: '09:00 AM – 06:00 PM',
-    courts: 'All 4 Courts (Courts 1 – 4)',
-    entryFee: 2000,
-    prizePool: '₱18,000 Cash + Club Championship Banner',
-    maxTeams: 12,
-    registeredCount: 8,
-    status: 'OPEN FOR REGISTRATION',
-    description: "Major League Pickleball format! Each squad clash features 4 games to 21 (rally scoring): Women's Doubles, Men's Doubles, and 2 Mixed Doubles sets. Tied 2–2 matches go to a 1v1 Dreambreaker Singles tiebreak!"
+    "id": "trn-daraga-mlp-rally",
+    "title": "Daraga MLP-Style Team Rally Showdown",
+    "format": "MLP 4-Player Co-Ed Squad Format (Rally Scoring)",
+    "formatKey": "MLP_TEAM",
+    "division": "Club Squads (2 Men + 2 Women per Squad)",
+    "category": "Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)",
+    "date": "2026-11-28",
+    "time": "09:00 AM – 06:00 PM",
+    "courts": "All 4 Courts (Courts 1 – 4)",
+    "entryFee": 2000,
+    "prizePool": "₱18,000 Cash + Club Championship Banner",
+    "maxTeams": 12,
+    "registeredCount": 8,
+    "approved": true,
+    "scoringTarget": 21,
+    "status": "OPEN FOR REGISTRATION",
+    "description": "Major League Pickleball 4-player squad format! Each clash features Women's Doubles, Men's Doubles, and Mixed Doubles to 21 points (rally scoring) plus Dreambreaker tiebreak.",
+    "players": [
+      "Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)",
+      "Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)",
+      "Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)",
+      "Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)",
+      "Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)",
+      "Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)",
+      "Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)",
+      "Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)"
+    ],
+    "bracket": [
+      {
+        "id": "QF1",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 1",
+        "court": "Court 1",
+        "teamA": "Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)",
+        "teamB": "Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "LIVE",
+        "winner": null
+      },
+      {
+        "id": "QF2",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 2",
+        "court": "Court 2",
+        "teamA": "Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)",
+        "teamB": "Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF3",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 3",
+        "court": "Court 3",
+        "teamA": "Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)",
+        "teamB": "Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF4",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 4",
+        "court": "Court 4",
+        "teamA": "Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)",
+        "teamB": "Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "SF1",
+        "stage": "Semifinals",
+        "label": "Semifinal 1",
+        "court": "Court 1",
+        "teamA": "Winner QF1",
+        "teamB": "Winner QF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "SF2",
+        "stage": "Semifinals",
+        "label": "Semifinal 2",
+        "court": "Court 2",
+        "teamA": "Winner QF3",
+        "teamB": "Winner QF4",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "FIN",
+        "stage": "Championship Final",
+        "label": "Gold Medal Final",
+        "court": "Court 1",
+        "teamA": "Winner SF1",
+        "teamB": "Winner SF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      }
+    ]
   },
   {
-    id: 'trn-albay-double-elim',
-    title: 'Albay Double-Elimination Knockout Classic',
-    format: 'USA Pickleball Double Elimination Bracket',
-    formatKey: 'DOUBLE_ELIM',
-    division: 'Intermediate (3.5) & Advanced (4.0+)',
-    category: "Men's Singles & Mixed Doubles",
-    date: '2026-12-03',
-    time: '08:00 AM – 04:00 PM',
-    courts: 'All 4 Courts (Courts 1 – 4)',
-    entryFee: 600,
-    prizePool: '₱15,000 Cash + Official Championship Medals',
-    maxTeams: 24,
-    registeredCount: 10,
-    status: 'OPEN FOR REGISTRATION',
-    description: 'Full Double-Elimination Championship Bracket (Winners Bracket best 2-of-3 to 11; Consolation Bracket 1 game to 15). Every player/team is guaranteed at least 2 bracket matches before elimination.'
+    "id": "trn-albay-double-elim",
+    "title": "Albay Double-Elimination Knockout Classic",
+    "format": "USA Pickleball Double Elimination Bracket",
+    "formatKey": "DOUBLE_ELIM",
+    "division": "Intermediate (3.5) & Advanced (4.0+)",
+    "category": "Men's Doubles & Mixed Doubles",
+    "date": "2026-12-03",
+    "time": "08:00 AM – 04:00 PM",
+    "courts": "All 4 Courts (Courts 1 – 4)",
+    "entryFee": 600,
+    "prizePool": "₱15,000 Cash + Official Championship Medals",
+    "maxTeams": 24,
+    "registeredCount": 8,
+    "approved": true,
+    "scoringTarget": 15,
+    "status": "OPEN FOR REGISTRATION",
+    "description": "Full USA Pickleball Championship Bracket across Courts 1 – 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.",
+    "players": [
+      "Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)",
+      "Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)",
+      "Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)",
+      "Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)",
+      "Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)",
+      "Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)",
+      "Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)",
+      "Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)"
+    ],
+    "bracket": [
+      {
+        "id": "QF1",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 1",
+        "court": "Court 1",
+        "teamA": "Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)",
+        "teamB": "Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "LIVE",
+        "winner": null
+      },
+      {
+        "id": "QF2",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 2",
+        "court": "Court 2",
+        "teamA": "Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)",
+        "teamB": "Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF3",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 3",
+        "court": "Court 3",
+        "teamA": "Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)",
+        "teamB": "Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "QF4",
+        "stage": "Quarterfinals",
+        "label": "Quarterfinal 4",
+        "court": "Court 4",
+        "teamA": "Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)",
+        "teamB": "Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "READY",
+        "winner": null
+      },
+      {
+        "id": "SF1",
+        "stage": "Semifinals",
+        "label": "Semifinal 1",
+        "court": "Court 1",
+        "teamA": "Winner QF1",
+        "teamB": "Winner QF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "SF2",
+        "stage": "Semifinals",
+        "label": "Semifinal 2",
+        "court": "Court 2",
+        "teamA": "Winner QF3",
+        "teamB": "Winner QF4",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      },
+      {
+        "id": "FIN",
+        "stage": "Championship Final",
+        "label": "Gold Medal Final",
+        "court": "Court 1",
+        "teamA": "Winner SF1",
+        "teamB": "Winner SF2",
+        "scoreA": 0,
+        "scoreB": 0,
+        "serverSide": "A",
+        "serverNum": 2,
+        "toA": 2,
+        "toB": 2,
+        "status": "PENDING",
+        "winner": null
+      }
+    ]
   }
-  ];
+];
 }
 var DEFAULT_PF_TOURNAMENTS = pfGetDefaultTournaments();
 var activePublicTournamentFilter = 'ALL';
 
 function pfGetTournamentsList() {
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const defaults = pfGetDefaultTournaments();
   if (Array.isArray(cfg.tournaments) && cfg.tournaments.length > 0) {
-    return cfg.tournaments;
+    return cfg.tournaments.map((t, idx) => {
+      const defMatch = defaults.find(d => d.id === t.id) || defaults[idx % defaults.length];
+      const players = (Array.isArray(t.players) && t.players.length > 0) ? t.players : (defMatch ? defMatch.players : []);
+      const bracket = (Array.isArray(t.bracket) && t.bracket.length > 0) ? t.bracket : pfBuildDefaultBracketForPlayers(players);
+      return Object.assign({}, defMatch || {}, t, { players, bracket });
+    });
   }
-  return pfGetDefaultTournaments();
+  return defaults;
 }
 
 function pfSetTournamentFilter(filterKey) {
   activePublicTournamentFilter = filterKey || 'ALL';
   document.querySelectorAll('.pf-trn-filter-btn').forEach(btn => {
     if (btn.dataset.filter === activePublicTournamentFilter) {
-      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider transition shadow-md';
+      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-[#0F291E] text-white font-black text-xs uppercase tracking-wider transition shadow-md';
     } else {
-      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-brand-card text-slate-300 hover:text-white border border-white/15 font-bold text-xs uppercase tracking-wider transition';
+      btn.className = 'pf-trn-filter-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:text-slate-900 border border-slate-300 font-bold text-xs uppercase tracking-wider transition';
     }
   });
   pfRenderPublicTournaments();
@@ -4753,53 +5366,10 @@ window.openAdminTournamentHost = openAdminTournamentHost;
 
 function pfRenderLiveSpectatorBracketBanner() {
   const banner = document.getElementById('public-live-bracket-spectator-banner');
-  if (!banner) return;
-  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
-  let bracket = cfg && cfg.liveBracketState ? cfg.liveBracketState : null;
-  if (!bracket) {
-    try {
-      bracket = JSON.parse(localStorage.getItem('pf_live_tournament_bracket') || 'null');
-    } catch (e) {}
-  }
-  if (!bracket || !bracket.matches || bracket.phase === 'SETUP' || cfg.liveBracketApproved === false || cfg.tournamentsPublishedOnHome === false) {
+  if (banner) {
     banner.classList.add('hidden');
     banner.innerHTML = '';
-    return;
   }
-  const r0 = Array.isArray(bracket.matches[0]) ? bracket.matches[0] : [];
-  const r1 = Array.isArray(bracket.matches[1]) ? bracket.matches[1] : [];
-  const r2 = Array.isArray(bracket.matches[2]) ? bracket.matches[2] : [];
-  const allMatches = [...r0, ...r1, ...r2];
-  const doneCount = allMatches.filter(m => m && m.winner).length;
-
-  banner.classList.remove('hidden');
-  banner.innerHTML = `
-    <div class="rounded-3xl bg-gradient-to-r from-[#050E1D] via-[#0E2240] to-[#050E1D] border-2 border-brand-lime p-5 sm:p-6 shadow-2xl space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-2.5">
-          <span class="w-3 h-3 rounded-full bg-brand-lime animate-ping"></span>
-          <span class="px-3 py-1 rounded-full bg-brand-lime text-brand-black font-mono text-[10px] font-black uppercase tracking-wider">🔴 LIVE ADMIN-HOSTED 3D TOURNAMENT BRACKET</span>
-          <span class="text-xs font-mono text-slate-300 font-bold">Spectator View Only • ${doneCount}/${allMatches.length} Matches Completed</span>
-        </div>
-        ${bracket.champion ? `<span class="px-3.5 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-xs uppercase">👑 Champion: ${pfEscapeHtml(bracket.champion.name)}</span>` : `<span class="text-xs font-mono text-brand-lime font-bold">Hosted by Club Admin</span>`}
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2">
-          <span class="text-[10px] font-mono uppercase text-brand-lime font-black block">Quarterfinals (4 Matches)</span>
-          ${r0.map(m => `<div class="flex justify-between items-center py-1 border-b border-white/5 last:border-0"><span class="${m.winner && m.p1 && m.winner.id===m.p1.id ? 'text-brand-lime font-black' : 'text-slate-300'}">${pfEscapeHtml(m.p1 ? m.p1.name : 'TBD')} vs ${pfEscapeHtml(m.p2 ? m.p2.name : 'TBD')}</span><span class="font-mono text-[11px] text-white font-bold">${m.s1}-${m.s2}</span></div>`).join('')}
-        </div>
-        <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-white/10 space-y-2">
-          <span class="text-[10px] font-mono uppercase text-sky-400 font-black block">Semifinals (2 Matches)</span>
-          ${r1.map(m => `<div class="flex justify-between items-center py-1 border-b border-white/5 last:border-0"><span class="${m.winner && m.p1 && m.winner.id===m.p1.id ? 'text-brand-lime font-black' : 'text-slate-300'}">${pfEscapeHtml(m.p1 ? m.p1.name : 'TBD')} vs ${pfEscapeHtml(m.p2 ? m.p2.name : 'TBD')}</span><span class="font-mono text-[11px] text-white font-bold">${m.s1}-${m.s2}</span></div>`).join('')}
-        </div>
-        <div class="p-3.5 rounded-2xl bg-brand-black/80 border border-amber-400/30 space-y-2">
-          <span class="text-[10px] font-mono uppercase text-amber-300 font-black block">🏆 Championship Final</span>
-          ${r2.map(m => `<div class="flex justify-between items-center py-1"><span class="text-white font-black">${pfEscapeHtml(m.p1 ? m.p1.name : 'TBD')} vs ${pfEscapeHtml(m.p2 ? m.p2.name : 'TBD')}</span><span class="font-mono text-xs text-brand-lime font-black">${m.s1}-${m.s2}</span></div>`).join('')}
-          <p class="text-[10px] text-slate-400 pt-1">Only the Club Admin can score or advance tournament bracket matches.</p>
-        </div>
-      </div>
-    </div>
-  `;
 }
 
 function pfRenderPublicTournaments() {
@@ -4809,16 +5379,14 @@ function pfRenderPublicTournaments() {
   if (!grid) return;
 
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
-  const masterPublished = cfg.tournamentsPublishedOnHome === true;
-  const list = pfGetTournamentsList().filter(t => t && t.approved === true);
+  const masterPublished = cfg.tournamentsPublishedOnHome !== false;
+  const list = pfGetTournamentsList().filter(t => t && t.approved !== false);
 
   const navTrn = document.getElementById('nav-link-tournaments');
   const mobNavTrn = document.getElementById('mob-nav-link-tournaments');
   const topNavTrn = document.getElementById('nav-top-link-tournaments');
   const filtersWrap = document.getElementById('public-tournament-filters-wrap');
-  const hasLiveBracket = Boolean(cfg.liveBracketApproved === true && cfg.liveBracketState && cfg.liveBracketState.phase && cfg.liveBracketState.phase !== 'SETUP');
 
-  // Always keep Tournaments section & navigation links visible
   if (sec) sec.classList.remove('hidden');
   if (navTrn) navTrn.classList.remove('hidden');
   if (mobNavTrn) mobNavTrn.classList.remove('hidden');
@@ -4835,7 +5403,6 @@ function pfRenderPublicTournaments() {
     }
   }
 
-  // Render clean Empty State card when no tournaments are scheduled/published
   if (!isPublishedWithEvents) {
     grid.innerHTML = `
       <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
@@ -4863,26 +5430,73 @@ function pfRenderPublicTournaments() {
 
   grid.innerHTML = filtered.map(t => {
     const fee = Number(t.entryFee || 0);
-    const maxT = Math.max(1, Number(t.maxTeams || 24));
-    const regT = Math.min(maxT, Math.max(0, Number(t.registeredCount || 0)));
+    const players = Array.isArray(t.players) ? t.players : [];
+    const bracket = Array.isArray(t.bracket) ? t.bracket : pfBuildDefaultBracketForPlayers(players);
+    const maxT = Math.max(players.length, Number(t.maxTeams || 24));
+    const regT = Math.min(maxT, Math.max(players.length, Number(t.registeredCount || players.length)));
     const spotsLeft = Math.max(0, maxT - regT);
     const pct = Math.min(100, Math.round((regT / maxT) * 100));
 
+    const qfMatches = bracket.filter(m => m.stage === 'Quarterfinals');
+    const sfMatches = bracket.filter(m => m.stage === 'Semifinals');
+    const finMatches = bracket.filter(m => m.stage === 'Championship Final' || m.id === 'FIN');
+    const finMatch = finMatches[0] || null;
+    const champName = (finMatch && finMatch.winner) ? (finMatch.winner === 'A' ? finMatch.teamA : finMatch.teamB) : null;
+
+    const renderBracketMatchMini = (m) => {
+      const winA = m.winner === 'A';
+      const winB = m.winner === 'B';
+      let stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[9px] font-mono font-bold">🟢 Ready</span>`;
+      if (m.status === 'COMPLETED') {
+        stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[9px] font-mono font-bold">🔵 Final</span>`;
+      } else if (m.status === 'LIVE') {
+        stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[9px] font-mono font-bold">🟣 Live</span>`;
+      } else if (m.status === 'PENDING') {
+        stBadge = `<span class="pf-pill px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-[9px] font-mono font-bold">🟡 Awaiting</span>`;
+      }
+      return `
+        <div class="rounded-xl bg-white border border-[#E2E0D8] p-2.5 space-y-1.5 shadow-2xs">
+          <div class="flex items-center justify-between gap-1.5">
+            <span class="text-[9px] font-mono font-extrabold uppercase text-[#0D1F18] bg-[#EFECE6] px-2 py-0.5 rounded">${pfEscapeHtml(m.court || 'Court 1')} • ${pfEscapeHtml(m.label || m.id)}</span>
+            ${stBadge}
+          </div>
+          <div class="space-y-1 text-[11px]">
+            <div class="flex items-center justify-between gap-2 px-2 py-1 rounded-lg ${winA ? 'bg-[#D1FAE5] text-[#065F46] font-extrabold border border-[#6EE7B7]' : 'bg-[#F8F7F3] text-[#0D1F18] font-semibold'}">
+              <span class="truncate">${winA ? '🏆 ' : ''}${pfEscapeHtml(m.teamA)}</span>
+              <span class="font-mono font-extrabold">${Number(m.scoreA || 0)}</span>
+            </div>
+            <div class="flex items-center justify-between gap-2 px-2 py-1 rounded-lg ${winB ? 'bg-[#D1FAE5] text-[#065F46] font-extrabold border border-[#6EE7B7]' : 'bg-[#F8F7F3] text-[#0D1F18] font-semibold'}">
+              <span class="truncate">${winB ? '🏆 ' : ''}${pfEscapeHtml(m.teamB)}</span>
+              <span class="font-mono font-extrabold">${Number(m.scoreB || 0)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    const playersGridHtml = players.map((pName, idx) => `
+      <div class="flex items-center gap-2 p-2 rounded-xl bg-white border border-[#E2E0D8] text-xs shadow-2xs">
+        <span class="w-6 h-6 rounded-lg bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
+        <span class="font-bold text-[#0D1F18] truncate">${pfEscapeHtml(pName)}</span>
+      </div>
+    `).join('');
+
     return `
-      <div class="rounded-2xl bg-white border border-[#E2E0D8] hover:border-[#15803D] transition-all p-5 sm:p-6 shadow-sm flex flex-col justify-between space-y-4 text-[#0D1F18]">
-        <div class="space-y-3">
+      <div class="rounded-3xl bg-white border border-[#E2E0D8] hover:border-[#15803D] transition-all p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4 text-[#0D1F18]">
+        <div class="space-y-3.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-bold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
+            <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Pickleball Tournament')}</span>
             <div class="flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full bg-[#F6F5F0] text-[#52605A] border border-[#E2E0D8] font-mono text-[9px] font-bold uppercase">Club Event</span>
-              <span class="px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#0D1F18] border border-[#D5D3CC] font-mono text-[10px] font-bold uppercase">${spotsLeft} Spots Left</span>
+              ${champName ? `<span class="pf-pill px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">👑 Champion: ${pfEscapeHtml(champName)}</span>` : `<span class="pf-pill px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] font-mono text-[10px] font-extrabold uppercase">${spotsLeft} Spots Left</span>`}
             </div>
           </div>
 
-          <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-[#0D1F18] leading-tight">${pfEscapeHtml(t.title)}</h3>
-          <p class="text-xs text-[#52605A] leading-relaxed">${pfEscapeHtml(t.description || '')}</p>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight text-[#0D1F18] leading-tight">${pfEscapeHtml(t.title)}</h3>
+            <p class="text-xs text-[#52605A] leading-relaxed mt-1">${pfEscapeHtml(t.description || '')}</p>
+          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
             <div class="p-3 rounded-xl bg-[#F8F7F3] border border-[#E2E0D8]">
               <span class="text-[10px] font-mono uppercase text-[#52605A] block">Date &amp; Time</span>
               <b class="text-[#0D1F18] font-mono">${pfEscapeHtml(t.date)} • ${pfEscapeHtml(t.time)}</b>
@@ -4900,6 +5514,44 @@ function pfRenderPublicTournaments() {
               <b class="text-[#15803D] font-mono text-base">${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</b>
             </div>
           </div>
+
+          <!-- REGISTERED PLAYERS & SEEDED TEAMS ROSTER -->
+          <div class="rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8] p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="pf-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-mono font-extrabold uppercase">👥 Registered Players &amp; Seeds (${players.length})</span>
+              </div>
+              <span class="text-[10px] font-mono font-bold text-[#52605A]">${regT} / ${maxT} Entries</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${playersGridHtml}
+            </div>
+          </div>
+
+          <!-- INTERACTIVE TOURNAMENT BRACKET SYSTEM (QUARTERFINALS -> SEMIFINALS -> GOLD MEDAL FINAL) -->
+          <details class="group rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8] overflow-hidden" open>
+            <summary class="cursor-pointer px-4 py-3 flex items-center justify-between gap-2 select-none bg-white border-b border-[#E2E0D8]">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#15803D]"></span>
+                <span class="text-xs font-extrabold text-[#0D1F18] uppercase tracking-wider">🏆 Official Championship Bracket (Courts 1 – 4)</span>
+              </div>
+              <span class="text-[11px] font-mono font-bold text-[#15803D] group-open:rotate-180 transition-transform">▼ Show / Hide Bracket</span>
+            </summary>
+            <div class="p-3.5 grid grid-cols-1 lg:grid-cols-3 gap-3">
+              <div class="space-y-2">
+                <div class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#52605A] px-1">Quarterfinals (4 Matches)</div>
+                ${qfMatches.map(renderBracketMatchMini).join('')}
+              </div>
+              <div class="space-y-2">
+                <div class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#5B21B6] px-1">Semifinals (2 Matches)</div>
+                ${sfMatches.map(renderBracketMatchMini).join('')}
+              </div>
+              <div class="space-y-2">
+                <div class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#065F46] px-1">🏆 Gold Medal Final</div>
+                ${finMatches.map(renderBracketMatchMini).join('')}
+              </div>
+            </div>
+          </details>
         </div>
 
         <div class="pt-3 border-t border-[#E2E0D8] space-y-3">
@@ -4913,7 +5565,7 @@ function pfRenderPublicTournaments() {
             </div>
           </div>
 
-          <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="w-full py-3.5 px-5 rounded-xl bg-[#0D1F18] hover:bg-[#15803D] text-white font-bold text-xs tracking-wide transition active:scale-95 shadow-sm flex items-center justify-center gap-2">
+          <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" class="w-full py-3.5 px-5 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white font-extrabold text-xs tracking-wide transition active:scale-95 shadow-sm flex items-center justify-center gap-2" style="color:#FFFFFF !important;">
             <span>Register for Tournament (${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}) →</span>
           </button>
         </div>
