@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  var THEME_STORAGE_KEY = 'pf_v2_theme';
+  var THEME_STORAGE_KEY = 'pf_v3_theme_night_default';
 
   /**
    * 1. Instant Theme Hydration (Default: 'light' Editorial Warm Daylight)
@@ -16,7 +16,7 @@
       var saved = localStorage.getItem(THEME_STORAGE_KEY);
       if (saved === 'dark' || saved === 'light') return saved;
     } catch (e) {}
-    return 'light';
+    return 'dark';
   }
 
   function applyTheme(theme, animateTransition) {
@@ -28,6 +28,7 @@
     }
     try {
       localStorage.setItem(THEME_STORAGE_KEY, theme);
+      localStorage.setItem('pf_client_theme', theme);
     } catch (e) {}
 
     var btn = document.getElementById('pf-theme-toggle-btn');
@@ -60,7 +61,7 @@
   applyTheme(getInitialTheme(), false);
 
   window.pfToggleEditorialTheme = function () {
-    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var current = document.documentElement.getAttribute('data-theme') || 'dark';
     var next = current === 'light' ? 'dark' : 'light';
     applyTheme(next, true);
   };

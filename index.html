@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" class="scroll-smooth">
+<html lang="en" data-theme="dark" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
 <title>P&F Rally Ground | #1 Pickleball Club & Court Booking in Daraga, Albay (Bicol)</title>
@@ -2586,6 +2586,186 @@ button.pf-trn-btn-danger:hover,
       color: #9BE600 !important;
     }
 
+  
+    /* === NIGHT MODE: CLUB UPDATES (FLOATING PILL, MODAL WINDOW, FEED) & NEON GREEN FOOTER === */
+    #footer-contact,
+    footer#footer-contact,
+    html[data-theme="dark"] footer,
+    html[data-theme="dark"] #footer-contact {
+      background-color: #050E1D !important;
+      border-top: 1px solid rgba(155, 230, 0, 0.28) !important;
+      color: #E2E8F0 !important;
+    }
+    #footer-contact > div:first-child,
+    footer > div.h-1:first-child {
+      background: linear-gradient(90deg, #0072CE 0%, #9BE600 50%, #0E8A2D 100%) !important;
+    }
+    #footer-contact [data-site-club-subtitle],
+    #footer-contact h4,
+    #footer-contact a[href*="openAdminPortal"],
+    #footer-contact a[href="/admin/"] {
+      color: #9BE600 !important;
+    }
+    #footer-contact a[href="#location"],
+    #footer-contact a[href*="index.html#location"] {
+      background: rgba(155, 230, 0, 0.15) !important;
+      color: #9BE600 !important;
+      border-color: rgba(155, 230, 0, 0.4) !important;
+    }
+    #footer-contact a[href="#location"]:hover,
+    #footer-contact a[href*="index.html#location"]:hover {
+      background: rgba(155, 230, 0, 0.25) !important;
+      color: #B4FF00 !important;
+    }
+    #footer-contact ul li a:hover {
+      color: #9BE600 !important;
+    }
+    #footer-contact button[onclick*="openBookingDrawer"],
+    #footer-contact a.bg-emerald-600 {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      border: 1px solid #B4FF00 !important;
+      font-weight: 900 !important;
+      box-shadow: 0 8px 24px -6px rgba(155, 230, 0, 0.45) !important;
+    }
+    #footer-contact button[onclick*="openBookingDrawer"]:hover,
+    #footer-contact a.bg-emerald-600:hover {
+      background: #B4FF00 !important;
+      color: #050E1D !important;
+    }
+    #footer-contact .pf-footer-admin-btn {
+      background: rgba(14, 34, 64, 0.9) !important;
+      border: 1px solid rgba(155, 230, 0, 0.45) !important;
+      color: #9BE600 !important;
+    }
+    #footer-contact .pf-footer-admin-btn * {
+      color: #9BE600 !important;
+    }
+    #footer-contact .pf-footer-admin-btn:hover {
+      background: #9BE600 !important;
+      border-color: #B4FF00 !important;
+      color: #050E1D !important;
+    }
+    #footer-contact .pf-footer-admin-btn:hover * {
+      color: #050E1D !important;
+    }
+
+    /* Night Mode: Floating Club Updates Launcher Button (#announcement-launcher-btn) */
+    html[data-theme="dark"] #announcement-launcher-btn {
+      background: #0E2240 !important;
+      color: #FFFFFF !important;
+      border: 1.5px solid #9BE600 !important;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 20px rgba(155, 230, 0, 0.22) !important;
+    }
+    html[data-theme="dark"] #announcement-launcher-btn:hover {
+      background: #132C52 !important;
+      border-color: #B4FF00 !important;
+    }
+    html[data-theme="dark"] #announcement-launcher-btn > div:first-child {
+      background: #050E1D !important;
+      color: #9BE600 !important;
+      border: 1px solid rgba(155, 230, 0, 0.4) !important;
+    }
+    html[data-theme="dark"] #announcement-launcher-btn > div:first-child svg {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] #announcement-launcher-btn > div:first-child span.animate-pulse {
+      background: #9BE600 !important;
+      --tw-ring-color: #050E1D !important;
+    }
+    html[data-theme="dark"] #announcement-launcher-btn > div:nth-child(2) > span:first-child {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] #announcement-launcher-btn > div:nth-child(2) > span:last-child {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] #ann-floating-badge {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      border-color: #B4FF00 !important;
+      font-weight: 900 !important;
+    }
+
+    /* Night Mode: Expandable Club Updates Window (#announcement-board-window & #public-announcement-feed) */
+    html[data-theme="dark"] #announcement-board-window {
+      background: #08182E !important;
+      color: #F8FAFC !important;
+      border: 1.5px solid #9BE600 !important;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 28px rgba(155, 230, 0, 0.18) !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:first-child {
+      background: linear-gradient(90deg, #0072CE 0%, #9BE600 50%, #0E8A2D 100%) !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:nth-child(2) {
+      background: #050E1D !important;
+      border-bottom: 1px solid rgba(155, 230, 0, 0.25) !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:nth-child(2) h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:nth-child(2) p {
+      color: #94A3B8 !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:nth-child(2) span.rounded-full {
+      background: rgba(155, 230, 0, 0.18) !important;
+      color: #9BE600 !important;
+      border-color: #9BE600 !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:nth-child(2) button {
+      background: #0E2240 !important;
+      color: #9BE600 !important;
+      border-color: rgba(155, 230, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:nth-child(2) button:hover {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] #public-announcement-feed {
+      background: #08182E !important;
+    }
+    html[data-theme="dark"] #public-announcement-feed article,
+    html[data-theme="dark"] #public-announcement-feed > div {
+      background: #0E2240 !important;
+      border: 1px solid rgba(155, 230, 0, 0.26) !important;
+      color: #F8FAFC !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+    html[data-theme="dark"] #public-announcement-feed article h4,
+    html[data-theme="dark"] #public-announcement-feed article span.font-bold {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] #public-announcement-feed article p {
+      color: #E2E8F0 !important;
+    }
+    html[data-theme="dark"] #public-announcement-feed article span.font-mono.block {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] #public-announcement-feed article span.pf-pill {
+      background: rgba(155, 230, 0, 0.16) !important;
+      color: #9BE600 !important;
+      border-color: rgba(155, 230, 0, 0.4) !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:last-child {
+      background: #050E1D !important;
+      border-top: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:last-child > span {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:last-child > span > span.rounded-full {
+      background: #9BE600 !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:last-child button {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      font-weight: 900 !important;
+    }
+    html[data-theme="dark"] #announcement-board-window > div:last-child button:hover {
+      background: #B4FF00 !important;
+      color: #050E1D !important;
+    }
+
   </style>
 </head>
 <body class="bg-brand-black text-slate-100 font-sans antialiased selection:bg-brand-lime selection:text-brand-black overflow-x-hidden">
@@ -3275,7 +3455,7 @@ button.pf-trn-btn-danger:hover,
 
         <!-- Primary Action -->
         <div class="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-2.5 justify-end">
-          <button type="button" onclick="openBookingDrawer()" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-md text-center" style="color:#FFFFFF !important;">
+          <button type="button" onclick="openBookingDrawer()" class="w-full py-3 px-4 rounded-xl bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-extrabold text-xs uppercase tracking-wider transition shadow-md text-center" style="background:#9BE600 !important;color:#050E1D !important;">
             Reserve a Court →
           </button>
           <a href="check-booking.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-bold text-xs transition text-center" style="color:#FFFFFF !important;">
