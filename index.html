@@ -2662,7 +2662,7 @@ button.pf-trn-btn-danger:hover,
             <tbody id="schedule-matrix-rows" class="divide-y divide-slate-200 bg-white"></tbody>
           </table>
         </div>
-        <!-- 9-Category Calendar Legend Bar (Positioned Below Court Schedule Table) -->
+        <!-- Calendar Legend Bar (Positioned Below Court Schedule Table) -->
         <div id="schedule-category-legend-bar" class="mt-4 p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E5E4DF] flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs font-bold shadow-sm">
           <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D1FAE5] border border-[#6EE7B7] text-[#065F46]">
             <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#10B981]"></span>
@@ -2680,10 +2680,6 @@ button.pf-trn-btn-danger:hover,
             <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#F59E0B]"></span>
             <span>Pending</span>
           </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFEDD5] border border-[#FDBA74] text-[#9A3412]">
-            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#F97316]"></span>
-            <span>Hold</span>
-          </span>
           <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B]">
             <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#EF4444]"></span>
             <span>Blocked</span>
@@ -2695,10 +2691,6 @@ button.pf-trn-btn-danger:hover,
           <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] border border-[#C4B5FD] text-[#5B21B6]">
             <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#8B5CF6]"></span>
             <span>Open Play</span>
-          </span>
-          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F1F5F9]/80 border border-[#E2E8F0] text-[#64748B] opacity-80">
-            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#CBD5E1]"></span>
-            <span>Past</span>
           </span>
         </div>
       </div>
@@ -3707,9 +3699,9 @@ button.pf-trn-btn-danger:hover,
       return hour24;
     }
 
-    function isOpenPlaySlot(dateYMD, slotStr) {
+    function isOpenPlaySlot(dateYMD, slotStr, courtNum) {
       if (typeof window.pfIsDefaultOpenPlaySlot === 'function') {
-        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr);
+        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr, courtNum);
       }
       return ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'].includes(String(slotStr || '').trim());
     }
@@ -3915,9 +3907,10 @@ button.pf-trn-btn-danger:hover,
           : false;
 
         const cells = courtsToShow.map(cNum => {
+          const openPlayActiveForCourt = isOpenPlaySlot(selectedScheduleDateYMD, h.time, cNum);
           const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
             ? window.pfResolveCourtSlot(selectedScheduleDateYMD, cNum, h.time, liveBlocks, liveBookings)
-            : { status: openPlayActive ? 'OPEN_PLAY' : 'AVAILABLE', category: openPlayActive ? 'OPEN_PLAY' : 'AVAILABLE', reason: '' };
+            : { status: openPlayActiveForCourt ? 'OPEN_PLAY' : 'AVAILABLE', category: openPlayActiveForCourt ? 'OPEN_PLAY' : 'AVAILABLE', reason: '' };
           const cat = slotInfo.category || slotInfo.status || 'AVAILABLE';
           const isDrawerSelected = Boolean(
             typeof DRAWER_STATE !== 'undefined' &&

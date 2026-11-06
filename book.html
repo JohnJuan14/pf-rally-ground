@@ -2203,11 +2203,9 @@ button.pf-trn-btn-danger:hover,
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#5C2D0C] border border-[#C8BCA8] font-bold"><span class="w-2 h-2 rounded-full bg-[#78350F]"></span>Selected</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span>Confirmed</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-bold"><span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Pending</span>
-            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] font-bold"><span class="w-2 h-2 rounded-full bg-[#F97316]"></span>Hold</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] font-bold"><span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>Blocked</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] font-bold"><span class="w-2 h-2 rounded-full bg-[#64748B]"></span>Private</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>Open Play (<b data-site-price="open-play-badge">₱150</b>)</span>
-            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] font-bold opacity-75"><span class="w-2 h-2 rounded-full bg-[#CBD5E1]"></span>Past</span>
           </div>
         </section>
 
@@ -3557,9 +3555,9 @@ button.pf-trn-btn-danger:hover,
       6: { start: 18, end: 22 }
     };
 
-    function isBookOpenPlay(dateYMD, slotStr) {
+    function isBookOpenPlay(dateYMD, slotStr, courtNum) {
       if (typeof window.pfIsDefaultOpenPlaySlot === 'function') {
-        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr);
+        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr, courtNum !== undefined ? courtNum : selectedCourt);
       }
       return ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'].includes(String(slotStr || '').trim());
     }

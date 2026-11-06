@@ -25,7 +25,7 @@ function pfGetApiEndpoints(apiPath) {
   if (!isLocal) {
     return [cleanPath];
   }
-  return [cleanPath, `http://localhost:8088${cleanPath}`, `http://127.0.0.1:8089${cleanPath}`, `http://localhost:8089${cleanPath}`];
+  return [cleanPath, `http://localhost:8188${cleanPath}`, `http://127.0.0.1:8189${cleanPath}`, `http://localhost:8189${cleanPath}`, `http://localhost:8088${cleanPath}`, `http://127.0.0.1:8089${cleanPath}`, `http://localhost:8089${cleanPath}`];
 }
 window.pfGetApiEndpoints = pfGetApiEndpoints;
 
@@ -2537,7 +2537,7 @@ function applySiteConfig(incomingCfg) {
     if (!bannerEl && headerEl) {
       bannerEl = document.createElement('div');
       bannerEl.id = 'live-site-update-banner';
-      headerEl.insertBefore(bannerEl, headerEl.children[1] || headerEl.firstChild);
+      headerEl.insertBefore(bannerEl, headerEl.firstChild);
     }
     if (bannerEl) {
       bannerEl.classList.remove('hidden');
@@ -3096,23 +3096,55 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return { status: 'CLOSED', category: 'BLOCKED', override: matchedBlock, reason: matchedBlock.reason || 'Blocked' };
   }
 
-  // 4. Default schedule fallback: Expired check first, then Editable Open Play (default 3:00 PM – 6:00 PM across all courts), otherwise Available
+  // 4. Default schedule fallback: Expired check first, then Editable Open Play on Designated Courts, otherwise Available
   if (isExpiredSlot) {
     return { status: 'EXPIRED', category: 'PAST', override: null, reason: 'Past' };
   }
-  if (pfIsDefaultOpenPlaySlot(targetDate, slotStr)) {
+  if (pfIsDefaultOpenPlaySlot(targetDate, slotStr, cNum)) {
     return { status: 'OPEN_PLAY', category: 'OPEN_PLAY', override: null, reason: 'Open Play (3:00 PM – 6:00 PM)' };
   }
   return { status: 'AVAILABLE', category: 'AVAILABLE', override: null, reason: 'Available' };
 }
 
-function pfIsDefaultOpenPlaySlot(dateYMD, slotStr) {
+function pfGetOpenPlayDesignatedCourts(cfgObj) {
+  const cfg = cfgObj || ((typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {}));
+  if (cfg && Array.isArray(cfg.openPlayDesignatedCourts) && cfg.openPlayDesignatedCourts.length > 0) {
+    return cfg.openPlayDesignatedCourts;
+  }
+  if (typeof pfGetActiveOpenPlaySession === 'function') {
+    try {
+      const act = pfGetActiveOpenPlaySession();
+      if (act && Array.isArray(act.designatedCourts) && act.designatedCourts.length > 0) {
+        return act.designatedCourts;
+      }
+    } catch (e) {}
+  }
+  if (cfg && Array.isArray(cfg.openPlaySessions) && cfg.openPlaySessions.length > 0) {
+    const pub = cfg.openPlaySessions.find(s => s && s.published !== false) || cfg.openPlaySessions[0];
+    if (pub && Array.isArray(pub.designatedCourts) && pub.designatedCourts.length > 0) {
+      return pub.designatedCourts;
+    }
+  }
+  if (cfg && Number(cfg.openPlayCourtsCount) >= 1 && Number(cfg.openPlayCourtsCount) <= 4) {
+    return Array.from({ length: Number(cfg.openPlayCourtsCount) }, (_, i) => `Court ${i + 1}`);
+  }
+  return ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+}
+window.pfGetOpenPlayDesignatedCourts = pfGetOpenPlayDesignatedCourts;
+
+function pfIsDefaultOpenPlaySlot(dateYMD, slotStr, courtNum) {
   if (!slotStr) return false;
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   if (cfg && cfg.openPlayEnabled === false) return false;
   const defaultSlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
   const activeSlots = (cfg && Array.isArray(cfg.openPlaySlots)) ? cfg.openPlaySlots : defaultSlots;
-  return activeSlots.includes(String(slotStr).trim());
+  if (!activeSlots.includes(String(slotStr).trim())) return false;
+  if (courtNum !== undefined && courtNum !== null && String(courtNum).toUpperCase() !== 'ALL') {
+    const cNum = pfNormalizeCourtNumber(courtNum);
+    const designated = pfGetOpenPlayDesignatedCourts(cfg);
+    return designated.some(c => pfNormalizeCourtNumber(c) === cNum);
+  }
+  return true;
 }
 window.pfIsDefaultOpenPlaySlot = pfIsDefaultOpenPlaySlot;
 window.pfResolveCourtSlot = pfResolveCourtSlot;
@@ -5086,11 +5118,13 @@ async function pfSubmitJoinOpenPlayForm(e) {
 
 function pfRenderOpenPlay24Board() {
   const dedicatedRoot = document.getElementById('open-play-dedicated-page-root');
+  const homeBannerRoot = document.getElementById('open-play-24-board-container');
   const legacySummaryRoot = document.getElementById('openplay24-summary-root');
   const legacyPodsRoot = document.getElementById('openplay24-pods-grid');
 
-  if (!dedicatedRoot && !legacySummaryRoot && !legacyPodsRoot) return;
+  if (!dedicatedRoot && !homeBannerRoot && !legacySummaryRoot && !legacyPodsRoot) return;
 
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   const pubSessions = pfGetPublishedOpenPlaySessions();
   const activeSession = pfGetActiveOpenPlaySession();
   const schedule = pfBuildOpenPlay24Schedule(undefined, activeSession.id);
@@ -5100,7 +5134,71 @@ function pfRenderOpenPlay24Board() {
   const pct = Math.min(100, Math.round((joinedCount / 24) * 100));
   const dcList = Array.isArray(activeSession.designatedCourts) && activeSession.designatedCourts.length > 0
     ? activeSession.designatedCourts
-    : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+    : pfGetOpenPlayDesignatedCourts(cfg);
+
+  // Render Live Open Play Banner on index.html (#open-play-24-board-container)
+  if (homeBannerRoot) {
+    if (cfg && cfg.openPlayEnabled === false) {
+      homeBannerRoot.innerHTML = '';
+      homeBannerRoot.classList.add('hidden');
+    } else {
+      homeBannerRoot.classList.remove('hidden');
+      const homeCourtPillsHtml = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
+        const isOpCourt = dcList.includes(cName);
+        return isOpCourt
+          ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase"><span class="w-1.5 h-1.5 rounded-full bg-[#8B5CF6]"></span>🟣 ${cName}: Open Play</span>`
+          : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>🟢 ${cName}: Regular Hire</span>`;
+      }).join('');
+
+      const sessionTabsHtml = pubSessions.length > 1 ? `
+        <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200">
+          <span class="text-[10px] font-mono font-bold uppercase text-slate-500 mr-1">Active Sessions (${pubSessions.length}):</span>
+          ${pubSessions.map((s, idx) => {
+            const isAct = s.id === activeSession.id;
+            return `<button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="px-3 py-1 rounded-lg font-mono text-[10px] font-extrabold uppercase transition ${isAct ? 'bg-[#0F291E] text-[#A3E635] shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'}">0${idx + 1} • ${pfEscapeHtml(s.title)} (${s.players.length}/24)</button>`;
+          }).join('')}
+        </div>
+      ` : '';
+
+      homeBannerRoot.innerHTML = `
+        <div class="rounded-3xl bg-white border-2 border-[#C4B5FD] p-5 sm:p-6 shadow-md text-slate-900 space-y-4">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase">
+                  <span class="w-2 h-2 rounded-full bg-[#8B5CF6] animate-ping"></span>
+                  <span>🟣 LIVE OPEN PLAY SESSION &amp; 4-PLAYER POD SHUFFLER</span>
+                </span>
+                <span class="px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-black uppercase">
+                  ₱${unitFee} / Player Seat
+                </span>
+                <span class="px-3 py-1 rounded-full ${joinedCount > 0 ? 'bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7]' : 'bg-slate-100 text-slate-700 border border-slate-300'} font-mono text-[10px] font-extrabold uppercase">
+                  👥 ${joinedCount} / 24 Players Booked (${openSpotsCount} Open)
+                </span>
+              </div>
+              <h3 class="text-lg sm:text-xl font-black tracking-tight text-[#0D1F18]">
+                ${pfEscapeHtml(activeSession.title)} &bull; <span class="text-[#5B21B6] font-mono text-sm sm:text-base">${pfEscapeHtml(activeSession.schedule)}</span>
+              </h3>
+              <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                <span class="text-[10px] font-mono font-bold uppercase text-slate-500 mr-1">Court Allocation:</span>
+                ${homeCourtPillsHtml}
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+              <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-3 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white font-extrabold text-xs uppercase tracking-wider transition shadow-md inline-flex items-center gap-2">
+                <span>🏓 Book &amp; Pay Open Play Seat (₱${unitFee}) →</span>
+              </button>
+              <a href="open-play.html" class="px-4 py-3 rounded-xl bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#4C1D95] hover:text-white border border-[#C4B5FD] font-extrabold text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5">
+                <span>🔀 Live Pod Shuffler (${joinedCount}/24) →</span>
+              </a>
+            </div>
+          </div>
+          ${sessionTabsHtml}
+        </div>
+      `;
+    }
+  }
 
   if (!dedicatedRoot && (legacySummaryRoot || legacyPodsRoot)) {
     if (legacySummaryRoot) {

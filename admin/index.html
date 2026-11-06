@@ -2602,7 +2602,6 @@ button.pf-trn-btn-danger:hover,
                 <select id="adm-block-status" onchange="handleAdminStatusSelectChange(this.value)" class="w-full bg-brand-card border-2 border-brand-lime/60 rounded-xl px-3 py-2.5 text-white font-black">
                   <option value="OPEN">🟢 Available (Open Court)</option>
                   <option value="OPEN_PLAY">🟣 Open Play Session</option>
-                  <option value="HOLD">🟠 Hold (Reserved / Temp Hold)</option>
                   <option value="CLOSED" selected>🔴 Blocked (Closed Court)</option>
                   <option value="PRIVATE">⚪ Private (Exclusive / Coaching)</option>
                 </select>
@@ -2699,12 +2698,18 @@ button.pf-trn-btn-danger:hover,
                   <p class="text-[11px] text-slate-600">All 24 players are randomly shuffled into balanced 4-player Doubles Pods (2 vs 2) and assigned a dedicated time slot and court across 3:00 PM – 6:00 PM.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                  <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-[#C4B5FD]" id="adm-openplay-court-count-btns">
-                    <span class="text-[10px] font-mono font-bold uppercase text-[#5B21B6] px-2">Courts:</span>
+                  <div class="flex flex-wrap items-center gap-1 bg-white p-1.5 rounded-xl border border-[#C4B5FD]" id="adm-openplay-court-count-btns">
+                    <span class="text-[10px] font-mono font-bold uppercase text-[#5B21B6] px-1.5">Count:</span>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(1)" data-op-courts="1" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">1 Court</button>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(2)" data-op-courts="2" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">2 Courts</button>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(3)" data-op-courts="3" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">3 Courts</button>
                     <button type="button" onclick="adminSetOpenPlayCourtsCount(4)" data-op-courts="4" class="px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD]">4 Courts</button>
+                    <span class="text-slate-300 px-1">|</span>
+                    <span class="text-[10px] font-mono font-bold uppercase text-[#5B21B6] px-1">Pick Exact Court(s):</span>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(1)" data-op-single-court="1" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C1</button>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(2)" data-op-single-court="2" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C2</button>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(3)" data-op-single-court="3" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C3</button>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(4)" data-op-single-court="4" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C4</button>
                   </div>
                   <button type="button" onclick="adminShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">
                     🎲 Randomly Distribute 24 Players &amp; Sync Live
@@ -2761,9 +2766,6 @@ button.pf-trn-btn-danger:hover,
                 <button type="button" onclick="setAdminCalendarClickMode('OPEN_PLAY')" data-mode="OPEN_PLAY" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-black uppercase transition">
                   Open Play
                 </button>
-                <button type="button" onclick="setAdminCalendarClickMode('HOLD')" data-mode="HOLD" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] text-[11px] font-black uppercase transition">
-                  Hold
-                </button>
                 <button type="button" onclick="setAdminCalendarClickMode('CLOSED')" data-mode="CLOSED" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[11px] font-black uppercase transition">
                   Blocked
                 </button>
@@ -2790,7 +2792,7 @@ button.pf-trn-btn-danger:hover,
               </table>
             </div>
 
-            <!-- 9-Category Calendar Legend Bar (Positioned Below the Calendar Table) -->
+            <!-- Calendar Legend Bar (Positioned Below the Calendar Table) -->
             <div class="flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs font-bold bg-[#F8F9F4] px-4 py-3 rounded-2xl border border-slate-200 shadow-lg">
               <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#D1FAE5] border border-[#6EE7B7] text-[#065F46]">
                 <span class="cal-cat-dot w-2.5 h-2.5 bg-[#10B981]"></span>
@@ -2808,10 +2810,6 @@ button.pf-trn-btn-danger:hover,
                 <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F59E0B]"></span>
                 <span>Pending</span>
               </span>
-              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FFEDD5] border border-[#FDBA74] text-[#9A3412]">
-                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#F97316]"></span>
-                <span>Hold</span>
-              </span>
               <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B]">
                 <span class="cal-cat-dot w-2.5 h-2.5 bg-[#EF4444]"></span>
                 <span>Blocked</span>
@@ -2823,10 +2821,6 @@ button.pf-trn-btn-danger:hover,
               <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#EDE9FE] border border-[#C4B5FD] text-[#5B21B6]">
                 <span class="cal-cat-dot w-2.5 h-2.5 bg-[#8B5CF6]"></span>
                 <span>Open Play</span>
-              </span>
-              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F5F9]/80 border border-[#E2E8F0] text-[#64748B] opacity-80">
-                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#CBD5E1]"></span>
-                <span>Past</span>
               </span>
             </div>
           </div>
@@ -2859,10 +2853,6 @@ button.pf-trn-btn-danger:hover,
               <button type="button" onclick="confirmAdminSlotDecision('OPEN_PLAY')" class="w-full py-2.5 px-4 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
                 <span>🟣 Open Play Session</span>
                 <span class="font-mono text-[11px]">OPEN PLAY →</span>
-              </button>
-              <button type="button" onclick="confirmAdminSlotDecision('HOLD')" class="w-full py-2.5 px-4 rounded-xl bg-[#FFEDD5] hover:bg-[#FED7AA] text-[#9A3412] border border-[#FDBA74] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
-                <span>🟠 Hold (Temporary Slot Hold)</span>
-                <span class="font-mono text-[11px]">HOLD →</span>
               </button>
               <button type="button" onclick="confirmAdminSlotDecision('CLOSED')" class="w-full py-2.5 px-4 rounded-xl bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B] border border-[#FCA5A5] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
                 <span>🔴 Blocked (Closed Court)</span>
@@ -4876,12 +4866,35 @@ function clearFieldError(fieldId) {
       6: { start: 18, end: 22 }
     };
 
-    function isAdminOpenPlaySlot(slotStr) {
+    function getAdminOpenPlayDesignatedCourts(cfgObj) {
+      const cfg = cfgObj || ((typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? currentSiteConfig : {});
+      if (Array.isArray(cfg.openPlayDesignatedCourts) && cfg.openPlayDesignatedCourts.length > 0) {
+        return cfg.openPlayDesignatedCourts;
+      }
+      if (Array.isArray(cfg.openPlaySessions) && cfg.openPlaySessions.length > 0) {
+        const pub = cfg.openPlaySessions.find(s => s && s.published !== false) || cfg.openPlaySessions[0];
+        if (pub && Array.isArray(pub.designatedCourts) && pub.designatedCourts.length > 0) {
+          return pub.designatedCourts;
+        }
+      }
+      if (Number(cfg.openPlayCourtsCount) >= 1 && Number(cfg.openPlayCourtsCount) <= 4) {
+        return Array.from({ length: Number(cfg.openPlayCourtsCount) }, (_, i) => `Court ${i + 1}`);
+      }
+      return ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+    }
+
+    function isAdminOpenPlaySlot(slotStr, courtNum) {
       if (!slotStr) return false;
       const cfg = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? currentSiteConfig : {};
       if (cfg.openPlayEnabled === false) return false;
       const slots = Array.isArray(cfg.openPlaySlots) ? cfg.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
-      return slots.includes(String(slotStr).trim());
+      if (!slots.includes(String(slotStr).trim())) return false;
+      if (courtNum !== undefined && courtNum !== null && String(courtNum).toUpperCase() !== 'ALL') {
+        const cNum = extractAdminCourtNum(courtNum);
+        const desig = getAdminOpenPlayDesignatedCourts(cfg);
+        return desig.some(c => extractAdminCourtNum(c) === cNum);
+      }
+      return true;
     }
 
     function extractAdminCourtNum(courtStr) {
@@ -6423,8 +6436,8 @@ function clearFieldError(fieldId) {
         };
       }
 
-      // 4. Default Editable Open Play Schedule (3:00 PM – 6:00 PM across all 4 courts unless overridden above)
-      if (isAdminOpenPlaySlot(slotStr)) {
+      // 4. Default Editable Open Play Schedule (3:00 PM – 6:00 PM on Designated Open Play Courts unless overridden above)
+      if (isAdminOpenPlaySlot(slotStr, courtNum)) {
         return {
           status: 'OPEN_PLAY',
           isOverride: false,
@@ -6653,9 +6666,10 @@ function clearFieldError(fieldId) {
       if (toggle) toggle.checked = enabled;
       const opRateVal = Number(cfg.openPlayRate ?? 150);
       syncOpenPlayRateInputs(opRateVal);
+      const desigCourts = getAdminOpenPlayDesignatedCourts(cfg);
       if (badge) {
         badge.textContent = enabled && activeSlots.length > 0
-          ? `● Active Across All 4 Courts (${activeSlots[0]} – ${activeSlots[activeSlots.length - 1]} • ₱${opRateVal}/player)`
+          ? `● Active on ${desigCourts.join(', ')} (${activeSlots[0]} – ${activeSlots[activeSlots.length - 1]} • ₱${opRateVal}/player)`
           : '○ Default Open Play Disabled';
       }
       wrap.innerHTML = calendarHours.map(h => {
@@ -6772,8 +6786,11 @@ function clearFieldError(fieldId) {
       return DEFAULT_ADMIN_24_PLAYERS.map(p => ({ ...p }));
     }
 
-    function buildAdminOpenPlay24Pods(players24, courtsCount) {
-      const cCount = Math.max(1, Math.min(4, Number(courtsCount) || 4));
+    function buildAdminOpenPlay24Pods(players24, courtsOrCount) {
+      const desig = Array.isArray(courtsOrCount) && courtsOrCount.length > 0
+        ? courtsOrCount
+        : getAdminOpenPlayDesignatedCourts();
+      const cCount = Math.max(1, Math.min(4, desig.length || Number(courtsOrCount) || 4));
       const slotWindows = [
         '03:00 PM – 03:30 PM',
         '03:30 PM – 04:00 PM',
@@ -6785,12 +6802,13 @@ function clearFieldError(fieldId) {
       const pods = [];
       for (let i = 0; i < 6; i++) {
         const pSlice = players24.slice(i * 4, i * 4 + 4);
-        const courtNum = (i % cCount) + 1;
+        const courtLabel = desig[i % cCount] || `Court ${(i % cCount) + 1}`;
+        const courtNum = extractAdminCourtNum(courtLabel);
         const waveIdx = Math.floor(i / cCount);
         const timeSlot = slotWindows[waveIdx % slotWindows.length];
         pods.push({
           podNumber: i + 1,
-          court: `Court ${courtNum}`,
+          court: courtLabel,
           courtNum: courtNum,
           timeSlot: timeSlot,
           teamA: [pSlice[0] || { slotNum: i * 4 + 1, name: 'Open' }, pSlice[1] || { slotNum: i * 4 + 2, name: 'Open' }],
@@ -6800,17 +6818,46 @@ function clearFieldError(fieldId) {
       return pods;
     }
 
-    async function adminSetOpenPlayCourtsCount(count) {
-      const cCount = Math.max(1, Math.min(4, Number(count) || 4));
+    async function adminApplyDesignatedOpenPlayCourts(courtList, toastText) {
       if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
-      currentSiteConfig.openPlayCourtsCount = cCount;
+      const cleanList = Array.isArray(courtList) && courtList.length > 0 ? courtList.slice() : ['Court 1'];
+      cleanList.sort((a, b) => a.localeCompare(b));
+      currentSiteConfig.openPlayDesignatedCourts = cleanList;
+      currentSiteConfig.openPlayCourtsCount = cleanList.length;
+      if (typeof getAdminOpenPlaySessionsList === 'function') {
+        const sessions = getAdminOpenPlaySessionsList();
+        const active = sessions.find(s => s.id === (typeof adminSelectedOpenPlaySessionId !== 'undefined' ? adminSelectedOpenPlaySessionId : '')) || sessions.find(s => s.published !== false) || sessions[0];
+        if (active) active.designatedCourts = cleanList.slice();
+      }
       const roster = getAdminOpenPlay24Roster();
-      currentSiteConfig.openPlaySchedule = buildAdminOpenPlay24Pods(roster, cCount);
+      currentSiteConfig.openPlaySchedule = buildAdminOpenPlay24Pods(roster, cleanList);
       currentSiteConfig.updatedAt = Date.now();
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
       renderAdminOpenPlay24Board();
+      if (typeof renderAdminOpenPlayFeaturePage === 'function') renderAdminOpenPlayFeaturePage(true);
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
-      showAdminCalendarFeedback(`🟣 Open Play set to ${cCount} Court${cCount > 1 ? 's' : ''} for 24-Player Rotation — Synced live!`);
+      showAdminCalendarFeedback(toastText || `🟣 Open Play courts set to ${cleanList.join(', ')} (other courts remain Available for regular booking)!`);
+    }
+
+    async function adminSetOpenPlayCourtsCount(count) {
+      const cCount = Math.max(1, Math.min(4, Number(count) || 4));
+      const cleanList = Array.from({ length: cCount }, (_, i) => `Court ${i + 1}`);
+      await adminApplyDesignatedOpenPlayCourts(cleanList, `🟣 Open Play set to ${cleanList.join(', ')} — Synced live to Schedule & Open Play page!`);
+    }
+
+    async function adminToggleScheduleOpenPlayCourt(courtNum) {
+      const cur = getAdminOpenPlayDesignatedCourts().slice();
+      const label = `Court ${courtNum}`;
+      const idx = cur.indexOf(label);
+      if (idx >= 0) {
+        if (cur.length <= 1) return;
+        cur.splice(idx, 1);
+      } else {
+        cur.push(label);
+      }
+      await adminApplyDesignatedOpenPlayCourts(cur, `🟣 Open Play courts updated to: ${cur.join(', ')} — Unselected courts are now Available for regular hire!`);
     }
 
     async function adminShuffleOpenPlay24Players() {
@@ -6897,12 +6944,21 @@ function clearFieldError(fieldId) {
     function renderAdminOpenPlay24Board() {
       const grid = document.getElementById('adm-openplay-24-schedule-grid');
       if (!grid) return;
-      const cCount = Math.max(1, Math.min(4, Number((currentSiteConfig && currentSiteConfig.openPlayCourtsCount) || 4)));
+      const desig = getAdminOpenPlayDesignatedCourts();
+      const cCount = desig.length;
       document.querySelectorAll('#adm-openplay-court-count-btns [data-op-courts]').forEach(btn => {
         const n = Number(btn.getAttribute('data-op-courts'));
         btn.className = (n === cCount)
           ? 'px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD]'
           : 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-[#C4B5FD]';
+      });
+      document.querySelectorAll('#adm-openplay-court-count-btns [data-op-single-court]').forEach(btn => {
+        const cNum = Number(btn.getAttribute('data-op-single-court'));
+        const hasC = desig.includes(`Court ${cNum}`);
+        btn.className = hasC
+          ? 'px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]'
+          : 'px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-bold uppercase bg-white text-slate-500 border border-slate-300 hover:border-[#C4B5FD]';
+        btn.textContent = `${hasC ? '✓ ' : ''}C${cNum}`;
       });
       const roster = getAdminOpenPlay24Roster();
       const pods = (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySchedule) && currentSiteConfig.openPlaySchedule.length === 6)
@@ -14198,7 +14254,14 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       if (!target) return;
       const n = Math.max(1, Math.min(4, parseInt(count, 10) || 4));
       target.designatedCourts = Array.from({ length: n }, (_, i) => `Court ${i + 1}`);
-      await saveAndSyncAdminOpenPlaySessions(`✅ Set ${n} Designated Court${n > 1 ? 's' : ''} for "${target.title}"!`);
+      if (target.published !== false || target.id === adminSelectedOpenPlaySessionId) {
+        currentSiteConfig.openPlayDesignatedCourts = target.designatedCourts.slice();
+        currentSiteConfig.openPlayCourtsCount = target.designatedCourts.length;
+      }
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      renderAdminOpenPlay24Board();
+      await saveAndSyncAdminOpenPlaySessions(`✅ Set Designated Courts (${target.designatedCourts.join(', ')}) for "${target.title}" — Schedule Matrix updated!`);
     }
 
     async function adminToggleOpenPlaySingleCourt(sessionId, courtNum) {
@@ -14216,7 +14279,14 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
       cur.sort((a, b) => a.localeCompare(b));
       target.designatedCourts = cur;
-      await saveAndSyncAdminOpenPlaySessions(`✅ Updated Designated Courts (${cur.join(', ')}) for "${target.title}"!`);
+      if (target.published !== false || target.id === adminSelectedOpenPlaySessionId) {
+        currentSiteConfig.openPlayDesignatedCourts = cur.slice();
+        currentSiteConfig.openPlayCourtsCount = cur.length;
+      }
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      renderAdminOpenPlay24Board();
+      await saveAndSyncAdminOpenPlaySessions(`✅ Updated Designated Courts (${cur.join(', ')}) for "${target.title}" — Other courts remain Available on Schedule!`);
     }
 
     async function adminToggleOpenPlayShowCourtsOnSite(sessionId) {

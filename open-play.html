@@ -170,12 +170,35 @@
       height: 2px;
       border-top: 2px dashed rgba(163, 230, 53, 0.65);
     }
+    @keyframes pfMarqueeScroll {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .pf-live-ticker-track {
+      animation: pfMarqueeScroll 26s linear infinite;
+      will-change: transform;
+    }
+    .pf-live-ticker-track:hover {
+      animation-play-state: paused;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#F7F6F1] text-[#0D1F18]">
 
   <!-- ================= TOP EDITORIAL NAVBAR ================= -->
   <header class="sticky top-0 z-50 bg-[#F7F6F1]/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <!-- Official Logo Court Color Stripe -->
+    <div class="h-1.5 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
+    <!-- Live Site Update Top Banner (Moving Marquee Ticker Synced from Admin Website Editor) -->
+    <div id="live-site-update-banner" class="bg-[#EFECE6] text-[#0D1F18] border-b border-[#D5D3CC] px-3 py-1.5 text-[11px] sm:text-xs font-medium tracking-wide">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2 min-w-0 truncate">
+          <span class="px-2 py-0.5 rounded-full bg-[#15803D] text-white font-mono text-[9px] font-bold uppercase tracking-widest flex-shrink-0">Club Advisory</span>
+          <span id="live-site-update-text" class="truncate font-semibold text-[#0D1F18]">Courts 1–4 Open Daily 6:00 AM – 12:00 MN • Day ₱400/hr • Night ₱500/hr • Open Play ₱150/player</span>
+        </div>
+        <a href="book.html" class="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase text-[#15803D] hover:text-[#0D1F18] flex-shrink-0 underline">Reserve Slot →</a>
+      </div>
+    </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
       <!-- Left Brand Logo -->
       <a href="index.html" class="flex items-center gap-3 group">
