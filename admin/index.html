@@ -7044,7 +7044,7 @@ function clearFieldError(fieldId) {
       if (!wrap) return;
       const cfg = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? currentSiteConfig : {};
       const enabled = cfg.openPlayEnabled !== false;
-      const activeSlots = Array.isArray(cfg.openPlaySlots) ? cfg.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      const activeSlots = Array.isArray(cfg.openPlaySlots) ? cfg.openPlaySlots : ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
       if (toggle) toggle.checked = enabled;
       const opRateVal = Number(cfg.openPlayRate ?? 150);
       syncOpenPlayRateInputs(opRateVal);
@@ -7075,7 +7075,7 @@ function clearFieldError(fieldId) {
       currentSiteConfig.openPlayEnabled = true;
       let slots = Array.isArray(currentSiteConfig.openPlaySlots)
         ? [...currentSiteConfig.openPlaySlots]
-        : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+        : ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
       if (slots.includes(slotStr)) {
         slots = slots.filter(s => s !== slotStr);
       } else {
@@ -7097,7 +7097,7 @@ function clearFieldError(fieldId) {
       if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
       currentSiteConfig.openPlayEnabled = Boolean(isChecked);
       if (!Array.isArray(currentSiteConfig.openPlaySlots) || currentSiteConfig.openPlaySlots.length === 0) {
-        currentSiteConfig.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+        currentSiteConfig.openPlaySlots = ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
       }
       currentSiteConfig.updatedAt = Date.now();
       renderAdminOpenPlayPills();
@@ -7115,7 +7115,7 @@ function clearFieldError(fieldId) {
         onConfirm: async () => {
           if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
           currentSiteConfig.openPlayEnabled = true;
-          currentSiteConfig.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+          currentSiteConfig.openPlaySlots = ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
           currentSiteConfig.updatedAt = Date.now();
           renderAdminOpenPlayPills();
           renderScheduleBlocks();
@@ -9517,7 +9517,7 @@ async function adminSetOpenPlayWindowForDate() {
         alert(`⚠️ Expired Date (${dateYMD}): Cannot modify a past date. Please select Today or a future date.`);
         return;
       }
-      const targetHours = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      const targetHours = ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
       blocksMutationLockUntil = Date.now() + 8000;
       courtBlocks = courtBlocks.filter(b => !(String(b.date || '').trim() === dateYMD && targetHours.includes(String(b.hours || '').trim())));
       targetHours.forEach(hr => {
@@ -13395,7 +13395,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       openPlayCourtsCount: 4,
       openPlaySlotMinutes: 30,
       maxAdvanceBookingDays: 30,
-      openPlaySlots: ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
+      openPlaySlots: ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'],
       pricePaddleStd: 50,
       pricePaddleCarbon: 100,
       pricePaddleBranded: 200,
@@ -13642,7 +13642,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         cfg.liveBannerText = DEFAULT_SITE_CONFIG.liveBannerText;
       }
       if (cfg.openPlayEnabled === undefined) cfg.openPlayEnabled = true;
-      if (!Array.isArray(cfg.openPlaySlots)) cfg.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      if (!Array.isArray(cfg.openPlaySlots)) cfg.openPlaySlots = ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
       if ((cfg.openPlayRate === undefined || cfg.openPlayRate === null || Number(cfg.openPlayRate) === 0) && !cfg.openPlayRateCustomized) {
         cfg.openPlayRate = 150;
       }
@@ -13815,7 +13815,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         maxAdvanceBookingDays: 30,
 
         openPlayEnabled: (currentSiteConfig && currentSiteConfig.openPlayEnabled !== undefined) ? Boolean(currentSiteConfig.openPlayEnabled) : true,
-        openPlaySlots: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySlots)) ? currentSiteConfig.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
+        openPlaySlots: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySlots)) ? currentSiteConfig.openPlaySlots : ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'],
         pricePaddleStd: num('se-price-paddle-std', DEFAULT_SITE_CONFIG.pricePaddleStd),
         pricePaddleCarbon: num('se-price-paddle-carbon', DEFAULT_SITE_CONFIG.pricePaddleCarbon),
         pricePaddleBranded: num('se-price-paddle-branded', DEFAULT_SITE_CONFIG.pricePaddleBranded),

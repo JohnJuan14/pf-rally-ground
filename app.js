@@ -2437,7 +2437,7 @@ const DEFAULT_PF_SITE_CONFIG = {
   openPlaySlotMinutes: 30,
   maxAdvanceBookingDays: 30,
   openPlayEnabled: true,
-  openPlaySlots: ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'],
+  openPlaySlots: ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'],
   pricePaddleStd: 50,
   pricePaddleCarbon: 100,
   pricePaddleBranded: 200,
@@ -2474,8 +2474,14 @@ function getSiteConfig() {
         ? Object.assign({}, DEFAULT_PF_SITE_CONFIG, serverCfg, saved)
         : Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg));
   if (merged.openPlayEnabled === undefined) merged.openPlayEnabled = true;
-  if (!Array.isArray(merged.openPlaySlots)) {
-    merged.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+  if (!Array.isArray(merged.openPlaySlots) || (merged.openPlaySlots.length === 4 && merged.openPlaySlots[0] === '03:00 PM' && merged.openPlaySlots[3] === '06:00 PM')) {
+    merged.openPlaySlots = ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
+  }
+  if (Array.isArray(merged.openPlaySessions)) {
+    const hasLegacySession = merged.openPlaySessions.some(s => s && (s.id === 'op-session-1' || /03:00\s*PM\s*[–-]\s*06:00\s*PM/i.test(String(s.schedule || ''))));
+    if (hasLegacySession && typeof DEFAULT_OPEN_PLAY_SESSIONS !== 'undefined') {
+      merged.openPlaySessions = JSON.parse(JSON.stringify(DEFAULT_OPEN_PLAY_SESSIONS));
+    }
   }
   if (merged.liveBannerText === undefined || merged.liveBannerText === null || String(merged.liveBannerText).trim() === '0') {
     merged.liveBannerText = DEFAULT_PF_SITE_CONFIG.liveBannerText;
@@ -2492,6 +2498,44 @@ function getSiteConfig() {
   window.PF_SITE_CONFIG = merged;
   return merged;
 }
+
+
+// Auto-purge legacy 3:00 PM - 6:00 PM default Open Play blocks & migrate cached siteConfig in browser localStorage
+(function pfMigrateOfficialOpenPlayScheduleInStorage() {
+  try {
+    const rawBlocks = localStorage.getItem('pf_court_blocks');
+    if (rawBlocks) {
+      const parsedBlocks = JSON.parse(rawBlocks);
+      if (Array.isArray(parsedBlocks)) {
+        const cleaned = parsedBlocks.filter(b => {
+          if (!b) return false;
+          const isOp = String(b.statusType || '').toUpperCase() === 'OPEN_PLAY' || /open\s*play/i.test(String(b.reason || ''));
+          const isLegacy3pm = /3:00\s*PM/i.test(String(b.reason || '')) || String(b.hours || '').trim() === '03:00 PM';
+          return !(isOp && isLegacy3pm);
+        });
+        if (cleaned.length !== parsedBlocks.length) {
+          localStorage.setItem('pf_court_blocks', JSON.stringify(cleaned));
+        }
+      }
+    }
+    const rawSc = localStorage.getItem('pf_site_config');
+    if (rawSc) {
+      const sc = JSON.parse(rawSc);
+      let changed = false;
+      if (sc && Array.isArray(sc.openPlaySlots) && sc.openPlaySlots[0] === '03:00 PM') {
+        sc.openPlaySlots = ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
+        changed = true;
+      }
+      if (sc && Array.isArray(sc.openPlaySessions) && sc.openPlaySessions.some(s => s && (s.id === 'op-session-1' || /03:00\s*PM/i.test(String(s.schedule || ''))))) {
+        sc.openPlaySessions = JSON.parse(JSON.stringify(DEFAULT_OPEN_PLAY_SESSIONS));
+        changed = true;
+      }
+      if (changed) {
+        localStorage.setItem('pf_site_config', JSON.stringify(sc));
+      }
+    }
+  } catch (e) {}
+})();
 
 window.PF_SITE_CONFIG = getSiteConfig();
 if (typeof document !== 'undefined' && document.body) {
@@ -3157,7 +3201,7 @@ window.pfGetOpenPlayDesignatedCourts = pfGetOpenPlayDesignatedCourts;
 function pfGetOpenPlaySlotsForDate(dateYMD, cfgObj) {
   const cfg = cfgObj || ((typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {}));
   if (cfg && cfg.openPlayEnabled === false) return [];
-  if (cfg && cfg.openPlaySlotsCustomized === true && Array.isArray(cfg.openPlaySlots)) {
+  if (cfg && cfg.openPlaySlotsCustomized === true && Array.isArray(cfg.openPlaySlots) && !cfg.openPlaySlots.includes('03:00 PM') && cfg.openPlaySlots.join(',') !== '04:00 PM,05:00 PM,06:00 PM,07:00 PM') {
     return cfg.openPlaySlots;
   }
   const todayYMD = pfGetPhilippineTodayYMD();
@@ -5651,7 +5695,7 @@ function pfRenderOpenPlay24Board() {
     : (pubSessions.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4');
 
   const sessionSelectorBarHtml = pubSessions.length > 1 ? `
-    <div class="p-4 rounded-3xl bg-white border-2 border-[#E2E0D8] shadow-sm space-y-3">
+    <div class="pf-op-session-bar p-4 rounded-3xl bg-white border-2 border-[#E2E0D8] shadow-sm space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2 px-1">
         <div class="flex items-center gap-2">
           <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">🏓 Official Open Play Schedule (${pubSessions.length} Active Windows)</span>
@@ -5663,7 +5707,7 @@ function pfRenderOpenPlay24Board() {
           const isAct = s.id === activeSession.id;
           const sFee = Math.max(0, Number(s.entryFee !== undefined ? s.entryFee : 150));
           return `
-            <button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 ${isAct ? 'bg-[#0F291E] text-white border-[#0F291E] shadow-md' : 'bg-[#F8F7F3] hover:bg-white text-slate-900 border-[#E2E0D8]'}">
+            <button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="pf-op-session-btn ${isAct ? 'pf-op-session-btn-active bg-[#0F291E] text-white border-[#0F291E] shadow-md' : 'bg-[#F8F7F3] hover:bg-white text-slate-900 border-[#E2E0D8]'} p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3">
               <span class="w-7 h-7 rounded-lg ${isAct ? 'bg-[#A3E635] text-[#04120B]' : 'bg-[#0F291E] text-white'} font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0${idx + 1}</span>
               <div class="min-w-0 flex-1">
                 <div class="text-xs font-black truncate">${pfEscapeHtml(s.title)}</div>
@@ -5732,7 +5776,7 @@ function pfRenderOpenPlay24Board() {
         : `<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300 font-mono text-[10px] font-bold uppercase">4 Open Seats</span>`);
 
     return `
-      <div class="rounded-3xl bg-[#F8F7F3] border-2 border-[#E2E0D8] p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-3.5">
+      <div class="pf-op-pod-card rounded-3xl bg-[#F8F7F3] border-2 border-[#E2E0D8] p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-3.5">
         <div class="flex items-start justify-between gap-2">
           <div>
             <div class="flex flex-wrap items-center gap-1.5">
@@ -5777,7 +5821,7 @@ function pfRenderOpenPlay24Board() {
 
   // 3. Verified Community Check-In Roster List with Live Confirmation Status & Receipt Lookup Link
   const realRosterHtml = joinedCount === 0 ? `
-    <div class="p-6 rounded-2xl bg-[#F0FDF4] border-2 border-dashed border-[#86EFAC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="pf-op-empty-roster p-6 rounded-2xl bg-[#F0FDF4] border-2 border-dashed border-[#86EFAC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div class="flex items-start sm:items-center gap-3.5">
         <span class="w-10 h-10 rounded-2xl bg-[#15803D] text-white font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0/24</span>
         <div>
@@ -5800,7 +5844,7 @@ function pfRenderOpenPlay24Board() {
           ? `<a href="check-booking.html?ref=${encodeURIComponent(pl.bookingRef)}" class="underline hover:text-emerald-950" title="View Official Image Receipt &amp; Live Status">${pfEscapeHtml(pl.bookingRef)}</a>`
           : '';
         return `
-          <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border-2 ${stInfo.isConfirmed ? 'border-emerald-400' : 'border-amber-300'} flex items-center justify-between gap-2.5">
+          <div class="pf-op-roster-card p-3.5 rounded-2xl bg-[#F8F7F3] border-2 ${stInfo.isConfirmed ? 'border-emerald-400' : 'border-amber-300'} flex items-center justify-between gap-2.5">
             <div class="flex items-center gap-2.5 min-w-0">
               <span class="w-8 h-8 rounded-xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
               <div class="min-w-0">
@@ -5820,13 +5864,13 @@ function pfRenderOpenPlay24Board() {
       ${sessionSelectorBarHtml}
 
       <!-- EDITORIAL OPEN PLAY STAGE (12-COLUMN SHOWCASE + ENTRY PASS + 6 COURT PODS) -->
-      <div class="rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-8 shadow-xl space-y-6 text-[#0D1F18]">
+      <div class="pf-op-stage-card rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-8 shadow-xl space-y-6 text-[#0D1F18]">
 
         <!-- 12-COLUMN EDITORIAL HEADER -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
 
           <!-- LEFT 8 COLUMNS: OFFICIAL POSTER, SESSION DETAILS & DESIGNATED COURTS -->
-          <div class="xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-3xl p-5 sm:p-7 border border-[#E2E0D8]">
+          <div class="pf-op-stage-left xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-3xl p-5 sm:p-7 border border-[#E2E0D8]">
             <div class="flex flex-col md:flex-row gap-5 items-start">
               <div class="w-full md:w-48 flex-shrink-0 rounded-2xl overflow-hidden border-2 border-[#15803D] shadow-lg">
                 <img src="assets/open-play-poster.jpg" alt="Official P&amp;F Rally Ground Open Play Schedule Poster" class="w-full h-auto object-cover">
@@ -5952,7 +5996,7 @@ function pfRenderOpenPlay24Board() {
         </div>
 
         <!-- VERIFIED COMMUNITY CHECK-IN ROSTER -->
-        <div class="pt-4 border-t border-slate-200 space-y-4">
+        <div class="pf-op-roster-section pt-4 border-t border-slate-200 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER (CLICK REF # FOR IMAGE RECEIPT)</span>
@@ -7287,13 +7331,13 @@ function pfRenderPublicTournaments() {
       ${eventSelectorBarHtml}
 
       <!-- FEATURED TOURNAMENT STAGE (GRAPHIC DESIGNER EDITORIAL POSTER + VIP ENTRY TICKET + ARENA BRACKET) -->
-      <div class="rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-8 shadow-xl space-y-6 text-[#0D1F18]">
+      <div class="pf-op-stage-card rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-8 shadow-xl space-y-6 text-[#0D1F18]">
 
         <!-- 12-COLUMN EDITORIAL SPORTS EVENT POSTER HEADER -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
 
           <!-- LEFT 8 COLUMNS: EVENT BRANDING, HEADLINE & ARCHITECTURAL SPEC GRID -->
-          <div class="xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-3xl p-5 sm:p-7 border border-[#E2E0D8]">
+          <div class="pf-op-stage-left xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-3xl p-5 sm:p-7 border border-[#E2E0D8]">
             <div class="space-y-3.5">
               <div class="flex flex-wrap items-center gap-2">
                 <span class="pf-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏆 ${pfEscapeHtml(t.format || 'Official Tournament')}</span>

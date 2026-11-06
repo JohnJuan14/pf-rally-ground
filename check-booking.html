@@ -2587,30 +2587,30 @@ button.pf-trn-btn-danger:hover,
     
     
     /* === V3.0 BULLETPROOF DAYLIGHT & NIGHT MODE CONTRAST FIX === */
-    /* Expired / Past Time Slots: Crisp & Legible in Both Modes */
+    /* Expired / Past Time Slots: Translucent in Both Daylight & Night Mode */
     .pf-cal-slot-past,
-    html[data-theme="light"] .pf-cal-slot-past {
-      background-color: #F1F5F9 !important;
-      border: 1px solid #CBD5E1 !important;
-      color: #334155 !important;
-      opacity: 1 !important;
+    html[data-theme="light"] .pf-cal-slot-past,
+    html[data-theme="dark"] .pf-cal-slot-past {
+      background-color: rgba(209, 250, 229, 0.38) !important;
+      border: 1px solid rgba(110, 231, 183, 0.38) !important;
+      color: rgba(6, 95, 70, 0.42) !important;
+      opacity: 0.52 !important;
       cursor: not-allowed !important;
     }
     .pf-cal-slot-past span,
-    html[data-theme="light"] .pf-cal-slot-past span {
-      color: #475569 !important;
-      opacity: 1 !important;
-    }
-    html[data-theme="dark"] .pf-cal-slot-past {
-      background-color: #08182E !important;
-      border: 1px solid rgba(148, 163, 184, 0.35) !important;
-      color: #CBD5E1 !important;
-      opacity: 1 !important;
-      cursor: not-allowed !important;
-    }
+    html[data-theme="light"] .pf-cal-slot-past span,
     html[data-theme="dark"] .pf-cal-slot-past span {
-      color: #94A3B8 !important;
+      color: rgba(6, 95, 70, 0.42) !important;
       opacity: 1 !important;
+    }
+    html[data-theme="dark"] #time-chips-container .pf-cal-slot-past {
+      background-color: rgba(209, 250, 229, 0.12) !important;
+      border: 1px solid rgba(110, 231, 183, 0.25) !important;
+      color: rgba(209, 250, 229, 0.55) !important;
+      opacity: 0.52 !important;
+    }
+    html[data-theme="dark"] #time-chips-container .pf-cal-slot-past span {
+      color: rgba(209, 250, 229, 0.55) !important;
     }
 
     /* Header Active Nav Dropdown & Book Court CTA in Daylight Mode */
@@ -3965,7 +3965,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261106v12"></script>
+<script src="app.js?v=20261106v13"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';

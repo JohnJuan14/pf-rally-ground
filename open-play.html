@@ -5,6 +5,17 @@
   <title>Open Play &amp; Live 4-Player Pod Shuffler | P&amp;F Rally Ground Pickleball Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="description" content="Book your Open Play seat (₱150/player), view the live verified community roster, and rotate across designated courts with our 4-Player Doubles Pod Shuffler at P&F Rally Ground Pickleball Club in Daraga, Albay.">
+    <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pf_v3_theme_night_default') || localStorage.getItem('pf_client_theme') || 'dark';
+        var mode = (saved === 'light') ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', mode);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
@@ -687,30 +698,30 @@
     
     
     /* === V3.0 BULLETPROOF DAYLIGHT & NIGHT MODE CONTRAST FIX === */
-    /* Expired / Past Time Slots: Crisp & Legible in Both Modes */
+    /* Expired / Past Time Slots: Translucent in Both Daylight & Night Mode */
     .pf-cal-slot-past,
-    html[data-theme="light"] .pf-cal-slot-past {
-      background-color: #F1F5F9 !important;
-      border: 1px solid #CBD5E1 !important;
-      color: #334155 !important;
-      opacity: 1 !important;
+    html[data-theme="light"] .pf-cal-slot-past,
+    html[data-theme="dark"] .pf-cal-slot-past {
+      background-color: rgba(209, 250, 229, 0.38) !important;
+      border: 1px solid rgba(110, 231, 183, 0.38) !important;
+      color: rgba(6, 95, 70, 0.42) !important;
+      opacity: 0.52 !important;
       cursor: not-allowed !important;
     }
     .pf-cal-slot-past span,
-    html[data-theme="light"] .pf-cal-slot-past span {
-      color: #475569 !important;
-      opacity: 1 !important;
-    }
-    html[data-theme="dark"] .pf-cal-slot-past {
-      background-color: #08182E !important;
-      border: 1px solid rgba(148, 163, 184, 0.35) !important;
-      color: #CBD5E1 !important;
-      opacity: 1 !important;
-      cursor: not-allowed !important;
-    }
+    html[data-theme="light"] .pf-cal-slot-past span,
     html[data-theme="dark"] .pf-cal-slot-past span {
-      color: #94A3B8 !important;
+      color: rgba(6, 95, 70, 0.42) !important;
       opacity: 1 !important;
+    }
+    html[data-theme="dark"] #time-chips-container .pf-cal-slot-past {
+      background-color: rgba(209, 250, 229, 0.12) !important;
+      border: 1px solid rgba(110, 231, 183, 0.25) !important;
+      color: rgba(209, 250, 229, 0.55) !important;
+      opacity: 0.52 !important;
+    }
+    html[data-theme="dark"] #time-chips-container .pf-cal-slot-past span {
+      color: rgba(209, 250, 229, 0.55) !important;
     }
 
     /* Header Active Nav Dropdown & Book Court CTA in Daylight Mode */
@@ -947,6 +958,165 @@
       color: #050E1D !important;
     }
 
+  
+    /* === OPEN PLAY SUBPAGE (open-play.html) DAYLIGHT & NIGHT MODE OPTIMIZATION === */
+    /* 1. Daylight Mode (html[data-theme="light"]) Editorial Country-Club Aesthetic */
+    html[data-theme="light"] #open-play-hero-section {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 52%, #DCFCE7 100%) !important;
+      border-bottom: 1px solid #BBF7D0 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] #open-play-hero-section h1 {
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] #open-play-hero-section h1 span {
+      color: #15803D !important;
+    }
+    html[data-theme="light"] #open-play-hero-section p {
+      color: #334155 !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-badge-primary {
+      background-color: #D1FAE5 !important;
+      border-color: #6EE7B7 !important;
+      color: #065F46 !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-badge-primary span.rounded-full {
+      background-color: #15803D !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-badge-secondary {
+      background-color: #FFFFFF !important;
+      border-color: #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-primary {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border: 1px solid #166534 !important;
+      box-shadow: 0 10px 24px -6px rgba(21, 128, 61, 0.35) !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-primary * {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-secondary {
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border: 1px solid #CBD5E1 !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-step-card {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-step-card .pf-op-step-title {
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-step-card p {
+      color: #475569 !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-step-card .font-mono {
+      color: #15803D !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-step-num {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: #15803D !important;
+    }
+
+    /* 2. Night Mode (html[data-theme="dark"]) Arena Aesthetic for Open Play Workspace */
+    html[data-theme="dark"] #open-play-hero-section {
+      background:
+        radial-gradient(circle at 18% 22%, rgba(155, 230, 0, 0.14) 0%, rgba(0, 114, 206, 0.14) 45%, rgba(5, 14, 29, 0.96) 90%),
+        #08182E !important;
+      border-bottom: 1px solid rgba(155, 230, 0, 0.24) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] #open-play-hero-section .pf-op-step-card {
+      background-color: rgba(14, 34, 64, 0.85) !important;
+      border: 1px solid rgba(155, 230, 0, 0.22) !important;
+    }
+    html[data-theme="dark"] .pf-op-session-bar,
+    html[data-theme="dark"] .pf-op-stage-card {
+      background-color: #08182E !important;
+      border-color: rgba(155, 230, 0, 0.25) !important;
+      color: #F8FAFC !important;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45) !important;
+    }
+    html[data-theme="dark"] .pf-op-session-bar .text-\[\#52605A\] {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="dark"] .pf-op-session-btn:not(.pf-op-session-btn-active) {
+      background-color: #0E2240 !important;
+      border-color: rgba(155, 230, 0, 0.2) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] .pf-op-session-btn:not(.pf-op-session-btn-active) .text-slate-600 {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="dark"] .pf-op-session-btn.pf-op-session-btn-active {
+      background-color: #050E1D !important;
+      border-color: #9BE600 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 8px 20px -4px rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] .pf-op-stage-left {
+      background-color: #0E2240 !important;
+      border-color: rgba(155, 230, 0, 0.22) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] .pf-op-stage-left h2,
+    html[data-theme="dark"] .pf-op-stage-left .text-\[\#0D1F18\] {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] .pf-op-stage-left .text-\[\#15803D\] {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] .pf-op-stage-left .text-\[\#475569\],
+    html[data-theme="dark"] .pf-op-stage-left .text-\[\#52605A\],
+    html[data-theme="dark"] .pf-op-stage-left .text-\[\#64748B\] {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="dark"] .pf-op-stage-left .border-\[\#DEDAD0\] {
+      border-color: rgba(155, 230, 0, 0.18) !important;
+    }
+    html[data-theme="dark"] .pf-op-pod-card {
+      background-color: #0E2240 !important;
+      border-color: rgba(155, 230, 0, 0.22) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] .pf-op-pod-card .text-slate-700 {
+      color: #E2E8F0 !important;
+    }
+    html[data-theme="dark"] .pf-op-roster-section {
+      border-color: rgba(155, 230, 0, 0.2) !important;
+    }
+    html[data-theme="dark"] .pf-op-roster-section h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] .pf-op-roster-section .text-emerald-800 {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] .pf-op-empty-roster {
+      background-color: rgba(14, 34, 64, 0.9) !important;
+      border-color: rgba(155, 230, 0, 0.45) !important;
+    }
+    html[data-theme="dark"] .pf-op-empty-roster .text-\[\#064E3B\] {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] .pf-op-empty-roster .text-\[\#166534\] {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="dark"] .pf-op-roster-card {
+      background-color: #0E2240 !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] .pf-op-roster-card .text-slate-900 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] .pf-op-roster-card .text-emerald-800,
+    html[data-theme="dark"] .pf-op-roster-card a {
+      color: #9BE600 !important;
+    }
+
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#F7F6F1] text-[#0D1F18]">
@@ -1039,8 +1209,13 @@
         </a>
       </nav>
 
-      <!-- Right Actions + Mobile Menu Button -->
+      <!-- Right Actions + Theme Toggle + Mobile Menu Button -->
       <div class="flex items-center gap-2">
+        <!-- Daylight / Night Court Theme Switcher -->
+        <button type="button" id="pf-theme-toggle-btn" onclick="pfToggleClientTheme()" class="pf-bklit-theme-pill px-3 py-2 rounded-xl bg-[#F6F5F0] hover:bg-slate-200/80 text-[#0D1F18] border border-slate-300 font-mono text-[11px] font-extrabold uppercase tracking-wider transition inline-flex items-center gap-1.5 shadow-2xs" title="Switch between Daylight &amp; Night Court Mode">
+          <span id="pf-theme-toggle-icon">🌙</span>
+          <span id="pf-theme-toggle-label" class="hidden sm:inline">Night Court</span>
+        </button>
         <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-3.5 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition hidden sm:inline-flex items-center gap-1.5 shadow-xs">
           <span>🏓 Book Open Play (₱150)</span>
         </button>
@@ -1067,17 +1242,17 @@
   </header>
 
   <!-- ================= EDITORIAL COUNTRY-CLUB OPEN PLAY HERO ================= -->
-  <section class="relative bg-[#0F291E] text-white border-b border-emerald-900/80 py-10 sm:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
+  <section id="open-play-hero-section" class="pf-op-hero relative bg-[#0F291E] text-white border-b border-emerald-900/80 py-10 sm:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
     <div class="max-w-7xl mx-auto space-y-8 relative z-10">
       <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div class="space-y-3.5 max-w-3xl">
           <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E635]/20 border border-[#A3E635]/50 text-[#A3E635] font-mono text-[11px] font-extrabold uppercase tracking-wider">
+            <span class="pf-op-hero-badge-primary inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E635]/20 border border-[#A3E635]/50 text-[#A3E635] font-mono text-[11px] font-extrabold uppercase tracking-wider">
               <span class="w-2 h-2 rounded-full bg-[#A3E635]"></span>
-              <span>SOCIAL DOUBLES ROTATION • NO KNOCKOUT BRACKET</span>
+              <span>SOCIAL DOUBLES ROTATION • TUE–THU 4–8PM &amp; FRI–SAT 6–10PM</span>
             </span>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-emerald-100 font-mono text-[11px] font-bold uppercase">
-              ₱150 / Player Entry • 24-Player Max Capacity
+            <span class="pf-op-hero-badge-secondary inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-emerald-100 font-mono text-[11px] font-bold uppercase">
+              ₱150 / Participant • 24-Player Max Capacity
             </span>
           </div>
           <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-[1.08]">
@@ -1089,10 +1264,10 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
-          <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-5 py-3.5 rounded-2xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2">
+          <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="pf-op-hero-cta-primary px-5 py-3.5 rounded-2xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2">
             <span>🏓 Book &amp; Pay Open Play Seat (₱150) →</span>
           </button>
-          <a href="check-booking.html" class="px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-extrabold text-xs uppercase tracking-wider transition">
+          <a href="check-booking.html" class="pf-op-hero-cta-secondary px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-extrabold text-xs uppercase tracking-wider transition">
             🔍 My Booking Pass
           </a>
         </div>
@@ -1100,25 +1275,25 @@
 
       <!-- 3-Step Country-Club Editorial How-It-Works Strip -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-2">
-        <div class="p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
-          <span class="w-8 h-8 rounded-xl bg-[#A3E635] text-[#04120B] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">01</span>
+        <div class="pf-op-step-card p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
+          <span class="pf-op-step-num w-8 h-8 rounded-xl bg-[#A3E635] text-[#04120B] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">01</span>
           <div>
-            <div class="text-xs font-extrabold uppercase tracking-wide text-white">Book &amp; Pay Your Seat (₱150)</div>
-            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Select your Open Play session, pay via GCash, Maya, BDO, or Pay at Counter, and receive your official <span class="font-mono text-[#A3E635]">PF-OP</span> booking reference.</p>
+            <div class="pf-op-step-title text-xs font-extrabold uppercase tracking-wide text-white">Book &amp; Pay Your Seat (₱150)</div>
+            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Select your Open Play session, pay via GCash, Maya, BDO, or Pay at Counter, and download your <span class="font-mono text-[#A3E635]">PF-OP</span> PNG Image Receipt.</p>
           </div>
         </div>
-        <div class="p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
-          <span class="w-8 h-8 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">02</span>
+        <div class="pf-op-step-card p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
+          <span class="pf-op-step-num w-8 h-8 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">02</span>
           <div>
-            <div class="text-xs font-extrabold uppercase tracking-wide text-white">Verified Real Community Roster</div>
-            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Zero fake filler names. Every booked player appears immediately on the live 24-player session board so the community sees exact attendance.</p>
+            <div class="pf-op-step-title text-xs font-extrabold uppercase tracking-wide text-white">Live Confirmation Status</div>
+            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Your seat appears immediately on the 24-player board and updates from <span class="font-mono text-[#A3E635]">⏳ PENDING</span> to <span class="font-mono text-[#A3E635]">✅ CONFIRMED</span> once verified by Admin.</p>
           </div>
         </div>
-        <div class="p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
-          <span class="w-8 h-8 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">03</span>
+        <div class="pf-op-step-card p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
+          <span class="pf-op-step-num w-8 h-8 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">03</span>
           <div>
-            <div class="text-xs font-extrabold uppercase tracking-wide text-white">Shuffle 4-Player Doubles Pods</div>
-            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Click Shuffle at any time to Deal 6 balanced 4-player doubles pods (<span class="font-mono text-[#A3E635]">Pair A vs Pair B</span>) across the designated Open Play courts.</p>
+            <div class="pf-op-step-title text-xs font-extrabold uppercase tracking-wide text-white">Shuffle 4-Player Doubles Pods</div>
+            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Click Shuffle at any time to deal 6 balanced 4-player doubles pods (<span class="font-mono text-[#A3E635]">Pair A vs Pair B</span>) across the designated Open Play courts.</p>
           </div>
         </div>
       </div>
@@ -1128,33 +1303,107 @@
   <!-- ================= MAIN OPEN PLAY SHUFFLER WORKSPACE ================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
     <div id="open-play-dedicated-page-root" class="space-y-6">
-      <!-- Populated automatically by pfRenderOpenPlay24Board() in app.js?v=20261106v12 -->
+      <!-- Populated automatically by pfRenderOpenPlay24Board() in app.js?v=20261106v13 -->
     </div>
   </main>
 
-  <!-- ================= CLEAN EDITORIAL FOOTER ================= -->
-  <footer class="bg-[#0D1F18] text-slate-300 border-t border-emerald-900/50 py-8 px-4 sm:px-6 lg:px-8 mt-12">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-      <div class="flex items-center gap-3">
-        <img src="assets/logo.png" alt="P&amp;F Rally Ground" class="w-8 h-9 object-contain rounded-lg bg-[#0F291E] p-1 border border-emerald-500/30">
-        <div>
-          <span class="font-extrabold text-white block">P&amp;F Rally Ground Pickleball Club</span>
-          <span class="text-[11px] text-slate-400">Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Albay</span>
+  <!-- ================= UNIFIED LUXURY CLUB FOOTER ================= -->
+  <footer id="footer-contact" class="bg-[#0D1F18] text-white border-t border-white/10 mt-12">
+    <div class="h-1 w-full bg-gradient-to-r from-[#0072CE] via-[#9BE600] to-[#0E8A2D]"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start pb-8 border-b border-white/10">
+        <!-- Brand & Address -->
+        <div class="md:col-span-5 space-y-3">
+          <div class="inline-flex items-center gap-3">
+            <a href="index.html" class="flex-shrink-0">
+              <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Rally Ground Logo" class="h-12 w-12 rounded-xl object-contain bg-white p-1 shadow-md border border-white/20">
+            </a>
+            <div>
+              <a href="index.html" class="text-base font-extrabold text-white tracking-tight uppercase block leading-none" style="color:#FFFFFF !important;" data-site-club-name="1">P&amp;F Rally Ground</a>
+              <span class="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest mt-1 block" data-site-club-subtitle="1">Pickleball Club &bull; Daraga, Albay</span>
+            </div>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed max-w-md" style="color:#CBD5E1 !important;">
+            Velasco St., Phase 4, Do&ntilde;a Maria Subd., Tagas, Daraga, Albay 4501. Open daily 6:00 AM – 12:00 Midnight. Official Open Play: Tue–Thu (4–8 PM) &amp; Fri–Sat (6–10 PM) at ₱150/participant.
+          </p>
+          <div class="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px]">
+            <a href="tel:09998832346" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 hover:bg-white/15 px-3 py-1 text-white border border-white/15 font-bold transition" style="color:#FFFFFF !important;">
+              📞 0999 883 2346
+            </a>
+            <a href="index.html#location" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 px-3 py-1 text-emerald-300 border border-emerald-500/30 font-bold transition">
+              📍 Google Satellite Map
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="md:col-span-4 grid grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <h4 class="text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-400">Play &amp; Courts</h4>
+            <ul class="space-y-1.5 text-xs text-slate-300">
+              <li><a href="index.html#schedule" class="hover:text-white transition block">Court Schedule</a></li>
+              <li><a href="open-play.html" class="text-[#9BE600] font-bold hover:text-white transition block">Open Play Shuffler</a></li>
+              <li><a href="index.html#tournaments" class="hover:text-white transition block">Tournaments</a></li>
+              <li><a href="pricing.html" class="hover:text-white transition block">Rates &amp; Gear</a></li>
+            </ul>
+          </div>
+          <div class="space-y-2">
+            <h4 class="text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-400">Reservations</h4>
+            <ul class="space-y-1.5 text-xs text-slate-300">
+              <li><a href="book.html" class="hover:text-white transition block">Book Online</a></li>
+              <li><a href="check-booking.html" class="hover:text-white transition block">My Booking Pass</a></li>
+              <li><a href="/admin/" onclick="return openAdminPortal(event)" class="text-emerald-400 hover:text-emerald-300 font-bold transition block">Staff Portal →</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Primary Action -->
+        <div class="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-2.5 justify-end">
+          <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="w-full py-3 px-4 rounded-xl bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-extrabold text-xs uppercase tracking-wider transition shadow-md text-center" style="background:#9BE600 !important;color:#050E1D !important;">
+            🏓 Book Open Play (₱150) →
+          </button>
+          <a href="check-booking.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-bold text-xs transition text-center" style="color:#FFFFFF !important;">
+            Check Booking Status
+          </a>
+          <a href="/admin/" onclick="return openAdminPortal(event)" class="pf-footer-admin-btn w-full py-2.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider transition text-center flex items-center justify-center gap-1.5 shadow-xs">
+            <span>🔒 Admin Portal</span>
+            <span>→</span>
+          </a>
         </div>
       </div>
-      <div class="flex flex-wrap items-center gap-4 font-bold">
-        <a href="index.html" class="hover:text-white transition">Home</a>
-        <a href="open-play.html" class="text-[#A3E635]">Open Play Shuffler</a>
-        <a href="index.html#tournaments" class="hover:text-white transition">Tournaments</a>
-        <a href="check-booking.html" class="hover:text-white transition">My Booking</a>
-        <a href="book.html" class="hover:text-white transition">Book a Court</a>
+
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
+        <span>© 2026 P&amp;F Rally Ground Pickleball Club • Daraga, Albay.</span>
+        <span>4 Covered Courts • Daily 6:00 AM – 12:00 MN • Open Play Tue–Thu 4–8PM &amp; Fri–Sat 6–10PM</span>
       </div>
     </div>
   </footer>
 
-  <script src="app.js?v=20261106v12"></script>
+  <script src="app.js?v=20261106v13"></script>
   <script>
+    function pfSyncThemeToggleButtons(mode) {
+      const isDark = mode === 'dark';
+      const iconEl = document.getElementById('pf-theme-toggle-icon');
+      const lblEl = document.getElementById('pf-theme-toggle-label');
+      if (iconEl) iconEl.textContent = isDark ? '🌙' : '☀️';
+      if (lblEl) lblEl.textContent = isDark ? 'Night Court' : 'Daylight';
+    }
+    function pfToggleClientTheme() {
+      const root = document.documentElement;
+      const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      if (document.body) document.body.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem('pf_v3_theme_night_default', next);
+        localStorage.setItem('pf_client_theme', next);
+      } catch (e) {}
+      pfSyncThemeToggleButtons(next);
+    }
     document.addEventListener('DOMContentLoaded', function() {
+      const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      pfSyncThemeToggleButtons(cur);
       if (typeof pfRenderOpenPlay24Board === 'function') {
         pfRenderOpenPlay24Board();
       }
