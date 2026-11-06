@@ -5155,7 +5155,7 @@ function pfRenderOpenPlay24Board() {
       const homeCourtPillsHtml = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
         const isOpCourt = dcList.includes(cName);
         return isOpCourt
-          ? `<span class="px-2.5 py-1.5 rounded-xl bg-[#0F291E] text-white font-mono text-[10px] font-extrabold uppercase flex items-center gap-1.5 shadow-2xs" style="background:#0F291E !important;color:#FFFFFF !important;"><span class="w-1.5 h-1.5 rounded-full bg-[#A3E635] flex-shrink-0"></span><span class="truncate" style="color:#FFFFFF !important;">${cName} • Open Play</span></span>`
+          ? `<span class="pf-court-dark-pill px-2.5 py-1.5 rounded-xl bg-[#0F291E] text-white font-mono text-[10px] font-extrabold uppercase flex items-center gap-1.5 shadow-2xs"><span class="w-1.5 h-1.5 rounded-full bg-[#A3E635] flex-shrink-0"></span><span class="truncate" style="color:#FFFFFF !important;">${cName} • Open Play</span></span>`
           : `<span class="px-2.5 py-1.5 rounded-xl bg-white text-[#64748B] border border-[#CBD5E1] font-mono text-[10px] font-semibold uppercase flex items-center gap-1.5" title="Available for Regular Court Hire"><span class="w-1.5 h-1.5 rounded-full bg-[#94A3B8] flex-shrink-0"></span><span class="truncate">${cName} • Regular</span></span>`;
       }).join('');
 
@@ -5164,7 +5164,7 @@ function pfRenderOpenPlay24Board() {
           <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] mr-1">Active Open Play Sessions (${pubSessions.length}):</span>
           ${pubSessions.map((s, idx) => {
             const isAct = s.id === activeSession.id;
-            return `<button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="px-3.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${isAct ? 'bg-[#0F291E] text-[#A3E635] shadow-sm' : 'bg-[#F8F7F3] hover:bg-slate-200 text-[#0D1F18] border border-[#D5D3CC]'}" style="${isAct ? 'background:#0F291E !important;color:#A3E635 !important;' : ''}">0${idx + 1} • ${pfEscapeHtml(s.title)} (${s.players.length}/24)</button>`;
+            return `<button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="px-3.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${isAct ? 'bg-[#0F291E] text-[#A3E635] shadow-sm' : 'bg-[#F8F7F3] hover:bg-slate-200 text-[#0D1F18] border border-[#D5D3CC]'}" data-active-session="${isAct ? '1' : '0'}">0${idx + 1} • ${pfEscapeHtml(s.title)} (${s.players.length}/24)</button>`;
           }).join('')}
         </div>
       ` : '';
@@ -5222,7 +5222,7 @@ function pfRenderOpenPlay24Board() {
             </div>
 
             <!-- RIGHT 4 COLUMNS: OFFICIAL OPEN PLAY ENTRY PASS & CTA CARD -->
-            <div class="xl:col-span-4 rounded-2xl bg-[#0F291E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-xl" style="background:linear-gradient(145deg,#071912 0%,#0F291E 55%,#06150E 100%) !important;color:#FFFFFF !important;">
+            <div class="pf-pass-dark-card xl:col-span-4 rounded-2xl bg-[#0F291E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-xl text-white">
               <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                   <div class="pf-rect-logo-badge" style="width:48px;height:58px;">
@@ -5498,7 +5498,7 @@ function pfRenderOpenPlay24Board() {
           </div>
 
           <!-- RIGHT 4 COLUMNS: OFFICIAL OPEN PLAY SEAT BOOKING CARD -->
-          <div class="xl:col-span-4 rounded-3xl bg-[#0F291E] bg-gradient-to-br from-[#071912] via-[#0F291E] to-[#06150E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl text-white" style="background:linear-gradient(145deg,#071912 0%,#0F291E 55%,#06150E 100%) !important;color:#FFFFFF !important;">
+          <div class="pf-pass-dark-card xl:col-span-4 rounded-3xl bg-[#0F291E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl text-white">
             <div class="flex items-center justify-between gap-3.5">
               <div class="flex items-center gap-3">
                 <div class="pf-rect-logo-badge" style="width:52px;height:62px;">
@@ -6904,7 +6904,7 @@ function pfRenderPublicTournaments() {
   const designatedCourtPillsHtml = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
     const isActiveCourt = dcList.includes(cName);
     return isActiveCourt
-      ? `<span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-extrabold uppercase flex items-center gap-1" style="background:#0F291E !important;color:#FFFFFF !important;"><span class="w-1.5 h-1.5 rounded-full bg-[#A3E635]"></span>${cName}</span>`
+      ? `<span class="pf-court-dark-pill px-2.5 py-1 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-extrabold uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#A3E635]"></span>${cName}</span>`
       : `<span class="px-2.5 py-1 rounded-lg bg-[#F1F5F9] text-[#94A3B8] border border-[#E2E8F0] font-mono text-[10px] font-semibold uppercase line-through opacity-60" title="Open for regular bookings">${cName}</span>`;
   }).join('');
 
@@ -6961,7 +6961,7 @@ function pfRenderPublicTournaments() {
           </div>
 
           <!-- RIGHT 4 COLUMNS: OFFICIAL VIP TOURNAMENT ENTRY PASS CARD -->
-          <div class="xl:col-span-4 rounded-3xl bg-gradient-to-br from-[#071912] via-[#0F291E] to-[#06150E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl relative overflow-hidden" style="background:linear-gradient(145deg,#071912 0%,#0F291E 55%,#06150E 100%) !important;color:#FFFFFF !important;">
+          <div class="pf-pass-dark-card xl:col-span-4 rounded-3xl bg-[#0F291E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl relative overflow-hidden text-white">
             <div class="flex items-center justify-between gap-3.5">
               <div class="flex items-center gap-3">
                 <div class="pf-rect-logo-badge" style="width:54px;height:66px;">

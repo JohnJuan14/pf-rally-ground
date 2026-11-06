@@ -222,16 +222,16 @@
           },
           colors: {
             brand: {
-              black: '#0D1F18',
-              dark: '#132A21',
-              card: '#18352A',
-              cardBorder: 'rgba(52, 211, 153, 0.18)',
-              border: 'rgba(52, 211, 153, 0.20)',
-              lime: '#34D399',
-              limeHover: '#10B981',
-              blue: '#0D9488',
-              green: '#15803D',
-              clay: '#C85A32',
+              black: '#050E1D',
+              dark: '#08182E',
+              card: '#0E2240',
+              cardBorder: 'rgba(155, 230, 0, 0.20)',
+              border: 'rgba(155, 230, 0, 0.16)',
+              lime: '#9BE600',
+              limeHover: '#B4FF00',
+              blue: '#0072CE',
+              green: '#0E8A2D',
+              clay: '#FF5733',
             }
           },
           animation: {
@@ -2083,6 +2083,323 @@ button.pf-trn-btn-danger:hover,
 .pf-phase-slide-panel {
   animation: pfPhaseSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
+    /* === GITHUB-HOSTED CLASSIC NIGHT MODE PALETTE (DARK BLUE #050E1D/#08182E/#0E2240 & NEON GREEN #9BE600) === */
+    html[data-theme="dark"] {
+      --pf-bg-canvas: #050E1D !important;
+      --pf-bg-elevated: #08182E !important;
+      --pf-bg-card: #0E2240 !important;
+      --pf-text-primary: #F8FAFC !important;
+      --pf-text-secondary: #CBD5E1 !important;
+      --pf-text-muted: #94A3B8 !important;
+      --pf-accent-emerald: #9BE600 !important;
+      --pf-accent-mint: #B4FF00 !important;
+      --pf-accent-clay: #FF5733 !important;
+      --pf-border-subtle: rgba(155, 230, 0, 0.18) !important;
+    }
+    html[data-theme="dark"] body {
+      background-color: #050E1D !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] header {
+      background: rgba(5, 14, 29, 0.94) !important;
+      border-bottom: 1px solid rgba(155, 230, 0, 0.18) !important;
+    }
+    html[data-theme="dark"] header > div:first-child,
+    html[data-theme="dark"] footer > div:first-child {
+      background: linear-gradient(90deg, #0072CE 0%, #9BE600 50%, #0E8A2D 100%) !important;
+    }
+    html[data-theme="dark"] #live-site-update-banner {
+      background: #08182E !important;
+      color: #F8FAFC !important;
+      border-bottom: 1px solid rgba(155, 230, 0, 0.18) !important;
+    }
+    html[data-theme="dark"] .pf-live-ticker-badge {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] .pf-live-ticker-item,
+    html[data-theme="dark"] #live-site-update-text {
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] .pf-live-ticker-sep {
+      background: rgba(155, 230, 0, 0.16) !important;
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] .pf-live-ticker-cta {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] .pf-bklit-theme-pill,
+    html[data-theme="dark"] #pf-theme-toggle-btn {
+      background: #0E2240 !important;
+      color: #F8FAFC !important;
+      border-color: rgba(155, 230, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] header [data-site-club-name],
+    html[data-theme="dark"] header [data-site-text="clubName"] {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] header [data-site-club-subtitle],
+    html[data-theme="dark"] header [data-site-text="clubSubtitle"] {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] header nav > a:not(.bg-brand-lime),
+    html[data-theme="dark"] .pf-nav-dropdown-btn {
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] .pf-nav-dropdown:hover .pf-nav-dropdown-btn,
+    html[data-theme="dark"] .pf-nav-dropdown.open .pf-nav-dropdown-btn,
+    html[data-theme="dark"] .pf-nav-dropdown-btn.active {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      border-color: #9BE600 !important;
+      box-shadow: 0 6px 16px -4px rgba(155, 230, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] header button[onclick*="openBookingDrawer"],
+    html[data-theme="dark"] header nav > a.bg-brand-lime {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      border-color: #9BE600 !important;
+      box-shadow: 0 6px 18px -4px rgba(155, 230, 0, 0.4) !important;
+    }
+    html[data-theme="dark"] header button[onclick*="openBookingDrawer"] *,
+    html[data-theme="dark"] header nav > a.bg-brand-lime * {
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] {
+      background: #0E2240 !important;
+      color: #FFFFFF !important;
+      border-color: rgba(155, 230, 0, 0.3) !important;
+    }
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] span.text-\[\#9BE600\] {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] header #header-ann-badge {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] .hero-mask {
+      background:
+        linear-gradient(90deg, rgba(5, 14, 29, 0.45) 0%, rgba(5, 14, 29, 0.18) 52%, rgba(5, 14, 29, 0.04) 100%),
+        linear-gradient(180deg, rgba(5, 14, 29, 0.08) 0%, rgba(5, 14, 29, 0.26) 68%, #050E1D 100%) !important;
+    }
+    html[data-theme="dark"] .hero-cta-primary {
+      background: #9BE600 !important;
+      color: #050E1D !important;
+      border: 1px solid #B4FF00 !important;
+      box-shadow: 0 14px 32px -6px rgba(155, 230, 0, 0.45) !important;
+    }
+    html[data-theme="dark"] .hero-cta-primary *,
+    html[data-theme="dark"] .hero-cta-primary:hover {
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] .hero-cta-primary:hover {
+      background: #B4FF00 !important;
+    }
+    html[data-theme="dark"] .hero-cta-tertiary {
+      background: rgba(5, 14, 29, 0.78) !important;
+      border-color: rgba(155, 230, 0, 0.55) !important;
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] section#courts,
+    html[data-theme="dark"] section#schedule,
+    html[data-theme="dark"] section#location {
+      background-color: #08182E !important;
+      border-color: rgba(155, 230, 0, 0.16) !important;
+    }
+    html[data-theme="dark"] section#tournaments {
+      background-color: #050E1D !important;
+      color: #F8FAFC !important;
+      border-color: rgba(155, 230, 0, 0.16) !important;
+    }
+    html[data-theme="dark"] section#tournaments > div > div > div > p {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] #public-tournaments-grid > div,
+    html[data-theme="dark"] #open-play-card-surface {
+      background-color: #0E2240 !important;
+      border-color: rgba(155, 230, 0, 0.25) !important;
+      color: #F8FAFC !important;
+    }
+    .pf-pass-dark-card {
+      background: linear-gradient(145deg, #071912 0%, #0F291E 55%, #06150E 100%) !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] .pf-pass-dark-card {
+      background: linear-gradient(145deg, #050E1D 0%, #0E2240 55%, #08182E 100%) !important;
+      border-color: #9BE600 !important;
+      color: #FFFFFF !important;
+    }
+    .pf-court-dark-pill {
+      background: #0F291E !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] .pf-court-dark-pill {
+      background: #050E1D !important;
+      border: 1px solid rgba(155, 230, 0, 0.35) !important;
+      color: #FFFFFF !important;
+    }
+    button[data-active-session="1"] {
+      background: #0F291E !important;
+      color: #A3E635 !important;
+    }
+    html[data-theme="dark"] button[data-active-session="1"] {
+      background: #050E1D !important;
+      border: 1px solid #9BE600 !important;
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] .pf-arena-stage {
+      background:
+        radial-gradient(circle at 50% 28%, rgba(0, 114, 206, 0.26) 0%, rgba(155, 230, 0, 0.16) 40%, rgba(5, 14, 29, 0.98) 78%),
+        linear-gradient(145deg, #050E1D 0%, #0E2240 50%, #08182E 100%) !important;
+      border: 2px solid #9BE600 !important;
+    }
+    html[data-theme="dark"] footer,
+    html[data-theme="dark"] #footer-contact {
+      background-color: #050E1D !important;
+      border-color: rgba(155, 230, 0, 0.16) !important;
+    }
+    html[data-theme="dark"] .pf-footer-admin-btn {
+      background: rgba(14, 34, 64, 0.85) !important;
+      border: 1px solid rgba(155, 230, 0, 0.4) !important;
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] .pf-footer-admin-btn:hover {
+      background: #9BE600 !important;
+      border-color: #B4FF00 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] body .white-calendar-rail .date-tile.date-tile-active,
+    html[data-theme="dark"] body #date-rail-container .date-tile.date-tile-active,
+    html[data-theme="dark"] body #date-carousel .date-tile.date-tile-active {
+      background: #050E1D !important;
+      border: 2px solid #9BE600 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 8px 20px -4px rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] body .white-calendar-rail .date-tile.date-tile-active .tile-weekday,
+    html[data-theme="dark"] body #date-rail-container .date-tile.date-tile-active .tile-weekday,
+    html[data-theme="dark"] body #date-carousel .date-tile.date-tile-active .tile-weekday {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] #schedule-table-head,
+    html[data-theme="dark"] #schedule-table-head th {
+      background-color: #050E1D !important;
+      color: #FFFFFF !important;
+      border-color: #0E2240 !important;
+    }
+    html[data-theme="dark"] .time-chip {
+      background: rgba(10, 22, 40, 0.9) !important;
+      border: 1px solid rgba(155, 230, 0, 0.2) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] .time-chip:hover:not(:disabled) {
+      background: rgba(155, 230, 0, 0.15) !important;
+      border-color: #9BE600 !important;
+    }
+    html[data-theme="dark"] .time-chip.time-chip-active {
+      background: #9BE600 !important;
+      border-color: #9BE600 !important;
+      color: #050E1D !important;
+      box-shadow: 0 8px 20px -4px rgba(155, 230, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] .time-chip.time-chip-active * {
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] body main section.bg-brand-card,
+    html[data-theme="dark"] body main section[class*="bg-brand-card"],
+    html[data-theme="dark"] body main section.bg-white,
+    html[data-theme="dark"] body main .pf-book-summary-card,
+    html[data-theme="dark"] body main .pf-book-verified-card {
+      background-color: #0E2240 !important;
+      border: 1px solid rgba(155, 230, 0, 0.22) !important;
+      color: #F8FAFC !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4) !important;
+    }
+    html[data-theme="dark"] body main section .bg-brand-black,
+    html[data-theme="dark"] body main section [class*="bg-brand-black"],
+    html[data-theme="dark"] body main .pf-policy-consent-card {
+      background-color: #050E1D !important;
+      border-color: rgba(155, 230, 0, 0.2) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main section input[type="text"],
+    html[data-theme="dark"] body main section input[type="tel"],
+    html[data-theme="dark"] body main section input[type="email"],
+    html[data-theme="dark"] body main section input[type="number"] {
+      background-color: #050E1D !important;
+      border: 1px solid rgba(155, 230, 0, 0.3) !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.22) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) b,
+    html[data-theme="dark"] body main .court-btn:not(.court-btn-active) span {
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main .court-btn.court-btn-active {
+      background-color: #050E1D !important;
+      border: 2px solid #9BE600 !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body main .court-btn.court-btn-active b,
+    html[data-theme="dark"] body main .court-btn.court-btn-active span {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body main .court-btn.court-btn-active > span:last-child {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] body main .duration-pill-btn.bg-brand-lime,
+    html[data-theme="dark"] body main .duration-pill-btn.bg-\[\#0D1F18\] {
+      background-color: #9BE600 !important;
+      border-color: #9BE600 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] body main .duration-pill-btn:not(.bg-brand-lime):not(.bg-\[\#0D1F18\]) {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.22) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main .pf-book-feature-pill {
+      background-color: #0E2240 !important;
+      border: 1px solid rgba(155, 230, 0, 0.3) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main .pf-book-feature-pill span:last-child {
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main button.pay-tab.bg-brand-lime,
+    html[data-theme="dark"] body main button.pay-tab.bg-\[\#9BE600\] {
+      background-color: #9BE600 !important;
+      border-color: #9BE600 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] body main button.pay-tab.bg-brand-lime *,
+    html[data-theme="dark"] body main button.pay-tab.bg-\[\#9BE600\] * {
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] body main button.pay-tab:not(.bg-brand-lime):not(.bg-\[\#9BE600\]) {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.22) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main button.pay-tab:not(.bg-brand-lime):not(.bg-\[\#9BE600\]) * {
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main #submit-booking-btn,
+    html[data-theme="dark"] body main .bg-brand-lime,
+    html[data-theme="dark"] body > section .bg-brand-lime {
+      background-color: #9BE600 !important;
+      border-color: #9BE600 !important;
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] body main .text-brand-lime,
+    html[data-theme="dark"] body > section .text-brand-lime {
+      color: #9BE600 !important;
+    }
 
   </style>
 </head>
