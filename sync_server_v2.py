@@ -484,6 +484,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             db = load_db()
             self._send_json({"ok": True, "announcements": db.get("announcements", [])})
             return
+
         elif parsed.path == "/api/site-config":
             db = load_db()
             default_sc = DEFAULT_DB.get("siteConfig", {})
@@ -520,6 +521,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self.path = "/check-booking.html"
         elif parsed.path in ("/courts", "/courts/"):
             self.path = "/courts.html"
+        elif parsed.path in ("/open-play", "/open-play/"):
+            self.path = "/open-play.html"
         elif parsed.path in ("/pricing", "/pricing/"):
             self.path = "/pricing.html"
         elif parsed.path in ("/admin", "/admin/"):
@@ -1326,6 +1329,44 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self._send_json({"ok": True, "slot": slot, "url": saved_url, "siteConfig": db.get("siteConfig", {})})
             return
 
+        elif parsed.path == "/api/openplay-join":
+            session_id = sanitize_str(body.get("sessionId") or "op-afternoon-social", 60)
+            p_name = sanitize_str(body.get("name") or "", 70)
+            p_skill = sanitize_str(body.get("skill") or "All Levels", 50)
+            p_phone = sanitize_str(body.get("phone") or "", 30)
+            if not p_name or len(p_name) < 2:
+                self._send_json({"ok": False, "error": "Please enter a valid player name."}, status=400)
+                return
+            current_sc = dict(DEFAULT_DB.get("siteConfig", {}))
+            if isinstance(db.get("siteConfig"), dict):
+                current_sc.update(db["siteConfig"])
+            sessions = current_sc.get("openPlaySessions")
+            if not isinstance(sessions, list) or len(sessions) == 0:
+                sessions = [
+                    {"id": "op-afternoon-social", "title": "Afternoon Social Open Play", "schedule": "Daily • 03:00 PM – 06:00 PM", "skillLevel": "All Skill Levels (Beginner – Intermediate)", "rotationRule": "4-Player Doubles Pods • Shuffle Players Every Round", "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"], "showCourtsOnSite": True, "published": True, "maxPlayers": 24, "players": []},
+                    {"id": "op-morning-dropin", "title": "Morning Community Drop-In", "schedule": "Daily • 07:00 AM – 10:00 AM", "skillLevel": "Social & Fitness Rotation (All Levels)", "rotationRule": "4-Player Doubles Pods • Balanced Court Rotation", "designatedCourts": ["Court 1", "Court 2"], "showCourtsOnSite": True, "published": False, "maxPlayers": 24, "players": []},
+                    {"id": "op-evening-nightlights", "title": "Evening Night-Lights Open Play", "schedule": "Mon / Wed / Fri • 06:00 PM – 09:00 PM", "skillLevel": "Intermediate & Competitive Rally", "rotationRule": "4-Player Doubles Pods • Winners Split Partners", "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"], "showCourtsOnSite": True, "published": False, "maxPlayers": 24, "players": []},
+                    {"id": "op-weekend-mixer", "title": "Weekend Club Open Play Mixer", "schedule": "Sat & Sun • 04:00 PM – 07:00 PM", "skillLevel": "All Community Members & Walk-Ins", "rotationRule": "4-Player Doubles Pods • Community Shuffler", "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"], "showCourtsOnSite": True, "published": False, "maxPlayers": 24, "players": []}
+                ]
+            target_s = next((s for s in sessions if isinstance(s, dict) and s.get("id") == session_id), sessions[0])
+            if not isinstance(target_s.get("players"), list):
+                target_s["players"] = []
+            if len(target_s["players"]) < 24 and not any(str(x.get("name", "")).lower() == p_name.lower() for x in target_s["players"] if isinstance(x, dict)):
+                target_s["players"].append({
+                    "id": "op-pl-" + str(int(time.time() * 1000)),
+                    "name": p_name,
+                    "skill": p_skill,
+                    "phone": p_phone,
+                    "joinedAt": get_pht_now().strftime("%I:%M %p")
+                })
+            current_sc["openPlaySessions"] = sessions
+            current_sc["openPlay24Roster"] = sessions[0].get("players", [])
+            current_sc["updatedAt"] = int(time.time() * 1000)
+            db["siteConfig"] = current_sc
+            save_db(db)
+            self._send_json({"ok": True, "siteConfig": current_sc})
+            return
+
         elif parsed.path == "/api/site-config":
             incoming = body.get("siteConfig") if isinstance(body.get("siteConfig"), dict) else body
             default_sc = DEFAULT_DB.get("siteConfig", {})
@@ -1349,7 +1390,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                         current_sc[k] = bool(v)
                     elif k == "openPlaySlots" and isinstance(v, list):
                         current_sc[k] = [sanitize_str(x, 30) for x in v if str(x).strip()]
-                    elif k in ("tournaments", "openPlayRoster", "openPlaySchedule") and isinstance(v, (list, dict)):
+                    elif k in ("tournaments", "openPlaySessions", "openPlay24Roster", "openPlayRoster", "openPlaySchedule") and isinstance(v, (list, dict)):
                         current_sc[k] = v
                     elif k == "openPlayRateCustomized":
                         current_sc[k] = bool(v)

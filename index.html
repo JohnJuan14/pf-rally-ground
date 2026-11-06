@@ -2294,9 +2294,9 @@ button.pf-trn-btn-danger:hover,
               <span>Live Schedule</span>
               <span class="text-[10px] font-mono text-emerald-600 font-bold">6AM–12AM</span>
             </a>
-            <a href="#open-play-24-board-container" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
-              <span>Open Play</span>
-              <span class="text-[10px] font-mono text-emerald-600 font-bold" data-site-price="open-play-badge">₱150/player</span>
+            <a href="open-play.html" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Open Play &amp; Shuffler</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">Live Pods</span>
             </a>
             <a href="pricing.html#court-rates" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item ">
               <span>Court Rates</span>
@@ -2312,6 +2312,9 @@ button.pf-trn-btn-danger:hover,
             </a>
           </div>
         </div>
+        <a href="open-play.html" id="nav-top-link-openplay" class="whitespace-nowrap px-3.5 py-2 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-[#0D1F18] hover:text-[#15803D] hover:bg-[#0D1F18]/5 font-bold">
+          <span>Open Play</span>
+        </a>
         <a href="#tournaments" id="nav-top-link-tournaments" class="whitespace-nowrap px-3.5 py-2 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-[#0D1F18] hover:text-[#15803D] hover:bg-[#0D1F18]/5 font-bold">
           <span>Tournaments</span>
         </a>
@@ -2385,8 +2388,8 @@ button.pf-trn-btn-danger:hover,
           <a href="#schedule" id="mob-nav-link-schedule" onclick="if(window.pfNavigateToSchedule) window.pfNavigateToSchedule(event); toggleMobileMenu();" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
             <span>Live Schedule</span> <span id="mob-nav-badge-schedule" class="font-mono text-[10px] text-emerald-700">6AM–12AM</span>
           </a>
-          <a href="#open-play-24-board-container" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Open Play (3–6 PM)</span> <span class="font-mono text-[10px] text-emerald-700" data-site-price="open-play-badge">₱150/player</span>
+          <a href="open-play.html" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
+            <span>Open Play &amp; Player Shuffler</span> <span class="font-mono text-[10px] text-emerald-700">Live Pods →</span>
           </a>
           <a href="pricing.html#court-rates" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
             <span>Court Rates</span> <span class="font-mono text-[10px] text-slate-600">₱400/hr</span>

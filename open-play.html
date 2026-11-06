@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <title>Open Play &amp; Live Player Pod Shuffler | P&amp;F Rally Ground Pickleball Club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="description" content="Join the live Open Play community roster and use our 4-Player Match Pod Shuffler at P&F Rally Ground Pickleball Club in Daraga, Albay.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            display: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              black: '#0D1F18',
+              dark: '#132A21',
+              card: '#18352A',
+              lime: '#34D399',
+              limeHover: '#10B981',
+              blue: '#0D9488',
+              green: '#15803D',
+              clay: '#C85A32',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+      background-color: #F7F6F1;
+      color: #0D1F18;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+      scroll-behavior: smooth;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F7F6F1] text-[#0D1F18]">
+
+  <!-- ================= TOP EDITORIAL NAVBAR ================= -->
+  <header class="sticky top-0 z-50 bg-[#F7F6F1]/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+      <!-- Left Brand Logo -->
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-11 sm:w-11 sm:h-12 rounded-xl bg-[#0F291E] border-2 border-[#34D399]/60 p-1 flex items-center justify-center shadow-sm overflow-hidden">
+          <img src="assets/logo.png" data-site-logo alt="P&amp;F Rally Ground Logo" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <span class="block text-sm sm:text-base font-black tracking-tight text-[#0D1F18] leading-none" data-site-text="clubName">P&amp;F Rally Ground</span>
+          <span class="block text-[10px] sm:text-[11px] font-mono font-bold text-emerald-800 uppercase tracking-wider mt-0.5" data-site-text="clubSubtitle">Pickleball Club • Daraga</span>
+        </div>
+      </a>
+
+      <!-- Center Desktop Links -->
+      <nav class="hidden lg:flex items-center gap-1.5 text-xs font-extrabold">
+        <a href="index.html" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Home</a>
+        <a href="index.html#schedule" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Court Schedule</a>
+        <a href="open-play.html" class="px-3.5 py-2 rounded-lg bg-[#0F291E] text-white shadow-xs transition">Open Play &amp; Shuffler</a>
+        <a href="index.html#tournaments" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Tournaments</a>
+        <a href="pricing.html" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Rates &amp; Gear</a>
+        <a href="check-booking.html" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">My Booking</a>
+      </nav>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-2">
+        <a href="index.html#schedule" class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-extrabold text-xs uppercase tracking-wider transition hidden sm:inline-flex items-center gap-1.5">
+          <span>📅 Court Timeline</span>
+        </a>
+        <a href="book.html" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black text-xs uppercase tracking-wider transition shadow-sm inline-flex items-center gap-1.5">
+          <span>Book Court</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= DEDICATED OPEN PLAY HERO BANNER (BASIC, CLEAN, NO BRACKET, NO PRICES) ================= -->
+  <section class="bg-[#0F291E] text-white border-b border-emerald-900/60 py-10 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div class="space-y-3 max-w-3xl">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-[#A3E635] font-mono text-[11px] font-extrabold uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-[#A3E635]"></span>
+            <span>DEDICATED OPEN PLAY &amp; PLAYER SHUFFLER</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-emerald-100 font-mono text-[11px] font-bold uppercase">
+            4-Player Doubles Pods • No Knockout Bracket
+          </span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+          Community Open Play &amp; Live Match Pod Shuffler
+        </h1>
+        <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed max-w-2xl">
+          Check the exact real community players who have joined today's Open Play session, see which courts are designated, and shuffle players into balanced 4-player doubles match pods for every round.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5">
+        <a href="index.html#tournaments" class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-extrabold text-xs uppercase tracking-wider transition">
+          🏆 View Tournaments
+        </a>
+        <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-5 py-3.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-lg">
+          🏓 Join Open Play Roster →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MAIN OPEN PLAY SHUFFLER WORKSPACE ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <div id="open-play-dedicated-page-root" class="space-y-6">
+      <!-- Populated automatically by pfRenderOpenPlay24Board() in app.js -->
+    </div>
+  </main>
+
+  <!-- ================= CLEAN EDITORIAL FOOTER ================= -->
+  <footer class="bg-[#0D1F18] text-slate-300 border-t border-emerald-900/50 py-8 px-4 sm:px-6 lg:px-8 mt-12">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-3">
+        <img src="assets/logo.png" alt="P&amp;F Rally Ground" class="w-8 h-9 object-contain rounded-lg bg-[#0F291E] p-1 border border-emerald-500/30">
+        <div>
+          <span class="font-extrabold text-white block">P&amp;F Rally Ground Pickleball Club</span>
+          <span class="text-[11px] text-slate-400">Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Albay</span>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-4 font-bold">
+        <a href="index.html" class="hover:text-white transition">Home</a>
+        <a href="open-play.html" class="text-[#A3E635]">Open Play Shuffler</a>
+        <a href="index.html#tournaments" class="hover:text-white transition">Tournaments</a>
+        <a href="book.html" class="hover:text-white transition">Book a Court</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof pfRenderOpenPlay24Board === 'function') {
+        pfRenderOpenPlay24Board();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1419,6 +1419,9 @@ button.pf-trn-btn-danger:hover,
             <button onclick="switchTab('tournament')" id="nav-tournament" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
               <span>Tournaments</span>
             </button>
+            <button onclick="switchTab('openplay')" id="nav-openplay" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
+              <span>Open Play &amp; Shuffler</span>
+            </button>
             <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-white/5 border border-transparent text-left">
               <span>Settings &amp; QR</span>
             </button>
@@ -1488,6 +1491,7 @@ button.pf-trn-btn-danger:hover,
             <button type="button" onclick="closeAllAdminDropdowns(); switchTab('site-editor');" class="adm-dropdown-item"><span>Site Editor</span></button>
             <button type="button" onclick="closeAllAdminDropdowns(); switchTab('announcements');" class="adm-dropdown-item"><span>Updates Feed</span></button>
             <button type="button" onclick="closeAllAdminDropdowns(); switchTab('tournament');" class="adm-dropdown-item"><span>Tournaments</span></button>
+            <button type="button" onclick="closeAllAdminDropdowns(); switchTab('openplay');" class="adm-dropdown-item"><span>Open Play &amp; Shuffler</span></button>
             <button type="button" onclick="closeAllAdminDropdowns(); switchTab('settings');" class="adm-dropdown-item"><span>Settings &amp; QR</span></button>
           </div>
         </div>
@@ -3562,6 +3566,13 @@ button.pf-trn-btn-danger:hover,
 
       </section>
 
+      <!-- ================= 4C. DEDICATED OPEN PLAY & LIVE PLAYER POD SHUFFLER FEATURE TAB (NO BRACKET, NO PRICES) ================= -->
+      <section id="tab-openplay" class="hidden space-y-6">
+        <div id="admin-openplay-feature-workspace" class="space-y-6">
+          <!-- Populated dynamically by renderAdminOpenPlayFeaturePage() -->
+        </div>
+      </section>
+
       <!-- ================= 5. INVENTORY TAB (WHOLESALE-TO-RETAIL CAPITAL & AUTO-DEDUCT) ================= -->
       <section id="tab-inventory" class="hidden space-y-6">
         
@@ -5135,6 +5146,7 @@ function clearFieldError(fieldId) {
       if (typeof renderAdminOpenPlayPills === 'function') renderAdminOpenPlayPills();
       if (typeof renderAdminOpenPlay24Board === 'function') renderAdminOpenPlay24Board();
       if (typeof renderAdminTournamentsManager === 'function') renderAdminTournamentsManager();
+      if (typeof renderAdminOpenPlayFeaturePage === 'function') renderAdminOpenPlayFeaturePage();
       renderPosCatalog();
       renderInventoryTable();
       renderReportsLedger();
@@ -5410,11 +5422,12 @@ function clearFieldError(fieldId) {
         announcements: 'Announcements',
         pos: 'CourtHub Rental POS & Analytics',
         tournament: 'Admin-Only 3D Tournament Host',
+        openplay: 'Open Play & Player Pod Shuffler',
         inventory: 'Inventory',
         reports: 'Sales & Reports',
         settings: 'Settings & Security'
       };
-      ['site-editor', 'overview', 'bookings', 'schedule', 'announcements', 'pos', 'tournament', 'inventory', 'reports', 'settings'].forEach(t => {
+      ['site-editor', 'overview', 'bookings', 'schedule', 'announcements', 'pos', 'tournament', 'openplay', 'inventory', 'reports', 'settings'].forEach(t => {
         const sec = document.getElementById('tab-' + t);
         const nav = document.getElementById('nav-' + t);
         if (sec) sec.classList.add('hidden');
@@ -5493,6 +5506,7 @@ function clearFieldError(fieldId) {
       if (tabId === 'announcements' && typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
       if (tabId === 'pos') { renderPosCatalog(); renderPosOrder(); if (typeof refreshPosHubFromLiveState === 'function') refreshPosHubFromLiveState(); }
       if (tabId === 'tournament' && typeof renderAdminTournamentApprovalGate === 'function') { renderAdminTournamentApprovalGate(); }
+      if (tabId === 'openplay' && typeof renderAdminOpenPlayFeaturePage === 'function') { renderAdminOpenPlayFeaturePage(); }
       if (tabId === 'inventory') renderInventoryTable();
       if (tabId === 'reports') renderReportsLedger();
     }
@@ -14005,6 +14019,579 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       target.approved = !(target.approved !== false);
       if (target.approved) currentSiteConfig.tournamentsPublishedOnHome = true;
       await saveAndSyncAdminTournaments(target.approved ? `✅ Published "${target.title}" on Homepage!` : `🔒 Moved "${target.title}" to Draft`);
+    }
+
+    // ================= DEDICATED ADMIN OPEN PLAY & LIVE PLAYER POD SHUFFLER FEATURE ENGINE (NO BRACKET, NO PRICES) =================
+    const ADMIN_DEFAULT_OPEN_PLAY_SESSIONS = [
+      {
+        id: 'op-afternoon-social',
+        title: 'Afternoon Social Open Play',
+        schedule: 'Daily • 03:00 PM – 06:00 PM',
+        skillLevel: 'All Skill Levels (Beginner – Intermediate)',
+        rotationRule: '4-Player Doubles Pods • Shuffle Players Every Round',
+        designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+        showCourtsOnSite: true,
+        published: true,
+        maxPlayers: 24,
+        players: [],
+        shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+        lastShuffleTime: 'Ready to Shuffle'
+      },
+      {
+        id: 'op-morning-dropin',
+        title: 'Morning Community Drop-In',
+        schedule: 'Daily • 07:00 AM – 10:00 AM',
+        skillLevel: 'Social & Fitness Rotation (All Levels)',
+        rotationRule: '4-Player Doubles Pods • Balanced Court Rotation',
+        designatedCourts: ['Court 1', 'Court 2'],
+        showCourtsOnSite: true,
+        published: false,
+        maxPlayers: 24,
+        players: [],
+        shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+        lastShuffleTime: 'Ready to Shuffle'
+      },
+      {
+        id: 'op-evening-nightlights',
+        title: 'Evening Night-Lights Open Play',
+        schedule: 'Mon / Wed / Fri • 06:00 PM – 09:00 PM',
+        skillLevel: 'Intermediate & Competitive Rally',
+        rotationRule: '4-Player Doubles Pods • Winners Split Partners',
+        designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+        showCourtsOnSite: true,
+        published: false,
+        maxPlayers: 24,
+        players: [],
+        shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+        lastShuffleTime: 'Ready to Shuffle'
+      },
+      {
+        id: 'op-weekend-mixer',
+        title: 'Weekend Club Open Play Mixer',
+        schedule: 'Sat & Sun • 04:00 PM – 07:00 PM',
+        skillLevel: 'All Community Members & Walk-Ins',
+        rotationRule: '4-Player Doubles Pods • Community Shuffler',
+        designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+        showCourtsOnSite: true,
+        published: false,
+        maxPlayers: 24,
+        players: [],
+        shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+        lastShuffleTime: 'Ready to Shuffle'
+      }
+    ];
+
+    let adminSelectedOpenPlaySessionId = 'op-afternoon-social';
+
+    function getAdminOpenPlaySessionsList() {
+      if (!currentSiteConfig) currentSiteConfig = {};
+      if (!Array.isArray(currentSiteConfig.openPlaySessions) || currentSiteConfig.openPlaySessions.length === 0) {
+        currentSiteConfig.openPlaySessions = JSON.parse(JSON.stringify(ADMIN_DEFAULT_OPEN_PLAY_SESSIONS));
+      }
+      currentSiteConfig.openPlaySessions.forEach((s, idx) => {
+        const def = ADMIN_DEFAULT_OPEN_PLAY_SESSIONS[idx] || ADMIN_DEFAULT_OPEN_PLAY_SESSIONS[0];
+        if (!s.id) s.id = def.id;
+        if (!s.title) s.title = def.title;
+        if (!s.schedule) s.schedule = def.schedule;
+        if (!s.skillLevel) s.skillLevel = def.skillLevel;
+        if (!s.rotationRule) s.rotationRule = def.rotationRule;
+        if (!Array.isArray(s.designatedCourts) || s.designatedCourts.length === 0) {
+          s.designatedCourts = def.designatedCourts.slice();
+        }
+        if (typeof s.showCourtsOnSite !== 'boolean') s.showCourtsOnSite = true;
+        if (typeof s.published !== 'boolean') s.published = (idx === 0);
+        if (!Array.isArray(s.players)) s.players = [];
+        // Filter out any legacy fake filler player names
+        s.players = s.players.filter(p => {
+          const nm = typeof p === 'string' ? p.trim() : String((p && p.name) || '').trim();
+          return nm && !/^Player\s*0?\d+/i.test(nm) && !/^Open\s*Spot/i.test(nm) && !/\(Spot\s*#\d+\)/i.test(nm);
+        }).map((p, pIdx) => ({
+          id: (typeof p === 'object' && p.id) ? p.id : ('op-pl-' + (pIdx + 1)),
+          name: typeof p === 'string' ? p.trim() : String(p.name || '').trim(),
+          skill: (typeof p === 'object' && p.skill) ? p.skill : 'All Levels',
+          phone: (typeof p === 'object' && p.phone) ? p.phone : '',
+          joinedAt: (typeof p === 'object' && p.joinedAt) ? p.joinedAt : 'Joined'
+        }));
+        if (!Array.isArray(s.shuffledOrder) || s.shuffledOrder.length !== 24) {
+          s.shuffledOrder = Array.from({ length: 24 }, (_, i) => i);
+        }
+        if (!s.lastShuffleTime) s.lastShuffleTime = 'Ready to Shuffle';
+      });
+      return currentSiteConfig.openPlaySessions;
+    }
+
+    async function saveAndSyncAdminOpenPlaySessions(toastMessage) {
+      const list = getAdminOpenPlaySessionsList();
+      currentSiteConfig.openPlaySessions = list;
+      if (list[0]) {
+        currentSiteConfig.openPlay24Roster = list[0].players.slice();
+      }
+      currentSiteConfig.updatedAt = Date.now();
+      saveAdminState(true);
+      renderAdminOpenPlayFeaturePage();
+      try {
+        await postSiteConfigToEndpoints(currentSiteConfig);
+      } catch (e) {}
+      if (toastMessage) {
+        const toast = document.getElementById('adm-op-toast-banner');
+        if (toast) {
+          toast.textContent = toastMessage;
+          toast.classList.remove('hidden');
+          setTimeout(() => toast.classList.add('hidden'), 3500);
+        }
+      }
+    }
+
+    async function adminSetPublishedOpenPlayCount(count) {
+      const list = getAdminOpenPlaySessionsList();
+      const n = Math.max(1, Math.min(list.length, parseInt(count, 10) || 1));
+      list.forEach((s, idx) => {
+        s.published = (idx < n);
+      });
+      await saveAndSyncAdminOpenPlaySessions(`✅ Open Play Page now displays ${n} Session${n > 1 ? 's' : ''}!`);
+    }
+
+    async function adminToggleSingleOpenPlaySessionPublished(sessionId) {
+      const list = getAdminOpenPlaySessionsList();
+      const target = list.find(s => s.id === sessionId);
+      if (!target) return;
+      target.published = !target.published;
+      if (!list.some(s => s.published)) {
+        target.published = true;
+      }
+      await saveAndSyncAdminOpenPlaySessions(target.published ? `✅ Shown "${target.title}" on Open Play Page!` : `🔒 Hid "${target.title}" on Open Play Page`);
+    }
+
+    async function adminSetOpenPlayDesignatedCourtCount(sessionId, count) {
+      const list = getAdminOpenPlaySessionsList();
+      const target = list.find(s => s.id === sessionId);
+      if (!target) return;
+      const n = Math.max(1, Math.min(4, parseInt(count, 10) || 4));
+      target.designatedCourts = Array.from({ length: n }, (_, i) => `Court ${i + 1}`);
+      await saveAndSyncAdminOpenPlaySessions(`✅ Set ${n} Designated Court${n > 1 ? 's' : ''} for "${target.title}"!`);
+    }
+
+    async function adminToggleOpenPlaySingleCourt(sessionId, courtNum) {
+      const list = getAdminOpenPlaySessionsList();
+      const target = list.find(s => s.id === sessionId);
+      if (!target) return;
+      const label = `Court ${courtNum}`;
+      const cur = Array.isArray(target.designatedCourts) ? target.designatedCourts.slice() : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      const idx = cur.indexOf(label);
+      if (idx >= 0) {
+        if (cur.length <= 1) return;
+        cur.splice(idx, 1);
+      } else {
+        cur.push(label);
+      }
+      cur.sort((a, b) => a.localeCompare(b));
+      target.designatedCourts = cur;
+      await saveAndSyncAdminOpenPlaySessions(`✅ Updated Designated Courts (${cur.join(', ')}) for "${target.title}"!`);
+    }
+
+    async function adminToggleOpenPlayShowCourtsOnSite(sessionId) {
+      const list = getAdminOpenPlaySessionsList();
+      const target = list.find(s => s.id === sessionId);
+      if (!target) return;
+      target.showCourtsOnSite = !(target.showCourtsOnSite !== false);
+      await saveAndSyncAdminOpenPlaySessions(target.showCourtsOnSite ? `👁️ Showing Court Badges on Open Play Page` : `🙈 Hid Court Badges on Open Play Page`);
+    }
+
+    async function adminSaveOpenPlaySessionDetails(sessionId) {
+      const list = getAdminOpenPlaySessionsList();
+      const target = list.find(s => s.id === sessionId);
+      if (!target) return;
+      const titleEl = document.getElementById('adm-op-title-' + sessionId);
+      const schedEl = document.getElementById('adm-op-sched-' + sessionId);
+      const skillEl = document.getElementById('adm-op-skill-' + sessionId);
+      if (titleEl && titleEl.value.trim()) target.title = titleEl.value.trim();
+      if (schedEl && schedEl.value.trim()) target.schedule = schedEl.value.trim();
+      if (skillEl && skillEl.value.trim()) target.skillLevel = skillEl.value.trim();
+      await saveAndSyncAdminOpenPlaySessions(`💾 Saved "${target.title}" details & synced to Open Play Page!`);
+    }
+
+    function adminSelectActiveOpenPlaySession(sessionId) {
+      adminSelectedOpenPlaySessionId = sessionId;
+      renderAdminOpenPlayFeaturePage();
+    }
+
+    async function adminAddOpenPlayRealPlayer(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const list = getAdminOpenPlaySessionsList();
+      const active = list.find(s => s.id === adminSelectedOpenPlaySessionId) || list[0];
+      const nameInput = document.getElementById('adm-op-new-player-name');
+      const skillInput = document.getElementById('adm-op-new-player-skill');
+      const rawName = String(nameInput ? nameInput.value : '').trim();
+      const skill = String(skillInput ? skillInput.value : 'Intermediate (3.5)').trim();
+
+      if (!rawName || rawName.length < 2) return;
+      if (active.players.length >= 24) {
+        alert('This Open Play session already has 24 / 24 players.');
+        return;
+      }
+      active.players.push({
+        id: 'op-pl-' + Date.now(),
+        name: rawName,
+        skill: skill,
+        phone: '',
+        joinedAt: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })
+      });
+      if (nameInput) nameInput.value = '';
+      await saveAndSyncAdminOpenPlaySessions(`✅ Added "${rawName}" (${active.players.length}/24) to "${active.title}"!`);
+    }
+
+    async function adminRemoveOpenPlayRealPlayer(sessionId, playerIndex) {
+      const list = getAdminOpenPlaySessionsList();
+      const active = list.find(s => s.id === sessionId) || list[0];
+      if (!active || !active.players[playerIndex]) return;
+      const removed = active.players.splice(playerIndex, 1)[0];
+      await saveAndSyncAdminOpenPlaySessions(`🗑️ Removed "${removed.name}" (${active.players.length}/24 remaining).`);
+    }
+
+    async function adminShuffleOpenPlaySessionPods(sessionId) {
+      const list = getAdminOpenPlaySessionsList();
+      const active = list.find(s => s.id === (sessionId || adminSelectedOpenPlaySessionId)) || list[0];
+      const arr = Array.from({ length: 24 }, (_, i) => i);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+      }
+      active.shuffledOrder = arr;
+      active.lastShuffleTime = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      await saveAndSyncAdminOpenPlaySessions(`🔀 Shuffled all players & 4-player match pods for "${active.title}"!`);
+    }
+
+    async function adminClearOpenPlaySessionPlayers(sessionId) {
+      const list = getAdminOpenPlaySessionsList();
+      const active = list.find(s => s.id === (sessionId || adminSelectedOpenPlaySessionId)) || list[0];
+      active.players = [];
+      active.shuffledOrder = Array.from({ length: 24 }, (_, i) => i);
+      active.lastShuffleTime = 'Reset to 0 Players';
+      await saveAndSyncAdminOpenPlaySessions(`🧹 Cleared "${active.title}" to 0 / 24 Players (all 24 spots open)!`);
+    }
+
+    async function adminLoadOpenPlayDemoPlayers(sessionId) {
+      const list = getAdminOpenPlaySessionsList();
+      const active = list.find(s => s.id === (sessionId || adminSelectedOpenPlaySessionId)) || list[0];
+      const demoNames = [
+        { name: 'Marco Santos', skill: 'Advanced (4.0+)' },
+        { name: 'Luis Villanueva', skill: 'Intermediate (3.5)' },
+        { name: 'Bea Alcantara', skill: 'Intermediate (3.5)' },
+        { name: 'Clarisse Tan', skill: 'Beginner (2.5–3.0)' },
+        { name: 'Anton Mendoza', skill: 'Intermediate (3.5)' },
+        { name: 'Miguel Borromeo', skill: 'Advanced (4.0+)' },
+        { name: 'Rafa Elizalde', skill: 'Intermediate (3.5)' },
+        { name: 'Gabriel Lim', skill: 'Beginner (2.5–3.0)' },
+        { name: 'Dan Soriano', skill: 'Intermediate (3.5)' },
+        { name: 'Trish Dy', skill: 'Intermediate (3.5)' },
+        { name: 'Enzo Navarro', skill: 'Beginner (2.5–3.0)' },
+        { name: 'Jomar Peña', skill: 'Intermediate (3.5)' }
+      ];
+      active.players = demoNames.map((d, idx) => ({
+        id: 'op-demo-' + (idx + 1),
+        name: d.name,
+        skill: d.skill,
+        phone: '',
+        joinedAt: 'Demo Test'
+      }));
+      await adminShuffleOpenPlaySessionPods(active.id);
+    }
+
+    function renderAdminOpenPlayFeaturePage() {
+      const container = document.getElementById('admin-openplay-feature-workspace');
+      if (!container) return;
+
+      const list = getAdminOpenPlaySessionsList();
+      const active = list.find(s => s.id === adminSelectedOpenPlaySessionId) || list[0];
+      adminSelectedOpenPlaySessionId = active.id;
+
+      const pubCount = list.filter(s => s.published !== false).length;
+      const desigCourts = Array.isArray(active.designatedCourts) && active.designatedCourts.length > 0
+        ? active.designatedCourts
+        : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+
+      // Build 6 shuffled pods for the active session preview
+      const baseSlots = [];
+      active.players.forEach((pl, idx) => {
+        baseSlots.push({ slotNumber: idx + 1, name: pl.name, skill: pl.skill || 'All Levels', isJoined: true });
+      });
+      while (baseSlots.length < 24) {
+        const n = baseSlots.length + 1;
+        baseSlots.push({ slotNumber: n, name: `Open Spot #${n}`, skill: 'Available', isJoined: false });
+      }
+
+      const order = Array.isArray(active.shuffledOrder) && active.shuffledOrder.length === 24
+        ? active.shuffledOrder
+        : Array.from({ length: 24 }, (_, i) => i);
+
+      const realCount = active.players.length;
+      let orderedSlots = [];
+      if (realCount > 0 && realCount < 24) {
+        const realIndices = order.filter(i => i < realCount);
+        const openIndices = order.filter(i => i >= realCount);
+        orderedSlots = [...realIndices, ...openIndices].map((origIdx, pos) => Object.assign({}, baseSlots[origIdx] || baseSlots[pos], { podSeat: pos + 1 }));
+      } else {
+        orderedSlots = order.map((origIdx, pos) => Object.assign({}, baseSlots[origIdx] || baseSlots[pos], { podSeat: pos + 1 }));
+      }
+
+      const podsHtml = [];
+      for (let p = 0; p < 6; p++) {
+        const grp = orderedSlots.slice(p * 4, p * 4 + 4);
+        const cName = desigCourts[p % desigCourts.length] || `Court ${(p % 4) + 1}`;
+        const renderSeat = (seat) => seat && seat.isJoined
+          ? `<div class="p-2 rounded-lg bg-white border border-emerald-300 flex items-center justify-between gap-2">
+               <span class="text-xs font-extrabold text-slate-900 truncate">✓ ${pfEscapeHtml(seat.name)}</span>
+               <span class="text-[9px] font-mono font-bold text-emerald-700">${pfEscapeHtml(seat.skill)}</span>
+             </div>`
+          : `<div class="p-2 rounded-lg bg-white/70 border border-dashed border-slate-300 text-xs font-medium text-slate-400 truncate">Open Spot #${seat ? seat.podSeat : ''}</div>`;
+
+        podsHtml.push(`
+          <div class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-3">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <span class="px-2.5 py-0.5 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-black uppercase">Pod ${p + 1}</span>
+              <span class="px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-900 font-mono text-[10px] font-extrabold uppercase">📍 ${pfEscapeHtml(cName)}</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+                <span class="text-[9px] font-mono font-black uppercase text-emerald-900 block">Side A (Doubles)</span>
+                ${renderSeat(grp[0])}
+                ${renderSeat(grp[1])}
+              </div>
+              <div class="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1.5">
+                <span class="text-[9px] font-mono font-black uppercase text-slate-600 block">Side B (Doubles)</span>
+                ${renderSeat(grp[2])}
+                ${renderSeat(grp[3])}
+              </div>
+            </div>
+          </div>
+        `);
+      }
+
+      container.innerHTML = `
+        <!-- 1. OPEN PLAY SESSIONS & COURT DISPLAY CONTROLLER (SAME SPECS AS TOURNAMENT, NO BRACKET, NO PRICES) -->
+        <div class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 space-y-5 shadow-md">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div class="flex items-start sm:items-center gap-3.5">
+              <div class="pf-rect-logo-badge hidden sm:flex">
+                <img src="../assets/logo.png" alt="P&amp;F Rally Ground">
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🏓 DEDICATED OPEN PLAY &amp; PLAYER POD SHUFFLER MANAGER</span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase tracking-wider">No Bracket • No Prices • Pure Player Shuffler</span>
+                </div>
+                <h2 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">Manage Open Play Sessions, Designated Courts &amp; Live Player Shuffler</h2>
+                <p class="text-xs text-slate-600">Choose whether to show 1, 2, 3, or 4 Open Play sessions on <code class="font-mono font-bold text-emerald-800">open-play.html</code>, designate courts (1–4), and shuffle real joined players into 4-player match pods.</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <a href="/open-play.html" onclick="return openPublicSite(event, 'open-play.html')" class="pf-trn-btn-emerald px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5">
+                <span>↗ View Public Open Play Page</span>
+              </a>
+            </div>
+          </div>
+
+          <div id="adm-op-toast-banner" class="hidden p-3 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-950 font-extrabold text-xs"></div>
+
+          <!-- FLEXIBLE SESSION DISPLAY BAR (1 DEFAULT, OR 2, 3, 4) -->
+          <div class="p-4 rounded-2xl bg-[#F8FAFC] border-2 border-slate-200 space-y-3.5">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+              <div>
+                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">🎛️ WEBSITE OPEN PLAY SESSION SELECTOR (DEFAULT = SHOW 1 SESSION)</span>
+                <p class="text-xs text-slate-600">Choose how many Open Play sessions to show on the dedicated Open Play sub-page (<code class="font-mono font-bold">open-play.html</code>), or toggle individual sessions below:</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${[1, 2, 3, 4].map(n => `
+                  <button type="button" onclick="adminSetPublishedOpenPlayCount(${n})" class="px-3 py-2 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${pubCount === n ? 'bg-[#0F291E] text-white shadow-xs' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'}">
+                    ${n === 1 ? '1️⃣ Show 1 Session (Default)' : (n === 4 ? '4️⃣ Show All 4' : `${n}️⃣ Show ${n} Sessions`)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-2 border-t border-slate-200">
+              ${list.map((s, idx) => {
+                const isOn = s.published !== false;
+                return `
+                  <button type="button" onclick="adminToggleSingleOpenPlaySessionPublished('${pfEscapeHtml(s.id)}')" class="p-2.5 rounded-xl border-2 text-left transition flex items-center justify-between gap-2 ${isOn ? 'bg-emerald-50/90 border-emerald-500 text-slate-900' : 'bg-white border-slate-200 text-slate-500'}">
+                    <div class="min-w-0">
+                      <span class="text-[10px] font-mono font-black uppercase block ${isOn ? 'text-emerald-800' : 'text-slate-400'}">Session #${idx + 1} • ${isOn ? 'SHOWN' : 'HIDDEN'}</span>
+                      <span class="text-xs font-extrabold truncate block">${pfEscapeHtml(s.title)}</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded font-mono text-[10px] font-black ${isOn ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-600'}">${isOn ? 'ON' : 'OFF'}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- 4 OPEN PLAY SESSION CARDS GRID (NO PRICES, NO BRACKET) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            ${list.map((s, idx) => {
+              const isOn = s.published !== false;
+              const sDesig = Array.isArray(s.designatedCourts) ? s.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+              const showC = s.showCourtsOnSite !== false;
+              return `
+                <div class="p-4 sm:p-5 rounded-2xl border-2 transition space-y-3.5 ${isOn ? 'bg-white border-emerald-500/70 shadow-sm' : 'bg-slate-50/80 border-slate-200'}">
+                  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-black uppercase">Session #${idx + 1}</span>
+                      <span class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-extrabold uppercase ${s.players.length > 0 ? 'bg-emerald-100 text-emerald-900' : 'bg-slate-200 text-slate-700'}">
+                        👥 ${s.players.length} / 24 Real Players
+                      </span>
+                    </div>
+                    <button type="button" onclick="adminToggleSingleOpenPlaySessionPublished('${pfEscapeHtml(s.id)}')" class="px-3 py-1 rounded-lg font-mono text-[10px] font-black uppercase transition ${isOn ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}">
+                      ${isOn ? '● VISIBLE ON WEBSITE' : '○ HIDDEN (CLICK TO SHOW)'}
+                    </button>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div class="sm:col-span-2">
+                      <label class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-1">Session Title</label>
+                      <input type="text" id="adm-op-title-${pfEscapeHtml(s.id)}" value="${pfEscapeHtml(s.title)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900">
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-1">Schedule / Time Window</label>
+                      <input type="text" id="adm-op-sched-${pfEscapeHtml(s.id)}" value="${pfEscapeHtml(s.schedule)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900">
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-1">Skill Division</label>
+                      <input type="text" id="adm-op-skill-${pfEscapeHtml(s.id)}" value="${pfEscapeHtml(s.skillLevel)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900">
+                    </div>
+                  </div>
+
+                  <!-- Designated Courts Controller (1, 2, 3, or 4 Courts + Optional Show/Hide Badge) -->
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <span class="text-[10px] font-mono font-extrabold uppercase text-slate-700">📍 Designated Courts (${sDesig.length} Active)</span>
+                      <button type="button" onclick="adminToggleOpenPlayShowCourtsOnSite('${pfEscapeHtml(s.id)}')" class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-extrabold uppercase border transition ${showC ? 'bg-emerald-50 text-emerald-900 border-emerald-300' : 'bg-slate-200 text-slate-600 border-slate-300'}">
+                        ${showC ? '👁️ Court Badge: Shown' : '🙈 Court Badge: Hidden'}
+                      </button>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      ${[1, 2, 3, 4].map(cnt => `
+                        <button type="button" onclick="adminSetOpenPlayDesignatedCourtCount('${pfEscapeHtml(s.id)}', ${cnt})" class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-bold transition ${sDesig.length === cnt ? 'bg-[#0F291E] text-white' : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'}">
+                          ${cnt} ${cnt === 1 ? 'Court' : 'Courts'}
+                        </button>
+                      `).join('')}
+                      <span class="text-slate-300 px-1">|</span>
+                      ${[1, 2, 3, 4].map(cNum => {
+                        const cLbl = 'Court ' + cNum;
+                        const hasC = sDesig.includes(cLbl);
+                        return `
+                          <button type="button" onclick="adminToggleOpenPlaySingleCourt('${pfEscapeHtml(s.id)}', ${cNum})" class="px-2 py-1 rounded-lg font-mono text-[10px] font-extrabold transition ${hasC ? 'bg-emerald-700 text-white' : 'bg-white border border-slate-300 text-slate-500'}">
+                            ${hasC ? '✓ ' : ''}C${cNum}
+                          </button>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <button type="button" onclick="adminSelectActiveOpenPlaySession('${pfEscapeHtml(s.id)}'); document.getElementById('adm-op-shuffler-workspace')?.scrollIntoView({behavior:'smooth'});" class="pf-trn-btn-violet px-3.5 py-2 rounded-xl text-[11px] uppercase transition">
+                      🔀 Manage Roster &amp; Shuffle Pods (${s.players.length}/24)
+                    </button>
+                    <button type="button" onclick="adminSaveOpenPlaySessionDetails('${pfEscapeHtml(s.id)}')" class="pf-trn-btn-primary px-4 py-2 rounded-xl text-[11px] uppercase transition">
+                      💾 Save Session
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- 2. LIVE OPEN PLAY PLAYER ROSTER & 6-POD SHUFFLER WORKSPACE (NO BRACKET, NO PRICES) -->
+        <div id="adm-op-shuffler-workspace" class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 space-y-5 shadow-md">
+          <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[10px] font-mono font-extrabold uppercase">🔀 LIVE 4-PLAYER MATCH POD SHUFFLER</span>
+                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[10px] font-mono font-extrabold uppercase">👥 ${active.players.length} / 24 Real Players Joined</span>
+                <span class="text-[11px] font-mono font-bold text-slate-500">Last Shuffle: ${pfEscapeHtml(active.lastShuffleTime)}</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-black text-slate-900">${pfEscapeHtml(active.title)} — Player Roster &amp; Court Pod Shuffler</h3>
+              <p class="text-xs text-slate-600">Add walk-in players or shuffle everyone into 6 balanced 4-player doubles pods across ${pfEscapeHtml(desigCourts.join(', '))}. Starts at 0 players with zero fake fillers.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+              <div>
+                <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-500 mb-0.5">Active Open Play Session</label>
+                <select onchange="adminSelectActiveOpenPlaySession(this.value)" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900">
+                  ${list.map(s => `<option value="${pfEscapeHtml(s.id)}" ${s.id === active.id ? 'selected' : ''}>${pfEscapeHtml(s.title)} (${s.players.length}/24)</option>`).join('')}
+                </select>
+              </div>
+              <button type="button" onclick="adminShuffleOpenPlaySessionPods('${pfEscapeHtml(active.id)}')" class="pf-trn-btn-primary px-4 py-2.5 rounded-xl text-xs uppercase transition">
+                🔀 Shuffle Players &amp; Pods Now
+              </button>
+              <button type="button" onclick="adminLoadOpenPlayDemoPlayers('${pfEscapeHtml(active.id)}')" class="pf-trn-btn-secondary px-3.5 py-2.5 rounded-xl text-xs uppercase transition" title="Load 12 sample players to test the shuffler">
+                🧪 Test with Demo Players
+              </button>
+              <button type="button" onclick="adminClearOpenPlaySessionPlayers('${pfEscapeHtml(active.id)}')" class="pf-trn-btn-danger px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
+                🧹 Clear to 0 Players
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Add Real Walk-In Player Bar -->
+          <form onsubmit="adminAddOpenPlayRealPlayer(event)" class="p-4 rounded-2xl bg-emerald-50/70 border-2 border-emerald-200 flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+            <div class="flex-1">
+              <label class="block text-[10px] font-mono font-extrabold uppercase text-emerald-950 mb-1">+ Add Real Walk-In / Checked-In Player to "${pfEscapeHtml(active.title)}"</label>
+              <input type="text" id="adm-op-new-player-name" required placeholder="Type player's real First & Last Name (e.g. Marco Santos)..." class="w-full bg-white border border-emerald-300 rounded-xl px-3.5 py-2.5 text-xs font-extrabold text-slate-900">
+            </div>
+            <div class="w-full sm:w-52">
+              <label class="block text-[10px] font-mono font-extrabold uppercase text-emerald-950 mb-1">Skill Level</label>
+              <select id="adm-op-new-player-skill" class="w-full bg-white border border-emerald-300 rounded-xl px-3 py-2.5 text-xs font-extrabold text-slate-900">
+                <option value="Beginner (2.5–3.0)">Beginner (2.5–3.0)</option>
+                <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
+                <option value="Advanced (4.0+)">Advanced (4.0+)</option>
+                <option value="All Levels">All Levels</option>
+              </select>
+            </div>
+            <button type="submit" class="pf-trn-btn-emerald px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider whitespace-nowrap">
+              + Add Player to Roster →
+            </button>
+          </form>
+
+          <!-- Exact Real Players Joined Strip -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black uppercase text-slate-900">Joined Players Roster (${active.players.length} / 24 Real Players)</span>
+              <span class="text-[11px] font-mono text-slate-500">${Math.max(0, 24 - active.players.length)} Open Spots Available</span>
+            </div>
+            ${active.players.length > 0 ? `
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                ${active.players.map((pl, pIdx) => `
+                  <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                      <div class="text-xs font-extrabold text-slate-900 truncate">#${pIdx + 1} • ${pfEscapeHtml(pl.name)}</div>
+                      <div class="text-[10px] font-mono text-emerald-700 truncate">${pfEscapeHtml(pl.skill || 'All Levels')}</div>
+                    </div>
+                    <button type="button" onclick="adminRemoveOpenPlayRealPlayer('${pfEscapeHtml(active.id)}', ${pIdx})" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 text-[10px] font-black transition" title="Remove Player">✕</button>
+                  </div>
+                `).join('')}
+              </div>
+            ` : `
+              <div class="p-4 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-center text-xs text-slate-600 font-semibold">
+                Currently <b>0 / 24 Players Joined</b> (no fake filler names). Add walk-in players above or let players join directly on <code class="font-mono font-bold">open-play.html</code>!
+              </div>
+            `}
+          </div>
+
+          <!-- 6 Shuffled Court Match Pods Grid -->
+          <div class="space-y-3 pt-2 border-t border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black uppercase text-slate-900">Live Shuffled 4-Player Match Pods (6 Pods Across ${pfEscapeHtml(desigCourts.join(', '))})</span>
+              <button type="button" onclick="adminShuffleOpenPlaySessionPods('${pfEscapeHtml(active.id)}')" class="text-xs font-extrabold text-emerald-800 hover:underline">🔀 Re-Shuffle Pairings →</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              ${podsHtml.join('')}
+            </div>
+          </div>
+        </div>
+      `;
     }
   </script>
 

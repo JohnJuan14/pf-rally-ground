@@ -4311,177 +4311,270 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ================= OPEN PLAY 24-PLAYER RANDOM DISTRIBUTION & DEDICATED TIME SLOT ENGINE =================
-const DEFAULT_OPEN_PLAY_SAMPLE_PLAYERS = [
-  'Player 01 (Spot #1)', 'Player 02 (Spot #2)', 'Player 03 (Spot #3)', 'Player 04 (Spot #4)',
-  'Player 05 (Spot #5)', 'Player 06 (Spot #6)', 'Player 07 (Spot #7)', 'Player 08 (Spot #8)',
-  'Player 09 (Spot #9)', 'Player 10 (Spot #10)', 'Player 11 (Spot #11)', 'Player 12 (Spot #12)',
-  'Player 13 (Spot #13)', 'Player 14 (Spot #14)', 'Player 15 (Spot #15)', 'Player 16 (Spot #16)',
-  'Player 17 (Spot #17)', 'Player 18 (Spot #18)', 'Player 19 (Spot #19)', 'Player 20 (Spot #20)',
-  'Player 21 (Spot #21)', 'Player 22 (Spot #22)', 'Player 23 (Spot #23)', 'Player 24 (Spot #24)'
+// ================= OPEN PLAY DEDICATED SUB-PAGE & REAL PLAYER POD SHUFFLER ENGINE (NO BRACKET, NO PRICES) =================
+const DEFAULT_OPEN_PLAY_SESSIONS = [
+  {
+    id: 'op-afternoon-social',
+    title: 'Afternoon Social Open Play',
+    schedule: 'Daily • 03:00 PM – 06:00 PM',
+    skillLevel: 'All Skill Levels (Beginner – Intermediate)',
+    rotationRule: '4-Player Doubles Pods • Shuffle Players Every Round',
+    designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+    showCourtsOnSite: true,
+    published: true,
+    maxPlayers: 24,
+    players: [],
+    shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+    lastShuffleTime: 'Ready to Shuffle'
+  },
+  {
+    id: 'op-morning-dropin',
+    title: 'Morning Community Drop-In',
+    schedule: 'Daily • 07:00 AM – 10:00 AM',
+    skillLevel: 'Social & Fitness Rotation (All Levels)',
+    rotationRule: '4-Player Doubles Pods • Balanced Court Rotation',
+    designatedCourts: ['Court 1', 'Court 2'],
+    showCourtsOnSite: true,
+    published: false,
+    maxPlayers: 24,
+    players: [],
+    shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+    lastShuffleTime: 'Ready to Shuffle'
+  },
+  {
+    id: 'op-evening-nightlights',
+    title: 'Evening Night-Lights Open Play',
+    schedule: 'Mon / Wed / Fri • 06:00 PM – 09:00 PM',
+    skillLevel: 'Intermediate & Competitive Rally',
+    rotationRule: '4-Player Doubles Pods • Winners Split Partners',
+    designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+    showCourtsOnSite: true,
+    published: false,
+    maxPlayers: 24,
+    players: [],
+    shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+    lastShuffleTime: 'Ready to Shuffle'
+  },
+  {
+    id: 'op-weekend-mixer',
+    title: 'Weekend Club Open Play Mixer',
+    schedule: 'Sat & Sun • 04:00 PM – 07:00 PM',
+    skillLevel: 'All Community Members & Walk-Ins',
+    rotationRule: '4-Player Doubles Pods • Community Shuffler',
+    designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+    showCourtsOnSite: true,
+    published: false,
+    maxPlayers: 24,
+    players: [],
+    shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+    lastShuffleTime: 'Ready to Shuffle'
+  }
 ];
 
 window.PF_OPEN_PLAY_STATE = {
-  courtsCount: 4,
-  maxPlayers: 24,
-  shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
-  lastShuffleTime: 'Live Seeded',
-  customNames: {}
+  activeSessionId: 'op-afternoon-social',
+  courtsOverrideBySession: {},
+  shuffledOrderBySession: {},
+  lastShuffleTimeBySession: {}
 };
 
-function pfGetOpenPlay24PlayersList(targetDateYMD) {
+function pfIsFakeOpenPlayFillerName(name) {
+  const s = String(name || '').trim();
+  if (!s) return true;
+  return /^Player\s*0?\d+/i.test(s) || /^Open\s*Spot\s*#?\d+/i.test(s) || /\(Spot\s*#\d+\)/i.test(s);
+}
+
+function pfGetNormalizedOpenPlaySessions() {
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
-  const todayYMD = pfGetPhilippineTodayYMD();
-  const activeDate = targetDateYMD || (typeof selectedScheduleDateYMD !== 'undefined' && selectedScheduleDateYMD ? selectedScheduleDateYMD : todayYMD);
+  const rawSessions = Array.isArray(cfg.openPlaySessions) && cfg.openPlaySessions.length > 0
+    ? cfg.openPlaySessions
+    : DEFAULT_OPEN_PLAY_SESSIONS;
 
-  // Check if siteConfig has saved openPlayRoster names
-  const savedRoster = Array.isArray(cfg.openPlayRoster) ? cfg.openPlayRoster : [];
+  return DEFAULT_OPEN_PLAY_SESSIONS.map((def, idx) => {
+    const found = rawSessions.find(s => s && s.id === def.id) || rawSessions[idx] || {};
+    const desig = Array.isArray(found.designatedCourts) && found.designatedCourts.length > 0
+      ? found.designatedCourts
+      : def.designatedCourts.slice();
 
-  // Pull real Open Play bookings for activeDate
-  const allBookings = (typeof pfGetAllMergedBookings === 'function') ? pfGetAllMergedBookings() : [];
-  const openPlayBookings = allBookings.filter(b => {
-    if (!b || b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
-    const isOp = /open play/i.test(String(b.court || '')) || (Array.isArray(b.items) && b.items.some(it => /open play/i.test(String(it))));
-    if (!isOp) return false;
-    return (typeof pfBookingMatchesTargetDate === 'function') ? pfBookingMatchesTargetDate(b, activeDate, todayYMD) : true;
-  });
+    // Filter out any legacy fake filler player names so only real players count
+    const rawPlayers = Array.isArray(found.players) ? found.players : [];
+    const cleanRealPlayers = [];
+    rawPlayers.forEach(p => {
+      if (!p) return;
+      const pName = typeof p === 'string' ? p.trim() : String(p.name || '').trim();
+      if (!pName || pfIsFakeOpenPlayFillerName(pName)) return;
+      cleanRealPlayers.push({
+        id: (typeof p === 'object' && p.id) ? p.id : ('op-pl-' + (cleanRealPlayers.length + 1)),
+        name: pName,
+        skill: (typeof p === 'object' && p.skill) ? p.skill : 'All Levels',
+        phone: (typeof p === 'object' && p.phone) ? p.phone : '',
+        joinedAt: (typeof p === 'object' && p.joinedAt) ? p.joinedAt : 'Joined'
+      });
+    });
 
-  const basePlayers = [];
-  openPlayBookings.forEach((bk) => {
-    const pCount = Math.max(1, Math.min(6, Number(bk.players || 1)));
-    for (let k = 0; k < pCount && basePlayers.length < 24; k++) {
-      const label = k === 0 ? `${bk.name || 'Booked Player'} (Ref: ${bk.ref})` : `${bk.name || 'Booked Player'} +Guest #${k}`;
-      basePlayers.push({
-        name: label,
-        isBooked: true,
-        ref: bk.ref || ''
+    // On session #1, also merge any legacy openPlay24Roster real entries if present
+    if (idx === 0 && cleanRealPlayers.length === 0 && Array.isArray(cfg.openPlay24Roster)) {
+      cfg.openPlay24Roster.forEach(r => {
+        const rName = typeof r === 'string' ? r.trim() : String((r && r.name) || '').trim();
+        if (rName && !pfIsFakeOpenPlayFillerName(rName)) {
+          cleanRealPlayers.push({
+            id: 'op-pl-' + (cleanRealPlayers.length + 1),
+            name: rName,
+            skill: (r && r.skill) || 'All Levels',
+            phone: (r && r.phone) || '',
+            joinedAt: 'Joined'
+          });
+        }
       });
     }
-  });
 
-  for (let i = basePlayers.length; i < 24; i++) {
-    const customName = window.PF_OPEN_PLAY_STATE.customNames[i] || (savedRoster[i] && savedRoster[i].name) || DEFAULT_OPEN_PLAY_SAMPLE_PLAYERS[i] || `Player #${i + 1}`;
-    basePlayers.push({
-      name: customName,
-      isBooked: Boolean(savedRoster[i] && savedRoster[i].isBooked),
-      ref: (savedRoster[i] && savedRoster[i].ref) || ''
-    });
-  }
+    const order = (Array.isArray(found.shuffledOrder) && found.shuffledOrder.length === 24)
+      ? found.shuffledOrder.slice()
+      : Array.from({ length: 24 }, (_, i) => i);
 
-  // Apply current random permutation
-  const order = (Array.isArray(window.PF_OPEN_PLAY_STATE.shuffledOrder) && window.PF_OPEN_PLAY_STATE.shuffledOrder.length === 24)
-    ? window.PF_OPEN_PLAY_STATE.shuffledOrder
-    : Array.from({ length: 24 }, (_, idx) => idx);
-
-  return order.map((origIdx, slotPos) => {
-    const p = basePlayers[origIdx] || { name: `Player #${origIdx + 1}`, isBooked: false };
     return {
-      seedNumber: slotPos + 1,
-      origIndex: origIdx,
-      name: p.name,
-      isBooked: p.isBooked,
-      ref: p.ref
+      id: found.id || def.id,
+      title: String(found.title || (idx === 0 && cfg.openPlay24Title ? cfg.openPlay24Title : def.title)).trim(),
+      schedule: String(found.schedule || (idx === 0 && cfg.openPlay24Window ? cfg.openPlay24Window : def.schedule)).trim(),
+      skillLevel: String(found.skillLevel || def.skillLevel).trim(),
+      rotationRule: String(found.rotationRule || def.rotationRule).trim(),
+      designatedCourts: desig,
+      showCourtsOnSite: found.showCourtsOnSite !== false,
+      published: typeof found.published === 'boolean' ? found.published : (idx === 0),
+      maxPlayers: Math.max(4, Number(found.maxPlayers || 24)),
+      players: cleanRealPlayers.slice(0, 24),
+      shuffledOrder: order,
+      lastShuffleTime: String(found.lastShuffleTime || def.lastShuffleTime || 'Ready to Shuffle')
     };
   });
 }
 
-function pfBuildOpenPlay24Schedule(courtsCountInput) {
-  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
-  const courtsCount = Math.max(1, Math.min(4, Number(courtsCountInput || window.PF_OPEN_PLAY_STATE.courtsCount || cfg.openPlayCourtsCount || 4)));
-  window.PF_OPEN_PLAY_STATE.courtsCount = courtsCount;
+function pfGetPublishedOpenPlaySessions() {
+  const all = pfGetNormalizedOpenPlaySessions();
+  const pub = all.filter(s => s.published !== false);
+  return pub.length > 0 ? pub : [all[0]];
+}
 
-  const players = pfGetOpenPlay24PlayersList();
-  // 24 players = 6 doubles pods of 4 players each (Pod 1..Pod 6)
-  const pods = [];
-  for (let p = 0; p < 6; p++) {
-    const group = players.slice(p * 4, p * 4 + 4);
-    pods.push({
-      podIndex: p + 1,
-      teamA: [group[0], group[1]],
-      teamB: [group[2], group[3]],
-      players: group
+function pfGetActiveOpenPlaySession() {
+  const pub = pfGetPublishedOpenPlaySessions();
+  const found = pub.find(s => s.id === window.PF_OPEN_PLAY_STATE.activeSessionId);
+  if (found) return found;
+  window.PF_OPEN_PLAY_STATE.activeSessionId = pub[0].id;
+  return pub[0];
+}
+
+function pfSelectOpenPlaySession(sessionId) {
+  if (!sessionId) return;
+  window.PF_OPEN_PLAY_STATE.activeSessionId = sessionId;
+  pfRenderOpenPlay24Board();
+}
+
+function pfBuildOpenPlay24Schedule(courtsCountInput, sessionIdInput) {
+  const allSessions = pfGetNormalizedOpenPlaySessions();
+  const session = (sessionIdInput && allSessions.find(s => s.id === sessionIdInput)) || pfGetActiveOpenPlaySession();
+  const desigCourts = (Array.isArray(session.designatedCourts) && session.designatedCourts.length > 0)
+    ? session.designatedCourts
+    : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+
+  const overrideCount = window.PF_OPEN_PLAY_STATE.courtsOverrideBySession[session.id];
+  const courtsCount = Math.max(1, Math.min(4, Number(courtsCountInput || overrideCount || desigCourts.length || 4)));
+  const activeCourtNames = [];
+  for (let i = 0; i < courtsCount; i++) {
+    activeCourtNames.push(desigCourts[i] || `Court ${i + 1}`);
+  }
+
+  // Build 24 slots: real joined players first, then honest Open Spots
+  const baseSlots = [];
+  session.players.forEach((pl, idx) => {
+    baseSlots.push({
+      slotNumber: idx + 1,
+      name: pl.name,
+      skill: pl.skill || 'All Levels',
+      isJoined: true
+    });
+  });
+  while (baseSlots.length < 24) {
+    const n = baseSlots.length + 1;
+    baseSlots.push({
+      slotNumber: n,
+      name: `Open Spot #${n}`,
+      skill: 'Available',
+      isJoined: false
     });
   }
 
-  // Dedicated Time Slots between 3:00 PM and 6:00 PM (180 mins total) depending on how many courts (1, 2, 3, or 4) are active:
-  // Each pod of 4 players gets a dedicated court (Court 1..courtsCount) and dedicated time slot!
-  const slotScheduleByCourtCount = {
-    1: [
-      { pod: 1, court: 1, timeSlot: '03:00 PM – 03:30 PM', roundLabel: 'Slot 1 of 6 (30 mins)' },
-      { pod: 2, court: 1, timeSlot: '03:30 PM – 04:00 PM', roundLabel: 'Slot 2 of 6 (30 mins)' },
-      { pod: 3, court: 1, timeSlot: '04:00 PM – 04:30 PM', roundLabel: 'Slot 3 of 6 (30 mins)' },
-      { pod: 4, court: 1, timeSlot: '04:30 PM – 05:00 PM', roundLabel: 'Slot 4 of 6 (30 mins)' },
-      { pod: 5, court: 1, timeSlot: '05:00 PM – 05:30 PM', roundLabel: 'Slot 5 of 6 (30 mins)' },
-      { pod: 6, court: 1, timeSlot: '05:30 PM – 06:00 PM', roundLabel: 'Slot 6 of 6 (30 mins)' }
-    ],
-    2: [
-      { pod: 1, court: 1, timeSlot: '03:00 PM – 04:00 PM', roundLabel: 'Wave 1 • Court 1 (60 mins)' },
-      { pod: 2, court: 2, timeSlot: '03:00 PM – 04:00 PM', roundLabel: 'Wave 1 • Court 2 (60 mins)' },
-      { pod: 3, court: 1, timeSlot: '04:00 PM – 05:00 PM', roundLabel: 'Wave 2 • Court 1 (60 mins)' },
-      { pod: 4, court: 2, timeSlot: '04:00 PM – 05:00 PM', roundLabel: 'Wave 2 • Court 2 (60 mins)' },
-      { pod: 5, court: 1, timeSlot: '05:00 PM – 06:00 PM', roundLabel: 'Wave 3 • Court 1 (60 mins)' },
-      { pod: 6, court: 2, timeSlot: '05:00 PM – 06:00 PM', roundLabel: 'Wave 3 • Court 2 (60 mins)' }
-    ],
-    3: [
-      { pod: 1, court: 1, timeSlot: '03:00 PM – 04:30 PM', roundLabel: 'Session A • Court 1 (90 mins)' },
-      { pod: 2, court: 2, timeSlot: '03:00 PM – 04:30 PM', roundLabel: 'Session A • Court 2 (90 mins)' },
-      { pod: 3, court: 3, timeSlot: '03:00 PM – 04:30 PM', roundLabel: 'Session A • Court 3 (90 mins)' },
-      { pod: 4, court: 1, timeSlot: '04:30 PM – 06:00 PM', roundLabel: 'Session B • Court 1 (90 mins)' },
-      { pod: 5, court: 2, timeSlot: '04:30 PM – 06:00 PM', roundLabel: 'Session B • Court 2 (90 mins)' },
-      { pod: 6, court: 3, timeSlot: '04:30 PM – 06:00 PM', roundLabel: 'Session B • Court 3 (90 mins)' }
-    ],
-    4: [
-      { pod: 1, court: 1, timeSlot: '03:00 PM – 04:00 PM ( + 05:00 PM Rotation )', roundLabel: 'Court 1 • Primary Slot' },
-      { pod: 2, court: 2, timeSlot: '03:00 PM – 04:00 PM ( + 05:00 PM Rotation )', roundLabel: 'Court 2 • Primary Slot' },
-      { pod: 3, court: 3, timeSlot: '03:00 PM – 04:00 PM ( + 05:30 PM Rotation )', roundLabel: 'Court 3 • Primary Slot' },
-      { pod: 4, court: 4, timeSlot: '03:00 PM – 04:00 PM ( + 05:30 PM Rotation )', roundLabel: 'Court 4 • Primary Slot' },
-      { pod: 5, court: 1, timeSlot: '04:00 PM – 05:00 PM ( + 05:00 PM Court 3 )', roundLabel: 'Court 1 & 3 • Dedicated Slot' },
-      { pod: 6, court: 2, timeSlot: '04:00 PM – 05:00 PM ( + 05:00 PM Court 4 )', roundLabel: 'Court 2 & 4 • Dedicated Slot' }
-    ]
+  // Apply shuffle order: if real players have joined and user clicked shuffle, shuffle the real players across pods
+  // or shuffle all 24 slots according to session/local shuffledOrder
+  const localOrder = window.PF_OPEN_PLAY_STATE.shuffledOrderBySession[session.id];
+  const order = (Array.isArray(localOrder) && localOrder.length === 24)
+    ? localOrder
+    : ((Array.isArray(session.shuffledOrder) && session.shuffledOrder.length === 24)
+      ? session.shuffledOrder
+      : Array.from({ length: 24 }, (_, idx) => idx));
+
+  // Keep real players grouped into active pods first when fewer than 24 players are present,
+  // while still shuffling their partner/opponent pairings!
+  const realCount = session.players.length;
+  let orderedSlots = [];
+  if (realCount > 0 && realCount < 24) {
+    const realIndices = order.filter(i => i < realCount);
+    const openIndices = order.filter(i => i >= realCount);
+    orderedSlots = [...realIndices, ...openIndices].map((origIdx, pos) => {
+      const item = baseSlots[origIdx] || baseSlots[pos];
+      return Object.assign({}, item, { podSeat: pos + 1, origIndex: origIdx });
+    });
+  } else {
+    orderedSlots = order.map((origIdx, pos) => {
+      const item = baseSlots[origIdx] || baseSlots[pos];
+      return Object.assign({}, item, { podSeat: pos + 1, origIndex: origIdx });
+    });
+  }
+
+  const waveLabelsByCourtCount = {
+    1: ['Round 1 (30 mins)', 'Round 2 (30 mins)', 'Round 3 (30 mins)', 'Round 4 (30 mins)', 'Round 5 (30 mins)', 'Round 6 (30 mins)'],
+    2: ['Wave 1 • Match 1', 'Wave 1 • Match 2', 'Wave 2 • Match 1', 'Wave 2 • Match 2', 'Wave 3 • Match 1', 'Wave 3 • Match 2'],
+    3: ['Wave A • Match 1', 'Wave A • Match 2', 'Wave A • Match 3', 'Wave B • Match 1', 'Wave B • Match 2', 'Wave B • Match 3'],
+    4: ['Primary Rotation • Court 1', 'Primary Rotation • Court 2', 'Primary Rotation • Court 3', 'Primary Rotation • Court 4', 'Next-Up Stack • Pod 5', 'Next-Up Stack • Pod 6']
   };
+  const waveLabels = waveLabelsByCourtCount[courtsCount] || waveLabelsByCourtCount[4];
 
-  const assignments = slotScheduleByCourtCount[courtsCount] || slotScheduleByCourtCount[4];
-  const enrichedPods = pods.map((pod, idx) => {
-    const asgn = assignments[idx] || assignments[0];
-    return Object.assign({}, pod, {
-      courtNumber: asgn.court,
-      courtLabel: `Court ${asgn.court}`,
-      dedicatedTimeSlot: asgn.timeSlot,
-      roundLabel: asgn.roundLabel
+  const pods = [];
+  for (let p = 0; p < 6; p++) {
+    const group = orderedSlots.slice(p * 4, p * 4 + 4);
+    const assignedCourtName = activeCourtNames[p % activeCourtNames.length] || `Court ${(p % courtsCount) + 1}`;
+    const cNumMatch = String(assignedCourtName).match(/(\d+)/);
+    const courtNum = cNumMatch ? Number(cNumMatch[1]) : ((p % courtsCount) + 1);
+    pods.push({
+      podIndex: p + 1,
+      courtNumber: courtNum,
+      courtLabel: assignedCourtName,
+      assignedCourt: courtNum,
+      primarySlot: waveLabels[p] || `Pod ${p + 1} Rotation`,
+      dedicatedTimeSlot: waveLabels[p] || `Pod ${p + 1} Rotation`,
+      roundLabel: waveLabels[p] || `Pod ${p + 1} Rotation`,
+      teamA: [group[0], group[1]],
+      teamB: [group[2], group[3]],
+      players: group,
+      joinedInPod: group.filter(g => g && g.isJoined).length
     });
-  });
-
-  const flatRoster = [];
-  enrichedPods.forEach(ep => {
-    ep.players.forEach((pl, pIdx) => {
-      const teamLabel = pIdx < 2 ? 'Team A' : 'Team B';
-      const partner = pIdx === 0 ? ep.players[1] : (pIdx === 1 ? ep.players[0] : (pIdx === 2 ? ep.players[3] : ep.players[2]));
-      flatRoster.push({
-        playerSpot: pl.seedNumber,
-        name: pl.name,
-        isBooked: pl.isBooked,
-        ref: pl.ref,
-        podNumber: ep.podIndex,
-        courtNumber: ep.courtNumber,
-        courtLabel: ep.courtLabel,
-        teamLabel: teamLabel,
-        partnerName: partner ? partner.name : 'TBD',
-        dedicatedTimeSlot: ep.dedicatedTimeSlot,
-        roundLabel: ep.roundLabel
-      });
-    });
-  });
+  }
 
   return {
+    session,
     courtsCount,
+    activeCourtNames,
     maxPlayers: 24,
-    openPlayRate: Number(cfg.openPlayRate ?? 150),
-    pods: enrichedPods,
-    roster: flatRoster
+    joinedCount: session.players.length,
+    spotsLeft: Math.max(0, 24 - session.players.length),
+    pods,
+    players: orderedSlots,
+    lastShuffleTime: window.PF_OPEN_PLAY_STATE.lastShuffleTimeBySession[session.id] || session.lastShuffleTime || 'Ready to Shuffle'
   };
 }
 
-function pfShuffleOpenPlay24Players() {
+function pfShuffleOpenPlay24Players(sessionIdInput) {
+  const session = pfGetActiveOpenPlaySession();
+  const sid = sessionIdInput || session.id;
   const arr = Array.from({ length: 24 }, (_, i) => i);
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -4489,242 +4582,473 @@ function pfShuffleOpenPlay24Players() {
     arr[i] = arr[j];
     arr[j] = tmp;
   }
-  window.PF_OPEN_PLAY_STATE.shuffledOrder = arr;
-  window.PF_OPEN_PLAY_STATE.lastShuffleTime = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  window.PF_OPEN_PLAY_STATE.shuffledOrderBySession[sid] = arr;
+  window.PF_OPEN_PLAY_STATE.lastShuffleTimeBySession[sid] = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   pfRenderOpenPlay24Board();
 }
 
 function pfSetOpenPlayCourtCount(numCourts) {
+  const session = pfGetActiveOpenPlaySession();
   const c = Math.max(1, Math.min(4, Number(numCourts) || 4));
-  window.PF_OPEN_PLAY_STATE.courtsCount = c;
+  window.PF_OPEN_PLAY_STATE.courtsOverrideBySession[session.id] = c;
+  pfRenderOpenPlay24Board();
+}
+
+function pfOpenJoinOpenPlayModal(sessionIdInput) {
+  const allSessions = pfGetNormalizedOpenPlaySessions();
+  const session = (sessionIdInput && allSessions.find(s => s.id === sessionIdInput)) || pfGetActiveOpenPlaySession();
+  if (!session) return;
+
+  let modal = document.getElementById('pf-openplay-join-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pf-openplay-join-modal';
+    modal.className = 'fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm';
+    document.body.appendChild(modal);
+  }
+
+  const joinedCount = session.players.length;
+  const spotsLeft = Math.max(0, 24 - joinedCount);
+  const courtBadgeText = (session.showCourtsOnSite !== false && Array.isArray(session.designatedCourts) && session.designatedCourts.length > 0)
+    ? session.designatedCourts.join(' • ')
+    : 'Club Open Play Courts';
+
+  modal.innerHTML = `
+    <div class="w-full max-w-md rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-2xl overflow-hidden animate-fadeIn">
+      <div class="p-5 sm:p-6 bg-[#0F291E] text-white flex items-start justify-between gap-3">
+        <div class="space-y-1">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-[#A3E635] font-mono text-[10px] font-extrabold uppercase tracking-wider">
+            🏓 LIVE COMMUNITY ROSTER (${joinedCount} / 24 JOINED)
+          </span>
+          <h3 class="text-lg sm:text-xl font-black tracking-tight text-white">${pfEscapeHtml(session.title)}</h3>
+          <p class="text-xs text-emerald-100/90">${pfEscapeHtml(session.schedule)} • ${pfEscapeHtml(courtBadgeText)}</p>
+        </div>
+        <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm flex items-center justify-center">✕</button>
+      </div>
+
+      <form onsubmit="pfSubmitJoinOpenPlayForm(event, '${pfEscapeHtml(session.id)}')" class="p-5 sm:p-6 space-y-4 text-xs">
+        <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex items-center justify-between gap-2">
+          <span class="font-bold">Available Spots Remaining:</span>
+          <span class="px-2.5 py-1 rounded-full bg-emerald-700 text-white font-mono font-extrabold text-[11px]">${spotsLeft} of 24 Spots Open</span>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-extrabold uppercase text-slate-700 mb-1">Your Full Name (First &amp; Last Name) *</label>
+          <input type="text" id="pf-op-join-name" required minlength="3" maxlength="60" placeholder="e.g. Marco Santos" class="w-full rounded-xl border-2 border-slate-200 focus:border-[#0F291E] px-3.5 py-2.5 text-sm font-bold text-slate-900 outline-none">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-extrabold uppercase text-slate-700 mb-1">Skill / Rally Level *</label>
+            <select id="pf-op-join-skill" class="w-full rounded-xl border-2 border-slate-200 focus:border-[#0F291E] px-3 py-2.5 text-xs font-bold text-slate-900 outline-none bg-white">
+              <option value="Beginner (2.5–3.0)">Beginner (2.5–3.0)</option>
+              <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
+              <option value="Advanced (4.0+)">Advanced (4.0+)</option>
+              <option value="All Levels Social">All Levels Social</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-extrabold uppercase text-slate-700 mb-1">Mobile Number (Optional)</label>
+            <input type="tel" id="pf-op-join-phone" placeholder="0917 123 4567" class="w-full rounded-xl border-2 border-slate-200 focus:border-[#0F291E] px-3.5 py-2.5 text-xs font-mono font-bold text-slate-900 outline-none">
+          </div>
+        </div>
+
+        <p id="pf-op-join-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs"></p>
+
+        <div class="flex items-center gap-2 pt-1">
+          <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold uppercase text-xs transition">
+            Cancel
+          </button>
+          <button type="submit" id="pf-op-join-submit-btn" class="flex-1 py-3 px-5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black uppercase text-xs tracking-wider transition shadow-md">
+            🏓 Join Open Play &amp; Enter Shuffler →
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+  modal.classList.remove('hidden');
+}
+
+function pfCloseJoinOpenPlayModal() {
+  const modal = document.getElementById('pf-openplay-join-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function pfSubmitJoinOpenPlayForm(e, sessionId) {
+  if (e && e.preventDefault) e.preventDefault();
+  const nameEl = document.getElementById('pf-op-join-name');
+  const skillEl = document.getElementById('pf-op-join-skill');
+  const phoneEl = document.getElementById('pf-op-join-phone');
+  const errEl = document.getElementById('pf-op-join-error');
+  const btnEl = document.getElementById('pf-op-join-submit-btn');
+
+  const rawName = String(nameEl ? nameEl.value : '').trim();
+  const skill = String(skillEl ? skillEl.value : 'Intermediate (3.5)').trim();
+  const phone = String(phoneEl ? phoneEl.value : '').trim();
+
+  if (rawName.length < 3) {
+    if (errEl) {
+      errEl.textContent = 'Please enter your real First and Last Name (at least 3 characters).';
+      errEl.classList.remove('hidden');
+    }
+    return;
+  }
+
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const sessions = pfGetNormalizedOpenPlaySessions();
+  const target = sessions.find(s => s.id === sessionId) || sessions[0];
+
+  if (target.players.length >= 24) {
+    if (errEl) {
+      errEl.textContent = 'This Open Play session already has 24 / 24 players joined.';
+      errEl.classList.remove('hidden');
+    }
+    return;
+  }
+
+  if (target.players.some(p => p.name.toLowerCase() === rawName.toLowerCase())) {
+    if (errEl) {
+      errEl.textContent = `"${rawName}" is already on the live roster for this Open Play session!`;
+      errEl.classList.remove('hidden');
+    }
+    return;
+  }
+
+  if (btnEl) {
+    btnEl.disabled = true;
+    btnEl.textContent = 'Joining Open Play Roster...';
+  }
+
+  target.players.push({
+    id: 'op-pl-' + Date.now(),
+    name: rawName,
+    skill: skill,
+    phone: phone,
+    joinedAt: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })
+  });
+
+  cfg.openPlaySessions = sessions;
+  if (sessions[0]) {
+    cfg.openPlay24Roster = sessions[0].players.slice();
+  }
+  window.PF_SITE_CONFIG = cfg;
+  try {
+    localStorage.setItem('pf_site_config', JSON.stringify(cfg));
+  } catch (err) {}
+
+  try {
+    await fetch('/api/openplay-join', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: target.id,
+        name: rawName,
+        skill: skill,
+        phone: phone
+      })
+    });
+  } catch (err) {
+    try {
+      await fetch('/api/site-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ siteConfig: cfg })
+      });
+    } catch (e2) {}
+  }
+
+  pfCloseJoinOpenPlayModal();
   pfRenderOpenPlay24Board();
 }
 
 function pfRenderOpenPlay24Board() {
-  const container = document.getElementById('open-play-24-board-container');
-  if (!container) return;
+  const dedicatedRoot = document.getElementById('open-play-dedicated-page-root');
+  const homeContainer = document.getElementById('open-play-24-board-container');
 
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
-  if (cfg && cfg.openPlayEnabled === false) {
-    container.innerHTML = '';
-    container.classList.add('hidden');
-    return;
-  }
-  container.classList.remove('hidden');
-
-  const opRate = Number(cfg.openPlayRate ?? 150);
-  const rateLabel = opRate > 0 ? `₱${opRate}` : 'Free';
-  const scheduleData = pfBuildOpenPlay24Schedule(window.PF_OPEN_PLAY_STATE.courtsCount);
+  const pubSessions = pfGetPublishedOpenPlaySessions();
+  const activeSession = pfGetActiveOpenPlaySession();
+  const scheduleData = pfBuildOpenPlay24Schedule(undefined, activeSession.id);
   const courtsActive = scheduleData.courtsCount;
   const pods = scheduleData.pods || [];
-  const players = scheduleData.players || [];
-  const bookedPlayersCount = players.filter(p => p && p.isBooked).length;
-  const spotsLeft = Math.max(0, 24 - bookedPlayersCount);
+  const joinedCount = scheduleData.joinedCount;
+  const spotsLeft = scheduleData.spotsLeft;
+  const showCourts = activeSession.showCourtsOnSite !== false;
+  const desigLabel = Array.isArray(activeSession.designatedCourts) && activeSession.designatedCourts.length > 0
+    ? activeSession.designatedCourts.join(' • ')
+    : 'Courts 1 – 4';
 
-  const sessionBlocks = [
-    {
-      slot: '03:00 PM',
-      timeRange: '3:00 PM – 4:00 PM',
-      tag: 'SESSION BLOCK 1',
-      title: 'Warm-Up & Social Rotation',
-      desc: 'All-levels social doubles across Courts 1 – 4. Great for solo drop-ins and first-hour rallies.',
-      courtsLabel: 'Courts 1 – 4 Active',
-      podNums: 'Pods #1 – #4 on court'
-    },
-    {
-      slot: '04:00 PM',
-      timeRange: '4:00 PM – 5:00 PM',
-      tag: 'SESSION BLOCK 2',
-      title: 'Balanced Skill Pod Play',
-      desc: 'Paddle-stack rotation groups players by similar rally pace (Beginner, Intermediate & Open).',
-      courtsLabel: 'Courts 1 – 4 Active',
-      podNums: 'Pods #3 – #6 rotating'
-    },
-    {
-      slot: '05:00 PM',
-      timeRange: '5:00 PM – 6:00 PM',
-      tag: 'SESSION BLOCK 3',
-      title: 'Sunset Challenge Doubles',
-      desc: 'High-energy doubles games to 11 points (win by 2). Winners stay & split for up to 2 games.',
-      courtsLabel: 'Courts 1 – 4 Active',
-      podNums: 'All 6 Pods next-up stack'
+  // 1. IF ON HOMEPAGE (index.html), RENDER COMPACT EDITORIAL CALLOUT CARD LINKING TO open-play.html (NO PRICES, NO BRACKET)
+  if (homeContainer && !dedicatedRoot) {
+    if (cfg && cfg.openPlayEnabled === false) {
+      homeContainer.innerHTML = '';
+      homeContainer.classList.add('hidden');
+      return;
     }
-  ];
+    homeContainer.classList.remove('hidden');
+    homeContainer.innerHTML = `
+      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-7 shadow-md flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+        <div class="space-y-2 max-w-2xl">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 text-[11px] font-mono font-extrabold uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span>COMMUNITY OPEN PLAY &amp; PLAYER SHUFFLER</span>
+            </span>
+            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 text-[11px] font-mono font-bold">
+              👥 ${joinedCount} / 24 Players Joined (${spotsLeft} Spots Open)
+            </span>
+            ${showCourts ? `
+              <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-mono font-bold">
+                📍 ${pfEscapeHtml(desigLabel)}
+              </span>
+            ` : ''}
+          </div>
+          <h3 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 font-sans">
+            ${pfEscapeHtml(activeSession.title)} • <span class="text-emerald-800">${pfEscapeHtml(activeSession.schedule)}</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Join the live Open Play community roster and use our 4-Player Match Pod Shuffler on the dedicated Open Play page. No brackets—just balanced doubles rotation across ${showCourts ? pfEscapeHtml(desigLabel) : 'our courts'}.
+          </p>
+        </div>
 
-  const sessionCardsHtml = sessionBlocks.map((b) => `
-    <div class="rounded-2xl bg-[#F8FAFC] border border-slate-200/90 p-5 flex flex-col justify-between gap-4 hover:border-[#8B5CF6] hover:bg-white transition-all shadow-xs">
-      <div class="space-y-2.5">
-        <div class="flex items-center justify-between gap-2">
-          <span class="pf-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-sans font-extrabold uppercase tracking-wider">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#8B5CF6]"></span>
-            <span>${b.tag}</span>
-          </span>
-          <span class="pf-pill inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-sans font-bold">
-            ${b.courtsLabel}
-          </span>
+        <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+          <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-2 border-emerald-300 font-extrabold text-xs uppercase tracking-wider transition">
+            + Quick Join (${joinedCount}/24)
+          </button>
+          <a href="open-play.html" class="py-3.5 px-5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black text-xs uppercase tracking-wider transition shadow-md flex items-center gap-2 whitespace-nowrap">
+            <span>🏓 Open Player Shuffler Page</span>
+            <span>→</span>
+          </a>
         </div>
-        <div class="pt-0.5">
-          <div class="text-lg sm:text-xl font-extrabold text-slate-900 font-sans tracking-tight">${b.timeRange}</div>
-          <h4 class="text-xs sm:text-sm font-bold text-[#5B21B6] mt-0.5">${b.title}</h4>
-        </div>
-        <p class="text-xs text-slate-600 leading-relaxed font-normal">${b.desc}</p>
       </div>
-      <div class="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-2">
-        <span class="text-[11px] font-semibold text-slate-600">${rateLabel} / player</span>
-        <button type="button" onclick="openBookingDrawer(1, '${b.slot}')" class="px-3.5 py-2 rounded-xl bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#5B21B6] hover:text-white border border-[#C4B5FD] hover:border-[#5B21B6] text-xs font-extrabold transition shadow-2xs">
-          Book ${b.slot} →
-        </button>
+    `;
+    return;
+  }
+
+  // 2. DEDICATED OPEN PLAY SUB-PAGE (open-play.html)
+  const targetContainer = dedicatedRoot || homeContainer;
+  if (!targetContainer) return;
+
+  const sessionSwitcherHtml = pubSessions.length > 1 ? `
+    <div class="rounded-2xl bg-white border-2 border-slate-200 p-4 shadow-xs space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 font-mono text-[10px] font-extrabold uppercase tracking-wider">
+            🏓 OPEN PLAY SESSIONS (${pubSessions.findIndex(s => s.id === activeSession.id) + 1} OF ${pubSessions.length})
+          </span>
+          <span class="text-xs font-semibold text-slate-600">Select an Open Play session below to view its live player roster &amp; pod shuffler</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(4, pubSessions.length)} gap-2.5">
+        ${pubSessions.map((s, idx) => {
+          const isAct = s.id === activeSession.id;
+          const sCourts = (s.showCourtsOnSite !== false && Array.isArray(s.designatedCourts) && s.designatedCourts.length > 0)
+            ? s.designatedCourts.join(', ')
+            : '';
+          return `
+            <button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="text-left p-3.5 rounded-xl border-2 transition flex items-start gap-3 ${isAct ? 'bg-[#0F291E] text-white border-[#0F291E] shadow-sm' : 'bg-slate-50 hover:bg-white text-slate-900 border-slate-200'}">
+              <span class="w-7 h-7 rounded-lg font-mono text-xs font-black flex items-center justify-center flex-shrink-0 ${isAct ? 'bg-[#A3E635] text-[#050E1D]' : 'bg-slate-200 text-slate-700'}">0${idx + 1}</span>
+              <div class="min-w-0 flex-1">
+                <div class="text-xs font-extrabold truncate ${isAct ? 'text-white' : 'text-slate-900'}">${pfEscapeHtml(s.title)}</div>
+                <div class="text-[11px] font-mono truncate mt-0.5 ${isAct ? 'text-emerald-200' : 'text-slate-500'}">${pfEscapeHtml(s.schedule)}</div>
+                <div class="text-[10px] font-mono mt-1 ${isAct ? 'text-[#A3E635]' : 'text-emerald-700'}">👥 ${s.players.length}/24 Joined${sCourts ? ' • ' + pfEscapeHtml(sCourts) : ''}</div>
+              </div>
+            </button>
+          `;
+        }).join('')}
       </div>
     </div>
-  `).join('');
+  ` : '';
 
-  const compactPodsHtml = pods.map((pod) => {
-    const cleanPName = (p, idx) => {
-      if (!p || !p.name) return `Open Spot #${(pod.podIndex - 1) * 4 + idx + 1}`;
-      const raw = String(p.name).replace(/\s*\(Spot\s*#\d+\)/i, '').trim();
-      if (/^Player\s*0?\d+$/i.test(raw)) {
-        return `Open Spot #${(pod.podIndex - 1) * 4 + idx + 1}`;
+  const podsGridHtml = pods.map((pod) => {
+    const renderSeat = (seat) => {
+      if (seat && seat.isJoined) {
+        return `
+          <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-white border border-emerald-300 shadow-2xs">
+            <div class="min-w-0">
+              <div class="text-xs font-extrabold text-slate-900 truncate">✓ ${pfEscapeHtml(seat.name)}</div>
+              <div class="text-[10px] font-mono text-emerald-700 truncate">${pfEscapeHtml(seat.skill || 'Joined')}</div>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-mono text-[9px] font-black uppercase flex-shrink-0">#${seat.podSeat}</span>
+          </div>
+        `;
       }
-      return raw;
+      return `
+        <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="w-full text-left flex items-center justify-between gap-2 p-2 rounded-lg bg-white/80 hover:bg-emerald-50 border border-dashed border-slate-300 hover:border-emerald-500 transition group">
+          <span class="text-xs font-semibold text-slate-500 group-hover:text-emerald-900 truncate">+ Open Spot #${seat ? seat.podSeat : ''} (Click to Join)</span>
+          <span class="px-2 py-0.5 rounded bg-slate-100 group-hover:bg-emerald-200 text-slate-600 group-hover:text-emerald-950 font-mono text-[9px] font-bold uppercase flex-shrink-0">OPEN</span>
+        </button>
+      `;
     };
-    const tA1 = cleanPName(pod.teamA[0], 0);
-    const tA2 = cleanPName(pod.teamA[1], 1);
-    const tB1 = cleanPName(pod.teamB[0], 2);
-    const tB2 = cleanPName(pod.teamB[1], 3);
 
     return `
-      <div class="rounded-xl bg-white border border-slate-200 p-3.5 space-y-2.5 shadow-2xs">
-        <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+      <div class="rounded-2xl bg-white border-2 border-slate-200 p-4 sm:p-5 space-y-3.5 shadow-xs hover:border-slate-300 transition">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div class="flex items-center gap-2">
-            <span class="pf-pill px-2.5 py-0.5 rounded-lg bg-slate-900 text-white text-[10px] font-sans font-extrabold uppercase">Court ${pod.assignedCourt}</span>
-            <span class="text-xs font-extrabold text-slate-900">Group ${pod.podIndex}</span>
+            <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-white font-mono text-[11px] font-extrabold uppercase">Pod ${pod.podIndex}</span>
+            ${showCourts ? `<span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 font-mono text-[11px] font-extrabold uppercase">📍 ${pfEscapeHtml(pod.courtLabel)}</span>` : ''}
           </div>
-          <span class="text-[11px] font-semibold text-emerald-700">${pod.primarySlot.split('(')[0].trim()}</span>
+          <span class="text-[11px] font-mono font-bold text-slate-600">${pfEscapeHtml(pod.roundLabel)}</span>
         </div>
-        <div class="grid grid-cols-2 gap-2 text-[11px]">
-          <div class="p-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
-            <span class="text-[9px] font-extrabold uppercase text-emerald-800 block mb-1">Side A (Doubles)</span>
-            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tA1)}</div>
-            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tA2)}</div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-extrabold uppercase text-emerald-900">Side A (Doubles Pair)</span>
+              <span class="text-[10px] font-mono font-bold text-emerald-700">2 Spots</span>
+            </div>
+            ${renderSeat(pod.teamA[0])}
+            ${renderSeat(pod.teamA[1])}
           </div>
-          <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-            <span class="text-[9px] font-extrabold uppercase text-slate-600 block mb-1">Side B (Doubles)</span>
-            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tB1)}</div>
-            <div class="text-slate-800 font-semibold truncate">• ${pfEscapeHtml(tB2)}</div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-extrabold uppercase text-slate-700">Side B (Doubles Pair)</span>
+              <span class="text-[10px] font-mono font-bold text-slate-500">2 Spots</span>
+            </div>
+            ${renderSeat(pod.teamB[0])}
+            ${renderSeat(pod.teamB[1])}
           </div>
         </div>
       </div>
     `;
   }).join('');
 
-  container.innerHTML = `
-    <div class="rounded-3xl bg-white text-slate-900 border border-slate-200 p-5 sm:p-8 shadow-xl space-y-6">
-      <!-- Top Editorial Summary Header -->
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-6 border-b border-slate-200">
-        <div class="space-y-2 max-w-2xl">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-sans font-extrabold uppercase tracking-wider">
-              <span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>
-              <span>DAILY OPEN PLAY • 3:00 PM – 6:00 PM</span>
-            </span>
-            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-sans font-bold">
-              ${spotsLeft} of 24 Spots Open Today
-            </span>
+  const realRosterHtml = activeSession.players.length > 0
+    ? `
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+        ${activeSession.players.map((pl, idx) => `
+          <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-6 h-6 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
+              <div class="min-w-0">
+                <div class="text-xs font-extrabold text-slate-900 truncate">${pfEscapeHtml(pl.name)}</div>
+                <div class="text-[10px] font-mono text-emerald-800 truncate">${pfEscapeHtml(pl.skill || 'All Levels')}</div>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-200/80 text-emerald-950 font-mono text-[9px] font-black uppercase flex-shrink-0">JOINED</span>
           </div>
-          <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-sans">
-            Drop-In Community Open Play
-          </h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-            No partner needed. Join up to 24 players across all 4 covered courts for rotating doubles matches. Play at your own pace with our fair paddle-stack rotation system.
-          </p>
+        `).join('')}
+      </div>
+    `
+    : `
+      <div class="p-6 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 text-center space-y-2">
+        <div class="text-sm font-extrabold text-slate-800">0 Players Joined Yet — All 24 Open Play Spots Are Available!</div>
+        <p class="text-xs text-slate-600 max-w-xl mx-auto">No fake or filler names are shown. Be the first player to join this Open Play session—click <b>Join Open Play Roster</b> below to put your name on Spot #1!</p>
+      </div>
+    `;
+
+  targetContainer.innerHTML = `
+    <div class="space-y-6">
+      ${sessionSwitcherHtml}
+
+      <!-- Clean Basic Session Overview Card (No Prices, No Bracket) -->
+      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-8 shadow-sm space-y-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 border-b border-slate-200 pb-6">
+          <div class="space-y-2.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 font-mono text-[11px] font-extrabold uppercase tracking-wider">
+                🏓 ${pfEscapeHtml(activeSession.rotationRule)}
+              </span>
+              ${showCourts ? `
+                <span class="px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[11px] font-extrabold uppercase">
+                  📍 Designated: ${pfEscapeHtml(desigLabel)}
+                </span>
+              ` : ''}
+              <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-mono text-[11px] font-extrabold uppercase">
+                ${spotsLeft} OF 24 SPOTS OPEN (${joinedCount}/24 JOINED)
+              </span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-slate-900 font-sans">
+              ${pfEscapeHtml(activeSession.title)}
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 max-w-3xl leading-relaxed">
+              Open Play uses our live 4-Player Match Pod Shuffler instead of an elimination bracket. Players join the live community roster below and get shuffled into balanced doubles pods across ${showCourts ? pfEscapeHtml(desigLabel) : 'the designated courts'}.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+            <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border-2 border-slate-200 font-extrabold text-xs uppercase tracking-wider transition flex items-center gap-2">
+              <span>🔀 Shuffle Players &amp; Pods</span>
+            </button>
+            <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="py-3.5 px-6 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black text-xs sm:text-sm uppercase tracking-wider transition shadow-md flex items-center gap-2">
+              <span>🏓 Join Open Play Roster</span>
+              <span>→</span>
+            </button>
+          </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-slate-50 border border-slate-200 p-4 rounded-2xl flex-shrink-0">
-          <div class="pr-2">
-            <span class="text-[10px] font-sans font-bold uppercase tracking-wider text-slate-500 block">Open Play Entry</span>
-            <div class="flex items-baseline gap-1.5 mt-0.5">
-              <span class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-sans">${rateLabel}</span>
-              <span class="text-xs font-semibold text-slate-500">/ player</span>
-            </div>
-            <span class="text-[11px] text-emerald-700 font-semibold block">Courts 1 – 4 • Paddle Stack Rotation</span>
+        <!-- Clean 3-Box Spec Strip (No Prices / No Prizes) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div class="p-4 rounded-2xl bg-[#F8F7F2] border border-slate-200/90">
+            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-500 block">📅 SCHEDULE WINDOW</span>
+            <div class="text-sm sm:text-base font-extrabold text-slate-900 mt-1">${pfEscapeHtml(activeSession.schedule)}</div>
           </div>
-          <button type="button" onclick="openBookingDrawer(1, '03:00 PM')" class="py-3.5 px-5 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-extrabold text-xs sm:text-sm tracking-wide transition shadow-sm flex items-center justify-center gap-2 whitespace-nowrap">
-            <span>Join Open Play</span>
-            <span>→</span>
+          <div class="p-4 rounded-2xl bg-[#F8F7F2] border border-slate-200/90">
+            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-500 block">🎾 SKILL LEVEL &amp; FORMAT</span>
+            <div class="text-sm sm:text-base font-extrabold text-emerald-800 mt-1">${pfEscapeHtml(activeSession.skillLevel)}</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-[#F8F7F2] border border-slate-200/90">
+            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-500 block">👥 REAL PLAYERS JOINED</span>
+            <div class="text-sm sm:text-base font-extrabold text-sky-800 mt-1">${joinedCount} / 24 Players (${spotsLeft} Spots Open)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live 4-Player Match Pod Shuffler Board (6 Pods = 24 Players) -->
+      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-8 shadow-sm space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-extrabold uppercase">LIVE COURT POD SHUFFLER</span>
+              <span class="text-[11px] font-mono font-bold text-slate-500">Last Shuffle: ${pfEscapeHtml(scheduleData.lastShuffleTime)}</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-black text-slate-900 mt-1">6 Shuffled Doubles Match Pods (4 Players Per Pod)</h3>
+            <p class="text-xs text-slate-600">Click <b>Shuffle Players Now</b> before each round to randomize partners and opponents across ${courtsActive} active court${courtsActive > 1 ? 's' : ''}.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px] font-bold">
+              <span class="px-2 text-slate-600 font-mono text-[10px] uppercase">Courts:</span>
+              ${[1, 2, 3, 4].map(c => `
+                <button type="button" onclick="pfSetOpenPlayCourtCount(${c})" class="px-2.5 py-1.5 rounded-lg transition font-mono ${courtsActive === c ? 'bg-[#0F291E] text-white font-extrabold' : 'text-slate-600 hover:text-slate-900'}">${c} ${c === 1 ? 'Court' : 'Courts'}</button>
+              `).join('')}
+            </div>
+            <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-extrabold text-xs uppercase tracking-wider transition shadow-xs">
+              🔀 Shuffle Players Now
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${podsGridHtml}
+        </div>
+      </div>
+
+      <!-- Exact Community Players Joined List -->
+      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-8 shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+          <div>
+            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER</span>
+            <h3 class="text-lg font-black text-slate-900">Exact Players Joined (${joinedCount} / 24)</h3>
+          </div>
+          <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs uppercase tracking-wider transition">
+            + Add My Name to Roster
           </button>
         </div>
+        ${realRosterHtml}
       </div>
-
-      <!-- 3 Hourly Session Blocks -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        ${sessionCardsHtml}
-      </div>
-
-      <!-- 4-Pillar How Open Play Works Strip -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
-        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">1</span>
-          <div>
-            <h4 class="text-xs font-extrabold text-slate-900">Reserve or Walk In</h4>
-            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Book your spot online (${rateLabel}/player) or check in at the front desk before 3:00 PM.</p>
-          </div>
-        </div>
-        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">2</span>
-          <div>
-            <h4 class="text-xs font-extrabold text-slate-900">Stack Your Paddle</h4>
-            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Place your paddle in the 4-up rack by skill level so every game is competitive and welcoming.</p>
-          </div>
-        </div>
-        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">3</span>
-          <div>
-            <h4 class="text-xs font-extrabold text-slate-900">11-Point Rally Games</h4>
-            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Games are played to 11 points (win by 2). Next 4 paddles rotate onto the open court immediately.</p>
-          </div>
-        </div>
-        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-start gap-3">
-          <span class="w-8 h-8 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-extrabold text-xs flex items-center justify-center flex-shrink-0">4</span>
-          <div>
-            <h4 class="text-xs font-extrabold text-slate-900">Rotate Partners</h4>
-            <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">Meet the Daraga pickleball community—winners split partners after each match for fresh matchups.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Optional Clean Expandable Court Matchmaker Tool -->
-      <details class="group rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden">
-        <summary class="cursor-pointer px-4 sm:px-5 py-3.5 text-xs font-extrabold text-slate-700 hover:text-slate-900 flex flex-wrap items-center justify-between gap-2 select-none">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span>Optional On-Court Tool: 4-Court Match Pod Shuffler (${bookedPlayersCount} Booked / ${spotsLeft} Open Spots)</span>
-          </div>
-          <span class="text-emerald-700 font-bold text-[11px] group-open:rotate-180 transition-transform">▼ Show / Hide</span>
-        </summary>
-        <div class="p-4 sm:p-5 border-t border-slate-200 bg-white space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-xs text-slate-600">Use this optional shuffler at the courts to randomly assign players into 6 balanced doubles pods across ${courtsActive} active court${courtsActive > 1 ? 's' : ''}.</p>
-            <div class="flex flex-wrap items-center gap-2">
-              <div class="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px] font-bold">
-                <span class="px-2 text-slate-600">Courts:</span>
-                ${[1, 2, 3, 4].map(c => `
-                  <button type="button" onclick="pfSetOpenPlayCourtCount(${c})" class="px-2.5 py-1 rounded-lg transition ${courtsActive === c ? 'bg-slate-900 text-white font-extrabold' : 'text-slate-600 hover:text-slate-900'}">${c}C</button>
-                `).join('')}
-              </div>
-              <button type="button" onclick="pfShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-extrabold text-xs transition shadow-2xs">
-                Shuffle Match Pods
-              </button>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            ${compactPodsHtml}
-          </div>
-        </div>
-      </details>
     </div>
   `;
 }
 
+window.DEFAULT_OPEN_PLAY_SESSIONS = DEFAULT_OPEN_PLAY_SESSIONS;
+window.pfGetNormalizedOpenPlaySessions = pfGetNormalizedOpenPlaySessions;
+window.pfGetPublishedOpenPlaySessions = pfGetPublishedOpenPlaySessions;
+window.pfSelectOpenPlaySession = pfSelectOpenPlaySession;
+window.pfOpenJoinOpenPlayModal = pfOpenJoinOpenPlayModal;
+window.pfCloseJoinOpenPlayModal = pfCloseJoinOpenPlayModal;
+window.pfSubmitJoinOpenPlayForm = pfSubmitJoinOpenPlayForm;
 window.pfBuildOpenPlay24Schedule = pfBuildOpenPlay24Schedule;
 window.pfShuffleOpenPlay24Players = pfShuffleOpenPlay24Players;
 window.pfSetOpenPlayCourtCount = pfSetOpenPlayCourtCount;

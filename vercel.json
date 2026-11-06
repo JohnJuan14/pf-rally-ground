@@ -27,6 +27,10 @@
       "destination": "/courts.html"
     },
     {
+      "source": "/open-play",
+      "destination": "/open-play.html"
+    },
+    {
       "source": "/pricing",
       "destination": "/pricing.html"
     }
