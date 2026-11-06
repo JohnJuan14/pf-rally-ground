@@ -243,6 +243,90 @@ def _normalize_db_dict(data):
     return data
 
 
+def _get_supabase_credentials():
+    sb_url = (os.environ.get("SUPABASE_URL") or os.environ.get("NEXT_PUBLIC_SUPABASE_URL") or "").strip().rstrip("/")
+    sb_key = (
+        os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+        or os.environ.get("SUPABASE_KEY")
+        or os.environ.get("SUPABASE_ANON_KEY")
+        or os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+        or ""
+    ).strip()
+    if sb_url and sb_key:
+        return sb_url, sb_key
+    for candidate in (
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "supabase_config.json"),
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "supabase_config.json"),
+    ):
+        if os.path.exists(candidate):
+            try:
+                with open(candidate, "r", encoding="utf-8") as f:
+                    cfg = json.load(f)
+                u = str(cfg.get("url") or cfg.get("SUPABASE_URL") or "").strip().rstrip("/")
+                k = str(cfg.get("serviceRoleKey") or cfg.get("anonKey") or cfg.get("key") or cfg.get("SUPABASE_KEY") or "").strip()
+                if u and k:
+                    return u, k
+            except Exception:
+                pass
+    return (
+        "https://rqyedcvngrhijmkoeyii.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxeWVkY3ZuZ3JoaWpta29leWlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5Mjc0NDUsImV4cCI6MjEwOTUwMzQ0NX0.jIhie1tDXUBLUw9-mJ91XwEOOPLDGL6ilDYzrxpvo-I"
+    )
+
+
+def _supabase_get_db():
+    sb_url, sb_key = _get_supabase_credentials()
+    if not sb_url or not sb_key:
+        return None
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"{sb_url}/rest/v1/pf_cloud_state?id=eq.pf_rally_ground_db&select=data,updated_at",
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Accept": "application/json",
+            }
+        )
+        with urllib.request.urlopen(req, timeout=3.5) as resp:
+            rows = json.loads(resp.read().decode("utf-8"))
+            if isinstance(rows, list) and len(rows) > 0 and isinstance(rows[0], dict):
+                raw_data = rows[0].get("data")
+                if isinstance(raw_data, dict) and len(raw_data) > 0:
+                    return raw_data
+    except Exception:
+        pass
+    return None
+
+
+def _supabase_set_db(data):
+    sb_url, sb_key = _get_supabase_credentials()
+    if not sb_url or not sb_key:
+        return
+    try:
+        import urllib.request
+        payload = {
+            "id": "pf_rally_ground_db",
+            "data": data,
+            "updated_at": int(time.time() * 1000)
+        }
+        body_bytes = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            f"{sb_url}/rest/v1/pf_cloud_state?on_conflict=id",
+            data=body_bytes,
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Content-Type": "application/json",
+                "Prefer": "resolution=merge-duplicates,return=minimal",
+            },
+            method="POST"
+        )
+        urllib.request.urlopen(req, timeout=3.5).read()
+    except Exception:
+        pass
+
+
 def _kv_get_db():
     kv_url = (os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL") or "").strip().rstrip("/")
     kv_token = (os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN") or "").strip()
@@ -287,6 +371,15 @@ def _kv_set_db(data):
 
 def load_db():
     global _MEMORY_DB
+    sb_data = _supabase_get_db()
+    if isinstance(sb_data, dict):
+        _MEMORY_DB = _normalize_db_dict(sb_data)
+        try:
+            with open(DB_FILE, "w", encoding="utf-8") as f:
+                json.dump(_MEMORY_DB, f)
+        except Exception:
+            pass
+        return _MEMORY_DB
     kv_data = _kv_get_db()
     if isinstance(kv_data, dict):
         _MEMORY_DB = _normalize_db_dict(kv_data)
@@ -334,6 +427,7 @@ def save_db(data):
                 json.dump(data, f, indent=2)
         except Exception:
             pass
+    _supabase_set_db(data)
     _kv_set_db(data)
 
 
@@ -1546,7 +1640,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                             current_sc[k] = bool(v)
                     elif k == "openPlaySlots" and isinstance(v, list):
                         current_sc[k] = [sanitize_str(x, 30) for x in v if str(x).strip()]
-                    elif isinstance(v, (list, dict)) or k in ("tournaments", "openPlaySessions", "openPlay24Roster", "openPlayRoster", "openPlaySchedule"):
+                    elif isinstance(v, (list, dict)) or k in ("tournaments", "openPlaySessions", "openPlay24Roster", "openPlayRoster", "openPlaySchedule", "openPlayDesignatedCourts"):
                         current_sc[k] = v
                     elif isinstance(v, (int, float)) or isinstance(def_val, (int, float)) or k in (
                         "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate", "openPlayMaxPlayers", "openPlayCourtsCount", "openPlaySlotMinutes", "maxAdvanceBookingDays", "clubLat", "clubLng",

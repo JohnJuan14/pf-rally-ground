@@ -1419,17 +1419,30 @@
       border: 1px solid #475569 !important;
     }
 
-    /* Dark Mode adaptation for white cards (Calendar, Open Play, Tournaments, Policies) */
+    /* Ensure all Volt Lime (#A3E635) buttons & child spans ALWAYS have crisp black text (#04120B) */
+    html body .bg-\[\#A3E635\],
+    html body .bg-\[\#A3E635\] *,
+    html[data-theme="light"] .bg-\[\#0F291E\] .bg-\[\#A3E635\],
+    html[data-theme="light"] .bg-\[\#0F291E\] .bg-\[\#A3E635\] *,
+    html[data-theme="dark"] .bg-\[\#0F291E\] .bg-\[\#A3E635\],
+    html[data-theme="dark"] .bg-\[\#0F291E\] .bg-\[\#A3E635\] *,
+    html body button.pf-trn-btn-volt,
+    html body button.pf-trn-btn-volt *,
+    html body .pf-trn-btn-volt,
+    html body .pf-trn-btn-volt * {
+      color: #04120B !important;
+    }
+
+    /* Dark Mode adaptation for white/cream cards (Open Play & Tournaments) */
     html[data-theme="dark"] section#tournaments {
       background-color: #091510 !important;
       color: #ECFDF5 !important;
       border-color: rgba(255, 255, 255, 0.1) !important;
     }
-    html[data-theme="dark"] section#tournaments h2,
-    html[data-theme="dark"] section#tournaments h3 {
+    html[data-theme="dark"] section#tournaments > div > div > div > h2 {
       color: #FFFFFF !important;
     }
-    html[data-theme="dark"] section#tournaments p {
+    html[data-theme="dark"] section#tournaments > div > div > div > p {
       color: #A7F3D0 !important;
     }
     html[data-theme="dark"] #public-tournaments-grid > div {
@@ -1437,17 +1450,28 @@
       border-color: rgba(52, 211, 153, 0.25) !important;
       color: #ECFDF5 !important;
     }
+    /* Keep headings & text dark inside light cream/white inner cards (#F8F7F3 / bg-white) in Dark Mode */
+    html[data-theme="dark"] #public-tournaments-grid .bg-\[\#F8F7F3\] h3,
+    html[data-theme="dark"] #public-tournaments-grid .bg-white .bg-\[\#F8F7F3\] h3,
+    html[data-theme="dark"] #open-play-card-surface .bg-\[\#F8F7F3\] h3,
+    html[data-theme="dark"] #open-play-card-surface h3 {
+      color: #0D1F18 !important;
+    }
+    html[data-theme="dark"] #public-tournaments-grid .bg-\[\#F8F7F3\] p,
+    html[data-theme="dark"] #open-play-card-surface .bg-\[\#F8F7F3\] p {
+      color: #334155 !important;
+    }
+    /* Empty state card in #public-tournaments-grid when no tournaments are scheduled */
+    html[data-theme="dark"] #public-tournaments-grid > div.border-dashed h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] #public-tournaments-grid > div.border-dashed p {
+      color: #CBD5E1 !important;
+    }
     html[data-theme="dark"] #open-play-card-surface {
       background-color: #0F231B !important;
       border-color: rgba(52, 211, 153, 0.25) !important;
       color: #ECFDF5 !important;
-    }
-    html[data-theme="dark"] #open-play-card-surface h3 {
-      color: #FFFFFF !important;
-    }
-    html[data-theme="dark"] #open-play-card-surface > div > div > p,
-    html[data-theme="dark"] #open-play-card-surface #open-play-capacity-meta {
-      color: #CBD5E1 !important;
     }
 
     html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-slate-100,
@@ -2531,15 +2555,15 @@ button.pf-trn-btn-danger:hover,
           </div>
         </a>
 
-        <div class="flex items-center gap-3 p-3 rounded-2xl bg-brand-black/80 border border-brand-lime/30 shadow-lg">
-          <div class="w-10 h-10 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center flex-shrink-0 shadow-md shadow-brand-lime/30">
+        <a href="#schedule" onclick="return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="flex items-center gap-3 p-3 rounded-2xl bg-brand-black/80 hover:bg-brand-card border border-brand-lime/30 hover:border-brand-lime transition group shadow-lg cursor-pointer">
+          <div class="w-10 h-10 rounded-xl bg-brand-lime text-brand-black flex items-center justify-center flex-shrink-0 shadow-md shadow-brand-lime/30 group-hover:scale-105 transition-transform">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <div class="min-w-0">
-            <span class="text-white font-black block uppercase tracking-wide truncate">6 AM – 12 AM</span>
+            <span class="text-white font-black block uppercase tracking-wide group-hover:text-brand-lime transition truncate">6 AM – 12 AM</span>
             <span class="text-[11px] text-brand-lime font-mono block truncate">30-Day Advance Booking</span>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   </section>
@@ -2692,6 +2716,10 @@ button.pf-trn-btn-danger:hover,
             <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#8B5CF6]"></span>
             <span>Open Play</span>
           </span>
+          <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF9C3] border border-[#FACC15] text-[#854D0E]">
+            <span class="cal-cat-dot w-2 h-2 rounded-full bg-[#EAB308]"></span>
+            <span>🏆 Tournament</span>
+          </span>
         </div>
       </div>
 
@@ -2728,7 +2756,7 @@ button.pf-trn-btn-danger:hover,
       <!-- Live Spectator Bracket Status Banner (Read-Only on Public Site, Synced from Admin 3D Tournament Host) -->
       <div id="public-live-bracket-spectator-banner" class="hidden"></div>
 
-      <!-- Dynamic Tournaments Grid (Populated by pfRenderPublicTournaments in app.js & editable in Admin) -->
+      <!-- Dynamic Tournaments Grid (Populated by pfRenderPublicTournaments in app.js?v=20261105v9 & editable in Admin) -->
       <div id="public-tournaments-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
           <div class="w-11 h-11 rounded-xl bg-[#E2E0D8] text-[#475569] flex items-center justify-center mx-auto mb-4">
@@ -2779,10 +2807,20 @@ button.pf-trn-btn-danger:hover,
             </div>
           </div>
 
-          <div class="space-y-2.5 pt-2">
-            <a data-site-map-pin-link="1" href="https://www.google.com/maps?q=13.15543,123.72471+(P%26F+Rally+Ground+Pickleball+Club)&amp;t=k&amp;z=18" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition active:scale-95">
-              <span>🛰️ Open Google Maps Satellite Pin (13.15543, 123.72471)</span>
-              <span>↗</span>
+          <div class="pt-2">
+            <a data-site-map-pin-link="1" href="https://www.google.com/maps?q=13.15543,123.72471+(P%26F+Rally+Ground+Pickleball+Club)&amp;t=k&amp;z=18" target="_blank" rel="noopener noreferrer" class="group w-full p-3.5 rounded-2xl bg-[#0F291E] hover:bg-[#143829] border-2 border-[#15803D] hover:border-[#A3E635] text-white flex items-center justify-between gap-3 shadow-lg transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99]" style="background:#0F291E !important;color:#FFFFFF !important;">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-[#A3E635] text-[#0F291E] flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform" style="background:#A3E635 !important;color:#0F291E !important;">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <div class="min-w-0 text-left">
+                  <span class="block text-xs sm:text-sm font-black uppercase tracking-wide text-white truncate" style="color:#FFFFFF !important;">Open Google Satellite Map</span>
+                  <span class="block text-[11px] font-mono font-bold text-[#A3E635] truncate" style="color:#A3E635 !important;">📍 GPS Pin: 13.15543, 123.72471</span>
+                </div>
+              </div>
+              <span class="pf-trn-btn-volt px-3.5 py-2 rounded-xl bg-[#A3E635] group-hover:bg-[#BEF264] text-[#04120B] border border-[#65A30D] font-mono text-[10px] font-black uppercase tracking-wider whitespace-nowrap transition flex-shrink-0 shadow-sm" style="background:#A3E635 !important;color:#04120B !important;border-color:#65A30D !important;">
+                Directions ↗
+              </span>
             </a>
           </div>
         </div>
@@ -3604,7 +3642,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261105v5"></script>
+<script src="app.js?v=20261105v9"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -3922,7 +3960,13 @@ button.pf-trn-btn-danger:hover,
             slotInfo.status !== 'CLOSED'
           );
 
-          if (cat === 'PRIVATE') {
+          if (cat === 'TOURNAMENT') {
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <a href="#tournaments" class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#FEF9C3] hover:bg-[#FEF08A] text-[#854D0E] border border-[#FACC15] text-[10px] sm:text-xs font-extrabold shadow-sm truncate transition" title="${pfEscapeHtml(slotInfo.reason || 'Official Club Tournament')}">
+                🏆 Tournament
+              </a>
+            </td>`;
+          } else if (cat === 'PRIVATE') {
             return `<td class="p-1 sm:p-1.5 text-center relative">
               <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[10px] sm:text-xs font-extrabold shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'Private')}">
                 Private
@@ -4151,7 +4195,11 @@ button.pf-trn-btn-danger:hover,
         const isSelected = (slot === DRAWER_STATE.selectedStartSlot);
         const rate = getHourlyRate(slot);
 
-        if (cat === 'PRIVATE') {
+        if (cat === 'TOURNAMENT') {
+          btn.disabled = true;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEF9C3] text-[#854D0E] border border-[#FACC15] text-[11px] font-sans font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#854D0E] font-black">🏆 Tournament</span>`;
+        } else if (cat === 'PRIVATE') {
           btn.disabled = true;
           btn.className = 'py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[11px] font-sans font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#64748B] font-black">Private</span>`;

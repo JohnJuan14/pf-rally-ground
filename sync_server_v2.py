@@ -198,6 +198,90 @@ def append_security_log(db, event_type, detail, ip="127.0.0.1"):
     })
     db["securityLog"] = db["securityLog"][:40]
 
+def _get_supabase_credentials():
+    sb_url = (os.environ.get("SUPABASE_URL") or os.environ.get("NEXT_PUBLIC_SUPABASE_URL") or "").strip().rstrip("/")
+    sb_key = (
+        os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+        or os.environ.get("SUPABASE_KEY")
+        or os.environ.get("SUPABASE_ANON_KEY")
+        or os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+        or ""
+    ).strip()
+    if sb_url and sb_key:
+        return sb_url, sb_key
+    for candidate in (
+        os.path.join(PUBLIC_DIR, "supabase_config.json"),
+        os.path.join(PUBLIC_DIR, "api", "supabase_config.json"),
+    ):
+        if os.path.exists(candidate):
+            try:
+                with open(candidate, "r", encoding="utf-8") as f:
+                    cfg = json.load(f)
+                u = str(cfg.get("url") or cfg.get("SUPABASE_URL") or "").strip().rstrip("/")
+                k = str(cfg.get("serviceRoleKey") or cfg.get("anonKey") or cfg.get("key") or cfg.get("SUPABASE_KEY") or "").strip()
+                if u and k:
+                    return u, k
+            except Exception:
+                pass
+    return (
+        "https://rqyedcvngrhijmkoeyii.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxeWVkY3ZuZ3JoaWpta29leWlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5Mjc0NDUsImV4cCI6MjEwOTUwMzQ0NX0.jIhie1tDXUBLUw9-mJ91XwEOOPLDGL6ilDYzrxpvo-I"
+    )
+
+
+def _supabase_get_db():
+    sb_url, sb_key = _get_supabase_credentials()
+    if not sb_url or not sb_key:
+        return None
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"{sb_url}/rest/v1/pf_cloud_state?id=eq.pf_rally_ground_db&select=data,updated_at",
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Accept": "application/json",
+            }
+        )
+        with urllib.request.urlopen(req, timeout=3.5) as resp:
+            rows = json.loads(resp.read().decode("utf-8"))
+            if isinstance(rows, list) and len(rows) > 0 and isinstance(rows[0], dict):
+                raw_data = rows[0].get("data")
+                if isinstance(raw_data, dict) and len(raw_data) > 0:
+                    return raw_data
+    except Exception:
+        pass
+    return None
+
+
+def _supabase_set_db(data):
+    sb_url, sb_key = _get_supabase_credentials()
+    if not sb_url or not sb_key:
+        return
+    try:
+        import urllib.request
+        payload = {
+            "id": "pf_rally_ground_db",
+            "data": data,
+            "updated_at": int(time.time() * 1000)
+        }
+        body_bytes = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            f"{sb_url}/rest/v1/pf_cloud_state?on_conflict=id",
+            data=body_bytes,
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Content-Type": "application/json",
+                "Prefer": "resolution=merge-duplicates,return=minimal",
+            },
+            method="POST"
+        )
+        urllib.request.urlopen(req, timeout=3.5).read()
+    except Exception:
+        pass
+
+
 def load_db():
     with db_lock:
         if not os.path.exists(DB_FILE):
@@ -242,8 +326,28 @@ def save_db(data):
     with db_lock:
         if isinstance(data, dict):
             data["updatedAt"] = int(time.time() * 1000)
-        with open(DB_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
+        payload = json.dumps(data, indent=2)
+        tmp_file = f"{DB_FILE}.{os.getpid()}.{threading.get_ident()}.tmp"
+        try:
+            with open(tmp_file, "w", encoding="utf-8") as f:
+                f.write(payload)
+
+                f.flush()
+                try:
+                    os.fsync(f.fileno())
+                except Exception:
+                    pass
+            os.replace(tmp_file, DB_FILE)
+            threading.Thread(target=_supabase_set_db, args=(data,), daemon=True).start()
+        except Exception:
+            try:
+                if os.path.exists(tmp_file):
+                    os.remove(tmp_file)
+            except Exception:
+                pass
+            with open(DB_FILE, "w", encoding="utf-8") as f:
+                f.write(payload)
+
 
 
 
@@ -1303,6 +1407,12 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     target_dirs.append(os.path.join(PUBLIC_DIR, "admin", "assets"))
                 if "ADMIN_DIR" in globals():
                     target_dirs.append(os.path.join(ADMIN_DIR, "assets"))
+                parent_scratch = os.path.dirname(PUBLIC_DIR) if "PUBLIC_DIR" in globals() else ""
+                if parent_scratch:
+                    for sib in ("pf-rally-ground-mockup", "pf-rally-ground-admin"):
+                        sib_dir = os.path.join(parent_scratch, sib)
+                        if os.path.isdir(sib_dir):
+                            target_dirs.append(os.path.join(sib_dir, "assets"))
                 wrote_any = False
                 for tdir in target_dirs:
                     try:
@@ -1569,7 +1679,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                             current_sc[k] = bool(v)
                     elif k == "openPlaySlots" and isinstance(v, list):
                         current_sc[k] = [sanitize_str(x, 30) for x in v if str(x).strip()]
-                    elif isinstance(v, (list, dict)) or k in ("tournaments", "openPlaySessions", "openPlay24Roster", "openPlayRoster", "openPlaySchedule"):
+                    elif isinstance(v, (list, dict)) or k in ("tournaments", "openPlaySessions", "openPlay24Roster", "openPlayRoster", "openPlaySchedule", "openPlayDesignatedCourts"):
                         current_sc[k] = v
                     elif isinstance(v, (int, float)) or isinstance(def_val, (int, float)) or k in (
                         "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate", "openPlayMaxPlayers", "openPlayCourtsCount", "openPlaySlotMinutes", "maxAdvanceBookingDays", "clubLat", "clubLng",
@@ -1697,15 +1807,34 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
         except Exception:
             pass
 
+import socket
+
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
     daemon_threads = True
 
+class DualStackTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    address_family = socket.AF_INET6
+    allow_reuse_address = True
+    daemon_threads = True
+
+    def server_bind(self):
+        try:
+            self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        except Exception:
+            pass
+        super().server_bind()
+
 def run_server(port, directory):
     handler = lambda *args, **kwargs: UnifiedHandler(*args, directory=directory, **kwargs)
-    with ThreadedTCPServer(("", port), handler) as httpd:
-        print(f"Serving {directory} on port {port} with live API sync & Cybersecurity Shield...")
-        httpd.serve_forever()
+    try:
+        with DualStackTCPServer(("::", port), handler) as httpd:
+            print(f"Serving {directory} on dual-stack [::]:{port} & 0.0.0.0:{port} with live API sync...")
+            httpd.serve_forever()
+    except Exception:
+        with ThreadedTCPServer(("", port), handler) as httpd:
+            print(f"Serving {directory} on IPv4 0.0.0.0:{port} with live API sync...")
+            httpd.serve_forever()
 
 def cleanup_existing_port_listeners(ports):
     import subprocess
@@ -1728,14 +1857,18 @@ def cleanup_existing_port_listeners(ports):
         pass
 
 if __name__ == "__main__":
-    cleanup_existing_port_listeners([8188, 8189])
+    all_ports = [8088, 8089, 8188, 8189]
+    cleanup_existing_port_listeners(all_ports)
     load_db()
-    pub_port = int(os.environ.get("PORT", 8188))
-    adm_port = int(os.environ.get("ADMIN_PORT", 8189))
-    t1 = threading.Thread(target=run_server, args=(pub_port, PUBLIC_DIR), daemon=True)
-    t2 = threading.Thread(target=run_server, args=(adm_port, ADMIN_DIR), daemon=True)
-    t1.start()
-    t2.start()
-    print(f"Both Public ({pub_port}) and Admin ({adm_port} & /admin/) servers running and connected!")
-    t1.join()
-    t2.join()
+    threads = []
+    for pub_p in (8088, 8188):
+        t = threading.Thread(target=run_server, args=(pub_p, PUBLIC_DIR), daemon=True)
+        t.start()
+        threads.append(t)
+    for adm_p in (8089, 8189):
+        t = threading.Thread(target=run_server, args=(adm_p, ADMIN_DIR), daemon=True)
+        t.start()
+        threads.append(t)
+    print("Unified P&F Rally Ground Server running on Public (8088, 8188) and Admin (8089, 8189)!")
+    for t in threads:
+        t.join()

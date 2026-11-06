@@ -1243,6 +1243,188 @@ button.pf-trn-btn-danger:hover,
   animation: pfPhaseSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+
+/* === COMPREHENSIVE DARK MODE & ADMIN ACCESS CONTRAST OVERHAUL === */
+#admin-auth-gate {
+  background: radial-gradient(circle at 50% 20%, #0F291E 0%, #060D0A 75%) !important;
+  color: #F8FAFC !important;
+}
+#admin-auth-gate #admin-auth-card {
+  background: #0D1B14 !important;
+  border: 2px solid #22C55E !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85) !important;
+}
+#admin-auth-gate h1,
+#admin-auth-gate label {
+  color: #F8FAFC !important;
+}
+#admin-auth-gate p,
+#admin-auth-gate span.text-slate-400,
+#admin-auth-gate span.text-slate-300 {
+  color: #CBD5E1 !important;
+}
+#admin-auth-gate input {
+  background-color: #060D0A !important;
+  color: #FFFFFF !important;
+  border-color: #334155 !important;
+}
+#admin-auth-gate input::placeholder {
+  color: #64748B !important;
+}
+#admin-auth-gate #auth-tab-password,
+#admin-auth-gate button[type="submit"].bg-brand-lime {
+  background-color: #A3E635 !important;
+  color: #052E16 !important;
+  border: 1px solid #BEF264 !important;
+  font-weight: 900 !important;
+}
+
+/* Fix Dark Mode across all Admin tabs, cards, buttons, and inputs */
+html[data-adm-theme="dark"] .bg-brand-lime {
+  background-color: #22C55E !important;
+  color: #052E16 !important;
+}
+html[data-adm-theme="dark"] .text-brand-lime {
+  color: #4ADE80 !important;
+}
+html[data-adm-theme="dark"] .border-brand-lime,
+html[data-adm-theme="dark"] .border-brand-lime\/30,
+html[data-adm-theme="dark"] .border-brand-lime\/40,
+html[data-adm-theme="dark"] .border-brand-lime\/50,
+html[data-adm-theme="dark"] .border-brand-lime\/60 {
+  border-color: rgba(74, 222, 128, 0.45) !important;
+}
+html[data-adm-theme="dark"] .white-studio-card,
+html[data-adm-theme="dark"] .pf-scoring-portal,
+html[data-adm-theme="dark"] div.bg-white,
+html[data-adm-theme="dark"] section.bg-white,
+html[data-adm-theme="dark"] div.bg-\[\#F8FAFC\],
+html[data-adm-theme="dark"] div.bg-\[\#F8F9F4\],
+html[data-adm-theme="dark"] div.bg-slate-50,
+html[data-adm-theme="dark"] div.bg-slate-50\/70,
+html[data-adm-theme="dark"] div.bg-slate-50\/80,
+html[data-adm-theme="dark"] div.bg-slate-100,
+html[data-adm-theme="dark"] div.bg-slate-100\/90,
+html[data-adm-theme="dark"] table.bg-white,
+html[data-adm-theme="dark"] tbody.bg-white,
+html[data-adm-theme="dark"] thead tr.bg-slate-100,
+html[data-adm-theme="dark"] th.bg-slate-100,
+html[data-adm-theme="dark"] td.bg-\[\#F8FAFC\] {
+  background: #111915 !important;
+  background-color: #111915 !important;
+  color: #F1F5F9 !important;
+  border-color: #26382E !important;
+}
+html[data-adm-theme="dark"] div.bg-emerald-50,
+html[data-adm-theme="dark"] div.bg-emerald-50\/40,
+html[data-adm-theme="dark"] div.bg-emerald-50\/60,
+html[data-adm-theme="dark"] div.bg-emerald-50\/70,
+html[data-adm-theme="dark"] div.bg-emerald-50\/80,
+html[data-adm-theme="dark"] div.bg-\[\#F0FDF4\] {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(52, 211, 153, 0.35) !important;
+  color: #ECFDF5 !important;
+}
+html[data-adm-theme="dark"] div.bg-rose-50,
+html[data-adm-theme="dark"] div.bg-rose-50\/40 {
+  background-color: rgba(244, 63, 94, 0.12) !important;
+  border-color: rgba(251, 113, 133, 0.35) !important;
+  color: #FFE4E6 !important;
+}
+html[data-adm-theme="dark"] div.bg-amber-50,
+html[data-adm-theme="dark"] div.bg-amber-50\/70 {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  border-color: rgba(251, 191, 36, 0.35) !important;
+  color: #FEF3C7 !important;
+}
+html[data-adm-theme="dark"] button.bg-white,
+html[data-adm-theme="dark"] button.bg-slate-100,
+html[data-adm-theme="dark"] button.bg-\[\#F8FAFC\],
+html[data-adm-theme="dark"] .pf-trn-btn-secondary {
+  background: #18241E !important;
+  background-color: #18241E !important;
+  color: #E2E8F0 !important;
+  border-color: #334155 !important;
+}
+html[data-adm-theme="dark"] button.bg-white:hover,
+html[data-adm-theme="dark"] button.bg-slate-100:hover,
+html[data-adm-theme="dark"] .pf-trn-btn-secondary:hover {
+  background: #22332A !important;
+  background-color: #22332A !important;
+  color: #FFFFFF !important;
+  border-color: #4ADE80 !important;
+}
+html[data-adm-theme="dark"] .text-slate-900,
+html[data-adm-theme="dark"] .text-slate-800,
+html[data-adm-theme="dark"] .text-\[\#0D1F18\],
+html[data-adm-theme="dark"] .text-\[\#0F172A\],
+html[data-adm-theme="dark"] .text-\[\#050E1D\] {
+  color: #F8FAFC !important;
+}
+html[data-adm-theme="dark"] .text-slate-700,
+html[data-adm-theme="dark"] .text-slate-600 {
+  color: #CBD5E1 !important;
+}
+html[data-adm-theme="dark"] .text-slate-500 {
+  color: #94A3B8 !important;
+}
+html[data-adm-theme="dark"] .text-emerald-950,
+html[data-adm-theme="dark"] .text-emerald-900,
+html[data-adm-theme="dark"] .text-emerald-800,
+html[data-adm-theme="dark"] .text-emerald-700 {
+  color: #6EE7B7 !important;
+}
+html[data-adm-theme="dark"] .text-rose-950,
+html[data-adm-theme="dark"] .text-rose-900,
+html[data-adm-theme="dark"] .text-rose-800,
+html[data-adm-theme="dark"] .text-rose-700 {
+  color: #FDA4AF !important;
+}
+html[data-adm-theme="dark"] .text-\[\#5B21B6\],
+html[data-adm-theme="dark"] .text-violet-900,
+html[data-adm-theme="dark"] .text-violet-800 {
+  color: #C4B5FD !important;
+}
+html[data-adm-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-adm-theme="dark"] select,
+html[data-adm-theme="dark"] textarea {
+  background-color: #0B120E !important;
+  color: #F8FAFC !important;
+  border-color: #2D4237 !important;
+}
+/* Keep semantic calendar cells & pills readable in Dark Mode */
+html[data-adm-theme="dark"] .cal-cat-pill.bg-\[\#D1FAE5\],
+html[data-adm-theme="dark"] td div.bg-\[\#D1FAE5\] {
+  background-color: #064E3B !important;
+  color: #A7F3D0 !important;
+  border-color: #10B981 !important;
+}
+html[data-adm-theme="dark"] .cal-cat-pill.bg-\[\#EDE9FE\],
+html[data-adm-theme="dark"] td div.bg-\[\#EDE9FE\] {
+  background-color: #2E1065 !important;
+  color: #DDD6FE !important;
+  border-color: #8B5CF6 !important;
+}
+html[data-adm-theme="dark"] .cal-cat-pill.bg-\[\#FEF9C3\],
+html[data-adm-theme="dark"] td div.bg-\[\#FEF9C3\] {
+  background-color: #422006 !important;
+  color: #FEF08A !important;
+  border-color: #EAB308 !important;
+}
+html[data-adm-theme="dark"] .cal-cat-pill.bg-\[\#FEE2E2\],
+html[data-adm-theme="dark"] td div.bg-\[\#FEE2E2\] {
+  background-color: #450A0A !important;
+  color: #FECACA !important;
+  border-color: #EF4444 !important;
+}
+html[data-adm-theme="dark"] .cal-cat-pill.bg-\[\#DBEAFE\],
+html[data-adm-theme="dark"] td div.bg-\[\#DBEAFE\] {
+  background-color: #172554 !important;
+  color: #BFDBFE !important;
+  border-color: #3B82F6 !important;
+}
+
   </style>
   <!-- Comprehensive Favicon Suite -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -2602,6 +2784,7 @@ button.pf-trn-btn-danger:hover,
                 <select id="adm-block-status" onchange="handleAdminStatusSelectChange(this.value)" class="w-full bg-brand-card border-2 border-brand-lime/60 rounded-xl px-3 py-2.5 text-white font-black">
                   <option value="OPEN">🟢 Available (Open Court)</option>
                   <option value="OPEN_PLAY">🟣 Open Play Session</option>
+                  <option value="TOURNAMENT">🏆 Official Tournament (Admin Key Only)</option>
                   <option value="CLOSED" selected>🔴 Blocked (Closed Court)</option>
                   <option value="PRIVATE">⚪ Private (Exclusive / Coaching)</option>
                 </select>
@@ -2657,70 +2840,20 @@ button.pf-trn-btn-danger:hover,
             </div>
           </form>
 
-          <!-- Editable Daily Open Play Schedule, Price (₱150), & 24-Player Random Pod Controller (Connected to Open Play Lavender Purple #EDE9FE / #5B21B6) -->
-          <div class="p-4 sm:p-6 rounded-2xl bg-white border-2 border-[#C4B5FD] space-y-5 mb-6 shadow-md">
-            <div class="flex flex-wrap items-center justify-between gap-3">
+          <!-- Compact Redirect Notice to Open Play Feature Tab -->
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 shadow-xs">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-[#0F291E] text-[#A3E635] flex items-center justify-center font-black text-sm flex-shrink-0">🏓</span>
               <div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>🟣 OPEN PLAY SCHEDULE &amp; PRICE (ALL 4 COURTS)</span>
-                  <span id="adm-openplay-live-badge" class="text-[11px] font-mono font-bold text-[#5B21B6]">● Active: 3:00 PM – 6:00 PM • ₱150/player</span>
-                </div>
-                <h3 class="text-sm sm:text-base font-black uppercase text-slate-900 mt-1.5">Default Daily Open Play Hours, Editable Price &amp; 24-Player Random Distribution</h3>
-                <p class="text-xs text-slate-600">Edit the Open Play rate per player (default <b>₱150</b>), toggle active hours across Courts 1 – 4, and randomly distribute all <b>24 players</b> into dedicated time slots on <b>1 to 4 courts</b>.</p>
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <!-- Editable Open Play Price Input right inside Schedule Tab -->
-                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF5FF] text-slate-900 border-2 border-[#C4B5FD] shadow-xs">
-                  <span class="text-[10px] font-mono font-black uppercase text-[#5B21B6]">Open Play Price: ₱</span>
-                  <input type="number" id="adm-openplay-rate-input" min="0" step="10" value="150" oninput="syncOpenPlayRateInputs(this.value)" class="w-20 bg-white border border-[#C4B5FD] rounded-lg px-2 py-1 text-xs font-mono font-black text-slate-900 focus:outline-none">
-                  <span class="text-[10px] font-mono font-bold text-[#5B21B6]">/player</span>
-                </div>
-                <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#EDE9FE] border border-[#C4B5FD] text-xs font-black text-[#5B21B6] cursor-pointer">
-                  <input type="checkbox" id="adm-openplay-enabled-toggle" checked onchange="toggleAdminDefaultOpenPlayEnabled(this.checked)" class="w-4 h-4 accent-[#6D28D9]">
-                  <span>Enable Daily Open Play</span>
-                </label>
-                <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-bold uppercase transition">
-                  ↺ Reset 3PM–6PM (₱150)
-                </button>
-                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">
-                  💾 Save Open Play Rate &amp; Hours
-                </button>
+                <h4 class="text-xs sm:text-sm font-black uppercase text-slate-900">Daily Open Play Hours, Rate &amp; 24-Player Pod Generator</h4>
+                <p class="text-[11px] text-slate-600">Moved to the dedicated <b>Open Play Feature</b> tab for unified session, court, and player pod management.</p>
               </div>
             </div>
-            <div id="adm-openplay-hour-pills" class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-1.5 pt-1"></div>
-
-            <!-- 24-Player Random Distribution & Court Count Selector (1-4 Courts) -->
-            <div class="p-4 rounded-2xl bg-[#FAF5FF] text-slate-900 border border-[#C4B5FD] space-y-4">
-              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#E9D5FF] pb-3">
-                <div>
-                  <span class="px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase">🎲 24-PLAYER RANDOM DISTRIBUTION &amp; DEDICATED TIME SLOTS</span>
-                  <h4 class="text-sm sm:text-base font-black uppercase text-slate-900 mt-1">Open Play 24-Player Pod Generator (Select 1 – 4 Courts)</h4>
-                  <p class="text-[11px] text-slate-600">All 24 players are randomly shuffled into balanced 4-player Doubles Pods (2 vs 2) and assigned a dedicated time slot and court across 3:00 PM – 6:00 PM.</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <div class="flex flex-wrap items-center gap-1 bg-white p-1.5 rounded-xl border border-[#C4B5FD]" id="adm-openplay-court-count-btns">
-                    <span class="text-[10px] font-mono font-bold uppercase text-[#5B21B6] px-1.5">Count:</span>
-                    <button type="button" onclick="adminSetOpenPlayCourtsCount(1)" data-op-courts="1" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">1 Court</button>
-                    <button type="button" onclick="adminSetOpenPlayCourtsCount(2)" data-op-courts="2" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">2 Courts</button>
-                    <button type="button" onclick="adminSetOpenPlayCourtsCount(3)" data-op-courts="3" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">3 Courts</button>
-                    <button type="button" onclick="adminSetOpenPlayCourtsCount(4)" data-op-courts="4" class="px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD]">4 Courts</button>
-                    <span class="text-slate-300 px-1">|</span>
-                    <span class="text-[10px] font-mono font-bold uppercase text-[#5B21B6] px-1">Pick Exact Court(s):</span>
-                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(1)" data-op-single-court="1" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C1</button>
-                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(2)" data-op-single-court="2" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C2</button>
-                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(3)" data-op-single-court="3" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C3</button>
-                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(4)" data-op-single-court="4" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]">✓ C4</button>
-                  </div>
-                  <button type="button" onclick="adminShuffleOpenPlay24Players()" class="px-3.5 py-2 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-black text-xs uppercase transition shadow-md" style="color:#FFFFFF !important;">
-                    🎲 Randomly Distribute 24 Players &amp; Sync Live
-                  </button>
-                </div>
-              </div>
-              <div id="adm-openplay-24-schedule-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-            </div>
-
-            <div id="adm-calendar-action-feedback" class="hidden p-2.5 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-xs font-black"></div>
+            <button type="button" onclick="switchTab('openplay')" class="pf-trn-btn-emerald px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider whitespace-nowrap">
+              🏓 Open Play Manager &amp; 24-Pod Generator →
+            </button>
           </div>
+          <div id="adm-calendar-action-feedback" class="hidden mb-4 p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-xs font-black"></div>
 
           <!-- Active Calendar Overrides & Blocks List -->
           <div class="mb-6">
@@ -2765,6 +2898,9 @@ button.pf-trn-btn-danger:hover,
                 </button>
                 <button type="button" onclick="setAdminCalendarClickMode('OPEN_PLAY')" data-mode="OPEN_PLAY" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-black uppercase transition">
                   Open Play
+                </button>
+                <button type="button" onclick="setAdminCalendarClickMode('TOURNAMENT')" data-mode="TOURNAMENT" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#FEF9C3] text-[#854D0E] border border-[#FACC15] text-[11px] font-black uppercase transition">
+                  🏆 Tournament
                 </button>
                 <button type="button" onclick="setAdminCalendarClickMode('CLOSED')" data-mode="CLOSED" class="adm-cal-mode-btn px-3 py-1.5 rounded-xl bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[11px] font-black uppercase transition">
                   Blocked
@@ -2822,6 +2958,10 @@ button.pf-trn-btn-danger:hover,
                 <span class="cal-cat-dot w-2.5 h-2.5 bg-[#8B5CF6]"></span>
                 <span>Open Play</span>
               </span>
+              <span class="cal-cat-pill inline-flex items-center gap-1.5 px-3 py-1 bg-[#FEF9C3] border border-[#FACC15] text-[#854D0E]">
+                <span class="cal-cat-dot w-2.5 h-2.5 bg-[#EAB308]"></span>
+                <span>🏆 Tournament (Admin Key)</span>
+              </span>
             </div>
           </div>
         </div>
@@ -2853,6 +2993,10 @@ button.pf-trn-btn-danger:hover,
               <button type="button" onclick="confirmAdminSlotDecision('OPEN_PLAY')" class="w-full py-2.5 px-4 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
                 <span>🟣 Open Play Session</span>
                 <span class="font-mono text-[11px]">OPEN PLAY →</span>
+              </button>
+              <button type="button" onclick="confirmAdminSlotDecision('TOURNAMENT')" class="w-full py-2.5 px-4 rounded-xl bg-[#FEF9C3] hover:bg-[#FEF08A] text-[#854D0E] border border-[#FACC15] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
+                <span>🏆 Official Tournament (Admin Key Verified)</span>
+                <span class="font-mono text-[11px]">TOURNAMENT →</span>
               </button>
               <button type="button" onclick="confirmAdminSlotDecision('CLOSED')" class="w-full py-2.5 px-4 rounded-xl bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B] border border-[#FCA5A5] font-black text-xs uppercase flex items-center justify-between transition shadow-sm">
                 <span>🔴 Blocked (Closed Court)</span>
@@ -3235,12 +3379,12 @@ button.pf-trn-btn-danger:hover,
 
                 <div class="mt-4 space-y-3 text-xs">
                   <div>
-                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Method</label>
+                    <label class="block text-[10px] text-slate-400 uppercase mb-1 font-bold">Payment Method (Cash, E-Wallet, or Bank)</label>
                     <select id="pos-payment-mode" class="w-full bg-brand-black border border-white/15 rounded-xl px-3 py-2.5 text-white font-bold">
-                      <option value="Cash">Cash</option>
-                      <option value="GCash">GCash (0999 883 2346)</option>
-                      <option value="Maya">Maya / Card Terminal</option>
-                      <option value="Bank Transfer">Bank Transfer</option>
+                      <option value="Cash">💵 Cash (Front Desk Counter)</option>
+                      <option value="GCash (E-Wallet)">📱 GCash E-Wallet (0999 883 2346)</option>
+                      <option value="Maya (E-Wallet)">📱 Maya E-Wallet (0999 883 2346)</option>
+                      <option value="Bank Transfer (BDO)">🏦 Bank Transfer (BDO Official QR)</option>
                     </select>
                   </div>
 
@@ -3262,6 +3406,20 @@ button.pf-trn-btn-danger:hover,
                 Complete POS Sale &amp; Deduct Stock →
               </button>
             </div>
+          </div>
+
+          <!-- LIVE POS GEAR ORDERS & COUNTER TRANSACTIONS FEED -->
+          <div class="rounded-3xl bg-brand-card border border-brand-border p-5 sm:p-6 space-y-3 card-glow">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+              <div>
+                <span class="text-[10px] font-mono font-black uppercase tracking-widest text-brand-lime block">LIVE POS SYSTEM FEED • ONLINE "ORDER NOW" GEARS &amp; COUNTER SALES</span>
+                <h3 class="text-sm sm:text-base font-black uppercase text-white">Recent POS Gear &amp; Refreshment Orders (Cash / E-Wallet / Bank)</h3>
+              </div>
+              <button type="button" onclick="switchTab('reports')" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono text-[11px] font-bold uppercase transition">
+                📊 Full Sales Report →
+              </button>
+            </div>
+            <div id="pos-live-orders-feed" class="space-y-2 text-xs"></div>
           </div>
         </div>
 
@@ -3556,10 +3714,111 @@ button.pf-trn-btn-danger:hover,
 
       </section>
 
-      <!-- ================= 4C. DEDICATED OPEN PLAY & LIVE PLAYER POD SHUFFLER FEATURE TAB (NO BRACKET, NO PRICES) ================= -->
+      <!-- ================= 4C. DEDICATED OPEN PLAY & LIVE PLAYER POD SHUFFLER FEATURE TAB ================= -->
       <section id="tab-openplay" class="hidden space-y-6">
         <div id="admin-openplay-feature-workspace" class="space-y-6">
           <!-- Populated dynamically by renderAdminOpenPlayFeaturePage() -->
+        </div>
+
+        <!-- UPGRADED DAILY OPEN PLAY HOURS, EDITABLE RATE & 24-PLAYER TIME-SLOT POD GENERATOR (MOVED FROM SCHEDULE TAB) -->
+        <div id="admin-openplay-daily-hours-and-pods-card" class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-xl overflow-hidden">
+          <!-- Editorial Championship Dark Forest Header Bar -->
+          <div class="bg-[#0F291E] text-white p-5 sm:p-7 border-b border-emerald-900/60" style="background:#0F291E !important;color:#FFFFFF !important;">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-5">
+              <div class="space-y-2">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-[#A3E635] border border-[#A3E635]/40 font-mono text-[10px] font-black uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-[#A3E635]"></span>
+                    <span>DAILY OPEN PLAY HOURS &amp; 24-PLAYER POD ENGINE</span>
+                  </span>
+                  <span id="adm-openplay-live-badge" class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 text-white border border-white/15 font-mono text-[11px] font-extrabold">
+                    ● Active: 03:00 PM – 06:00 PM • ₱150/player
+                  </span>
+                </div>
+                <h3 class="text-lg sm:text-2xl font-black uppercase tracking-tight text-white" style="color:#FFFFFF !important;">
+                  Default Daily Open Play Hours, Rate &amp; 24-Player Time-Slot Distribution
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300 max-w-3xl" style="color:#CBD5E1 !important;">
+                  Configure the default per-player Open Play rate, click any hour below to toggle Open Play blocks on the public Court Schedule Matrix, and distribute 24 players across 1 to 4 designated courts.
+                </p>
+              </div>
+
+              <!-- Upgraded Control Cluster: Price Input + Enable Switch + Reset + Save -->
+              <div class="flex flex-wrap items-center gap-2.5 bg-white/10 p-3 rounded-2xl border border-white/15 backdrop-blur-xs">
+                <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white text-slate-900 border border-slate-200 shadow-xs">
+                  <span class="text-[10px] font-mono font-black uppercase text-[#0F291E]">Rate: ₱</span>
+                  <input type="number" id="adm-openplay-rate-input" min="0" step="10" value="150" oninput="syncOpenPlayRateInputs(this.value)" class="w-20 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-black text-slate-900 focus:outline-none focus:border-emerald-600">
+                  <span class="text-[10px] font-mono font-bold text-slate-500">/player</span>
+                </div>
+
+                <label class="inline-flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-white text-slate-900 border border-slate-200 text-xs font-black cursor-pointer select-none shadow-xs hover:bg-emerald-50 transition">
+                  <input type="checkbox" id="adm-openplay-enabled-toggle" checked onchange="toggleAdminDefaultOpenPlayEnabled(this.checked)" class="w-4 h-4 accent-[#15803D]">
+                  <span>Enable Daily Open Play</span>
+                </label>
+
+                <button type="button" onclick="resetAdminDefaultOpenPlay3to6()" class="px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 text-xs font-bold uppercase tracking-wider transition" style="color:#FFFFFF !important;">
+                  ↺ Reset 3PM–6PM
+                </button>
+
+                <button type="button" onclick="saveAdminDefaultOpenPlayConfig()" class="px-4 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#BEF264] text-[#0F291E] font-black text-xs uppercase tracking-wider transition shadow-md" style="background:#A3E635 !important;color:#0F291E !important;">
+                  💾 Save Rate &amp; Hours
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 sm:p-7 space-y-6 bg-[#F8FAFC]">
+            <!-- Step 1: Interactive 18-Hour Daily Schedule Selector -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-2xs">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div>
+                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">⏰ STEP 1 • DAILY OPERATING HOURS MATRIX (06:00 AM – 11:00 PM)</span>
+                  <p class="text-xs text-slate-600">Click any time slot below to toggle between <b>Open Play Window</b> and <b>Regular Court Hire</b> on the public schedule.</p>
+                </div>
+                <div class="flex items-center gap-3 text-[11px] font-mono font-bold">
+                  <span class="inline-flex items-center gap-1.5 text-[#0F291E]"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>Open Play Active</span>
+                  <span class="inline-flex items-center gap-1.5 text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>Regular Court</span>
+                </div>
+              </div>
+              <div id="adm-openplay-hour-pills" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-2 pt-1"></div>
+            </div>
+
+            <!-- Step 2: 24-Player Random Distribution & Court Selector (1-4 Courts) -->
+            <div class="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 space-y-5 shadow-2xs">
+              <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div class="space-y-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🎲 STEP 2 • 24-PLAYER POD &amp; TIME-SLOT GENERATOR</span>
+                    <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-300 font-mono text-[10px] font-extrabold uppercase">6 Pods × 4 Players (2v2 Doubles)</span>
+                  </div>
+                  <h4 class="text-base sm:text-xl font-black uppercase text-slate-900 mt-1">Open Play 24-Player Pod Generator (Select 1 – 4 Courts)</h4>
+                  <p class="text-xs text-slate-600">Select how many courts (or exact court numbers) to allocate for Open Play. Click any player slot in Pods 1–6 to assign or edit a player, or click <b>Randomly Distribute 24 Players</b>.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <div class="flex flex-wrap items-center gap-1.5 bg-[#F8FAFC] p-2 rounded-2xl border border-slate-200" id="adm-openplay-court-count-btns">
+                    <span class="text-[10px] font-mono font-extrabold uppercase text-slate-500 px-1.5">Court Count:</span>
+                    <button type="button" onclick="adminSetOpenPlayCourtsCount(1)" data-op-courts="1" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">1 Court</button>
+                    <button type="button" onclick="adminSetOpenPlayCourtsCount(2)" data-op-courts="2" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">2 Courts</button>
+                    <button type="button" onclick="adminSetOpenPlayCourtsCount(3)" data-op-courts="3" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200">3 Courts</button>
+                    <button type="button" onclick="adminSetOpenPlayCourtsCount(4)" data-op-courts="4" class="px-3 py-1.5 rounded-xl text-[11px] font-black uppercase bg-[#0F291E] text-white border border-[#0F291E]">4 Courts</button>
+                    <span class="text-slate-300 px-1">|</span>
+                    <span class="text-[10px] font-mono font-extrabold uppercase text-slate-500 px-1">Exact Courts:</span>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(1)" data-op-single-court="1" class="px-2.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase bg-emerald-700 text-white border border-emerald-700">✓ C1</button>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(2)" data-op-single-court="2" class="px-2.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase bg-emerald-700 text-white border border-emerald-700">✓ C2</button>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(3)" data-op-single-court="3" class="px-2.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase bg-emerald-700 text-white border border-emerald-700">✓ C3</button>
+                    <button type="button" onclick="adminToggleScheduleOpenPlayCourt(4)" data-op-single-court="4" class="px-2.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase bg-emerald-700 text-white border border-emerald-700">✓ C4</button>
+                  </div>
+
+                  <button type="button" onclick="adminShuffleOpenPlay24Players()" class="pf-trn-btn-primary px-4 py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center gap-1.5">
+                    <span>🎲 Randomly Distribute 24 Players &amp; Sync Live</span>
+                  </button>
+                </div>
+              </div>
+
+              <div id="adm-openplay-24-schedule-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -3729,8 +3988,12 @@ button.pf-trn-btn-danger:hover,
                   <b class="font-mono text-slate-900" id="rep-court-rev">₱0.00</b>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-slate-600 font-medium">🥤 Drinks &amp; Products Sold:</span>
+                  <span class="text-slate-600 font-medium">🥤 Drinks &amp; Gear Sold:</span>
                   <b class="font-mono text-slate-900" id="rep-pos-rev">₱0.00</b>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600 font-medium">🏆 Tournament Entries:</span>
+                  <b class="font-mono text-emerald-700" id="rep-trn-rev">₱0.00</b>
                 </div>
               </div>
             </div>
@@ -3756,6 +4019,10 @@ button.pf-trn-btn-danger:hover,
                 <div class="flex justify-between items-center">
                   <span class="text-slate-600 font-medium">🧾 Club Bills / Expenses:</span>
                   <b class="font-mono text-rose-700" id="rep-total-expenses">-₱0.00</b>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-600 font-medium">🏆 Winner Prize Payouts:</span>
+                  <b class="font-mono text-rose-700" id="rep-trn-prize-deduction">-₱0.00</b>
                 </div>
               </div>
             </div>
@@ -3968,6 +4235,7 @@ button.pf-trn-btn-danger:hover,
             <div class="sm:col-span-3">
               <label class="block text-[10px] font-black uppercase text-slate-700 mb-1">Type of Bill / Expense</label>
               <select id="exp-category-input" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+                <option value="Tournament Prizes">🏆 Tournament Prizes / Winner Payout</option>
                 <option value="Electricity & Water">⚡ Electricity &amp; Water Bill</option>
                 <option value="Staff / Helper Pay">👷 Staff / Helper Pay</option>
                 <option value="Bought Stock / Boxes">📦 Bought Stock / Boxes</option>
@@ -3978,7 +4246,7 @@ button.pf-trn-btn-danger:hover,
             </div>
             <div class="sm:col-span-5">
               <label class="block text-[10px] font-black uppercase text-slate-700 mb-1">What Did You Pay For?</label>
-              <input type="text" id="exp-title-input" required placeholder="e.g. Electric Bill, Ice & Water, Court Cleaner" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+              <input type="text" id="exp-title-input" required placeholder="e.g. Tournament Winner Cash Prize, Electric Bill, Ice & Water" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
             </div>
             <div class="sm:col-span-2">
               <label class="block text-[10px] font-black uppercase text-rose-700 mb-1">Amount Paid (₱)</label>
@@ -4997,7 +5265,8 @@ function clearFieldError(fieldId) {
       const host = window.location.hostname;
       const port = window.location.port;
       if ((host === 'localhost' || host === '127.0.0.1') && (port === '8089' || port === '8189')) {
-        window.location.href = 'http://' + host + ':8188/' + (pagePath || '');
+        const pubPort = (port === '8089') ? '8088' : '8188';
+        window.location.href = 'http://' + host + ':' + pubPort + '/' + (pagePath || '');
       } else {
         const target = pagePath && pagePath !== 'index.html' ? '/' + pagePath.replace(/^\//, '') : '/';
         window.location.href = target;
@@ -5297,9 +5566,10 @@ function clearFieldError(fieldId) {
 
       const stateEndpoints = ['/api/state'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        stateEndpoints.push('http://127.0.0.1:8089/api/state');
+        stateEndpoints.push('http://localhost:8088/api/state');
         stateEndpoints.push('http://127.0.0.1:8188/api/state');
         stateEndpoints.push('http://127.0.0.1:8189/api/state');
-        stateEndpoints.push('http://localhost:8188/api/state');
       }
 
       for (const ep of stateEndpoints) {
@@ -5324,6 +5594,14 @@ function clearFieldError(fieldId) {
               (posCatalog.length > 0 && (!data.inventory || data.inventory.length === 0)) ||
               (salesLedger.length > 0 && (!data.sales || data.sales.length === 0))
             );
+
+            // Hydrate Site Editor from server BEFORE any background booking sync so saved disk config is never overwritten
+            if (data.siteConfig && typeof handleIncomingServerSiteConfig === 'function' && !isColdServerContainer) {
+              handleIncomingServerSiteConfig(data.siteConfig);
+            }
+            if (data.paymentConfig && typeof syncPaymentConfigToAdminInputs === 'function' && !isColdServerContainer) {
+              syncPaymentConfigToAdminInputs(data.paymentConfig);
+            }
 
             if (isColdServerContainer || inMutationLock || foundNewLocalBooking) {
               // Merge any non-deleted bookings present on server when NOT inside an active admin deletion/mutation lock
@@ -5353,8 +5631,7 @@ function clearFieldError(fieldId) {
                   expenses: clubExpenses,
                   categories: customCategories,
                   announcements: typeof announcements !== 'undefined' ? announcements : [],
-                  securityLog: securityAuditLogs,
-                  siteConfig: typeof currentSiteConfig !== 'undefined' ? currentSiteConfig : undefined
+                  securityLog: securityAuditLogs
                 })
               }).catch(() => {});
             } else {
@@ -5529,7 +5806,11 @@ function clearFieldError(fieldId) {
       if (tabId === 'announcements' && typeof renderAdminAnnouncements === 'function') renderAdminAnnouncements();
       if (tabId === 'pos') { renderPosCatalog(); renderPosOrder(); if (typeof refreshPosHubFromLiveState === 'function') refreshPosHubFromLiveState(); }
       if (tabId === 'tournament' && typeof renderAdminTournamentApprovalGate === 'function') { renderAdminTournamentApprovalGate(); }
-      if (tabId === 'openplay' && typeof renderAdminOpenPlayFeaturePage === 'function') { renderAdminOpenPlayFeaturePage(); }
+      if (tabId === 'openplay') {
+        if (typeof renderAdminOpenPlayFeaturePage === 'function') renderAdminOpenPlayFeaturePage();
+        if (typeof renderAdminOpenPlayPills === 'function') renderAdminOpenPlayPills();
+        if (typeof renderAdminOpenPlay24Board === 'function') renderAdminOpenPlay24Board();
+      }
       if (tabId === 'inventory') renderInventoryTable();
       if (tabId === 'reports') renderReportsLedger();
     }
@@ -5961,10 +6242,13 @@ function clearFieldError(fieldId) {
         target.status = 'CONFIRMED';
         if (!salesLedger.some(s => s.ref === ref)) {
           const amt = Number(String(target.total || 400).replace(/[^0-9.]/g, '') || 400);
-          const cost = Number((currentSiteConfig && currentSiteConfig.costCourtPerHour) || 0);
+          const isTrn = Boolean(target.isTournament || String(target.ref || '').startsWith('PF-TRN') || /tournament/i.test(String(target.court || '')));
+          const isGear = Boolean(target.isGearOrder || String(target.ref || '').startsWith('PF-GEAR') || /gear|pro shop/i.test(String(target.court || '')));
+          const saleType = isTrn ? 'Tournament Entry' : (isGear ? 'POS Retail' : 'Court Rental');
+          const cost = (isTrn || isGear) ? 0 : Number((currentSiteConfig && currentSiteConfig.costCourtPerHour) || 0);
           salesLedger.unshift({
             ref: target.ref,
-            type: 'Court Rental',
+            type: saleType,
             desc: `${target.court || 'Court 01'} (${target.name || 'Guest'}) - Ref: ${target.transactionRef || 'STAFF'}`,
             method: target.paymentMethod || target.paymentMode || 'GCash',
             amount: amt,
@@ -6406,6 +6690,16 @@ function clearFieldError(fieldId) {
             block: matchedBlock
           };
         }
+        if (st === 'TOURNAMENT' || rLow.includes('tournament')) {
+          return {
+            status: 'CLOSED',
+            category: 'TOURNAMENT',
+            isOverride: true,
+            label: 'Tournament',
+            sub: matchedBlock.reason || 'Official Club Tournament',
+            block: matchedBlock
+          };
+        }
         if (st === 'PRIVATE' || rLow.includes('private')) {
           return {
             status: 'CLOSED',
@@ -6456,6 +6750,10 @@ function clearFieldError(fieldId) {
     }
 
     async function applyAdminSlotOverride(courtLabel, dateYMD, slotStr, statusType, reasonText) {
+      if (statusType === 'TOURNAMENT' && typeof isStaffAuthenticated === 'function' && !isStaffAuthenticated()) {
+        alert('🔒 Admin Access Key Required: Only authorized Admin / Staff keys can place a Tournament filler on the official court calendar.');
+        return;
+      }
       if (statusType !== 'RESET' && isAdminSlotExpired(dateYMD, slotStr === 'ALL' ? '' : slotStr)) {
         alert(`⚠️ Expired Calendar Slot (${dateYMD}${slotStr && slotStr !== 'ALL' ? ' • ' + slotStr : ''}): Cannot open or modify a past date or expired time slot. Please select Today (future hours) or a future date.`);
         return;
@@ -6500,9 +6798,11 @@ function clearFieldError(fieldId) {
         ? 'Available Court'
         : (statusType === 'OPEN_PLAY'
             ? 'Open Play Session'
-            : (statusType === 'HOLD'
-                ? 'On Hold'
-                : (statusType === 'PRIVATE' ? 'Private Session' : 'Blocked')));
+            : (statusType === 'TOURNAMENT'
+                ? 'Official Club Tournament (Admin Key Verified)'
+                : (statusType === 'HOLD'
+                    ? 'On Hold'
+                    : (statusType === 'PRIVATE' ? 'Private Session' : 'Blocked'))));
 
       const newBlock = {
         id: 'blk-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
@@ -6674,13 +6974,16 @@ function clearFieldError(fieldId) {
       }
       wrap.innerHTML = calendarHours.map(h => {
         const isOn = enabled && activeSlots.includes(h.time);
-        return `<button type="button" onclick="toggleAdminOpenPlayHourSlot('${h.time}')" class="py-2 px-2 rounded-xl font-mono text-[10px] sm:text-[11px] font-black transition border ${
+        return `<button type="button" onclick="toggleAdminOpenPlayHourSlot('${h.time}')" class="py-2.5 px-2.5 rounded-xl font-mono text-[11px] font-black transition flex flex-col items-center justify-center gap-0.5 ${
           isOn
-            ? 'bg-[#EDE9FE] text-[#5B21B6] border-2 border-[#8B5CF6] shadow-sm'
-            : 'bg-white text-slate-700 border-slate-200 hover:border-[#C4B5FD]'
-        }">
-          <span>${isOn ? '🟣 ' : ''}${h.time}</span>
-          <span class="block text-[8px] font-sans uppercase font-bold ${isOn ? 'text-[#5B21B6]' : 'text-slate-400'}">${isOn ? 'Open Play' : 'Regular'}</span>
+            ? 'bg-[#0F291E] text-white border-2 border-[#10B981] shadow-md'
+            : 'bg-[#F8FAFC] hover:bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300'
+        }" style="${isOn ? 'background:#0F291E !important;color:#FFFFFF !important;' : ''}">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full ${isOn ? 'bg-[#A3E635]' : 'bg-slate-300'}"></span>
+            <span style="${isOn ? 'color:#FFFFFF !important;' : ''}">${h.time}</span>
+          </span>
+          <span class="block text-[9px] font-mono uppercase tracking-wider font-extrabold ${isOn ? 'text-[#A3E635]' : 'text-slate-400'}" style="${isOn ? 'color:#A3E635 !important;' : ''}">${isOn ? 'OPEN PLAY' : 'REGULAR'}</span>
         </button>`;
       }).join('');
     }
@@ -6949,47 +7252,90 @@ function clearFieldError(fieldId) {
       document.querySelectorAll('#adm-openplay-court-count-btns [data-op-courts]').forEach(btn => {
         const n = Number(btn.getAttribute('data-op-courts'));
         btn.className = (n === cCount)
-          ? 'px-2.5 py-1.5 rounded-lg text-[11px] font-black uppercase bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD]'
-          : 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:border-[#C4B5FD]';
+          ? 'px-3 py-1.5 rounded-xl text-[11px] font-black uppercase bg-[#0F291E] text-white border border-[#0F291E] shadow-2xs'
+          : 'px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase bg-white text-slate-700 border border-slate-200 hover:bg-slate-100';
       });
       document.querySelectorAll('#adm-openplay-court-count-btns [data-op-single-court]').forEach(btn => {
         const cNum = Number(btn.getAttribute('data-op-single-court'));
         const hasC = desig.includes(`Court ${cNum}`);
         btn.className = hasC
-          ? 'px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold uppercase bg-[#5B21B6] text-white border border-[#5B21B6]'
-          : 'px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-bold uppercase bg-white text-slate-500 border border-slate-300 hover:border-[#C4B5FD]';
+          ? 'px-2.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase bg-emerald-700 text-white border border-emerald-700 shadow-2xs'
+          : 'px-2.5 py-1.5 rounded-xl font-mono text-[11px] font-bold uppercase bg-white text-slate-500 border border-slate-300 hover:bg-slate-100';
         btn.textContent = `${hasC ? '✓ ' : ''}C${cNum}`;
       });
       const roster = getAdminOpenPlay24Roster();
       const pods = (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySchedule) && currentSiteConfig.openPlaySchedule.length === 6)
         ? currentSiteConfig.openPlaySchedule
-        : buildAdminOpenPlay24Pods(roster, cCount);
+        : buildAdminOpenPlay24Pods(roster, desig);
 
-      grid.innerHTML = pods.map(pod => `
-        <div class="p-3.5 rounded-xl bg-white border border-[#C4B5FD] space-y-2 text-xs shadow-2xs">
-          <div class="flex items-center justify-between border-b border-[#E9D5FF] pb-2">
-            <span class="px-2.5 py-0.5 rounded-lg bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase">POD ${pod.podNumber} &bull; ${pfEscapeHtml(pod.court)}</span>
-            <span class="font-mono text-[10px] font-black text-[#5B21B6] bg-[#FAF5FF] border border-[#C4B5FD] px-2 py-0.5 rounded-lg">⏰ ${pfEscapeHtml(pod.timeSlot)}</span>
+      const renderPlayerSlotBtn = (p) => {
+        const rawName = String(p && p.name ? p.name : '').trim();
+        const isOpen = !rawName || rawName.includes('(Open Slot)') || /^Open/i.test(rawName);
+        const cleanDisplay = isOpen ? `Open Seat #${String(p.slotNum).padStart(2, '0')}` : rawName;
+        return `
+          <button type="button" onclick="adminPromptEditOpenPlayPlayer(${p.slotNum})" class="w-full text-left px-3 py-2 rounded-xl border transition flex items-center justify-between gap-2 ${
+            isOpen
+              ? 'bg-white/80 hover:bg-emerald-50/60 border-dashed border-slate-300 hover:border-emerald-400 text-slate-500'
+              : 'bg-white hover:bg-emerald-50/40 border-emerald-400 text-slate-900 shadow-2xs'
+          }">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="px-1.5 py-0.5 rounded-md font-mono text-[10px] font-black flex-shrink-0 ${
+                isOpen ? 'bg-slate-100 text-slate-500' : 'bg-[#0F291E] text-[#A3E635]'
+              }" style="${!isOpen ? 'background:#0F291E !important;color:#A3E635 !important;' : ''}">#${String(p.slotNum).padStart(2, '0')}</span>
+              <span class="text-xs ${isOpen ? 'font-medium text-slate-400' : 'font-extrabold text-slate-900'} truncate">${pfEscapeHtml(cleanDisplay)}</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-md font-mono text-[9px] font-extrabold uppercase flex-shrink-0 ${
+              isOpen ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-800'
+            }">${isOpen ? '+ Assign' : '✏️ Edit'}</span>
+          </button>
+        `;
+      };
+
+      grid.innerHTML = pods.map(pod => {
+        const allPlayers = [...(pod.teamA || []), ...(pod.teamB || [])];
+        const filledCount = allPlayers.filter(p => p && p.name && !String(p.name).includes('(Open Slot)')).length;
+        return `
+        <div class="rounded-2xl bg-[#F8FAFC] border-2 border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <!-- Dark Championship Forest Pod Header -->
+          <div class="bg-[#0F291E] text-white px-4 py-3 flex items-center justify-between gap-2" style="background:#0F291E !important;color:#FFFFFF !important;">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-lg bg-[#A3E635] text-[#0F291E] font-mono text-[10px] font-black uppercase" style="background:#A3E635 !important;color:#0F291E !important;">POD 0${pod.podNumber}</span>
+              <span class="font-mono text-xs font-extrabold text-white uppercase tracking-wider" style="color:#FFFFFF !important;">📍 ${pfEscapeHtml(pod.court)}</span>
+            </div>
+            <span class="font-mono text-[10px] font-extrabold text-emerald-200 bg-white/10 border border-white/15 px-2.5 py-1 rounded-lg">⏰ ${pfEscapeHtml(pod.timeSlot)}</span>
           </div>
-          <div class="space-y-1">
-            <div class="text-[9px] font-mono font-black uppercase text-[#5B21B6]">Team A (Click player to edit)</div>
-            ${pod.teamA.map(p => `
-              <button type="button" onclick="adminPromptEditOpenPlayPlayer(${p.slotNum})" class="w-full text-left px-2.5 py-1.5 rounded-lg bg-[#FAF5FF] hover:bg-[#EDE9FE] border border-[#E9D5FF] flex items-center justify-between gap-1 text-[11px] transition">
-                <span class="font-bold text-slate-900 truncate">#${p.slotNum} ${pfEscapeHtml(p.name)}</span>
-                <span class="text-[9px] font-mono text-[#5B21B6] font-bold">✏️ Edit</span>
-              </button>
-            `).join('')}
-            <div class="text-center text-[9px] font-mono font-black text-[#8B5CF6]">VS</div>
-            <div class="text-[9px] font-mono font-black uppercase text-[#5B21B6]">Team B (Click player to edit)</div>
-            ${pod.teamB.map(p => `
-              <button type="button" onclick="adminPromptEditOpenPlayPlayer(${p.slotNum})" class="w-full text-left px-2.5 py-1.5 rounded-lg bg-[#FAF5FF] hover:bg-[#EDE9FE] border border-[#E9D5FF] flex items-center justify-between gap-1 text-[11px] transition">
-                <span class="font-bold text-slate-900 truncate">#${p.slotNum} ${pfEscapeHtml(p.name)}</span>
-                <span class="text-[9px] font-mono text-[#5B21B6] font-bold">✏️ Edit</span>
-              </button>
-            `).join('')}
+
+          <!-- Pod Body: Team A vs Team B -->
+          <div class="p-4 space-y-3">
+            <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200/80 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono font-black uppercase tracking-wider text-emerald-900">Team A • North Court</span>
+                <span class="text-[9px] font-mono font-bold text-emerald-700">Click slot to edit</span>
+              </div>
+              <div class="space-y-1.5">
+                ${pod.teamA.map(renderPlayerSlotBtn).join('')}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div class="h-px flex-1 bg-slate-200"></div>
+              <span class="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-mono text-[9px] font-black uppercase tracking-widest">VS • DOUBLES POD</span>
+              <div class="h-px flex-1 bg-slate-200"></div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-white border border-slate-200 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono font-black uppercase tracking-wider text-slate-700">Team B • South Court</span>
+                <span class="text-[9px] font-mono font-bold text-slate-400">${filledCount}/4 Filled</span>
+              </div>
+              <div class="space-y-1.5">
+                ${pod.teamB.map(renderPlayerSlotBtn).join('')}
+              </div>
+            </div>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // ================= ADMIN PICKLEBALL TOURNAMENTS MANAGER =================
@@ -7716,11 +8062,29 @@ function clearFieldError(fieldId) {
       if (!adminActiveBracketTrnId || !list.some(t => t.id === adminActiveBracketTrnId)) {
         adminActiveBracketTrnId = list[0] ? list[0].id : 'trn-bicol-dupr-open';
       }
-      const pubCount = list.filter(t => t.published !== false).length;
+      const isMasterOn = currentSiteConfig && currentSiteConfig.tournamentsPublishedOnHome !== false;
+      const rawPubCount = list.filter(t => t.published !== false).length;
+      const pubCount = isMasterOn ? rawPubCount : 0;
+
+      const masterBtn = document.getElementById('btn-toggle-home-tournaments-master');
+      if (masterBtn) {
+        if (isMasterOn && pubCount > 0) {
+          masterBtn.className = 'pf-trn-btn-emerald px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition';
+          masterBtn.innerHTML = '✅ Homepage Section: ON (Click to Turn OFF)';
+        } else {
+          masterBtn.className = 'pf-trn-btn-danger px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition';
+          masterBtn.innerHTML = '🚫 Homepage Section: OFF (Click to Turn ON)';
+        }
+      }
 
       if (visBar) {
-        const countButtonsHtml = [1, 2, 3, 4].map(cnt => {
-          const isCurrentCnt = pubCount === cnt;
+        const offButtonHtml = `
+          <button type="button" onclick="adminSetPublishedTournamentCount(0)" class="${(!isMasterOn || pubCount === 0) ? 'pf-trn-btn-danger' : 'pf-trn-btn-secondary'} px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">
+            ${(!isMasterOn || pubCount === 0) ? '✓ ' : ''}🚫 Turn OFF (0 Events)
+          </button>
+        `;
+        const countButtonsHtml = offButtonHtml + [1, 2, 3, 4].map(cnt => {
+          const isCurrentCnt = isMasterOn && pubCount === cnt;
           const lbl = cnt === 1 ? '1 Event (Default)' : (cnt === 4 ? 'All 4 Events' : `${cnt} Events`);
           return `
             <button type="button" onclick="adminSetPublishedTournamentCount(${cnt})" class="${isCurrentCnt ? 'pf-trn-btn-primary' : 'pf-trn-btn-secondary'} px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">
@@ -7730,7 +8094,7 @@ function clearFieldError(fieldId) {
         }).join('');
 
         const individualEventPillsHtml = list.map((t, i) => {
-          const isPub = t.published !== false;
+          const isPub = isMasterOn && t.published !== false;
           const shortTitle = t.title.length > 28 ? t.title.slice(0, 28) + '…' : t.title;
           return `
             <button type="button" onclick="adminToggleSingleTournamentPublished('${pfEscapeHtml(t.id)}')" class="${isPub ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-3 py-2 rounded-xl text-left font-mono text-[11px] transition flex items-center justify-between gap-2">
@@ -7744,10 +8108,10 @@ function clearFieldError(fieldId) {
           <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-slate-200 pb-3">
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase">🎛️ WEBSITE EVENT DISPLAY SELECTOR</span>
-                <span class="font-mono text-xs font-extrabold text-slate-900">Currently Showing: <span class="text-[#15803D]">${pubCount} of ${list.length} Event${pubCount === 1 ? '' : 's'}</span> on Public Website</span>
+                <span class="cal-cat-pill px-2.5 py-0.5 rounded-full ${pubCount > 0 ? 'bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7]' : 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]'} font-mono text-[10px] font-black uppercase">🎛️ WEBSITE EVENT DISPLAY SELECTOR</span>
+                <span class="font-mono text-xs font-extrabold text-slate-900">Currently Showing: <span class="${pubCount > 0 ? 'text-[#15803D]' : 'text-rose-700'}">${pubCount > 0 ? `${pubCount} of ${list.length} Event${pubCount === 1 ? '' : 's'} on Public Website` : 'OFF (Hidden on Public Website)'}</span></span>
               </div>
-              <p class="text-[11px] text-slate-600 mt-0.5">Default is <b>Show 1 Event</b>. Click <b>Show 1, 2, 3, or All 4 Events</b> on the right — or click any specific event button below to show any combination (e.g. Event #1 &amp; #3, or Events #2, #3 &amp; #4).</p>
+              <p class="text-[11px] text-slate-600 mt-0.5">Click <b>🚫 Turn OFF (0 Events)</b> or the top-right <b>Homepage Section: ON/OFF</b> button to hide the Tournament section on the website — or choose <b>Show 1, 2, 3, or All 4 Events</b>.</p>
             </div>
             <div class="flex flex-wrap items-center gap-1.5">
               ${countButtonsHtml}
@@ -7832,8 +8196,13 @@ function clearFieldError(fieldId) {
                   ${courtCountPresets}
                 </div>
               </div>
-              <div class="flex flex-wrap items-center gap-1.5">
-                ${courtTogglePills}
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  ${courtTogglePills}
+                </div>
+                <button type="button" onclick="adminPostTournamentToCalendar('${pfEscapeHtml(t.id)}')" class="px-3 py-1.5 rounded-xl bg-[#FEF9C3] hover:bg-[#FEF08A] text-[#854D0E] border border-[#FACC15] font-mono text-[10px] font-black uppercase tracking-wider transition shadow-2xs" title="Requires Admin Access Key: Blocks designated courts on the tournament date with the 🏆 Tournament calendar filler">
+                  📅 Put on Calendar (Admin Key)
+                </button>
               </div>
             </div>
 
@@ -7895,15 +8264,33 @@ function clearFieldError(fieldId) {
       const list = getAdminTournamentsList();
       const target = list.find(t => t.id === trnId);
       if (!target) return;
-      target.published = target.published === false ? true : false;
+      const wasMasterOff = currentSiteConfig && currentSiteConfig.tournamentsPublishedOnHome === false;
+      if (wasMasterOff) {
+        currentSiteConfig.tournamentsPublishedOnHome = true;
+        list.forEach(t => { t.published = (t.id === trnId); });
+      } else {
+        target.published = target.published === false ? true : false;
+      }
       const pubNow = list.filter(t => t.published !== false).length;
-      await saveAndSyncAdminTournaments(`${target.published ? '🟢 Shown' : '⚪ Hidden'}: "${target.title}" (${pubNow} of ${list.length} events shown on website)`);
+      if (currentSiteConfig) {
+        currentSiteConfig.tournamentsPublishedOnHome = pubNow > 0;
+      }
+      await saveAndSyncAdminTournaments(pubNow > 0
+        ? `${target.published ? '🟢 Shown' : '⚪ Hidden'}: "${target.title}" (${pubNow} of ${list.length} events shown on website)`
+        : `🚫 All Tournament Events Hidden — Homepage Tournament Section Turned OFF!`);
     }
 
     async function adminSetPublishedTournamentCount(count) {
       const list = getAdminTournamentsList();
       if (!list.length) return;
-      const n = Math.max(1, Math.min(list.length, Number(count) || 1));
+      const rawNum = Number(count);
+      if (rawNum === 0) {
+        list.forEach(t => { t.published = false; });
+        if (currentSiteConfig) currentSiteConfig.tournamentsPublishedOnHome = false;
+        await saveAndSyncAdminTournaments('🚫 Homepage Tournament Section Turned OFF (Hidden on Public Website)!');
+        return;
+      }
+      const n = Math.max(1, Math.min(list.length, rawNum || 1));
       list.forEach((t, idx) => {
         t.published = (idx < n);
       });
@@ -9156,6 +9543,8 @@ async function adminSetOpenPlayWindowForDate() {
               badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black">🟣 Open Play</span>`;
             } else if (st === 'HOLD') {
               badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#FFEDD5] text-[#9A3412] border border-[#FDBA74] font-mono text-[10px] font-black">🟠 Hold</span>`;
+            } else if (st === 'TOURNAMENT') {
+              badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#FEF9C3] text-[#854D0E] border border-[#FACC15] font-mono text-[10px] font-black">🏆 Tournament</span>`;
             } else if (st === 'PRIVATE') {
               badge = `<span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] font-mono text-[10px] font-black">⚪ Private</span>`;
             }
@@ -9209,6 +9598,14 @@ async function adminSetOpenPlayWindowForDate() {
             return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-not-allowed">
               <div class="pf-cal-slot-past px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl font-bold text-[9px] sm:text-[11px] leading-tight">
                 <span>₱${rate}</span>
+              </div>
+            </td>`;
+          }
+
+          if (cat === 'TOURNAMENT') {
+            return `<td onclick="handleAdminMatrixCellClick(${cNum}, '${h.time}')" class="py-2 sm:py-2.5 px-1 sm:px-2 text-center cursor-pointer transition hover:opacity-90">
+              <div class="px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#FEF9C3] text-[#854D0E] border border-[#FACC15] font-extrabold text-[9px] sm:text-[11px] leading-tight shadow-sm">
+                <span class="sm:hidden">🏆 Trn</span><span class="hidden sm:inline">🏆 Tournament • ${pfEscapeHtml(info.sub)}</span>
               </div>
             </td>`;
           }
@@ -9532,62 +9929,199 @@ async function adminSetOpenPlayWindowForDate() {
       } catch (e) {}
     }
 
-    // ================= POINT OF SALE (POS) REGISTER =================
+    // ================= POINT OF SALE (POS) REGISTER (WITH BUILT-IN CLUB GEARS & COURT WALK-INS) =================
     let isSubmittingPosSale = false;
+
+    function getFrontDeskBuiltinGearItems() {
+      const sc = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? currentSiteConfig : (DEFAULT_SITE_CONFIG || {});
+      return [
+        {
+          id: 'gear-paddle-std',
+          name: 'Standard Paddle (Rental)',
+          cat: 'Rental',
+          price: Number(sc.pricePaddleStd ?? 50),
+          costPrice: Number(sc.costPaddleStd ?? 0),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: 'Club Gear',
+          img: sc.imgPaddleStd || 'assets/gear-composite-paddle.jpg'
+        },
+        {
+          id: 'gear-paddle-carbon',
+          name: 'Carbon Paddle (Pro Rental)',
+          cat: 'Rental',
+          price: Number(sc.pricePaddleCarbon ?? 100),
+          costPrice: Number(sc.costPaddleCarbon ?? 0),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: 'Club Gear',
+          img: sc.imgPaddleCarbon || 'assets/gear-carbon-paddle.jpg'
+        },
+        {
+          id: 'gear-paddle-branded',
+          name: 'Branded Carbon Paddle',
+          cat: 'Rental',
+          price: Number(sc.pricePaddleBranded ?? 200),
+          costPrice: Number(sc.costPaddleBranded ?? 0),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: 'Club Gear',
+          img: sc.imgPaddleBranded || 'assets/gear-carbon-paddle.jpg'
+        },
+        {
+          id: 'gear-ball-single',
+          name: 'Pickleball Ball (Single)',
+          cat: 'Pro Shop',
+          price: Number(sc.priceBallSingle ?? 50),
+          costPrice: Number(sc.costBallSingle ?? 30),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: 'Pro Shop',
+          img: sc.imgBallSingle || 'assets/gear-balls-x40.jpg'
+        },
+        {
+          id: 'gear-balls-bucket',
+          name: 'Training Balls (50 pcs Bucket)',
+          cat: 'Rental',
+          price: Number(sc.priceBallsBucket ?? 100),
+          costPrice: Number(sc.costBallsBucket ?? 0),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: 'Practice Pack',
+          img: sc.imgBallsBucket || 'assets/gear-balls-x40.jpg'
+        },
+        {
+          id: 'gear-machine',
+          name: 'Training Ball Machine (1 Hr)',
+          cat: 'Rental',
+          price: Number(sc.priceMachine ?? 100),
+          costPrice: Number(sc.costMachine ?? 0),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: 'Solo Training',
+          img: sc.imgMachine || 'assets/gear-ball-machine.jpg'
+        },
+        {
+          id: 'walkin-open-play',
+          name: 'Open Play Walk-In Seat',
+          cat: 'Court Access',
+          price: Number(sc.openPlayRate ?? 150),
+          costPrice: 0,
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: 'Walk-In Seat',
+          img: 'assets/court-1.jpg'
+        },
+        {
+          id: 'walkin-court-day',
+          name: 'Daytime Court Walk-In (1 Hr)',
+          cat: 'Court Access',
+          price: Number(sc.dayRate ?? 400),
+          costPrice: Number(sc.costCourtPerHour ?? 0),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: '6AM–5PM',
+          img: 'assets/court-1.jpg'
+        },
+        {
+          id: 'walkin-court-night',
+          name: 'Evening Court Walk-In (1 Hr)',
+          cat: 'Court Access',
+          price: Number(sc.nightRate ?? 500),
+          costPrice: Number(sc.costCourtPerHour ?? 0),
+          stock: 99,
+          isBuiltinGear: true,
+          badgeText: '6PM–12AM',
+          img: 'assets/court-1.jpg'
+        }
+      ];
+    }
+
+    function getCombinedPosCatalog() {
+      const builtins = getFrontDeskBuiltinGearItems();
+      const customIds = new Set((posCatalog || []).map(p => String(p.id || '')));
+      const customNames = new Set((posCatalog || []).map(p => String(p.name || '').toLowerCase()));
+      const mergedBuiltins = builtins.filter(b => !customIds.has(b.id) && !customNames.has(b.name.toLowerCase()));
+      return [...(posCatalog || []), ...mergedBuiltins];
+    }
 
     function renderPosCatalog() {
       const grid = document.getElementById('pos-catalog-grid');
       if (!grid) return;
 
-      if (posCatalog.length === 0) {
+      const allPosItems = getCombinedPosCatalog();
+      const filteredPos = activePosCategoryFilter === 'ALL'
+        ? allPosItems
+        : allPosItems.filter(p => p.cat === activePosCategoryFilter);
+
+      if (filteredPos.length === 0) {
         grid.innerHTML = `
-          <div class="col-span-full p-8 rounded-3xl bg-brand-card border border-white/10 text-center space-y-3">
-            <span class="text-sm font-black uppercase text-white block">No Products in Inventory Yet</span>
-            <p class="text-xs text-slate-400 max-w-sm mx-auto">Add your custom drinks, balls, or paddle rentals to the Inventory first. They will appear here with their picture and live stock count.</p>
-            <button onclick="openAddInventoryModal()" class="px-5 py-2.5 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition">
+          <div class="col-span-full p-6 rounded-2xl bg-brand-card border border-white/10 text-center space-y-2.5">
+            <span class="text-xs font-black uppercase text-white block">No items in category "${pfEscapeHtml(activePosCategoryFilter)}" yet</span>
+            <p class="text-[11px] text-slate-400">Switch to <b>All Items</b>, <b>Rental</b>, <b>Pro Shop</b>, or <b>Court Access</b>, or add a custom drink/product below.</p>
+            <button type="button" onclick="openAddInventoryModal()" class="px-4 py-2 rounded-xl bg-brand-lime text-brand-black font-black text-xs uppercase tracking-wider hover:bg-brand-limeHover transition">
               + Add Custom Product with Picture
             </button>
           </div>`;
         return;
       }
 
-      const filteredPos = activePosCategoryFilter === 'ALL'
-        ? posCatalog
-        : posCatalog.filter(p => p.cat === activePosCategoryFilter);
-      if (filteredPos.length === 0) {
-        grid.innerHTML = `<div class="col-span-full p-6 rounded-2xl bg-brand-card border border-white/10 text-center text-xs text-slate-400">No items in category "${activePosCategoryFilter}".</div>`;
-        return;
-      }
       grid.innerHTML = filteredPos.map(p => {
-        const outOfStock = Number(p.stock || 0) <= 0;
-        const unitCost = getResolvedItemUnitCost(p);
+        const isBuiltin = Boolean(p.isBuiltinGear);
+        const outOfStock = !isBuiltin && Number(p.stock || 0) <= 0;
+        const unitCost = isBuiltin ? Number(p.costPrice || 0) : getResolvedItemUnitCost(p);
         const unitProfit = Math.max(0, Number(p.price || 0) - unitCost);
+        const badgeLabel = isBuiltin ? (p.badgeText || 'Official Gear') : (outOfStock ? '0 Left' : `Stock: ${p.stock}`);
         return `
-        <div onclick="${outOfStock ? "alert('Out of stock! Please restock in the Inventory tab.')" : `addPosItem('${p.id}')`}" class="p-3.5 rounded-2xl bg-brand-card border ${outOfStock ? 'border-brand-clay/30 opacity-60 cursor-not-allowed' : 'border-white/10 hover:border-brand-lime/40 cursor-pointer active:scale-95'} transition flex flex-col justify-between">
+        <div onclick="${outOfStock ? "alert('Out of stock! Please restock in the Inventory tab.')" : `addPosItem('${p.id}')`}" class="p-3.5 rounded-2xl bg-brand-card border ${outOfStock ? 'border-brand-clay/30 opacity-60 cursor-not-allowed' : 'border-white/10 hover:border-brand-lime/40 cursor-pointer active:scale-95'} transition flex flex-col justify-between shadow-xs hover:shadow-md">
           <div>
             <div class="h-28 w-full rounded-xl overflow-hidden bg-brand-black mb-2.5 border border-white/5 relative">
               <img src="${resolvePreviewAssetPath(p.img || 'assets/gear-balls-x40.jpg')}" onerror="this.onerror=null;this.src=resolvePreviewAssetPath('assets/gear-balls-x40.jpg')" alt="${pfEscapeHtml(p.name)}" class="w-full h-full object-cover">
-              <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full ${outOfStock ? 'bg-brand-clay text-white' : 'bg-brand-black/85 text-brand-lime border border-brand-lime/30'} text-[9px] font-mono font-bold">
-                ${outOfStock ? '0 Left' : `Stock: ${p.stock}`}
+              <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full ${outOfStock ? 'bg-brand-clay text-white' : 'bg-[#0F291E]/90 text-[#A3E635] border border-[#A3E635]/40'} text-[9px] font-mono font-bold" style="${!outOfStock ? 'background:#0F291E !important;color:#A3E635 !important;' : ''}">
+                ${pfEscapeHtml(badgeLabel)}
               </span>
             </div>
             <span class="text-[9px] font-mono uppercase text-slate-400 block">${pfEscapeHtml(p.cat)}</span>
             <h4 class="font-bold text-white text-xs mt-0.5 leading-snug">${pfEscapeHtml(p.name)}</h4>
           </div>
-          <div class="flex items-center justify-between mt-2">
+          <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-white/10">
             <span class="text-brand-lime font-mono font-black text-sm">₱${Number(p.price).toFixed(2)}</span>
-            <span class="text-[9px] font-mono text-emerald-300">+₱${unitProfit.toFixed(0)} profit</span>
+            <span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 font-mono text-[9px] font-bold">+ Tap to Add</span>
           </div>
         </div>
       `}).join('');
+      renderPosLiveOrdersFeed();
+    }
+
+    function renderPosLiveOrdersFeed() {
+      const feed = document.getElementById('pos-live-orders-feed');
+      if (!feed) return;
+      const posItems = (salesLedger || []).filter(s => s && s.type === 'POS Retail').slice(0, 8);
+      if (posItems.length === 0) {
+        feed.innerHTML = `<div class="p-4 rounded-2xl bg-brand-black/50 border border-white/10 text-center text-slate-400 text-xs">No POS gear or drink orders recorded yet. Orders placed via <b>Order Now →</b> on the website or rung up above appear here automatically.</div>`;
+        return;
+      }
+      feed.innerHTML = posItems.map(s => `
+        <div class="p-3 rounded-2xl bg-brand-black/70 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-[#A3E635] border border-[#A3E635]/40 font-mono font-black text-[10px] flex-shrink-0" style="background:#0F291E !important;color:#A3E635 !important;">${pfEscapeHtml(s.ref)}</span>
+            <div class="min-w-0">
+              <div class="font-bold text-white truncate">${pfEscapeHtml(s.desc)}</div>
+              <div class="text-[10px] font-mono text-slate-400">Payment: <b class="text-emerald-300">${pfEscapeHtml(s.method || 'Cash')}</b> • ${pfEscapeHtml(s.date || 'Today')}</div>
+            </div>
+          </div>
+          <span class="font-mono font-black text-sm text-brand-lime flex-shrink-0">₱${Number(s.amount || 0).toFixed(2)}</span>
+        </div>
+      `).join('');
     }
 
     function addPosItem(id) {
-      const prod = posCatalog.find(p => p.id === id);
+      const allPosItems = getCombinedPosCatalog();
+      const prod = allPosItems.find(p => p.id === id);
       if (!prod) return;
       const existing = posOrder.find(o => o.id === id);
       const currentInCart = existing ? existing.qty : 0;
-      if (currentInCart + 1 > Number(prod.stock || 0)) {
+      if (!prod.isBuiltinGear && currentInCart + 1 > Number(prod.stock || 0)) {
         alert(`Only ${prod.stock} units of "${prod.name}" available in stock!`);
         return;
       }
@@ -10704,11 +11238,17 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const box = document.getElementById('ai-financial-audit-box');
       if (!box) return;
 
+      if (typeof syncTournamentEntriesToSalesLedger === 'function') {
+        syncTournamentEntriesToSalesLedger();
+      }
       const filteredSales = filterLedgerByActivePeriod(salesLedger);
       const filteredExp = filterLedgerByActivePeriod(clubExpenses);
 
-      const courtSales = filteredSales.filter(s => s.type === 'Court Rental');
-      const posSales = filteredSales.filter(s => s.type !== 'Court Rental');
+      const trnSales = filteredSales.filter(s => s.type === 'Tournament Entry' || String(s.ref || '').startsWith('PF-TRN') || /tournament/i.test(String(s.type || '') + ' ' + String(s.desc || '')));
+      const courtSales = filteredSales.filter(s => s.type === 'Court Rental' && !trnSales.includes(s));
+      const posSales = filteredSales.filter(s => s.type !== 'Court Rental' && !trnSales.includes(s));
+      const trnTotal = trnSales.reduce((a, b) => a + Number(b.amount || 0), 0);
+      const trnPrizeExpenses = filteredExp.filter(e => /winner prize|tournament prize/i.test(String(e.category || '') + ' ' + String(e.title || ''))).reduce((a, b) => a + Number(b.amount || 0), 0);
 
       const courtGross = courtSales.reduce((a, b) => a + Number(b.amount || 0), 0);
       const courtCost = courtSales.reduce((a, b) => a + estimateTransactionCost(b), 0);
@@ -10790,6 +11330,147 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
     }
 
+
+    function syncTournamentEntriesToSalesLedger() {
+      const list = getAdminTournamentsList();
+      let changed = false;
+      list.forEach(t => {
+        if (!t) return;
+        const fee = Math.max(0, Number(t.entryFee || 0));
+        if (fee <= 0) return;
+        const regs = Array.isArray(t.registrations) ? t.registrations : [];
+        regs.forEach((r, idx) => {
+          if (!r) return;
+          const rStatus = String(r.status || 'CONFIRMED').toUpperCase();
+          if (rStatus === 'DECLINED' || rStatus === 'CANCELLED') return;
+          const refId = r.id || r.ref || `PF-TRN-${t.id}-${idx + 1}`;
+          if (!salesLedger.some(s => s.ref === refId)) {
+            salesLedger.unshift({
+              ref: refId,
+              type: 'Tournament Entry',
+              desc: `🏆 ${t.title} — ${r.teamName || r.player1 || 'Team #' + (idx + 1)}`,
+              method: r.paymentMethod || 'GCash',
+              amount: fee,
+              cost: 0,
+              profit: fee,
+              date: (r.registeredAt && /^\d{4}-\d{2}-\d{2}/.test(r.registeredAt))
+                ? r.registeredAt
+                : (getAdminLocalTodayYMD() + ' 12:00')
+            });
+            changed = true;
+          }
+        });
+      });
+      if (changed) saveAdminState(true);
+    }
+
+    async function adminPostTournamentToCalendar(tournamentId) {
+      if (typeof isStaffAuthenticated === 'function' && !isStaffAuthenticated()) {
+        alert('🔒 Admin Access Key Required: Only authorized Admin keys can place a Tournament filler on the calendar.');
+        return;
+      }
+      const list = getAdminTournamentsList();
+      const trn = list.find(t => String(t.id) === String(tournamentId));
+      if (!trn) return;
+
+      const targetDate = (trn.date && /^\d{4}-\d{2}-\d{2}$/.test(String(trn.date).trim()))
+        ? String(trn.date).trim()
+        : getAdminSelectedDateYMD();
+      const dcList = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length > 0
+        ? trn.designatedCourts
+        : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+
+      blocksMutationLockUntil = Date.now() + 8000;
+
+      for (const cName of dcList) {
+        const cNum = extractAdminCourtNum(cName);
+        const courtLabel = 'Court 0' + cNum;
+        const newBlock = {
+          id: `blk-trn-${trn.id}-c${cNum}-${Date.now()}`,
+          court: courtLabel,
+          date: targetDate,
+          hours: 'ALL',
+          statusType: 'TOURNAMENT',
+          reason: `🏆 ${trn.title} (${trn.time || 'All Day'})`
+        };
+        courtBlocks = courtBlocks.filter(b => !(
+          String(b.court || '').trim().toLowerCase() === courtLabel.toLowerCase() &&
+          String(b.date || '').trim() === targetDate &&
+          String(b.hours || '').trim().toUpperCase() === 'ALL'
+        ));
+        courtBlocks.push(newBlock);
+        try {
+          await fetch('/api/blocks', {
+            method: 'POST',
+            headers: getAdminAuthHeaders(),
+            body: JSON.stringify({ action: 'set_slot', block: newBlock, updatedAt: Date.now() })
+          });
+        } catch (err) {}
+      }
+
+      saveAdminState(true);
+      syncAdminCalendarDate(targetDate);
+      renderScheduleBlocks();
+      if (typeof showTournamentManagerToast === 'function') {
+        showTournamentManagerToast(`🏆 Added "${trn.title}" to Calendar on ${targetDate} across ${dcList.join(', ')} (Admin Key Verified)!`);
+      }
+    }
+    window.adminPostTournamentToCalendar = adminPostTournamentToCalendar;
+
+    async function adminRecordTournamentWinnerPrizeDeduction(tournamentId) {
+      if (typeof isStaffAuthenticated === 'function' && !isStaffAuthenticated()) {
+        alert('🔒 Admin Access Key Required: Only authorized Admin keys can record Winner Cash Prize deductions.');
+        return;
+      }
+      const list = getAdminTournamentsList();
+      const trn = list.find(t => String(t.id) === String(tournamentId));
+      if (!trn) return;
+
+      const inp = document.getElementById(`trn-winner-prize-${tournamentId}`);
+      const prizeAmt = Math.max(0, parseFloat(inp ? inp.value : trn.winnerPrizeCost) || 0);
+      trn.winnerPrizeCost = prizeAmt;
+
+      const expId = `exp-trn-prize-${trn.id}`;
+      clubExpenses = (clubExpenses || []).filter(e => e && e.id !== expId);
+
+      if (prizeAmt > 0) {
+        const prizeExp = {
+          id: expId,
+          category: 'Tournament Winner Prize',
+          title: `🏆 Winner Cash Prize Payout — ${trn.title}`,
+          amount: prizeAmt,
+          date: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
+        };
+        clubExpenses.unshift(prizeExp);
+        try {
+          await fetch('/api/expenses', {
+            method: 'POST',
+            headers: getAdminAuthHeaders(),
+            body: JSON.stringify({ action: 'add', expense: prizeExp })
+          });
+        } catch (err) {}
+      } else {
+        try {
+          await fetch('/api/expenses', {
+            method: 'POST',
+            headers: getAdminAuthHeaders(),
+            body: JSON.stringify({ action: 'delete', id: expId })
+          });
+        } catch (err) {}
+      }
+
+      syncTournamentEntriesToSalesLedger();
+      await saveAdminTournamentsList(
+        list,
+        prizeAmt > 0
+          ? `💸 Deducted ₱${prizeAmt.toLocaleString()} Winner Cash Prize for "${trn.title}" from Total Sales & Net Profit!`
+          : `Cleared Winner Cash Prize deduction for "${trn.title}".`
+      );
+      saveAdminState(true);
+      renderAllAdminViews(true);
+    }
+    window.adminRecordTournamentWinnerPrizeDeduction = adminRecordTournamentWinnerPrizeDeduction;
+
     // ================= REPORTS & CSV EXPORT =================
     function renderReportsLedger() {
       const tbody = document.getElementById('reports-tbody');
@@ -10809,7 +11490,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const posCost = posSales.reduce((a, b) => a + estimateTransactionCost(b), 0);
       const posProfit = posTotal - posCost;
 
-      const grossTotal = courtTotal + posTotal;
+      const grossTotal = courtTotal + posTotal + trnTotal;
+      const elTrnRev = document.getElementById('rep-trn-rev');
+      if (elTrnRev) elTrnRev.textContent = '₱' + Number(trnTotal || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const elTrnPrize = document.getElementById('rep-trn-prize-deduction');
+      if (elTrnPrize) elTrnPrize.textContent = '-₱' + Number(trnPrizeExpenses || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const totalCogs = courtCost + posCost;
       const grossProfit = grossTotal - totalCogs;
       const totalExpenses = filteredExp.reduce((a, b) => a + Number(b.amount || 0), 0);
@@ -12813,8 +13498,9 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         }
         prev.onerror = function() {
           if (val.startsWith('assets/') && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (window.location.port === '8089' || window.location.port === '8189')) {
+            const pubPort = (window.location.port === '8089') ? '8088' : '8188';
             this.onerror = function() { this.onerror = null; this.src = resolvePreviewAssetPath(defVal); };
-            this.src = 'http://' + window.location.hostname + ':8188/' + val;
+            this.src = 'http://' + window.location.hostname + ':' + pubPort + '/' + val;
           } else if (defVal && this.src !== resolvePreviewAssetPath(defVal)) {
             this.onerror = null;
             this.src = resolvePreviewAssetPath(defVal);
@@ -13032,6 +13718,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         openPlayRateCustomized: true,
         openPlayMaxPlayers: Number((currentSiteConfig && currentSiteConfig.openPlayMaxPlayers) || 24),
         openPlayCourtsCount: Number((currentSiteConfig && currentSiteConfig.openPlayCourtsCount) || 4),
+        openPlayDesignatedCourts: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlayDesignatedCourts)) ? currentSiteConfig.openPlayDesignatedCourts : undefined,
         openPlayRoster: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlayRoster)) ? currentSiteConfig.openPlayRoster : undefined,
         openPlay24Roster: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlay24Roster)) ? currentSiteConfig.openPlay24Roster : undefined,
         openPlaySessions: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySessions)) ? currentSiteConfig.openPlaySessions : undefined,
@@ -13147,8 +13834,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       siteConfigLockUntil = Date.now() + 5000;
       const endpoints = ['/api/site-config'];
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        endpoints.push('http://127.0.0.1:8188/api/site-config');
         endpoints.push('http://127.0.0.1:8089/api/site-config');
+        endpoints.push('http://localhost:8088/api/site-config');
+        endpoints.push('http://127.0.0.1:8088/api/site-config');
+        endpoints.push('http://127.0.0.1:8188/api/site-config');
+        endpoints.push('http://127.0.0.1:8189/api/site-config');
       }
       for (const ep of endpoints) {
         try {
@@ -13173,6 +13863,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     }
 
     async function saveSiteConfigToServer(isSilentAutoSave = false) {
+      if (siteEditorSaving && !isSilentAutoSave) return;
       siteEditorSaving = true;
       siteConfigLockUntil = Date.now() + 5000;
       const newCfg = collectSiteConfigFromEditor();
@@ -13180,26 +13871,32 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       hasInitialSiteEditorLoaded = true;
       broadcastSiteConfigLive(newCfg);
 
-      const btn = document.getElementById('se-save-all-btn');
-      if (btn && !isSilentAutoSave) {
-        btn.disabled = true;
-        btn.innerHTML = '<span>Publishing Live...</span>';
+      const allSaveBtns = Array.from(document.querySelectorAll('#se-save-all-btn, button[onclick*="saveSiteConfigToServer"]'));
+      if (!isSilentAutoSave) {
+        allSaveBtns.forEach(b => {
+          b.disabled = true;
+          if (!b.dataset.origHtml) b.dataset.origHtml = b.innerHTML;
+          b.innerHTML = '<span>Publishing Live...</span>';
+        });
       }
 
-      await postSiteConfigToEndpoints(newCfg);
-
-      siteEditorSaving = false;
-      siteEditorDirty = false;
+      try {
+        await postSiteConfigToEndpoints(newCfg);
+      } finally {
+        siteEditorSaving = false;
+        siteEditorDirty = false;
+        if (!isSilentAutoSave) {
+          allSaveBtns.forEach(b => {
+            b.disabled = false;
+            if (b.dataset.origHtml) b.innerHTML = b.dataset.origHtml;
+          });
+        }
+      }
 
       const badge = document.getElementById('se-banner-autosave-badge');
       if (badge) badge.textContent = '✅ Saved & Live on Website!';
       const headerPill = document.getElementById('se-header-sync-pill');
       if (headerPill) headerPill.textContent = '● All Changes Published Live (' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ')';
-
-      if (btn && !isSilentAutoSave) {
-        btn.disabled = false;
-        btn.innerHTML = '<span>💾 Save &amp; Publish All Changes Live</span><span>→</span>';
-      }
 
       if (!isSilentAutoSave) {
         const fb = document.getElementById('se-save-feedback');
@@ -14085,8 +14782,18 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     }
     async function toggleMasterHomeTournamentVisibility() {
       ensureAdminTournamentsInitialized();
-      currentSiteConfig.tournamentsPublishedOnHome = !(currentSiteConfig.tournamentsPublishedOnHome !== false);
-      await saveAndSyncAdminTournaments(currentSiteConfig.tournamentsPublishedOnHome ? '✅ Published Tournaments on Public Homepage!' : '🔒 Hidden Tournaments on Public Homepage (Empty State shown)');
+      const list = getAdminTournamentsList();
+      const isCurrentlyOn = currentSiteConfig.tournamentsPublishedOnHome !== false && list.some(t => t.published !== false);
+      if (isCurrentlyOn) {
+        currentSiteConfig.tournamentsPublishedOnHome = false;
+        await saveAndSyncAdminTournaments('🚫 Homepage Tournament Section Turned OFF (Hidden on Public Website)!');
+      } else {
+        currentSiteConfig.tournamentsPublishedOnHome = true;
+        if (!list.some(t => t.published !== false) && list[0]) {
+          list[0].published = true;
+        }
+        await saveAndSyncAdminTournaments('✅ Homepage Tournament Section Turned ON (Visible on Public Website)!');
+      }
     }
     async function toggleSingleTournamentApproval(trnId) {
       const list = getAdminTournamentsList();
@@ -14228,13 +14935,43 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
     }
 
+    async function adminToggleMasterOpenPlayVisibility() {
+      const list = getAdminOpenPlaySessionsList();
+      const isMasterOn = currentSiteConfig && currentSiteConfig.openPlayEnabled !== false;
+      if (isMasterOn) {
+        if (currentSiteConfig) currentSiteConfig.openPlayEnabled = false;
+        renderAdminOpenPlayPills();
+        renderScheduleBlocks();
+        await saveAndSyncAdminOpenPlaySessions('🚫 Homepage Open Play Banner Turned OFF (Hidden on Public Website)!');
+      } else {
+        if (currentSiteConfig) currentSiteConfig.openPlayEnabled = true;
+        if (!list.some(s => s.published !== false) && list[0]) {
+          list[0].published = true;
+        }
+        renderAdminOpenPlayPills();
+        renderScheduleBlocks();
+        await saveAndSyncAdminOpenPlaySessions('✅ Homepage Open Play Banner Turned ON (Visible on Public Website)!');
+      }
+    }
+
     async function adminSetPublishedOpenPlayCount(count) {
       const list = getAdminOpenPlaySessionsList();
-      const n = Math.max(1, Math.min(list.length, parseInt(count, 10) || 1));
+      const rawNum = parseInt(count, 10);
+      if (rawNum === 0) {
+        if (currentSiteConfig) currentSiteConfig.openPlayEnabled = false;
+        renderAdminOpenPlayPills();
+        renderScheduleBlocks();
+        await saveAndSyncAdminOpenPlaySessions('🚫 Homepage Open Play Banner Turned OFF (Hidden on Public Website)!');
+        return;
+      }
+      if (currentSiteConfig) currentSiteConfig.openPlayEnabled = true;
+      const n = Math.max(1, Math.min(list.length, rawNum || 1));
       list.forEach((s, idx) => {
         s.published = (idx < n);
       });
-      await saveAndSyncAdminOpenPlaySessions(`✅ Open Play Page now displays ${n} Session${n > 1 ? 's' : ''}!`);
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      await saveAndSyncAdminOpenPlaySessions(`✅ Open Play now ON and displaying ${n} Session${n > 1 ? 's' : ''}!`);
     }
 
     async function adminToggleSingleOpenPlaySessionPublished(sessionId) {
@@ -14242,10 +14979,15 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const target = list.find(s => s.id === sessionId);
       if (!target) return;
       target.published = !target.published;
-      if (!list.some(s => s.published)) {
-        target.published = true;
+      const anyPublished = list.some(s => s.published !== false);
+      if (currentSiteConfig) {
+        currentSiteConfig.openPlayEnabled = anyPublished;
       }
-      await saveAndSyncAdminOpenPlaySessions(target.published ? `✅ Shown "${target.title}" on Open Play Page!` : `🔒 Hid "${target.title}" on Open Play Page`);
+      renderAdminOpenPlayPills();
+      renderScheduleBlocks();
+      await saveAndSyncAdminOpenPlaySessions(anyPublished
+        ? (target.published ? `✅ Shown "${target.title}" on Open Play!` : `🔒 Hid "${target.title}" on Open Play`)
+        : `🚫 All Open Play Sessions Hidden — Homepage Open Play Banner Turned OFF!`);
     }
 
     async function adminSetOpenPlayDesignatedCourtCount(sessionId, count) {
@@ -14423,7 +15165,9 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const active = list.find(s => s.id === adminSelectedOpenPlaySessionId) || list[0];
       adminSelectedOpenPlaySessionId = active.id;
 
-      const pubCount = list.filter(s => s.published !== false).length;
+      const isOpMasterOn = currentSiteConfig && currentSiteConfig.openPlayEnabled !== false;
+      const rawOpPubCount = list.filter(s => s.published !== false).length;
+      const pubCount = isOpMasterOn ? rawOpPubCount : 0;
       const desigCourts = Array.isArray(active.designatedCourts) && active.designatedCourts.length > 0
         ? active.designatedCourts
         : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
@@ -14509,7 +15253,10 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <a href="/open-play.html" onclick="return openPublicSite(event, 'open-play.html')" class="pf-trn-btn-emerald px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5">
+              <button type="button" id="btn-toggle-home-openplay-master" onclick="adminToggleMasterOpenPlayVisibility()" class="${isOpMasterOn && pubCount > 0 ? 'pf-trn-btn-emerald' : 'pf-trn-btn-danger'} px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
+                ${isOpMasterOn && pubCount > 0 ? '✅ Homepage Banner: ON (Click to Turn OFF)' : '🚫 Homepage Banner: OFF (Click to Turn ON)'}
+              </button>
+              <a href="/open-play.html" onclick="return openPublicSite(event, 'open-play.html')" class="pf-trn-btn-secondary px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5">
                 <span>↗ View Public Open Play Page</span>
               </a>
             </div>
@@ -14525,8 +15272,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                 <p class="text-xs text-slate-600">Choose how many Open Play sessions to show on the dedicated Open Play sub-page (<code class="font-mono font-bold">open-play.html</code>), or toggle individual sessions below:</p>
               </div>
               <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="adminSetPublishedOpenPlayCount(0)" class="px-3 py-2 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${(!isOpMasterOn || pubCount === 0) ? 'pf-trn-btn-danger' : 'bg-white hover:bg-slate-100 text-rose-700 border border-rose-300'}">
+                  ${(!isOpMasterOn || pubCount === 0) ? '✓ ' : ''}🚫 Turn OFF (Hide Banner)
+                </button>
                 ${[1, 2, 3, 4].map(n => `
-                  <button type="button" onclick="adminSetPublishedOpenPlayCount(${n})" class="px-3 py-2 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${pubCount === n ? 'bg-[#0F291E] text-white shadow-xs' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'}">
+                  <button type="button" onclick="adminSetPublishedOpenPlayCount(${n})" class="px-3 py-2 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${(isOpMasterOn && pubCount === n) ? 'bg-[#0F291E] text-white shadow-xs' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'}">
                     ${n === 1 ? '1️⃣ Show 1 Session (Default)' : (n === 4 ? '4️⃣ Show All 4' : `${n}️⃣ Show ${n} Sessions`)}
                   </button>
                 `).join('')}

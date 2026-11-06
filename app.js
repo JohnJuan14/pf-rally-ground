@@ -352,15 +352,10 @@ async function syncStateFromServer() {
             renderPublicInventoryCatalog();
           }
           if (data.siteConfig && typeof data.siteConfig === 'object') {
-            let localSaved = {};
-            try { localSaved = JSON.parse(localStorage.getItem('pf_site_config') || '{}') || {}; } catch (e) {}
-            const srvTs = Number(data.siteConfig.updatedAt || 0);
-            const locTs = Number(localSaved.updatedAt || 0);
-            const bestSc = (locTs > srvTs)
-              ? Object.assign({}, data.siteConfig, localSaved)
-              : Object.assign({}, localSaved, data.siteConfig);
+            const bestSc = Object.assign({}, DEFAULT_PF_SITE_CONFIG, data.siteConfig);
             sharedServerState.siteConfig = bestSc;
-            localStorage.setItem('pf_site_config', JSON.stringify(bestSc));
+            window.PF_SITE_CONFIG = bestSc;
+            try { localStorage.setItem('pf_site_config', JSON.stringify(bestSc)); } catch (e) {}
             if (typeof applySiteConfig === 'function') applySiteConfig(bestSc);
           }
           if (data.paymentConfig && typeof data.paymentConfig === 'object') {
@@ -438,7 +433,8 @@ function openAdminPortal(event) {
   const host = window.location.hostname;
   const port = window.location.port;
   if ((host === 'localhost' || host === '127.0.0.1') && (port === '8088' || port === '8188')) {
-    window.location.href = 'http://' + host + ':8189/?login=1';
+    const admPort = (port === '8088') ? '8089' : '8189';
+    window.location.href = 'http://' + host + ':' + admPort + '/?login=1';
   } else {
     window.location.href = '/admin/?login=1';
   }
@@ -1105,7 +1101,9 @@ function closePaymentModal() {
   document.body.classList.remove('overflow-hidden');
 }
 
+let _isSubmittingManualPayment = false;
 async function submitManualPaymentConfirmation() {
+  if (_isSubmittingManualPayment) return;
   const modalName = document.getElementById('modal-cust-name');
   const modalPhone = document.getElementById('modal-cust-phone');
   const drawerName = document.getElementById('cust-name');
@@ -1143,17 +1141,22 @@ async function submitManualPaymentConfirmation() {
   }
   clearFieldError('manual-ref-input');
 
-  const refCode = 'PF-' + Math.floor(10000 + Math.random() * 90000);
-  closePaymentModal();
+  _isSubmittingManualPayment = true;
+  try {
+    const refCode = 'PF-' + Math.floor(10000 + Math.random() * 90000);
+    closePaymentModal();
 
-  await finalizeBookingRecord({
-    name: finalName,
-    phone: finalPhone,
-    mode: selectedPaymentMode === 'bank' ? 'Bank Transfer (BDO / BPI / InstaPay)' : 'GCash (Official QR Ph / Express Send)',
-    status: 'PENDING VERIFICATION',
-    transactionRef: manualRef,
-    refNo: refCode
-  });
+    await finalizeBookingRecord({
+      name: finalName,
+      phone: finalPhone,
+      mode: selectedPaymentMode === 'bank' ? 'Bank Transfer (BDO / BPI / InstaPay)' : 'GCash (Official QR Ph / Express Send)',
+      status: 'PENDING VERIFICATION',
+      transactionRef: manualRef,
+      refNo: refCode
+    });
+  } finally {
+    _isSubmittingManualPayment = false;
+  }
 }
 
 async function finalizeBookingRecord(details) {
@@ -2110,7 +2113,7 @@ function renderPublicInventoryCatalog() {
           <span class="text-lg font-black text-white font-mono">₱${Number(item.price).toFixed(0)}</span>
           ${outOfStock
             ? `<button disabled class="px-3 py-1.5 rounded-lg bg-white/5 text-slate-500 text-xs font-bold cursor-not-allowed">Sold Out</button>`
-            : `<button onclick="openBookingDrawer()" class="px-3.5 py-1.5 rounded-lg bg-brand-lime text-brand-black hover:bg-brand-limeHover text-xs font-black transition active:scale-95">Book with Court →</button>`
+            : `<button onclick="pfOpenGearOrderModal('${safeName}')" class="px-4 py-2 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white border border-[#15803D] text-xs font-extrabold uppercase tracking-wider transition active:scale-95" style="background:#0F291E !important;color:#FFFFFF !important;">Rent Now →</button>`
           }
         </div>
       </div>
@@ -2450,11 +2453,14 @@ function getSiteConfig() {
   const serverCfg = (sharedServerState && sharedServerState.siteConfig && typeof sharedServerState.siteConfig === 'object')
     ? sharedServerState.siteConfig
     : {};
+  const hasServerSc = Boolean(sharedServerState && sharedServerState._hasSyncedFromServer && Object.keys(serverCfg).length > 0);
   const savedTs = Number(saved.updatedAt || 0);
   const srvTs = Number(serverCfg.updatedAt || 0);
-  const merged = (savedTs > srvTs)
-    ? Object.assign({}, DEFAULT_PF_SITE_CONFIG, serverCfg, saved)
-    : Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg);
+  const merged = hasServerSc
+    ? Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg)
+    : ((savedTs > srvTs)
+        ? Object.assign({}, DEFAULT_PF_SITE_CONFIG, serverCfg, saved)
+        : Object.assign({}, DEFAULT_PF_SITE_CONFIG, saved, serverCfg));
   if (merged.openPlayEnabled === undefined) merged.openPlayEnabled = true;
   if (!Array.isArray(merged.openPlaySlots)) {
     merged.openPlaySlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
@@ -3075,6 +3081,9 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
   if (matchedBlock) {
     const st = String(matchedBlock.statusType || 'CLOSED').toUpperCase();
     const rLower = String(matchedBlock.reason || '').toLowerCase();
+    if (st === 'TOURNAMENT' || rLower.includes('tournament')) {
+      return { status: 'CLOSED', category: 'TOURNAMENT', override: matchedBlock, reason: matchedBlock.reason || 'Official Club Tournament' };
+    }
     if (st === 'PRIVATE' || rLower.includes('private')) {
       return { status: 'CLOSED', category: 'PRIVATE', override: matchedBlock, reason: matchedBlock.reason || 'Private' };
     }
@@ -5146,53 +5155,115 @@ function pfRenderOpenPlay24Board() {
       const homeCourtPillsHtml = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
         const isOpCourt = dcList.includes(cName);
         return isOpCourt
-          ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase"><span class="w-1.5 h-1.5 rounded-full bg-[#8B5CF6]"></span>🟣 ${cName}: Open Play</span>`
-          : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>🟢 ${cName}: Regular Hire</span>`;
+          ? `<span class="px-2.5 py-1.5 rounded-xl bg-[#0F291E] text-white font-mono text-[10px] font-extrabold uppercase flex items-center gap-1.5 shadow-2xs" style="background:#0F291E !important;color:#FFFFFF !important;"><span class="w-1.5 h-1.5 rounded-full bg-[#A3E635] flex-shrink-0"></span><span class="truncate" style="color:#FFFFFF !important;">${cName} • Open Play</span></span>`
+          : `<span class="px-2.5 py-1.5 rounded-xl bg-white text-[#64748B] border border-[#CBD5E1] font-mono text-[10px] font-semibold uppercase flex items-center gap-1.5" title="Available for Regular Court Hire"><span class="w-1.5 h-1.5 rounded-full bg-[#94A3B8] flex-shrink-0"></span><span class="truncate">${cName} • Regular</span></span>`;
       }).join('');
 
       const sessionTabsHtml = pubSessions.length > 1 ? `
-        <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200">
-          <span class="text-[10px] font-mono font-bold uppercase text-slate-500 mr-1">Active Sessions (${pubSessions.length}):</span>
+        <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-[#E2E0D8]">
+          <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] mr-1">Active Open Play Sessions (${pubSessions.length}):</span>
           ${pubSessions.map((s, idx) => {
             const isAct = s.id === activeSession.id;
-            return `<button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="px-3 py-1 rounded-lg font-mono text-[10px] font-extrabold uppercase transition ${isAct ? 'bg-[#0F291E] text-[#A3E635] shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'}">0${idx + 1} • ${pfEscapeHtml(s.title)} (${s.players.length}/24)</button>`;
+            return `<button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="px-3.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${isAct ? 'bg-[#0F291E] text-[#A3E635] shadow-sm' : 'bg-[#F8F7F3] hover:bg-slate-200 text-[#0D1F18] border border-[#D5D3CC]'}" style="${isAct ? 'background:#0F291E !important;color:#A3E635 !important;' : ''}">0${idx + 1} • ${pfEscapeHtml(s.title)} (${s.players.length}/24)</button>`;
           }).join('')}
         </div>
       ` : '';
 
       homeBannerRoot.innerHTML = `
-        <div class="rounded-3xl bg-white border-2 border-[#C4B5FD] p-5 sm:p-6 shadow-md text-slate-900 space-y-4">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div class="space-y-2">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase">
-                  <span class="w-2 h-2 rounded-full bg-[#8B5CF6] animate-ping"></span>
-                  <span>🟣 LIVE OPEN PLAY SESSION &amp; 4-PLAYER POD SHUFFLER</span>
-                </span>
-                <span class="px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-black uppercase">
-                  ₱${unitFee} / Player Seat
-                </span>
-                <span class="px-3 py-1 rounded-full ${joinedCount > 0 ? 'bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7]' : 'bg-slate-100 text-slate-700 border border-slate-300'} font-mono text-[10px] font-extrabold uppercase">
-                  👥 ${joinedCount} / 24 Players Booked (${openSpotsCount} Open)
-                </span>
+        <div id="open-play-card-surface" class="rounded-3xl bg-white border border-slate-200 p-5 sm:p-7 shadow-2xl text-[#0D1F18] space-y-5">
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+
+            <!-- LEFT 8 COLUMNS: EDITORIAL SESSION OVERVIEW & COURT ALLOCATION -->
+            <div class="xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-2xl p-5 sm:p-6 border border-[#E2E0D8]">
+              <div class="space-y-3">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                    <span>Live Open Play Session</span>
+                  </span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                    4-Player Pod Shuffler
+                  </span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                    ${joinedCount} / 24 Booked &bull; ${openSpotsCount} Seats Open
+                  </span>
+                </div>
+
+                <div class="space-y-1.5">
+                  <h3 class="text-xl sm:text-3xl font-black tracking-tight text-[#0D1F18] leading-tight">
+                    ${pfEscapeHtml(activeSession.title)}
+                  </h3>
+                  <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                    Social doubles rotation designed for community play — no elimination bracket and no partner required. Book your seat online and use the live 4-player Pod Shuffler to rotate courts.
+                  </p>
+                </div>
               </div>
-              <h3 class="text-lg sm:text-xl font-black tracking-tight text-[#0D1F18]">
-                ${pfEscapeHtml(activeSession.title)} &bull; <span class="text-[#5B21B6] font-mono text-sm sm:text-base">${pfEscapeHtml(activeSession.schedule)}</span>
-              </h3>
-              <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
-                <span class="text-[10px] font-mono font-bold uppercase text-slate-500 mr-1">Court Allocation:</span>
-                ${homeCourtPillsHtml}
+
+              <div class="pt-4 border-t border-[#DEDAD0] grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                <div class="md:col-span-4 space-y-1 md:pr-3 md:border-r md:border-[#DEDAD0]">
+                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Session Schedule</span>
+                  <div class="font-mono text-xs sm:text-sm font-black text-[#0D1F18]">${pfEscapeHtml(activeSession.schedule)}</div>
+                  <div class="font-mono text-[11px] font-bold text-[#15803D]">6 Rotating 30-Min Waves</div>
+                </div>
+
+                <div class="md:col-span-3 space-y-1 md:px-2 md:border-r md:border-[#DEDAD0]">
+                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Skill Level</span>
+                  <div class="text-xs sm:text-sm font-extrabold text-[#0D1F18] leading-snug">${pfEscapeHtml(activeSession.skillLevel || 'All Skill Levels')}</div>
+                  <div class="text-[11px] font-semibold text-[#52605A]">Doubles Pods (To 11 Pts)</div>
+                </div>
+
+                <div class="md:col-span-5 space-y-1.5 md:pl-1">
+                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Court Allocation (${dcList.length} of 4 Active)</span>
+                  <div class="grid grid-cols-2 gap-1.5">
+                    ${homeCourtPillsHtml}
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
-              <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-3 rounded-xl bg-[#0F291E] hover:bg-[#15803D] text-white font-extrabold text-xs uppercase tracking-wider transition shadow-md inline-flex items-center gap-2">
-                <span>🏓 Book &amp; Pay Open Play Seat (₱${unitFee}) →</span>
-              </button>
-              <a href="open-play.html" class="px-4 py-3 rounded-xl bg-[#EDE9FE] hover:bg-[#5B21B6] text-[#4C1D95] hover:text-white border border-[#C4B5FD] font-extrabold text-xs uppercase tracking-wider transition inline-flex items-center gap-1.5">
-                <span>🔀 Live Pod Shuffler (${joinedCount}/24) →</span>
-              </a>
+            <!-- RIGHT 4 COLUMNS: OFFICIAL OPEN PLAY ENTRY PASS & CTA CARD -->
+            <div class="xl:col-span-4 rounded-2xl bg-[#0F291E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-xl" style="background:linear-gradient(145deg,#071912 0%,#0F291E 55%,#06150E 100%) !important;color:#FFFFFF !important;">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="pf-rect-logo-badge" style="width:48px;height:58px;">
+                    <img src="assets/logo.png" alt="P&amp;F Rally Ground">
+                  </div>
+                  <div>
+                    <span class="text-[9px] font-mono font-black uppercase tracking-widest block" style="color:#A3E635 !important;">OPEN PLAY PASS</span>
+                    <div class="text-xs font-extrabold uppercase tracking-wide" style="color:#FFFFFF !important;">P&amp;F Rally Ground</div>
+                    <div class="text-[10px] font-mono" style="color:#A7F3D0 !important;">Daraga, Albay</div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-[9px] font-mono uppercase tracking-widest block" style="color:#CBD5E1 !important;">Per Player</span>
+                  <div class="font-mono text-2xl sm:text-3xl font-black" style="color:#A3E635 !important;">₱${unitFee.toLocaleString()}</div>
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-[11px] font-mono">
+                  <span style="color:#CBD5E1 !important;">Booked Roster: <b style="color:#FFFFFF !important;">${joinedCount} / 24 Players</b></span>
+                  <span class="font-bold" style="color:#A3E635 !important;">${joinedCount === 0 ? 'All 24 Open' : pct + '% Full'}</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-black/50 overflow-hidden border border-white/15">
+                  <div class="h-full rounded-full bg-gradient-to-r from-[#10B981] to-[#A3E635]" style="width:${pct}%"></div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] font-mono" style="color:#A7F3D0 !important;">
+                  <span>${joinedCount} Confirmed</span>
+                  <span>${openSpotsCount} Seats Left</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 gap-2 pt-1">
+                <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="pf-trn-btn-volt w-full py-3.5 px-4 rounded-xl bg-[#A3E635] hover:bg-[#BEF264] text-[#04120B] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2" style="background:#A3E635 !important;color:#04120B !important;">
+                  <span style="color:#04120B !important;">Book &amp; Pay Open Play Seat (₱${unitFee}) →</span>
+                </button>
+                <a href="open-play.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 font-mono font-extrabold text-[11px] uppercase tracking-wider transition flex items-center justify-center gap-1.5" style="color:#FFFFFF !important;">
+                  <span>Open Live Pod Shuffler (${joinedCount}/24) →</span>
+                </a>
+              </div>
             </div>
+
           </div>
           ${sessionTabsHtml}
         </div>
@@ -5427,7 +5498,7 @@ function pfRenderOpenPlay24Board() {
           </div>
 
           <!-- RIGHT 4 COLUMNS: OFFICIAL OPEN PLAY SEAT BOOKING CARD -->
-          <div class="xl:col-span-4 rounded-3xl bg-gradient-to-br from-[#071912] via-[#0F291E] to-[#06150E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl text-white">
+          <div class="xl:col-span-4 rounded-3xl bg-[#0F291E] bg-gradient-to-br from-[#071912] via-[#0F291E] to-[#06150E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl text-white" style="background:linear-gradient(145deg,#071912 0%,#0F291E 55%,#06150E 100%) !important;color:#FFFFFF !important;">
             <div class="flex items-center justify-between gap-3.5">
               <div class="flex items-center gap-3">
                 <div class="pf-rect-logo-badge" style="width:52px;height:62px;">
@@ -6237,9 +6308,11 @@ function pfSetTournamentFilter(filterKey) {
 
 function openAdminTournamentHost(event) {
   if (event) event.preventDefault();
-  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (window.location.port === '8088' || window.location.port === '8188');
+  const port = window.location.port;
+  const isLocalSplit = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (port === '8088' || port === '8188');
+  const admPort = (port === '8088') ? '8089' : '8189';
   const targetUrl = isLocalSplit
-    ? `http://${window.location.hostname}:8189/#tab-tournament`
+    ? `http://${window.location.hostname}:${admPort}/#tab-tournament`
     : `/admin/#tab-tournament`;
   window.location.href = targetUrl;
   return false;
@@ -6617,17 +6690,19 @@ function pfRenderPublicTournaments() {
   const topNavTrn = document.getElementById('nav-top-link-tournaments');
   const filtersWrap = document.getElementById('public-tournament-filters-wrap');
 
+  const isPublishedWithEvents = Boolean(masterPublished && list.length > 0);
   if (sec) sec.classList.remove('hidden');
   if (navTrn) navTrn.classList.remove('hidden');
   if (mobNavTrn) mobNavTrn.classList.remove('hidden');
   if (topNavTrn) topNavTrn.classList.remove('hidden');
+  const specBanner = document.getElementById('public-live-bracket-spectator-banner');
+  if (specBanner && !isPublishedWithEvents) specBanner.classList.add('hidden');
 
   if (filtersWrap) {
     filtersWrap.classList.add('hidden');
     filtersWrap.classList.remove('flex');
   }
 
-  const isPublishedWithEvents = Boolean(masterPublished && list.length > 0);
   if (!isPublishedWithEvents) {
     grid.innerHTML = `
       <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
@@ -6989,7 +7064,7 @@ function pfSwitchTournamentPayMethod(methodKey) {
     const btn = document.getElementById('trn-pay-btn-' + k);
     if (btn) {
       btn.className = (k === m)
-        ? 'pf-trn-btn-primary py-2 px-3 rounded-xl font-mono text-xs uppercase transition'
+        ? 'pf-trn-btn-primary py-2 px-3 rounded-xl font-mono text-xs uppercase transition shadow-sm'
         : 'pf-trn-btn-secondary py-2 px-3 rounded-xl font-mono text-xs uppercase transition';
     }
   });
@@ -6997,23 +7072,33 @@ function pfSwitchTournamentPayMethod(methodKey) {
   const refWrap = document.getElementById('trn-reg-ref-wrap');
   const qrImg = document.getElementById('trn-reg-qr-img');
   const qrAcc = document.getElementById('trn-reg-qr-acc');
-  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const qrMerch = document.getElementById('trn-reg-qr-merchant');
+  const qrCfg = (typeof getPaymentQrConfig === 'function') ? getPaymentQrConfig() : {};
+  const chKey = m.toLowerCase();
   if (m === 'Venue') {
     if (qrWrap) qrWrap.classList.add('hidden');
     if (refWrap) refWrap.classList.add('hidden');
   } else {
     if (qrWrap) qrWrap.classList.remove('hidden');
     if (refWrap) refWrap.classList.remove('hidden');
+    const resolvedQrSrc = (typeof pfGetQrUrlForChannel === 'function')
+      ? pfGetQrUrlForChannel(chKey, 'qr')
+      : (m === 'GCash' ? (qrCfg.gcashQr || 'assets/qr-gcash.png') : (m === 'Maya' ? (qrCfg.mayaQr || 'assets/qr-maya.png') : (qrCfg.bdoQr || 'assets/qr-bdo.png')));
     if (qrImg) {
-      if (m === 'GCash') qrImg.src = cfg.qrGcash || 'assets/qr-gcash.jpg';
-      else if (m === 'Maya') qrImg.src = cfg.qrMaya || 'assets/qr-maya.jpg';
-      else qrImg.src = cfg.qrBdo || 'assets/qr-bdo.jpg';
+      qrImg.src = resolvedQrSrc;
+      qrImg.onerror = function() {
+        this.onerror = null;
+        this.src = m === 'GCash' ? 'assets/qr-gcash.png' : (m === 'Maya' ? 'assets/qr-maya.png' : 'assets/qr-bdo.png');
+      };
     }
-    if (qrAcc) {
-      qrAcc.textContent = m === 'BDO'
-        ? 'BDO Bank Transfer • Scan Official Club QR Code'
-        : `${m} Express Send: 0999 883 2346 (P&F Rally Ground)`;
-    }
+    const accNo = m === 'GCash'
+      ? (qrCfg.gcashNumber || '0999-883-2346')
+      : (m === 'Maya' ? (qrCfg.mayaNumber || '0999-883-2346') : (qrCfg.bdoNumber || '0012-3456-7890'));
+    const merchName = m === 'GCash'
+      ? (qrCfg.gcashMerchant || 'P&F RALLY GROUND CLUB')
+      : (m === 'Maya' ? (qrCfg.mayaMerchant || 'P&F RALLY GROUND MAYA') : (qrCfg.bdoMerchant || 'P&F RALLY GROUND CORP.'));
+    if (qrAcc) qrAcc.textContent = `${m} Account / Mobile: ${accNo}`;
+    if (qrMerch) qrMerch.textContent = `Merchant: ${merchName}`;
   }
 }
 window.pfSwitchTournamentPayMethod = pfSwitchTournamentPayMethod;
@@ -7084,11 +7169,16 @@ function pfRegisterForTournament(tournamentId) {
             </div>
           </div>
 
-          <div id="trn-reg-qr-box" class="flex flex-col sm:flex-row items-center gap-4 p-3 rounded-xl bg-white border border-slate-200">
-            <img id="trn-reg-qr-img" src="assets/qr-gcash.jpg" alt="Official Payment QR" class="w-28 h-28 object-contain rounded-lg border border-slate-200 flex-shrink-0">
-            <div class="space-y-1 text-center sm:text-left">
-              <div id="trn-reg-qr-acc" class="font-mono text-xs font-black text-slate-900">GCash Express Send: 0999 883 2346 (P&amp;F Rally Ground)</div>
-              <p class="text-[11px] text-slate-600">Scan the official club QR code above and enter your 6+ digit Reference Number below, or choose <b>Pay at Desk</b> to reserve your bracket seed and settle upon check-in.</p>
+          <div id="trn-reg-qr-box" class="flex flex-col sm:flex-row items-center gap-4 p-3.5 rounded-2xl bg-white border-2 border-emerald-600/30 shadow-xs">
+            <div class="relative group cursor-pointer flex-shrink-0" onclick="if(window.pfOpenQrZoomModal){const im=document.getElementById('trn-reg-qr-img');pfOpenQrZoomModal(im?im.src:'assets/qr-gcash.png', document.getElementById('trn-reg-qr-acc')?.textContent||'Official Tournament QR');}">
+              <img id="trn-reg-qr-img" src="assets/qr-gcash.png" alt="Official Payment QR" class="w-36 h-36 sm:w-40 sm:h-40 object-contain rounded-xl border-2 border-slate-200 bg-white p-1.5 shadow-sm">
+              <span class="mt-1 block text-center text-[9px] font-mono font-extrabold uppercase text-emerald-700">🔍 Tap QR to Enlarge</span>
+            </div>
+            <div class="space-y-1.5 text-center sm:text-left flex-1">
+              <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-mono text-[9px] font-black uppercase">INSTANT QR VERIFICATION</span>
+              <div id="trn-reg-qr-merchant" class="font-sans text-xs font-black uppercase text-[#0F291E]">Merchant: P&amp;F RALLY GROUND CLUB</div>
+              <div id="trn-reg-qr-acc" class="font-mono text-xs sm:text-sm font-black text-emerald-800">GCash Account / Mobile: 0999-883-2346</div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">Scan the official club QR code and enter your 6–13 digit Reference Number below, or choose <b>Pay at Desk</b> to reserve your bracket seed and settle upon check-in.</p>
             </div>
           </div>
 
@@ -7372,3 +7462,334 @@ function pfIsCurrentPhilippineHourSlot(dateYMD, slotStr) {
   return slotHr !== null && slotHr === now.getHours();
 }
 window.pfIsCurrentPhilippineHourSlot = pfIsCurrentPhilippineHourSlot;
+// ==============================================================================
+// STANDALONE POS GEAR & EQUIPMENT ORDER TERMINAL ("ORDER NOW" -> POS SYSTEM)
+// Supports Cash, E-Wallets (GCash / Maya), and Bank Transfer (BDO)
+// ==============================================================================
+const PF_STANDALONE_GEAR_CATALOG = [
+  { key: 'paddle-std', id: 'gear-paddle-std', name: 'Standard Paddle', category: 'Rental Equipment', unitLabel: '/ session', priceKey: 'pricePaddleStd', costKey: 'costPaddleStd', imgKey: 'imgPaddleStd', defaultPrice: 50, defaultCost: 0, defaultImg: 'assets/gear-composite-paddle.jpg' },
+  { key: 'paddle-carbon', id: 'gear-paddle-carbon', name: 'Carbon Paddle', category: 'Pro Performance', unitLabel: '/ session', priceKey: 'pricePaddleCarbon', costKey: 'costPaddleCarbon', imgKey: 'imgPaddleCarbon', defaultPrice: 100, defaultCost: 0, defaultImg: 'assets/gear-carbon-paddle.jpg' },
+  { key: 'paddle-branded', id: 'gear-paddle-branded', name: 'Branded Carbon Paddle', category: 'Tournament Tier', unitLabel: '/ session', priceKey: 'pricePaddleBranded', costKey: 'costPaddleBranded', imgKey: 'imgPaddleBranded', defaultPrice: 200, defaultCost: 0, defaultImg: 'assets/gear-carbon-paddle.jpg' },
+  { key: 'ball-single', id: 'gear-ball-single', name: 'Pickleball Ball', category: 'Match Equipment', unitLabel: '/ ball', priceKey: 'priceBallSingle', costKey: 'costBallSingle', imgKey: 'imgBallSingle', defaultPrice: 50, defaultCost: 30, defaultImg: 'assets/gear-balls-x40.jpg' },
+  { key: 'balls-bucket', id: 'gear-balls-bucket', name: 'Training Balls (50 pcs)', category: 'Practice Pack', unitLabel: '/ bucket', priceKey: 'priceBallsBucket', costKey: 'costBallsBucket', imgKey: 'imgBallsBucket', defaultPrice: 100, defaultCost: 0, defaultImg: 'assets/gear-balls-x40.jpg' },
+  { key: 'machine', id: 'gear-machine', name: 'Training Machine', category: 'Solo Training', unitLabel: '/ hour', priceKey: 'priceMachine', costKey: 'costMachine', imgKey: 'imgMachine', defaultPrice: 100, defaultCost: 0, defaultImg: 'assets/gear-ball-machine.jpg' }
+];
+
+let pfGearOrderQuantities = {};
+let pfGearOrderPayMethod = 'Cash';
+let pfIsSubmittingGearOrder = false;
+
+function pfGetLiveGearCatalog() {
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  return PF_STANDALONE_GEAR_CATALOG.map(item => ({
+    ...item,
+    price: Number(cfg[item.priceKey] ?? item.defaultPrice) || item.defaultPrice,
+    costPrice: Number(cfg[item.costKey] ?? item.defaultCost) || 0,
+    img: cfg[item.imgKey] || item.defaultImg
+  }));
+}
+
+function pfOpenGearOrderModal(initialItemKey) {
+  const catalog = pfGetLiveGearCatalog();
+  pfGearOrderQuantities = {};
+  catalog.forEach(g => { pfGearOrderQuantities[g.key] = 0; });
+
+  const matched = catalog.find(g => g.key === initialItemKey || g.name.toLowerCase() === String(initialItemKey || '').toLowerCase());
+  if (matched) {
+    pfGearOrderQuantities[matched.key] = 1;
+  } else if (catalog[0]) {
+    pfGearOrderQuantities[catalog[0].key] = 1;
+  }
+
+  let modal = document.getElementById('pf-standalone-gear-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pf-standalone-gear-modal';
+    modal.className = 'fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4';
+    modal.innerHTML = `
+      <div onclick="pfCloseGearOrderModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+      <div class="relative z-10 w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-3xl bg-white text-slate-900 border-2 border-[#15803D] p-5 sm:p-7 shadow-2xl space-y-4">
+        <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3.5">
+          <div class="flex items-center gap-3">
+            <div class="pf-rect-logo-badge" style="width:44px;height:52px;"><img src="assets/logo.png" alt="P&amp;F Logo"></div>
+            <div>
+              <span class="px-2.5 py-0.5 rounded bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase" style="background:#0F291E !important;color:#A3E635 !important;">🏓 DIRECT POS GEAR &amp; EQUIPMENT ORDER</span>
+              <h3 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1">Rent Gear Now (POS Checkout)</h3>
+              <p class="text-xs text-slate-600">Sent directly to the Front-Desk POS System — choose Cash, E-Wallet (GCash / Maya), or Bank Transfer (BDO).</p>
+            </div>
+          </div>
+          <button type="button" onclick="pfCloseGearOrderModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white font-black text-xs">✕</button>
+        </div>
+
+        <!-- Gear Item Steppers -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-black uppercase tracking-wider text-emerald-800">1. Select Gear &amp; Quantity</span>
+            <span class="text-[11px] font-mono text-slate-500">Tap + / − to adjust items</span>
+          </div>
+          <div id="pf-gear-modal-items-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+        </div>
+
+        <!-- Player Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
+          <div>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Player Name *</label>
+            <input type="text" id="pf-gear-order-name" placeholder="e.g. Marco Santos" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-bold">
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Mobile Number (Optional)</label>
+            <input type="tel" id="pf-gear-order-phone" placeholder="0917 123 4567" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-mono font-bold">
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Court / Walk-In Note</label>
+            <input type="text" id="pf-gear-order-note" placeholder="e.g. Walk-In / Open Play / Court 2" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-semibold">
+          </div>
+        </div>
+
+        <!-- Payment Method: Cash, E-Wallets (GCash/Maya), or Bank (BDO) -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+          <div class="space-y-2">
+            <span class="font-mono text-[10px] font-black uppercase text-slate-700 block">2. Choose How You Want to Pay (Cash, E-Wallet, or Bank):</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" id="pf-gear-pay-Cash" onclick="pfSetGearOrderPayMethod('Cash')" class="pf-trn-btn-primary py-2.5 px-3 rounded-xl font-mono text-xs uppercase transition">💵 Cash</button>
+              <button type="button" id="pf-gear-pay-GCash" onclick="pfSetGearOrderPayMethod('GCash')" class="pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs uppercase transition">📱 GCash</button>
+              <button type="button" id="pf-gear-pay-Maya" onclick="pfSetGearOrderPayMethod('Maya')" class="pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs uppercase transition">📱 Maya</button>
+              <button type="button" id="pf-gear-pay-BDO" onclick="pfSetGearOrderPayMethod('BDO')" class="pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs uppercase transition">🏦 BDO Bank</button>
+            </div>
+          </div>
+
+          <div id="pf-gear-cash-note" class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-semibold text-xs">
+            💵 <b>Cash Payment Selected:</b> Your gear order will be sent straight to the <b>Front-Desk POS Register</b>. Simply pay cash at the counter when picking up your paddle/balls!
+          </div>
+
+          <div id="pf-gear-qr-wrap" class="hidden flex flex-col sm:flex-row items-center gap-4 p-3.5 rounded-2xl bg-white border-2 border-emerald-600/30 shadow-xs">
+            <div class="cursor-pointer flex-shrink-0" onclick="if(window.pfOpenQrZoomModal){const im=document.getElementById('pf-gear-qr-img');pfOpenQrZoomModal(im?im.src:'assets/qr-gcash.png','Official POS Gear QR');}">
+              <img id="pf-gear-qr-img" src="assets/qr-gcash.png" alt="Payment QR" class="w-32 h-32 object-contain rounded-xl border border-slate-200 p-1.5 bg-white">
+              <span class="mt-1 block text-center text-[9px] font-mono font-extrabold uppercase text-emerald-700">🔍 Tap QR to Enlarge</span>
+            </div>
+            <div class="space-y-1 text-center sm:text-left flex-1">
+              <span id="pf-gear-qr-badge" class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-mono text-[9px] font-black uppercase">E-WALLET / BANK QR</span>
+              <div id="pf-gear-qr-acc" class="font-mono text-xs sm:text-sm font-black text-emerald-800">GCash: 0999-883-2346 (P&amp;F Rally Ground)</div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">Scan the official club QR code above and enter your Reference Number below (or leave blank if showing your phone screen at the Front Desk).</p>
+            </div>
+          </div>
+
+          <div id="pf-gear-ref-wrap" class="hidden">
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">E-Wallet / Bank Reference No. (Optional if showing receipt at desk)</label>
+            <input type="text" id="pf-gear-order-ref" placeholder="e.g. 809123456" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
+          </div>
+        </div>
+
+        <p id="pf-gear-order-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-300 text-rose-800 text-xs font-bold"></p>
+
+        <!-- Total & Direct POS Submit -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-[#0F291E] text-white" style="background:#0F291E !important;color:#FFFFFF !important;">
+          <div>
+            <span class="text-[10px] font-mono uppercase block" style="color:#A7F3D0 !important;">POS Gear Order Total</span>
+            <b id="pf-gear-order-total" class="text-2xl font-mono font-black" style="color:#A3E635 !important;">₱0.00</b>
+          </div>
+          <button type="button" id="pf-gear-submit-btn" onclick="pfSubmitStandaloneGearOrder()" class="pf-trn-btn-volt w-full sm:w-auto px-6 py-3.5 rounded-xl font-black uppercase text-xs tracking-wider transition shadow-lg">
+            🏓 Rent Gear Now →
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  pfRenderGearOrderItems();
+  pfSetGearOrderPayMethod('Cash');
+  const errEl = document.getElementById('pf-gear-order-error');
+  if (errEl) errEl.classList.add('hidden');
+  modal.classList.remove('hidden');
+}
+window.pfOpenGearOrderModal = pfOpenGearOrderModal;
+
+function pfCloseGearOrderModal() {
+  const modal = document.getElementById('pf-standalone-gear-modal');
+  if (modal) modal.classList.add('hidden');
+}
+window.pfCloseGearOrderModal = pfCloseGearOrderModal;
+
+function pfAdjustGearOrderQty(itemKey, delta) {
+  const cur = Number(pfGearOrderQuantities[itemKey] || 0);
+  pfGearOrderQuantities[itemKey] = Math.max(0, Math.min(20, cur + delta));
+  pfRenderGearOrderItems();
+}
+window.pfAdjustGearOrderQty = pfAdjustGearOrderQty;
+
+function pfRenderGearOrderItems() {
+  const grid = document.getElementById('pf-gear-modal-items-grid');
+  const totalEl = document.getElementById('pf-gear-order-total');
+  if (!grid) return;
+  const catalog = pfGetLiveGearCatalog();
+  let sum = 0;
+
+  grid.innerHTML = catalog.map(item => {
+    const qty = Number(pfGearOrderQuantities[item.key] || 0);
+    sum += qty * item.price;
+    const isSelected = qty > 0;
+    return `
+      <div class="p-3 rounded-2xl border-2 transition flex items-center justify-between gap-2.5 ${
+        isSelected ? 'bg-emerald-50/70 border-[#15803D] shadow-xs' : 'bg-white border-slate-200'
+      }">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <img src="${item.img}" alt="${pfEscapeHtml(item.name)}" class="w-11 h-11 rounded-xl object-cover border border-slate-200 flex-shrink-0">
+          <div class="min-w-0">
+            <span class="block text-xs font-extrabold text-slate-900 truncate">${pfEscapeHtml(item.name)}</span>
+            <span class="block text-[11px] font-mono font-black text-emerald-700">₱${item.price} <span class="text-[9px] text-slate-500 font-normal">${item.unitLabel}</span></span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <button type="button" onclick="pfAdjustGearOrderQty('${item.key}', -1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs flex items-center justify-center">−</button>
+          <span class="w-6 text-center font-mono text-xs font-black text-slate-900">${qty}</span>
+          <button type="button" onclick="pfAdjustGearOrderQty('${item.key}', 1)" class="w-7 h-7 rounded-lg bg-[#0F291E] hover:bg-[#15803D] text-white font-black text-xs flex items-center justify-center" style="background:#0F291E !important;color:#FFFFFF !important;">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (totalEl) totalEl.textContent = `₱${sum.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function pfSetGearOrderPayMethod(method) {
+  pfGearOrderPayMethod = method || 'Cash';
+  ['Cash', 'GCash', 'Maya', 'BDO'].forEach(k => {
+    const btn = document.getElementById('pf-gear-pay-' + k);
+    if (btn) {
+      btn.className = (k === pfGearOrderPayMethod)
+        ? 'pf-trn-btn-primary py-2.5 px-3 rounded-xl font-mono text-xs uppercase transition shadow-sm'
+        : 'pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs uppercase transition';
+    }
+  });
+  const cashNote = document.getElementById('pf-gear-cash-note');
+  const qrWrap = document.getElementById('pf-gear-qr-wrap');
+  const refWrap = document.getElementById('pf-gear-ref-wrap');
+  const qrImg = document.getElementById('pf-gear-qr-img');
+  const qrAcc = document.getElementById('pf-gear-qr-acc');
+  const qrBadge = document.getElementById('pf-gear-qr-badge');
+  const qrCfg = (typeof getPaymentQrConfig === 'function') ? getPaymentQrConfig() : {};
+
+  if (pfGearOrderPayMethod === 'Cash') {
+    if (cashNote) cashNote.classList.remove('hidden');
+    if (qrWrap) qrWrap.classList.add('hidden');
+    if (refWrap) refWrap.classList.add('hidden');
+  } else {
+    if (cashNote) cashNote.classList.add('hidden');
+    if (qrWrap) qrWrap.classList.remove('hidden');
+    if (refWrap) refWrap.classList.remove('hidden');
+    const chKey = pfGearOrderPayMethod.toLowerCase();
+    const resolvedSrc = (typeof pfGetQrUrlForChannel === 'function')
+      ? pfGetQrUrlForChannel(chKey, 'qr')
+      : (pfGearOrderPayMethod === 'GCash' ? 'assets/qr-gcash.png' : (pfGearOrderPayMethod === 'Maya' ? 'assets/qr-maya.png' : 'assets/qr-bdo.png'));
+    if (qrImg) {
+      qrImg.src = resolvedSrc;
+      qrImg.onerror = function() {
+        this.onerror = null;
+        this.src = pfGearOrderPayMethod === 'GCash' ? 'assets/qr-gcash.png' : (pfGearOrderPayMethod === 'Maya' ? 'assets/qr-maya.png' : 'assets/qr-bdo.png');
+      };
+    }
+    if (qrBadge) {
+      qrBadge.textContent = pfGearOrderPayMethod === 'BDO' ? '🏦 OFFICIAL BANK TRANSFER QR' : `📱 OFFICIAL ${pfGearOrderPayMethod.toUpperCase()} E-WALLET QR`;
+    }
+    const accNo = pfGearOrderPayMethod === 'GCash'
+      ? (qrCfg.gcashNumber || '0999-883-2346')
+      : (pfGearOrderPayMethod === 'Maya' ? (qrCfg.mayaNumber || '0999-883-2346') : (qrCfg.bdoNumber || '0012-3456-7890'));
+    if (qrAcc) qrAcc.textContent = `${pfGearOrderPayMethod} Account / Mobile: ${accNo} (P&F Rally Ground)`;
+  }
+}
+window.pfSetGearOrderPayMethod = pfSetGearOrderPayMethod;
+
+async function pfSubmitStandaloneGearOrder() {
+  if (pfIsSubmittingGearOrder) return;
+  const catalog = pfGetLiveGearCatalog();
+  const chosen = catalog.filter(g => Number(pfGearOrderQuantities[g.key] || 0) > 0);
+  const errEl = document.getElementById('pf-gear-order-error');
+  const showErr = (msg) => {
+    if (errEl) {
+      errEl.textContent = msg;
+      errEl.classList.remove('hidden');
+    } else {
+      alert(msg);
+    }
+  };
+
+  if (chosen.length === 0) {
+    showErr('⚠️ Please select at least 1 gear item using the + button.');
+    return;
+  }
+
+  const name = (document.getElementById('pf-gear-order-name')?.value || '').trim() || 'Walk-In Player';
+  const phone = (document.getElementById('pf-gear-order-phone')?.value || '').trim();
+  const note = (document.getElementById('pf-gear-order-note')?.value || '').trim() || 'Gear Order';
+  const payRef = (document.getElementById('pf-gear-order-ref')?.value || '').trim();
+
+  const totalAmount = chosen.reduce((acc, g) => acc + (g.price * Number(pfGearOrderQuantities[g.key] || 0)), 0);
+  const totalCost = chosen.reduce((acc, g) => acc + ((g.costPrice || 0) * Number(pfGearOrderQuantities[g.key] || 0)), 0);
+  const itemsDesc = chosen.map(g => `${Number(pfGearOrderQuantities[g.key] || 1)}x ${g.name}`).join(', ');
+  const posRef = 'POS-' + Math.floor(1000 + Math.random() * 9000);
+  const todayYMD = (typeof pfGetPhilippineTodayYMD === 'function') ? pfGetPhilippineTodayYMD() : new Date().toISOString().slice(0, 10);
+  const nowStr = todayYMD + ' ' + new Date().toTimeString().slice(0, 5);
+
+  const methodLabel = pfGearOrderPayMethod === 'Cash'
+    ? 'Cash'
+    : (pfGearOrderPayMethod === 'BDO' ? 'Bank Transfer (BDO)' : `${pfGearOrderPayMethod} (E-Wallet)`);
+
+  const posSalePayload = {
+    ref: posRef,
+    type: 'POS Retail',
+    desc: `${itemsDesc} • ${name}${note ? ' (' + note + ')' : ''}${payRef ? ' [Ref: ' + payRef + ']' : ''}`,
+    method: methodLabel,
+    customerName: name,
+    phone: phone,
+    paymentRef: payRef || (pfGearOrderPayMethod === 'Cash' ? 'CASH' : 'QR'),
+    amount: totalAmount,
+    cost: Math.round(totalCost * 100) / 100,
+    profit: Math.round((totalAmount - totalCost) * 100) / 100,
+    items: chosen.map(g => ({
+      id: g.id,
+      name: g.name,
+      qty: Number(pfGearOrderQuantities[g.key] || 1),
+      price: g.price,
+      costPrice: g.costPrice || 0
+    })),
+    date: nowStr
+  };
+
+  pfIsSubmittingGearOrder = true;
+  const submitBtn = document.getElementById('pf-gear-submit-btn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending to POS System...';
+  }
+
+  try {
+    const localSales = JSON.parse(localStorage.getItem('pf_sales_ledger') || '[]');
+    localSales.unshift(posSalePayload);
+    localStorage.setItem('pf_sales_ledger', JSON.stringify(localSales));
+  } catch (e) {}
+
+  try {
+    await fetch('/api/sales', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(posSalePayload)
+    });
+  } catch (e) {}
+
+  pfIsSubmittingGearOrder = false;
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = '🏓 Rent Gear Now →';
+  }
+  pfCloseGearOrderModal();
+  alert(`✅ POS GEAR RENTAL CONFIRMED (${posRef})!
+
+Player: ${name}
+Items: ${itemsDesc}
+Total: ₱${totalAmount.toFixed(2)}
+Payment Mode: ${methodLabel}${payRef ? ' (Ref: ' + payRef + ')' : ''}
+
+Your order has been sent directly to the P&F Rally Ground POS System!`);
+}
+window.pfSubmitStandaloneGearOrder = pfSubmitStandaloneGearOrder;
