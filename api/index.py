@@ -196,9 +196,22 @@ def Number_or_zero(v):
     except Exception:
         return 0
 
+def _scrub_corrupted_utf8(obj):
+    if isinstance(obj, str):
+        if "\ufffd" in obj:
+            return re.sub(r"\s*\ufffd\s*", " – ", obj)
+        return obj
+    elif isinstance(obj, list):
+        return [_scrub_corrupted_utf8(x) for x in obj]
+    elif isinstance(obj, dict):
+        return {k: _scrub_corrupted_utf8(v) for k, v in obj.items()}
+    return obj
+
+
 def _normalize_db_dict(data):
     if not isinstance(data, dict):
         data = json.loads(json.dumps(DEFAULT_DB))
+    data = _scrub_corrupted_utf8(data)
     if "adminPassword" not in data or not data["adminPassword"]:
         data["adminPassword"] = ""
     for k in ["bookings", "deletedBookingRefs", "deletedInventoryIds", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
@@ -235,6 +248,15 @@ def _normalize_db_dict(data):
             merged_sc["openPlayRate"] = 150
         if not isinstance(merged_sc.get("tournaments"), list) or len(merged_sc.get("tournaments")) == 0:
             merged_sc["tournaments"] = json.loads(json.dumps(DEFAULT_TOURNAMENTS))
+        if not isinstance(merged_sc.get("openPlaySessions"), list) or len(merged_sc.get("openPlaySessions")) == 0:
+            merged_sc["openPlaySessions"] = json.loads(json.dumps(DEFAULT_OPEN_PLAY_SESSIONS))
+        for idx_s, s in enumerate(merged_sc["openPlaySessions"]):
+            if isinstance(s, dict):
+                def_s = DEFAULT_OPEN_PLAY_SESSIONS[idx_s] if idx_s < len(DEFAULT_OPEN_PLAY_SESSIONS) else DEFAULT_OPEN_PLAY_SESSIONS[0]
+                if "– –" in str(s.get("schedule", "")) or "\ufffd" in str(s.get("schedule", "")) or s.get("schedule", "").count("–") >= 3:
+                    s["schedule"] = def_s["schedule"]
+                if "\ufffd" in str(s.get("title", "")):
+                    s["title"] = def_s["title"]
         if not merged_sc.get("openPlayMaxPlayers"):
             merged_sc["openPlayMaxPlayers"] = 24
         if not merged_sc.get("openPlayCourtsCount"):
@@ -413,10 +435,11 @@ def load_db():
 
 def save_db(data):
     global _MEMORY_DB
+    if isinstance(data, dict):
+        data["updatedAt"] = int(time.time() * 1000)
+        data = _normalize_db_dict(data)
+        _MEMORY_DB = data
     try:
-        if isinstance(data, dict):
-            data["updatedAt"] = int(time.time() * 1000)
-            _MEMORY_DB = _normalize_db_dict(data)
         tmp_file = DB_FILE + ".tmp"
         with open(tmp_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
@@ -574,7 +597,9 @@ class handler(http.server.BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Token")
-        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        self.send_header("CDN-Cache-Control", "no-store")
+        self.send_header("Vercel-CDN-Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(json.dumps(obj).encode("utf-8"))
 
@@ -941,6 +966,33 @@ class handler(http.server.BaseHTTPRequestHandler):
                 self._send_json({"ok": True, "authenticated": True, "method": "password", "role": matched_role, "token": token, "securityLog": db.get("securityLog", []), "state": db})
                 return
 
+        elif parsed.path == "/api/auth/change-password":
+            current_entered = str(body.get("currentPassword", "")).strip()
+            new_pw = str(body.get("newPassword", "")).strip()
+            official_key_hashes = {
+                "ca1023ba604e3f989f59b853ff3de14470f8ac5d8911d59cf1d33027a8ffb05b": "Club Owner (Key #1)",
+                "b79c480a8e32c4a3259688150ea360d2d8a7062544cf9403fc16caa5ffedf959": "General Manager (Key #2)",
+                "777298d14860a3730c4faca49cbb2e0a421d033c3ebef3fc83ce56a26406c8ee": "Front Desk Staff (Key #3)",
+                "b1f1adb6f95964cd7cf5616cd52c95d4b6cea2824205071e95fecc3d30567e69": "POS Cashier (Key #4)",
+                "88a30711924a8fd5c7eecf1f0e3ca2a7ec5436a4ad887b64baea0db8331c8b44": "Emergency Backup (Key #5)"
+            }
+            entered_hash = hashlib.sha256(("PF_RALLY_GROUND_v2_SALT_2026::" + current_entered).encode("utf-8")).hexdigest()
+            current_pw = str(db.get("adminPassword", "")).strip()
+            is_valid_current = (entered_hash in official_key_hashes) or (current_pw and current_entered == current_pw)
+            if not is_valid_current:
+                append_security_log(db, "PASSWORD_CHANGE_FAILED", "Incorrect current password during password update", client_ip)
+                save_db(db)
+                self._send_json({"ok": False, "error": "Current password is incorrect."}, status=401)
+                return
+            if len(new_pw) < 4:
+                self._send_json({"ok": False, "error": "New password must be at least 4 characters for security."}, status=400)
+                return
+            db["adminPassword"] = new_pw
+            append_security_log(db, "PASSWORD_UPDATED", "Admin password updated successfully", client_ip)
+            save_db(db)
+            self._send_json({"ok": True, "message": "Admin password updated successfully."})
+            return
+
         elif parsed.path == "/api/sync-state":
             del_refs = set(str(r).strip().upper() for r in (db.get("deletedBookingRefs") or []) if r)
             if isinstance(body.get("deletedBookingRefs"), list):
@@ -1007,13 +1059,30 @@ class handler(http.server.BaseHTTPRequestHandler):
 
         elif parsed.path == "/api/bookings/status":
             ref = body.get("ref")
+            ref_upper = str(ref or "").strip().upper()
             new_status = sanitize_str(body.get("status", "CONFIRMED"), 40).upper()
-            target = next((b for b in db["bookings"] if b.get("ref") == ref), None)
+            target = next((b for b in db["bookings"] if str(b.get("ref", "")).strip().upper() == ref_upper), None)
             if target:
                 old_status = str(target.get("status", "")).upper()
                 target["status"] = new_status
+                sc = db.get("siteConfig") if isinstance(db.get("siteConfig"), dict) else {}
+                op_sessions = sc.get("openPlaySessions") if isinstance(sc.get("openPlaySessions"), list) else []
+                if op_sessions and ref_upper:
+                    for s in op_sessions:
+                        if isinstance(s, dict) and isinstance(s.get("players"), list):
+                            if new_status in ("DECLINED", "CANCELLED"):
+                                s["players"] = [pl for pl in s["players"] if not (isinstance(pl, dict) and str(pl.get("bookingRef", "")).strip().upper() == ref_upper)]
+                            else:
+                                for pl in s["players"]:
+                                    if isinstance(pl, dict) and str(pl.get("bookingRef", "")).strip().upper() == ref_upper:
+                                        pl["status"] = new_status
+                    sc["openPlaySessions"] = op_sessions
+                    if op_sessions and isinstance(op_sessions[0], dict):
+                        sc["openPlay24Roster"] = op_sessions[0].get("players", [])
+                    sc["updatedAt"] = int(time.time() * 1000)
+                    db["siteConfig"] = sc
                 if new_status == "CONFIRMED" and old_status != "CONFIRMED":
-                    if not any(s.get("ref") == ref for s in db["salesLedger"]):
+                    if not any(str(s.get("ref", "")).strip().upper() == ref_upper for s in db["salesLedger"]):
                         amt_val = parse_amount(target.get("total", 0), 0.0)
                         bk_cost = compute_and_deduct_inventory_for_items(db, target.get("items", []), deduct_stock=False)
                         if bk_cost <= 0:
@@ -1030,7 +1099,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                         })
                     trigger_booking_gmail_notifications(db, target)
                 elif new_status in ("DECLINED", "CANCELLED"):
-                    db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
+                    db["salesLedger"] = [s for s in db.get("salesLedger", []) if str(s.get("ref", "")).strip().upper() != ref_upper]
                 append_security_log(db, f"BOOKING_{new_status}", f"Booking {ref} ({target.get('name', 'Guest')}) marked {new_status}", client_ip)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
@@ -1042,6 +1111,17 @@ class handler(http.server.BaseHTTPRequestHandler):
             ref_upper = ref.upper()
             db["bookings"] = [b for b in db.get("bookings", []) if str(b.get("ref", "")).strip().upper() != ref_upper]
             db["salesLedger"] = [s for s in db.get("salesLedger", []) if str(s.get("ref", "")).strip().upper() != ref_upper]
+            sc = db.get("siteConfig") if isinstance(db.get("siteConfig"), dict) else {}
+            op_sessions = sc.get("openPlaySessions") if isinstance(sc.get("openPlaySessions"), list) else []
+            if op_sessions and ref_upper:
+                for s in op_sessions:
+                    if isinstance(s, dict) and isinstance(s.get("players"), list):
+                        s["players"] = [pl for pl in s["players"] if not (isinstance(pl, dict) and str(pl.get("bookingRef", "")).strip().upper() == ref_upper)]
+                sc["openPlaySessions"] = op_sessions
+                if op_sessions and isinstance(op_sessions[0], dict):
+                    sc["openPlay24Roster"] = op_sessions[0].get("players", [])
+                sc["updatedAt"] = int(time.time() * 1000)
+                db["siteConfig"] = sc
             del_list = [str(r).strip().upper() for r in (db.get("deletedBookingRefs") or []) if r]
             if ref_upper and ref_upper not in del_list:
                 del_list.append(ref_upper)
@@ -1652,7 +1732,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 current_sc["updatedAt"] = int(time.time() * 1000)
             elif isinstance(incoming, dict):
                 for k, v in incoming.items():
-                    if k in ("action",):
+                    if k in ("action",) or v is None:
                         continue
                     def_val = default_sc.get(k)
                     if k == "updatedAt":
@@ -1696,6 +1776,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 if current_sc.get("liveBannerText") is None or str(current_sc.get("liveBannerText")).strip() == "0":
                     current_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
                 current_sc["updatedAt"] = int(time.time() * 1000)
+            current_sc = _scrub_corrupted_utf8(current_sc)
             db["siteConfig"] = current_sc
             save_db(db)
             db["sales"] = db.get("salesLedger", [])

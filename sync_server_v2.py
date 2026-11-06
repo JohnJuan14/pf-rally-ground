@@ -282,6 +282,18 @@ def _supabase_set_db(data):
         pass
 
 
+def _scrub_corrupted_utf8(obj):
+    if isinstance(obj, str):
+        if "\ufffd" in obj:
+            return re.sub(r"\s*\ufffd\s*", " – ", obj)
+        return obj
+    elif isinstance(obj, list):
+        return [_scrub_corrupted_utf8(x) for x in obj]
+    elif isinstance(obj, dict):
+        return {k: _scrub_corrupted_utf8(v) for k, v in obj.items()}
+    return obj
+
+
 def load_db():
     with db_lock:
         if not os.path.exists(DB_FILE):
@@ -290,7 +302,7 @@ def load_db():
             return json.loads(json.dumps(DEFAULT_DB))
         try:
             with open(DB_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
+                data = _scrub_corrupted_utf8(json.load(f))
                 if "adminPassword" not in data or not data["adminPassword"]:
                     data["adminPassword"] = ""
                 for k in ["bookings", "deletedBookingRefs", "deletedInventoryIds", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:

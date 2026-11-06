@@ -23,6 +23,14 @@
       "destination": "/admin/index.html"
     },
     {
+      "source": "/admin/",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/check-booking",
+      "destination": "/check-booking.html"
+    },
+    {
       "source": "/courts",
       "destination": "/courts.html"
     },
