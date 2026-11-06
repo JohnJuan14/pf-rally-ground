@@ -51,7 +51,9 @@ DEFAULT_ANNOUNCEMENTS = [
     }
 ]
 
-DEFAULT_TOURNAMENTS = [{'id': 'trn-bicol-dupr-open', 'title': 'Bicol Open DUPR Pickleball Cup', 'format': 'Round Robin + Medal Playoffs', 'formatKey': 'ROUND_ROBIN', 'division': 'Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)', 'category': "Men's, Women's & Mixed Doubles", 'date': '2026-11-21', 'time': '08:00 AM – 05:00 PM', 'courts': 'All 4 Courts (Courts 1 – 4)', 'entryFee': 850, 'prizePool': '₱25,000 + Trophies & Official DUPR Submission', 'maxTeams': 24, 'registeredCount': 8, 'approved': True, 'scoringTarget': 11, 'status': 'OPEN FOR REGISTRATION', 'description': 'Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 – 4.', 'players': ['Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)', 'Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)', 'Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)', 'Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)', 'Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)', 'Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)', 'Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)', 'Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)', 'teamB': 'Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'LIVE', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)', 'teamB': 'Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)', 'teamB': 'Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)', 'teamB': 'Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}, {'id': 'trn-mayon-king-court', 'title': 'Mayon Smash: King & Queen of the Court', 'format': 'Ladder Split Rotation (Individual Points)', 'formatKey': 'KING_COURT', 'division': 'All-Levels Social & Competitive (3.0–3.8)', 'category': 'Individual Entry (Rotating Doubles Partners)', 'date': '2026-11-14', 'time': '05:00 PM – 09:00 PM', 'courts': '4 Courts (Challenger to Crown Court)', 'entryFee': 350, 'prizePool': '₱6,000 Cash + Carbon Pro Paddle & Medals', 'maxTeams': 24, 'registeredCount': 8, 'approved': True, 'scoringTarget': 11, 'status': 'OPEN FOR REGISTRATION', 'description': 'Play 12-minute timed ladder rounds across Courts 1 – 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!', 'players': ['Seed #1 • Carlo Imperial & Sofia Locsin', 'Seed #8 • Ryan Beltran & Hannah Gomez', 'Seed #4 • Jerome Uy & Camille Chua', 'Seed #5 • Patrick Go & Denise Ramos', 'Seed #2 • Lance Vergara & Nina Pineda', 'Seed #7 • Mark Tolentino & Alyssa Cruz', 'Seed #3 • Adrian Dizon & Kyla Bautista', 'Seed #6 • Christian Sy & Mica Mendoza'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Seed #1 • Carlo Imperial & Sofia Locsin', 'teamB': 'Seed #8 • Ryan Beltran & Hannah Gomez', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'LIVE', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Seed #4 • Jerome Uy & Camille Chua', 'teamB': 'Seed #5 • Patrick Go & Denise Ramos', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Seed #2 • Lance Vergara & Nina Pineda', 'teamB': 'Seed #7 • Mark Tolentino & Alyssa Cruz', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Seed #3 • Adrian Dizon & Kyla Bautista', 'teamB': 'Seed #6 • Christian Sy & Mica Mendoza', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}, {'id': 'trn-daraga-mlp-rally', 'title': 'Daraga MLP-Style Team Rally Showdown', 'format': 'MLP 4-Player Co-Ed Squad Format (Rally Scoring)', 'formatKey': 'MLP_TEAM', 'division': 'Club Squads (2 Men + 2 Women per Squad)', 'category': 'Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)', 'date': '2026-11-28', 'time': '09:00 AM – 06:00 PM', 'courts': 'All 4 Courts (Courts 1 – 4)', 'entryFee': 2000, 'prizePool': '₱18,000 Cash + Club Championship Banner', 'maxTeams': 12, 'registeredCount': 8, 'approved': True, 'scoringTarget': 21, 'status': 'OPEN FOR REGISTRATION', 'description': "Major League Pickleball 4-player squad format! Each clash features Women's Doubles, Men's Doubles, and Mixed Doubles to 21 points (rally scoring) plus Dreambreaker tiebreak.", 'players': ['Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)', 'Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)', 'Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)', 'Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)', 'Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)', 'Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)', 'Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)', 'Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Seed #1 • Daraga Volcanoes (Marco, Luis, Bea, Clarisse)', 'teamB': 'Seed #8 • Cagsawa Crushers (Kevin, Paolo, Mia, Joy)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'LIVE', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Seed #4 • Legazpi Phantoms (Anton, Miguel, Ella, Sam)', 'teamB': 'Seed #5 • Albay Royals (Rafa, Gabriel, Tricia, Kim)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Seed #2 • Mayon Titans (Dan, Trish, Enzo, Chloe)', 'teamB': 'Seed #7 • Bicol Breakers (Vince, Nico, Faye, Lara)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Seed #3 • Tagas Smashers (Carlo, Sofia, Noel, Gwen)', 'teamB': 'Seed #6 • Embarcadero Aces (Lance, Nina, Jude, Pia)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}, {'id': 'trn-albay-double-elim', 'title': 'Albay Double-Elimination Knockout Classic', 'format': 'USA Pickleball Double Elimination Bracket', 'formatKey': 'DOUBLE_ELIM', 'division': 'Intermediate (3.5) & Advanced (4.0+)', 'category': "Men's Doubles & Mixed Doubles", 'date': '2026-12-03', 'time': '08:00 AM – 04:00 PM', 'courts': 'All 4 Courts (Courts 1 – 4)', 'entryFee': 600, 'prizePool': '₱15,000 Cash + Official Championship Medals', 'maxTeams': 24, 'registeredCount': 8, 'approved': True, 'scoringTarget': 15, 'status': 'OPEN FOR REGISTRATION', 'description': 'Full USA Pickleball Championship Bracket across Courts 1 – 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.', 'players': ['Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)', 'Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)', 'Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)', 'Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)', 'Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)', 'Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)', 'Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)', 'Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Seed #1 • Rafa Elizalde & Trish Dy (DUPR 4.1)', 'teamB': 'Seed #8 • Noel Rivera & Gwen Castro (DUPR 3.5)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'LIVE', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Seed #4 • Dan Soriano & Bea Alcantara (DUPR 3.9)', 'teamB': 'Seed #5 • Lance Vergara & Clarisse Tan (DUPR 3.8)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Seed #2 • Marco Santos & Sofia Locsin (DUPR 4.0)', 'teamB': 'Seed #7 • Jude Salazar & Pia Morales (DUPR 3.6)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Seed #3 • Anton Mendoza & Nina Pineda (DUPR 3.9)', 'teamB': 'Seed #6 • Carlo Imperial & Ella Flores (DUPR 3.7)', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'READY', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}]
+DEFAULT_TOURNAMENTS = [{'id': 'trn-bicol-dupr-open', 'title': 'Bicol Open DUPR Pickleball Cup', 'format': 'Round Robin + Medal Playoffs', 'formatKey': 'ROUND_ROBIN', 'division': 'Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)', 'category': "Men's, Women's & Mixed Doubles", 'date': '2026-11-21', 'time': '08:00 AM – 05:00 PM', 'courts': 'All 4 Courts (Courts 1 – 4)', 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': True, 'entryFee': 850, 'prizePool': '₱25,000 + Trophies & Official DUPR Submission', 'maxTeams': 24, 'registeredCount': 0, 'registrations': [], 'approved': True, 'scoringTarget': 11, 'status': 'OPEN FOR REGISTRATION', 'description': 'Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 – 4.', 'players': ['Open Seed #1 — Available', 'Open Seed #8 — Available', 'Open Seed #4 — Available', 'Open Seed #5 — Available', 'Open Seed #2 — Available', 'Open Seed #7 — Available', 'Open Seed #3 — Available', 'Open Seed #6 — Available'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Open Seed #1 — Available', 'teamB': 'Open Seed #8 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Open Seed #4 — Available', 'teamB': 'Open Seed #5 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Open Seed #2 — Available', 'teamB': 'Open Seed #7 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Open Seed #3 — Available', 'teamB': 'Open Seed #6 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}, {'id': 'trn-mayon-king-court', 'title': 'Mayon Smash: King & Queen of the Court', 'format': 'Ladder Split Rotation (Individual Points)', 'formatKey': 'KING_COURT', 'division': 'All-Levels Social & Competitive (3.0–3.8)', 'category': 'Individual Entry (Rotating Doubles Partners)', 'date': '2026-11-14', 'time': '05:00 PM – 09:00 PM', 'courts': 'All 4 Courts (Courts 1 – 4)', 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': False, 'entryFee': 350, 'prizePool': '₱6,000 Cash + Carbon Pro Paddle & Medals', 'maxTeams': 24, 'registeredCount': 0, 'registrations': [], 'approved': True, 'scoringTarget': 11, 'status': 'OPEN FOR REGISTRATION', 'description': 'Play 12-minute timed ladder rounds across Courts 1 – 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!', 'players': ['Open Seed #1 — Available', 'Open Seed #8 — Available', 'Open Seed #4 — Available', 'Open Seed #5 — Available', 'Open Seed #2 — Available', 'Open Seed #7 — Available', 'Open Seed #3 — Available', 'Open Seed #6 — Available'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Open Seed #1 — Available', 'teamB': 'Open Seed #8 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Open Seed #4 — Available', 'teamB': 'Open Seed #5 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Open Seed #2 — Available', 'teamB': 'Open Seed #7 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Open Seed #3 — Available', 'teamB': 'Open Seed #6 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}, {'id': 'trn-daraga-mlp-rally', 'title': 'Daraga MLP-Style Team Rally Showdown', 'format': 'MLP 4-Player Co-Ed Squad Format (Rally Scoring)', 'formatKey': 'MLP_TEAM', 'division': 'Club Squads (2 Men + 2 Women per Squad)', 'category': 'Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)', 'date': '2026-11-28', 'time': '09:00 AM – 06:00 PM', 'courts': 'All 4 Courts (Courts 1 – 4)', 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': False, 'entryFee': 2000, 'prizePool': '₱18,000 Cash + Club Championship Banner', 'maxTeams': 12, 'registeredCount': 0, 'registrations': [], 'approved': True, 'scoringTarget': 21, 'status': 'OPEN FOR REGISTRATION', 'description': "Major League Pickleball 4-player squad format! Each clash features Women's Doubles, Men's Doubles, and Mixed Doubles to 21 points (rally scoring) plus Dreambreaker tiebreak.", 'players': ['Open Seed #1 — Available', 'Open Seed #8 — Available', 'Open Seed #4 — Available', 'Open Seed #5 — Available', 'Open Seed #2 — Available', 'Open Seed #7 — Available', 'Open Seed #3 — Available', 'Open Seed #6 — Available'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Open Seed #1 — Available', 'teamB': 'Open Seed #8 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Open Seed #4 — Available', 'teamB': 'Open Seed #5 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Open Seed #2 — Available', 'teamB': 'Open Seed #7 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Open Seed #3 — Available', 'teamB': 'Open Seed #6 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}, {'id': 'trn-albay-double-elim', 'title': 'Albay Double-Elimination Knockout Classic', 'format': 'USA Pickleball Double Elimination Bracket', 'formatKey': 'DOUBLE_ELIM', 'division': 'Intermediate (3.5) & Advanced (4.0+)', 'category': "Men's Doubles & Mixed Doubles", 'date': '2026-12-03', 'time': '08:00 AM – 04:00 PM', 'courts': 'All 4 Courts (Courts 1 – 4)', 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': False, 'entryFee': 600, 'prizePool': '₱15,000 Cash + Official Championship Medals', 'maxTeams': 24, 'registeredCount': 0, 'registrations': [], 'approved': True, 'scoringTarget': 15, 'status': 'OPEN FOR REGISTRATION', 'description': 'Full USA Pickleball Championship Bracket across Courts 1 – 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.', 'players': ['Open Seed #1 — Available', 'Open Seed #8 — Available', 'Open Seed #4 — Available', 'Open Seed #5 — Available', 'Open Seed #2 — Available', 'Open Seed #7 — Available', 'Open Seed #3 — Available', 'Open Seed #6 — Available'], 'bracket': [{'id': 'QF1', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 1', 'court': 'Court 1', 'teamA': 'Open Seed #1 — Available', 'teamB': 'Open Seed #8 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF2', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 2', 'court': 'Court 2', 'teamA': 'Open Seed #4 — Available', 'teamB': 'Open Seed #5 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF3', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 3', 'court': 'Court 3', 'teamA': 'Open Seed #2 — Available', 'teamB': 'Open Seed #7 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'QF4', 'stage': 'Quarterfinals', 'label': 'Quarterfinal 4', 'court': 'Court 4', 'teamA': 'Open Seed #3 — Available', 'teamB': 'Open Seed #6 — Available', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF1', 'stage': 'Semifinals', 'label': 'Semifinal 1', 'court': 'Court 1', 'teamA': 'Winner QF1', 'teamB': 'Winner QF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'SF2', 'stage': 'Semifinals', 'label': 'Semifinal 2', 'court': 'Court 2', 'teamA': 'Winner QF3', 'teamB': 'Winner QF4', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}, {'id': 'FIN', 'stage': 'Championship Final', 'label': 'Gold Medal Final', 'court': 'Court 1', 'teamA': 'Winner SF1', 'teamB': 'Winner SF2', 'scoreA': 0, 'scoreB': 0, 'serverSide': 'A', 'serverNum': 2, 'toA': 2, 'toB': 2, 'status': 'PENDING', 'winner': None}]}]
+
+DEFAULT_OPEN_PLAY_SESSIONS = [{'id': 'op-afternoon-social', 'title': 'Afternoon Social Open Play', 'schedule': 'Daily • 03:00 PM – 06:00 PM', 'skillLevel': 'All Skill Levels (Beginner – Intermediate)', 'rotationRule': '4-Player Doubles Pods • Shuffle Players Every Round', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': True, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}, {'id': 'op-morning-dropin', 'title': 'Morning Community Drop-In', 'schedule': 'Daily • 07:00 AM – 10:00 AM', 'skillLevel': 'Social & Fitness Rotation (All Levels)', 'rotationRule': '4-Player Doubles Pods • Balanced Court Rotation', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2'], 'showCourtsOnSite': True, 'published': False, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}, {'id': 'op-evening-nightlights', 'title': 'Evening Night-Lights Open Play', 'schedule': 'Mon / Wed / Fri • 06:00 PM – 09:00 PM', 'skillLevel': 'Intermediate & Competitive Rally', 'rotationRule': '4-Player Doubles Pods • Winners Split Partners', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': False, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}, {'id': 'op-weekend-mixer', 'title': 'Weekend Club Open Play Mixer', 'schedule': 'Sat & Sun • 04:00 PM – 07:00 PM', 'skillLevel': 'All Community Members & Walk-Ins', 'rotationRule': '4-Player Doubles Pods • Community Shuffler', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': False, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}]
 
 DEFAULT_SECURITY_LOG = [
     {
@@ -145,6 +147,9 @@ DEFAULT_DB = {
         "clubLng": 123.72471,
         "clubMapPinUrl": "https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&name=Velasco+St.%2C+Phase+4%2C+Do%C3%B1a+Maria+Subd.%2C+Tagas%2C+Daraga%2C+Philippines%2C+4501&mkt=en-US&fbclid=IwY2xjawVYnBdleHRuA2FlbQIxMABwZG9mBWJyaWQRMTRoaU1vSGFYU01lQlhDQWlzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEfV6cDEdlnoTrV2XY-9GoSklW3i8iwAD-QR-A4aVHbv5si-SDftGv3wAWAItU_aem_ddmZG_qe15MZb6RjEsu8yA&FORM=FBKPL1&q=13.15543%2C+123.72471&cp=13.155430%7E123.724709&lvl=16&style=r",
         "tournaments": DEFAULT_TOURNAMENTS,
+        "tournamentsPublishedOnHome": True,
+        "openPlaySessions": DEFAULT_OPEN_PLAY_SESSIONS,
+        "openPlay24Roster": [],
         "openPlayEnabled": True,
         "openPlaySlots": ["03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM"],
         "pricePaddleStd": 50,
@@ -1334,37 +1339,208 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             p_name = sanitize_str(body.get("name") or "", 70)
             p_skill = sanitize_str(body.get("skill") or "All Levels", 50)
             p_phone = sanitize_str(body.get("phone") or "", 30)
+            p_email = sanitize_str(body.get("email") or "", 100)
+            p_date = sanitize_str(body.get("date") or get_pht_now().strftime("%Y-%m-%d"), 40)
+            pay_mode = sanitize_str(body.get("paymentMethod") or body.get("paymentMode") or "GCash", 50)
+            pay_ref = sanitize_str(body.get("transactionRef") or body.get("paymentRef") or "OPEN-PLAY", 60)
+            booking_ref = sanitize_str(body.get("ref") or ("PF-OP-" + str(int(time.time() * 1000))[-6:]), 30)
+            guest_names = body.get("guestNames") if isinstance(body.get("guestNames"), list) else []
+            create_booking = body.get("createBooking", True) is not False
+
             if not p_name or len(p_name) < 2:
                 self._send_json({"ok": False, "error": "Please enter a valid player name."}, status=400)
                 return
+
             current_sc = dict(DEFAULT_DB.get("siteConfig", {}))
             if isinstance(db.get("siteConfig"), dict):
                 current_sc.update(db["siteConfig"])
             sessions = current_sc.get("openPlaySessions")
             if not isinstance(sessions, list) or len(sessions) == 0:
-                sessions = [
-                    {"id": "op-afternoon-social", "title": "Afternoon Social Open Play", "schedule": "Daily • 03:00 PM – 06:00 PM", "skillLevel": "All Skill Levels (Beginner – Intermediate)", "rotationRule": "4-Player Doubles Pods • Shuffle Players Every Round", "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"], "showCourtsOnSite": True, "published": True, "maxPlayers": 24, "players": []},
-                    {"id": "op-morning-dropin", "title": "Morning Community Drop-In", "schedule": "Daily • 07:00 AM – 10:00 AM", "skillLevel": "Social & Fitness Rotation (All Levels)", "rotationRule": "4-Player Doubles Pods • Balanced Court Rotation", "designatedCourts": ["Court 1", "Court 2"], "showCourtsOnSite": True, "published": False, "maxPlayers": 24, "players": []},
-                    {"id": "op-evening-nightlights", "title": "Evening Night-Lights Open Play", "schedule": "Mon / Wed / Fri • 06:00 PM – 09:00 PM", "skillLevel": "Intermediate & Competitive Rally", "rotationRule": "4-Player Doubles Pods • Winners Split Partners", "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"], "showCourtsOnSite": True, "published": False, "maxPlayers": 24, "players": []},
-                    {"id": "op-weekend-mixer", "title": "Weekend Club Open Play Mixer", "schedule": "Sat & Sun • 04:00 PM – 07:00 PM", "skillLevel": "All Community Members & Walk-Ins", "rotationRule": "4-Player Doubles Pods • Community Shuffler", "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"], "showCourtsOnSite": True, "published": False, "maxPlayers": 24, "players": []}
-                ]
+                sessions = json.loads(json.dumps(DEFAULT_OPEN_PLAY_SESSIONS))
             target_s = next((s for s in sessions if isinstance(s, dict) and s.get("id") == session_id), sessions[0])
             if not isinstance(target_s.get("players"), list):
                 target_s["players"] = []
-            if len(target_s["players"]) < 24 and not any(str(x.get("name", "")).lower() == p_name.lower() for x in target_s["players"] if isinstance(x, dict)):
-                target_s["players"].append({
-                    "id": "op-pl-" + str(int(time.time() * 1000)),
+
+            fee_per_player = float(target_s.get("entryFee") or current_sc.get("openPlayRate") or 150)
+            all_entrants = [p_name] + [sanitize_str(g, 70) for g in guest_names if sanitize_str(g, 70)]
+            added_names = []
+            now_time_str = get_pht_now().strftime("%I:%M %p")
+            for idx_e, entrant_name in enumerate(all_entrants):
+                if len(target_s["players"]) < 24 and not any(str(x.get("name", "")).lower() == entrant_name.lower() for x in target_s["players"] if isinstance(x, dict)):
+                    target_s["players"].append({
+                        "id": f"op-pl-{int(time.time() * 1000)}-{idx_e}",
+                        "name": entrant_name,
+                        "skill": p_skill,
+                        "phone": p_phone,
+                        "email": p_email,
+                        "date": p_date,
+                        "bookingRef": booking_ref,
+                        "paymentMethod": pay_mode,
+                        "paymentRef": pay_ref,
+                        "paidAmount": fee_per_player,
+                        "status": "BOOKED",
+                        "joinedAt": now_time_str
+                    })
+                    added_names.append(entrant_name)
+
+            players_cnt = max(1, int(body.get("players") or len(all_entrants) or 1))
+            total_val = parse_amount(body.get("total"), fee_per_player * players_cnt)
+            created_bk = None
+            if create_booking:
+                desig = target_s.get("designatedCourts") if isinstance(target_s.get("designatedCourts"), list) and target_s.get("designatedCourts") else ["Court 1", "Court 2", "Court 3", "Court 4"]
+                court_label = f"Open Play • {target_s.get('title', 'Open Play')} ({', '.join(desig)})"
+                sched_str = target_s.get("schedule", "03:00 PM – 06:00 PM")
+                display_time = f"{p_date} • {sched_str}" if p_date not in sched_str else sched_str
+                created_bk = {
+                    "ref": booking_ref,
                     "name": p_name,
-                    "skill": p_skill,
-                    "phone": p_phone,
-                    "joinedAt": get_pht_now().strftime("%I:%M %p")
-                })
+                    "customerName": p_name,
+                    "phone": p_phone or "0999 883 2346",
+                    "customerPhone": p_phone or "0999 883 2346",
+                    "email": p_email,
+                    "customerEmail": p_email,
+                    "court": court_label,
+                    "date": p_date,
+                    "time": display_time,
+                    "players": players_cnt,
+                    "paymentMode": pay_mode,
+                    "paymentMethod": pay_mode,
+                    "transactionRef": pay_ref,
+                    "receiptDataUrl": body.get("receiptDataUrl", ""),
+                    "total": total_val,
+                    "status": "PENDING",
+                    "isOpenPlay": True,
+                    "openPlaySessionId": target_s.get("id"),
+                    "items": [f"Open Play Entry ({players_cnt}x Player @ ₱{int(fee_per_player)}) — {target_s.get('title', 'Open Play')} ({', '.join(all_entrants)})"],
+                    "createdAt": get_pht_now().strftime("%Y-%m-%d %H:%M")
+                }
+                if "bookings" not in db or not isinstance(db["bookings"], list):
+                    db["bookings"] = []
+                db["bookings"] = [b for b in db["bookings"] if b.get("ref") != booking_ref]
+                db["bookings"].insert(0, created_bk)
+                db["bookingsUpdatedAt"] = int(time.time() * 1000)
+
             current_sc["openPlaySessions"] = sessions
             current_sc["openPlay24Roster"] = sessions[0].get("players", [])
             current_sc["updatedAt"] = int(time.time() * 1000)
             db["siteConfig"] = current_sc
             save_db(db)
-            self._send_json({"ok": True, "siteConfig": current_sc})
+            db["sales"] = db.get("salesLedger", [])
+            self._send_json({"ok": True, "ref": booking_ref, "booking": created_bk, "addedPlayers": added_names, "siteConfig": current_sc, "state": db})
+            return
+
+        elif parsed.path == "/api/openplay-shuffle":
+            session_id = sanitize_str(body.get("sessionId") or "op-afternoon-social", 60)
+            incoming_order = body.get("shuffledOrder")
+            last_shuffle = sanitize_str(body.get("lastShuffleTime") or get_pht_now().strftime("%I:%M:%S %p"), 40)
+            current_sc = dict(DEFAULT_DB.get("siteConfig", {}))
+            if isinstance(db.get("siteConfig"), dict):
+                current_sc.update(db["siteConfig"])
+            sessions = current_sc.get("openPlaySessions")
+            if not isinstance(sessions, list) or len(sessions) == 0:
+                sessions = json.loads(json.dumps(DEFAULT_OPEN_PLAY_SESSIONS))
+            target_s = next((s for s in sessions if isinstance(s, dict) and s.get("id") == session_id), sessions[0])
+            if isinstance(incoming_order, list) and len(incoming_order) == 24:
+                target_s["shuffledOrder"] = [int(x) for x in incoming_order]
+            else:
+                import random
+                arr = list(range(24))
+                random.shuffle(arr)
+                target_s["shuffledOrder"] = arr
+            target_s["lastShuffleTime"] = last_shuffle
+            current_sc["openPlaySessions"] = sessions
+            current_sc["updatedAt"] = int(time.time() * 1000)
+            db["siteConfig"] = current_sc
+            save_db(db)
+            db["sales"] = db.get("salesLedger", [])
+            self._send_json({"ok": True, "session": target_s, "siteConfig": current_sc, "state": db})
+            return
+
+        elif parsed.path == "/api/tournament-register":
+            trn_id = sanitize_str(body.get("tournamentId") or "trn-bicol-dupr-open", 60)
+            p1 = sanitize_str(body.get("player1") or body.get("name") or "", 70)
+            p2 = sanitize_str(body.get("partner") or "", 70)
+            team_name = sanitize_str(body.get("teamName") or (f"{p1} & {p2}" if p2 else p1), 120)
+            phone = sanitize_str(body.get("phone") or "", 30)
+            email = sanitize_str(body.get("email") or "", 100)
+            division = sanitize_str(body.get("division") or "Intermediate (3.5)", 60)
+            pay_mode = sanitize_str(body.get("paymentMethod") or "GCash", 50)
+            pay_ref = sanitize_str(body.get("paymentRef") or body.get("transactionRef") or "TRN-ENTRY", 60)
+            booking_ref = sanitize_str(body.get("bookingRef") or body.get("ref") or ("PF-TRN-" + str(int(time.time() * 1000))[-6:]), 30)
+
+            if not p1 or len(p1) < 2:
+                self._send_json({"ok": False, "error": "Please enter a valid player/team name."}, status=400)
+                return
+
+            current_sc = dict(DEFAULT_DB.get("siteConfig", {}))
+            if isinstance(db.get("siteConfig"), dict):
+                current_sc.update(db["siteConfig"])
+            tournaments = current_sc.get("tournaments")
+            if not isinstance(tournaments, list) or len(tournaments) == 0:
+                tournaments = json.loads(json.dumps(DEFAULT_TOURNAMENTS))
+            target_t = next((t for t in tournaments if isinstance(t, dict) and t.get("id") == trn_id), tournaments[0])
+            if not isinstance(target_t.get("players"), list) or len(target_t["players"]) < 8:
+                target_t["players"] = [
+                    "Open Seed #1 — Available", "Open Seed #8 — Available",
+                    "Open Seed #4 — Available", "Open Seed #5 — Available",
+                    "Open Seed #2 — Available", "Open Seed #7 — Available",
+                    "Open Seed #3 — Available", "Open Seed #6 — Available"
+                ]
+            if not isinstance(target_t.get("registrations"), list):
+                target_t["registrations"] = []
+
+            seed_Order = [1, 8, 4, 5, 2, 7, 3, 6]
+            open_idx = -1
+            for idx_p, slot_val in enumerate(target_t["players"]):
+                sv = str(slot_val or "").strip()
+                if not sv or sv.lower().startswith(("open seed", "open slot", "available", "empty", "tbd", "waiting")):
+                    open_idx = idx_p
+                    break
+
+            seed_num = seed_Order[open_idx] if open_idx >= 0 else (len(target_t["registrations"]) + 1)
+            short_div = division.split("•")[0].strip()
+            bracket_label = f"Seed #{seed_num} • {team_name} ({short_div})"
+            if open_idx >= 0:
+                target_t["players"][open_idx] = bracket_label
+                if isinstance(target_t.get("bracket"), list) and len(target_t["bracket"]) >= 4:
+                    qf_idx = open_idx // 2
+                    qf_match = target_t["bracket"][qf_idx]
+                    if isinstance(qf_match, dict):
+                        if open_idx % 2 == 0:
+                            qf_match["teamA"] = bracket_label
+                        else:
+                            qf_match["teamB"] = bracket_label
+                        ta = str(qf_match.get("teamA", ""))
+                        tb = str(qf_match.get("teamB", ""))
+                        if not ta.lower().startswith("open seed") and not tb.lower().startswith("open seed"):
+                            qf_match["status"] = "READY"
+
+            if not any(str(r.get("bookingRef") or r.get("id")) == booking_ref for r in target_t["registrations"] if isinstance(r, dict)):
+                target_t["registrations"].append({
+                    "id": booking_ref,
+                    "bookingRef": booking_ref,
+                    "teamName": team_name,
+                    "player1": p1,
+                    "partner": p2 or "Solo / Rotating",
+                    "phone": phone,
+                    "email": email,
+                    "division": division,
+                    "paymentMethod": pay_mode,
+                    "paymentRef": pay_ref,
+                    "status": "CONFIRMED",
+                    "seedNumber": seed_num,
+                    "registeredAt": get_pht_now().strftime("%Y-%m-%d %I:%M %p")
+                })
+
+            filled_seeds = sum(1 for p in target_t["players"] if not str(p or "").strip().lower().startswith(("open seed", "open slot", "available", "empty", "tbd")))
+            target_t["registeredCount"] = max(len(target_t["registrations"]), filled_seeds)
+
+            current_sc["tournaments"] = tournaments
+            current_sc["updatedAt"] = int(time.time() * 1000)
+            db["siteConfig"] = current_sc
+            save_db(db)
+            db["sales"] = db.get("salesLedger", [])
+            self._send_json({"ok": True, "seedNumber": seed_num, "bracketLabel": bracket_label, "tournament": target_t, "siteConfig": current_sc, "state": db})
             return
 
         elif parsed.path == "/api/site-config":
@@ -1386,15 +1562,16 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                             current_sc["updatedAt"] = int(v)
                         except Exception:
                             current_sc["updatedAt"] = int(time.time() * 1000)
-                    elif isinstance(def_val, bool) or k in ("liveBannerEnabled", "openPlayEnabled"):
-                        current_sc[k] = bool(v)
+                    elif isinstance(v, bool) or isinstance(def_val, bool) or k in ("liveBannerEnabled", "openPlayEnabled", "tournamentsPublishedOnHome", "openPlayRateCustomized"):
+                        if isinstance(v, str):
+                            current_sc[k] = v.strip().lower() not in ("false", "0", "no", "")
+                        else:
+                            current_sc[k] = bool(v)
                     elif k == "openPlaySlots" and isinstance(v, list):
                         current_sc[k] = [sanitize_str(x, 30) for x in v if str(x).strip()]
-                    elif k in ("tournaments", "openPlaySessions", "openPlay24Roster", "openPlayRoster", "openPlaySchedule") and isinstance(v, (list, dict)):
+                    elif isinstance(v, (list, dict)) or k in ("tournaments", "openPlaySessions", "openPlay24Roster", "openPlayRoster", "openPlaySchedule"):
                         current_sc[k] = v
-                    elif k == "openPlayRateCustomized":
-                        current_sc[k] = bool(v)
-                    elif isinstance(def_val, (int, float)) or k in (
+                    elif isinstance(v, (int, float)) or isinstance(def_val, (int, float)) or k in (
                         "dayRate", "nightRate", "includedPlayers", "extraPlayerFee", "openPlayRate", "openPlayMaxPlayers", "openPlayCourtsCount", "openPlaySlotMinutes", "maxAdvanceBookingDays", "clubLat", "clubLng",
                         "pricePaddleStd", "pricePaddleCarbon", "pricePaddleBranded",
                         "priceBallSingle", "priceBallsBucket", "priceMachine", "costCourtPerHour", "costPaddleStd", "costPaddleCarbon", "costPaddleBranded", "costBallSingle", "costBallsBucket", "costMachine"
@@ -1416,6 +1593,10 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                             current_sc[k] = def_val
                     else:
                         current_sc[k] = sanitize_str(v, 800)
+                if "openPlayRate" in incoming:
+                    current_sc["openPlayRateCustomized"] = True
+                if current_sc.get("liveBannerText") is None or str(current_sc.get("liveBannerText")).strip() == "0":
+                    current_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
                 current_sc["updatedAt"] = int(time.time() * 1000)
             db["siteConfig"] = current_sc
             save_db(db)

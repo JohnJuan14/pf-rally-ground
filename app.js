@@ -4311,7 +4311,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ================= OPEN PLAY DEDICATED SUB-PAGE & REAL PLAYER POD SHUFFLER ENGINE (NO BRACKET, NO PRICES) =================
+// ================= OPEN PLAY DEDICATED SUB-PAGE, BOOKING CHECKOUT & 4-PLAYER POD SHUFFLER ENGINE =================
 const DEFAULT_OPEN_PLAY_SESSIONS = [
   {
     id: 'op-afternoon-social',
@@ -4319,6 +4319,7 @@ const DEFAULT_OPEN_PLAY_SESSIONS = [
     schedule: 'Daily • 03:00 PM – 06:00 PM',
     skillLevel: 'All Skill Levels (Beginner – Intermediate)',
     rotationRule: '4-Player Doubles Pods • Shuffle Players Every Round',
+    entryFee: 150,
     designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
     showCourtsOnSite: true,
     published: true,
@@ -4333,6 +4334,7 @@ const DEFAULT_OPEN_PLAY_SESSIONS = [
     schedule: 'Daily • 07:00 AM – 10:00 AM',
     skillLevel: 'Social & Fitness Rotation (All Levels)',
     rotationRule: '4-Player Doubles Pods • Balanced Court Rotation',
+    entryFee: 150,
     designatedCourts: ['Court 1', 'Court 2'],
     showCourtsOnSite: true,
     published: false,
@@ -4347,6 +4349,7 @@ const DEFAULT_OPEN_PLAY_SESSIONS = [
     schedule: 'Mon / Wed / Fri • 06:00 PM – 09:00 PM',
     skillLevel: 'Intermediate & Competitive Rally',
     rotationRule: '4-Player Doubles Pods • Winners Split Partners',
+    entryFee: 150,
     designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
     showCourtsOnSite: true,
     published: false,
@@ -4361,6 +4364,7 @@ const DEFAULT_OPEN_PLAY_SESSIONS = [
     schedule: 'Sat & Sun • 04:00 PM – 07:00 PM',
     skillLevel: 'All Community Members & Walk-Ins',
     rotationRule: '4-Player Doubles Pods • Community Shuffler',
+    entryFee: 150,
     designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
     showCourtsOnSite: true,
     published: false,
@@ -4375,7 +4379,9 @@ window.PF_OPEN_PLAY_STATE = {
   activeSessionId: 'op-afternoon-social',
   courtsOverrideBySession: {},
   shuffledOrderBySession: {},
-  lastShuffleTimeBySession: {}
+  lastShuffleTimeBySession: {},
+  selectedPayMethod: 'GCash',
+  selectedSeatCount: 1
 };
 
 function pfIsFakeOpenPlayFillerName(name) {
@@ -4389,6 +4395,7 @@ function pfGetNormalizedOpenPlaySessions() {
   const rawSessions = Array.isArray(cfg.openPlaySessions) && cfg.openPlaySessions.length > 0
     ? cfg.openPlaySessions
     : DEFAULT_OPEN_PLAY_SESSIONS;
+  const fallbackFee = Math.max(0, Number(cfg.openPlayFee || 150));
 
   return DEFAULT_OPEN_PLAY_SESSIONS.map((def, idx) => {
     const found = rawSessions.find(s => s && s.id === def.id) || rawSessions[idx] || {};
@@ -4396,7 +4403,6 @@ function pfGetNormalizedOpenPlaySessions() {
       ? found.designatedCourts
       : def.designatedCourts.slice();
 
-    // Filter out any legacy fake filler player names so only real players count
     const rawPlayers = Array.isArray(found.players) ? found.players : [];
     const cleanRealPlayers = [];
     rawPlayers.forEach(p => {
@@ -4408,11 +4414,13 @@ function pfGetNormalizedOpenPlaySessions() {
         name: pName,
         skill: (typeof p === 'object' && p.skill) ? p.skill : 'All Levels',
         phone: (typeof p === 'object' && p.phone) ? p.phone : '',
+        bookingRef: (typeof p === 'object' && p.bookingRef) ? p.bookingRef : '',
+        paymentMethod: (typeof p === 'object' && p.paymentMethod) ? p.paymentMethod : '',
+        status: (typeof p === 'object' && p.status) ? p.status : 'BOOKED',
         joinedAt: (typeof p === 'object' && p.joinedAt) ? p.joinedAt : 'Joined'
       });
     });
 
-    // On session #1, also merge any legacy openPlay24Roster real entries if present
     if (idx === 0 && cleanRealPlayers.length === 0 && Array.isArray(cfg.openPlay24Roster)) {
       cfg.openPlay24Roster.forEach(r => {
         const rName = typeof r === 'string' ? r.trim() : String((r && r.name) || '').trim();
@@ -4422,7 +4430,10 @@ function pfGetNormalizedOpenPlaySessions() {
             name: rName,
             skill: (r && r.skill) || 'All Levels',
             phone: (r && r.phone) || '',
-            joinedAt: 'Joined'
+            bookingRef: (r && r.bookingRef) || '',
+            paymentMethod: (r && r.paymentMethod) || '',
+            status: (r && r.status) || 'BOOKED',
+            joinedAt: (r && r.joinedAt) || 'Joined'
           });
         }
       });
@@ -4432,12 +4443,15 @@ function pfGetNormalizedOpenPlaySessions() {
       ? found.shuffledOrder.slice()
       : Array.from({ length: 24 }, (_, i) => i);
 
+    const parsedFee = Number(found.entryFee !== undefined ? found.entryFee : (def.entryFee || fallbackFee || 150));
+
     return {
       id: found.id || def.id,
       title: String(found.title || (idx === 0 && cfg.openPlay24Title ? cfg.openPlay24Title : def.title)).trim(),
       schedule: String(found.schedule || (idx === 0 && cfg.openPlay24Window ? cfg.openPlay24Window : def.schedule)).trim(),
       skillLevel: String(found.skillLevel || def.skillLevel).trim(),
       rotationRule: String(found.rotationRule || def.rotationRule).trim(),
+      entryFee: Number.isFinite(parsedFee) && parsedFee >= 0 ? parsedFee : 150,
       designatedCourts: desig,
       showCourtsOnSite: found.showCourtsOnSite !== false,
       published: typeof found.published === 'boolean' ? found.published : (idx === 0),
@@ -4483,13 +4497,16 @@ function pfBuildOpenPlay24Schedule(courtsCountInput, sessionIdInput) {
     activeCourtNames.push(desigCourts[i] || `Court ${i + 1}`);
   }
 
-  // Build 24 slots: real joined players first, then honest Open Spots
   const baseSlots = [];
   session.players.forEach((pl, idx) => {
     baseSlots.push({
       slotNumber: idx + 1,
       name: pl.name,
       skill: pl.skill || 'All Levels',
+      bookingRef: pl.bookingRef || '',
+      paymentMethod: pl.paymentMethod || '',
+      status: pl.status || 'BOOKED',
+      joinedAt: pl.joinedAt || 'Joined',
       isJoined: true
     });
   });
@@ -4497,14 +4514,16 @@ function pfBuildOpenPlay24Schedule(courtsCountInput, sessionIdInput) {
     const n = baseSlots.length + 1;
     baseSlots.push({
       slotNumber: n,
-      name: `Open Spot #${n}`,
+      name: `Open Seat #${n}`,
       skill: 'Available',
+      bookingRef: '',
+      paymentMethod: '',
+      status: 'OPEN',
+      joinedAt: '',
       isJoined: false
     });
   }
 
-  // Apply shuffle order: if real players have joined and user clicked shuffle, shuffle the real players across pods
-  // or shuffle all 24 slots according to session/local shuffledOrder
   const localOrder = window.PF_OPEN_PLAY_STATE.shuffledOrderBySession[session.id];
   const order = (Array.isArray(localOrder) && localOrder.length === 24)
     ? localOrder
@@ -4512,8 +4531,6 @@ function pfBuildOpenPlay24Schedule(courtsCountInput, sessionIdInput) {
       ? session.shuffledOrder
       : Array.from({ length: 24 }, (_, idx) => idx));
 
-  // Keep real players grouped into active pods first when fewer than 24 players are present,
-  // while still shuffling their partner/opponent pairings!
   const realCount = session.players.length;
   let orderedSlots = [];
   if (realCount > 0 && realCount < 24) {
@@ -4531,10 +4548,10 @@ function pfBuildOpenPlay24Schedule(courtsCountInput, sessionIdInput) {
   }
 
   const waveLabelsByCourtCount = {
-    1: ['Round 1 (30 mins)', 'Round 2 (30 mins)', 'Round 3 (30 mins)', 'Round 4 (30 mins)', 'Round 5 (30 mins)', 'Round 6 (30 mins)'],
-    2: ['Wave 1 • Match 1', 'Wave 1 • Match 2', 'Wave 2 • Match 1', 'Wave 2 • Match 2', 'Wave 3 • Match 1', 'Wave 3 • Match 2'],
-    3: ['Wave A • Match 1', 'Wave A • Match 2', 'Wave A • Match 3', 'Wave B • Match 1', 'Wave B • Match 2', 'Wave B • Match 3'],
-    4: ['Primary Rotation • Court 1', 'Primary Rotation • Court 2', 'Primary Rotation • Court 3', 'Primary Rotation • Court 4', 'Next-Up Stack • Pod 5', 'Next-Up Stack • Pod 6']
+    1: ['Wave 1 • 3:00–3:30 PM', 'Wave 2 • 3:30–4:00 PM', 'Wave 3 • 4:00–4:30 PM', 'Wave 4 • 4:30–5:00 PM', 'Wave 5 • 5:00–5:30 PM', 'Wave 6 • 5:30–6:00 PM'],
+    2: ['Wave 1 • Match A (3:00 PM)', 'Wave 1 • Match B (3:00 PM)', 'Wave 2 • Match A (3:30 PM)', 'Wave 2 • Match B (3:30 PM)', 'Wave 3 • Match A (4:00 PM)', 'Wave 3 • Match B (4:00 PM)'],
+    3: ['Wave A • Pod 1 (3:00 PM)', 'Wave A • Pod 2 (3:00 PM)', 'Wave A • Pod 3 (3:00 PM)', 'Wave B • Pod 4 (3:30 PM)', 'Wave B • Pod 5 (3:30 PM)', 'Wave B • Pod 6 (3:30 PM)'],
+    4: ['Active Court Rotation • Pod 1', 'Active Court Rotation • Pod 2', 'Active Court Rotation • Pod 3', 'Active Court Rotation • Pod 4', 'Next-Up Queue • Pod 5', 'Next-Up Queue • Pod 6']
   };
   const waveLabels = waveLabelsByCourtCount[courtsCount] || waveLabelsByCourtCount[4];
 
@@ -4561,112 +4578,297 @@ function pfBuildOpenPlay24Schedule(courtsCountInput, sessionIdInput) {
 
   return {
     session,
-    courtsCount,
+    totalPlayers: 24,
+    joinedCount: realCount,
+    openSpotsCount: Math.max(0, 24 - realCount),
+    courtsAvailable: courtsCount,
+    designatedCourts: desigCourts,
     activeCourtNames,
-    maxPlayers: 24,
-    joinedCount: session.players.length,
-    spotsLeft: Math.max(0, 24 - session.players.length),
     pods,
-    players: orderedSlots,
     lastShuffleTime: window.PF_OPEN_PLAY_STATE.lastShuffleTimeBySession[session.id] || session.lastShuffleTime || 'Ready to Shuffle'
   };
 }
 
-function pfShuffleOpenPlay24Players(sessionIdInput) {
-  const session = pfGetActiveOpenPlaySession();
-  const sid = sessionIdInput || session.id;
-  const arr = Array.from({ length: 24 }, (_, i) => i);
-  for (let i = arr.length - 1; i > 0; i--) {
+async function pfShuffleOpenPlay24Players(sessionIdInput) {
+  const session = (sessionIdInput && pfGetNormalizedOpenPlaySessions().find(s => s.id === sessionIdInput)) || pfGetActiveOpenPlaySession();
+  const realCount = session.players.length;
+
+  const realArr = Array.from({ length: realCount }, (_, i) => i);
+  for (let i = realArr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    const tmp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = tmp;
+    const tmp = realArr[i];
+    realArr[i] = realArr[j];
+    realArr[j] = tmp;
   }
-  window.PF_OPEN_PLAY_STATE.shuffledOrderBySession[sid] = arr;
-  window.PF_OPEN_PLAY_STATE.lastShuffleTimeBySession[sid] = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const openArr = Array.from({ length: 24 - realCount }, (_, i) => i + realCount);
+  const nextOrder = [...realArr, ...openArr];
+  const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  window.PF_OPEN_PLAY_STATE.shuffledOrderBySession[session.id] = nextOrder;
+  window.PF_OPEN_PLAY_STATE.lastShuffleTimeBySession[session.id] = nowStr;
+
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  const allSessions = pfGetNormalizedOpenPlaySessions().map(s => {
+    if (s.id !== session.id) return s;
+    return Object.assign({}, s, {
+      shuffledOrder: nextOrder,
+      lastShuffleTime: nowStr
+    });
+  });
+  cfg.openPlaySessions = allSessions;
+  cfg.updatedAt = Date.now();
+  window.PF_SITE_CONFIG = cfg;
+  try { localStorage.setItem('pf_site_config', JSON.stringify(cfg)); } catch (e) {}
+
+  pfRenderOpenPlay24Board();
+
+  const endpoints = (typeof pfGetApiEndpoints === 'function') ? pfGetApiEndpoints('/api/openplay-shuffle') : ['/api/openplay-shuffle'];
+  for (const url of endpoints) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: session.id,
+          shuffledOrder: nextOrder,
+          lastShuffleTime: nowStr
+        })
+      });
+      if (r.ok) break;
+    } catch (e) {}
+  }
+}
+
+function pfSetOpenPlayCourtCount(count, sessionIdInput) {
+  const session = (sessionIdInput && pfGetNormalizedOpenPlaySessions().find(s => s.id === sessionIdInput)) || pfGetActiveOpenPlaySession();
+  window.PF_OPEN_PLAY_STATE.courtsOverrideBySession[session.id] = Math.max(1, Math.min(4, Number(count) || 4));
   pfRenderOpenPlay24Board();
 }
 
-function pfSetOpenPlayCourtCount(numCourts) {
-  const session = pfGetActiveOpenPlaySession();
-  const c = Math.max(1, Math.min(4, Number(numCourts) || 4));
-  window.PF_OPEN_PLAY_STATE.courtsOverrideBySession[session.id] = c;
-  pfRenderOpenPlay24Board();
+function pfSwitchOpenPlayPayMethod(methodKey) {
+  const m = methodKey || 'GCash';
+  window.PF_OPEN_PLAY_STATE.selectedPayMethod = m;
+  const hiddenInp = document.getElementById('op-join-pay-method');
+  if (hiddenInp) hiddenInp.value = m;
+
+  ['GCash', 'Maya', 'BDO', 'Counter'].forEach(k => {
+    const btn = document.getElementById('op-pay-btn-' + k);
+    if (btn) {
+      btn.className = (k === m)
+        ? 'py-2.5 px-3 rounded-xl bg-[#0F291E] text-[#A3E635] border-2 border-[#15803D] font-mono text-xs font-black uppercase transition shadow-sm'
+        : 'py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-mono text-xs font-bold uppercase transition';
+    }
+  });
+
+  const qrBox = document.getElementById('op-join-qr-box');
+  const refWrap = document.getElementById('op-join-ref-wrap');
+  const qrImg = document.getElementById('op-join-qr-img');
+  const qrAcc = document.getElementById('op-join-qr-acc');
+  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+
+  if (m === 'Counter') {
+    if (qrBox) qrBox.classList.add('hidden');
+    if (refWrap) refWrap.classList.add('hidden');
+  } else {
+    if (qrBox) qrBox.classList.remove('hidden');
+    if (refWrap) refWrap.classList.remove('hidden');
+    if (qrImg) {
+      if (m === 'GCash') qrImg.src = cfg.qrGcash || 'assets/qr-gcash.png';
+      else if (m === 'Maya') qrImg.src = cfg.qrMaya || 'assets/qr-maya.png';
+      else qrImg.src = cfg.qrBdo || 'assets/qr-bdo.png';
+    }
+    if (qrAcc) {
+      qrAcc.textContent = m === 'BDO'
+        ? 'BDO InstaPay QR Transfer • Scan Official Club QR Code'
+        : `${m} Express Send: 0999 883 2346 (P&F Rally Ground)`;
+    }
+  }
 }
+window.pfSwitchOpenPlayPayMethod = pfSwitchOpenPlayPayMethod;
 
-function pfOpenJoinOpenPlayModal(sessionIdInput) {
-  const allSessions = pfGetNormalizedOpenPlaySessions();
-  const session = (sessionIdInput && allSessions.find(s => s.id === sessionIdInput)) || pfGetActiveOpenPlaySession();
-  if (!session) return;
+function pfUpdateOpenPlayModalTotals() {
+  const sessionSelect = document.getElementById('op-join-session-select');
+  const seatSelect = document.getElementById('op-join-seats-select');
+  const guestsWrap = document.getElementById('op-join-guests-wrap');
+  const totalEl = document.getElementById('op-join-total-display');
+  const feeBadgeEl = document.getElementById('op-join-session-meta');
 
+  const sessions = pfGetNormalizedOpenPlaySessions();
+  const selId = sessionSelect ? sessionSelect.value : window.PF_OPEN_PLAY_STATE.activeSessionId;
+  const session = sessions.find(s => s.id === selId) || pfGetActiveOpenPlaySession();
+  const unitFee = Math.max(0, Number(session.entryFee !== undefined ? session.entryFee : 150));
+  const seats = Math.max(1, Math.min(4, Number(seatSelect ? seatSelect.value : 1)));
+  window.PF_OPEN_PLAY_STATE.selectedSeatCount = seats;
+
+  if (guestsWrap) {
+    if (seats > 1) guestsWrap.classList.remove('hidden');
+    else guestsWrap.classList.add('hidden');
+  }
+
+  const totalAmount = unitFee * seats;
+  if (totalEl) {
+    totalEl.textContent = `₱${totalAmount.toLocaleString()}.00`;
+  }
+  if (feeBadgeEl) {
+    const spotsLeft = Math.max(0, 24 - session.players.length);
+    feeBadgeEl.textContent = `${session.schedule} • ₱${unitFee}/player • ${spotsLeft} of 24 seats open`;
+  }
+}
+window.pfUpdateOpenPlayModalTotals = pfUpdateOpenPlayModalTotals;
+
+function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
+  const pubSessions = pfGetPublishedOpenPlaySessions();
+  const session = (sessionIdInput && pubSessions.find(s => s.id === sessionIdInput)) || pfGetActiveOpenPlaySession();
   let modal = document.getElementById('pf-openplay-join-modal');
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'pf-openplay-join-modal';
-    modal.className = 'fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm';
+    modal.className = 'fixed inset-0 z-[999] flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4';
     document.body.appendChild(modal);
   }
 
-  const joinedCount = session.players.length;
-  const spotsLeft = Math.max(0, 24 - joinedCount);
-  const courtBadgeText = (session.showCourtsOnSite !== false && Array.isArray(session.designatedCourts) && session.designatedCourts.length > 0)
-    ? session.designatedCourts.join(' • ')
-    : 'Club Open Play Courts';
+  const todayYmd = (typeof pfGetPhilippineTodayYMD === 'function')
+    ? pfGetPhilippineTodayYMD()
+    : new Date().toISOString().slice(0, 10);
+  const unitFee = Math.max(0, Number(session.entryFee !== undefined ? session.entryFee : 150));
+  const spotsLeft = Math.max(0, 24 - session.players.length);
+  const nextSeat = preferredSeatNum || (session.players.length + 1);
+
+  const sessionOptionsHtml = pubSessions.map(s => {
+    const sFee = Math.max(0, Number(s.entryFee !== undefined ? s.entryFee : 150));
+    const sOpen = Math.max(0, 24 - s.players.length);
+    const sel = s.id === session.id ? 'selected' : '';
+    return `<option value="${pfEscapeHtml(s.id)}" ${sel}>${pfEscapeHtml(s.title)} (${pfEscapeHtml(s.schedule)}) — ₱${sFee}/player (${sOpen} open)</option>`;
+  }).join('');
 
   modal.innerHTML = `
-    <div class="w-full max-w-md rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-2xl overflow-hidden animate-fadeIn">
-      <div class="p-5 sm:p-6 bg-[#0F291E] text-white flex items-start justify-between gap-3">
-        <div class="space-y-1">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-[#A3E635] font-mono text-[10px] font-extrabold uppercase tracking-wider">
-            🏓 LIVE COMMUNITY ROSTER (${joinedCount} / 24 JOINED)
-          </span>
-          <h3 class="text-lg sm:text-xl font-black tracking-tight text-white">${pfEscapeHtml(session.title)}</h3>
-          <p class="text-xs text-emerald-100/90">${pfEscapeHtml(session.schedule)} • ${pfEscapeHtml(courtBadgeText)}</p>
+    <div onclick="pfCloseJoinOpenPlayModal()" class="absolute inset-0"></div>
+    <div id="op-join-modal-dialog" class="relative z-10 w-full max-w-2xl max-h-[92dvh] overflow-y-auto bg-white text-slate-900 rounded-3xl border-2 border-[#15803D] shadow-2xl p-5 sm:p-7 space-y-4 animate-fadeIn">
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3.5">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-12 rounded-xl bg-[#0F291E] border border-[#34D399]/60 p-1 flex items-center justify-center flex-shrink-0">
+            <img src="assets/logo.png" alt="P&amp;F Logo" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <span class="px-2.5 py-0.5 rounded bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase tracking-wider">🏓 OFFICIAL OPEN PLAY BOOKING &amp; SEAT CHECKOUT</span>
+            <h3 class="text-lg sm:text-xl font-black text-slate-900 mt-1">Book Your Open Play Seat &amp; Join Pod Shuffler</h3>
+            <p id="op-join-session-meta" class="text-xs font-mono font-bold text-emerald-700">${pfEscapeHtml(session.schedule)} • ₱${unitFee}/player • ${spotsLeft} of 24 seats open</p>
+          </div>
         </div>
-        <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm flex items-center justify-center">✕</button>
+        <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white font-black text-xs">✕</button>
       </div>
 
-      <form onsubmit="pfSubmitJoinOpenPlayForm(event, '${pfEscapeHtml(session.id)}')" class="p-5 sm:p-6 space-y-4 text-xs">
-        <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex items-center justify-between gap-2">
-          <span class="font-bold">Available Spots Remaining:</span>
-          <span class="px-2.5 py-1 rounded-full bg-emerald-700 text-white font-mono font-extrabold text-[11px]">${spotsLeft} of 24 Spots Open</span>
+      <!-- Seat Assignment Banner -->
+      <div class="p-3.5 rounded-2xl bg-[#F0FDF4] border border-[#86EFAC] flex items-center justify-between gap-3 text-xs">
+        <div class="font-bold text-[#065F46]">
+          🟢 <b>Seat #${nextSeat} Ready:</b> Booking adds your name to the live <b>24-Player Pod Shuffler</b> and generates an official <b>PF-OP</b> Booking Pass.
         </div>
+        <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-[#A3E635] font-mono text-[11px] font-black whitespace-nowrap">₱${unitFee} / Seat</span>
+      </div>
 
-        <div>
-          <label class="block text-[11px] font-extrabold uppercase text-slate-700 mb-1">Your Full Name (First &amp; Last Name) *</label>
-          <input type="text" id="pf-op-join-name" required minlength="3" maxlength="60" placeholder="e.g. Marco Santos" class="w-full rounded-xl border-2 border-slate-200 focus:border-[#0F291E] px-3.5 py-2.5 text-sm font-bold text-slate-900 outline-none">
-        </div>
+      <form id="pf-openplay-join-form" onsubmit="pfSubmitJoinOpenPlayForm(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="op-join-pay-method" value="GCash">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-extrabold uppercase text-slate-700 mb-1">Skill / Rally Level *</label>
-            <select id="pf-op-join-skill" class="w-full rounded-xl border-2 border-slate-200 focus:border-[#0F291E] px-3 py-2.5 text-xs font-bold text-slate-900 outline-none bg-white">
-              <option value="Beginner (2.5–3.0)">Beginner (2.5–3.0)</option>
-              <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
-              <option value="Advanced (4.0+)">Advanced (4.0+)</option>
-              <option value="All Levels Social">All Levels Social</option>
+        <!-- Session & Play Date Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Open Play Session *</label>
+            <select id="op-join-session-select" onchange="pfUpdateOpenPlayModalTotals()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold">
+              ${sessionOptionsHtml}
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-extrabold uppercase text-slate-700 mb-1">Mobile Number (Optional)</label>
-            <input type="tel" id="pf-op-join-phone" placeholder="0917 123 4567" class="w-full rounded-xl border-2 border-slate-200 focus:border-[#0F291E] px-3.5 py-2.5 text-xs font-mono font-bold text-slate-900 outline-none">
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Play Date *</label>
+            <input id="op-join-date" type="date" value="${pfEscapeHtml(todayYmd)}" min="${pfEscapeHtml(todayYmd)}" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-mono font-bold">
           </div>
         </div>
 
-        <p id="pf-op-join-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs"></p>
+        <!-- Player Name, Phone, Skill, Seat Count -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Player Full Name *</label>
+            <input id="op-join-name" type="text" required maxlength="60" placeholder="e.g., Marco Villanueva" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold focus:outline-none focus:border-emerald-700">
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Mobile Number (11 Digits) *</label>
+            <input id="op-join-phone" type="tel" required maxlength="20" placeholder="0917 123 4567" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-mono font-bold focus:outline-none focus:border-emerald-700">
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Skill Level *</label>
+            <select id="op-join-skill" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold">
+              <option value="All Levels">All Levels (Social Mix)</option>
+              <option value="Beginner (2.0–2.5)">Beginner (2.0 – 2.5)</option>
+              <option value="Intermediate (3.0–3.5)" selected>Intermediate (3.0 – 3.5)</option>
+              <option value="Advanced (4.0+)">Advanced / Competitive (4.0+)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Number of Seats to Book *</label>
+            <select id="op-join-seats-select" onchange="pfUpdateOpenPlayModalTotals()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold">
+              <option value="1" selected>1 Player Seat — ₱${unitFee}</option>
+              <option value="2">2 Player Seats (Pair) — ₱${unitFee * 2}</option>
+              <option value="3">3 Player Seats — ₱${unitFee * 3}</option>
+              <option value="4">4 Player Seats (Full Pod) — ₱${unitFee * 4}</option>
+            </select>
+          </div>
+        </div>
 
-        <div class="flex items-center gap-2 pt-1">
-          <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold uppercase text-xs transition">
-            Cancel
-          </button>
-          <button type="submit" id="pf-op-join-submit-btn" class="flex-1 py-3 px-5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black uppercase text-xs tracking-wider transition shadow-md">
-            🏓 Join Open Play &amp; Enter Shuffler →
-          </button>
+        <!-- Additional Guest Names (Visible if seats > 1) -->
+        <div id="op-join-guests-wrap" class="hidden p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+          <label class="block text-[10px] font-mono font-extrabold uppercase text-emerald-900">Additional Player Names (Comma-separated so each gets their own Pod Seat)</label>
+          <input id="op-join-guests" type="text" placeholder="e.g., Paolo Santos, Bea Alonzo" class="w-full px-3.5 py-2 rounded-xl border border-emerald-300 bg-white text-slate-900 font-semibold">
+        </div>
+
+        <!-- Payment Method & QR Verification -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="font-mono text-[10px] font-black uppercase text-slate-700">Select Open Play Payment Method:</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full sm:w-auto">
+              <button type="button" id="op-pay-btn-GCash" onclick="pfSwitchOpenPlayPayMethod('GCash')" class="py-2.5 px-3 rounded-xl bg-[#0F291E] text-[#A3E635] border-2 border-[#15803D] font-mono text-xs font-black uppercase transition shadow-sm">GCash QR</button>
+              <button type="button" id="op-pay-btn-Maya" onclick="pfSwitchOpenPlayPayMethod('Maya')" class="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-mono text-xs font-bold uppercase transition">Maya QR</button>
+              <button type="button" id="op-pay-btn-BDO" onclick="pfSwitchOpenPlayPayMethod('BDO')" class="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-mono text-xs font-bold uppercase transition">BDO QR</button>
+              <button type="button" id="op-pay-btn-Counter" onclick="pfSwitchOpenPlayPayMethod('Counter')" class="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-mono text-xs font-bold uppercase transition">Pay at Desk</button>
+            </div>
+          </div>
+
+          <div id="op-join-qr-box" class="flex flex-col sm:flex-row items-center gap-4 p-3 rounded-xl bg-white border border-slate-200">
+            <img id="op-join-qr-img" src="assets/qr-gcash.png" alt="Official Payment QR" class="w-28 h-28 object-contain rounded-lg border border-slate-200 flex-shrink-0">
+            <div class="space-y-1 text-center sm:text-left">
+              <div id="op-join-qr-acc" class="font-mono text-xs font-black text-slate-900">GCash Express Send: 0999 883 2346 (P&amp;F Rally Ground)</div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">Scan the official club QR code above and enter your 6+ digit Reference Number below, or choose <b>Pay at Desk</b> to reserve your Open Play seat and pay upon arrival.</p>
+            </div>
+          </div>
+
+          <div id="op-join-ref-wrap">
+            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Payment Reference No. (Last 6–13 Digits)</label>
+            <input type="text" id="op-join-ref" placeholder="e.g. 8091234567 (or switch to Pay at Desk)" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
+          </div>
+        </div>
+
+        <!-- Bottom Total & Submit Bar -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-[#0F291E] text-white">
+          <div>
+            <span class="text-[10px] font-mono uppercase text-emerald-200 block">Open Play Entry Total</span>
+            <b id="op-join-total-display" class="text-2xl font-mono font-black text-[#A3E635]">₱${unitFee.toLocaleString()}.00</b>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase">Cancel</button>
+            <button id="op-join-submit-btn" type="submit" class="flex-1 sm:flex-initial px-6 py-3.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg">
+              🏓 Confirm Booking &amp; Join Pod Shuffler →
+            </button>
+          </div>
         </div>
       </form>
     </div>
   `;
   modal.classList.remove('hidden');
+  pfSwitchOpenPlayPayMethod('GCash');
+  pfUpdateOpenPlayModalTotals();
+  setTimeout(() => {
+    const inp = document.getElementById('op-join-name');
+    if (inp) inp.focus();
+  }, 60);
 }
 
 function pfCloseJoinOpenPlayModal() {
@@ -4674,184 +4876,270 @@ function pfCloseJoinOpenPlayModal() {
   if (modal) modal.classList.add('hidden');
 }
 
-async function pfSubmitJoinOpenPlayForm(e, sessionId) {
+async function pfSubmitJoinOpenPlayForm(e) {
   if (e && e.preventDefault) e.preventDefault();
-  const nameEl = document.getElementById('pf-op-join-name');
-  const skillEl = document.getElementById('pf-op-join-skill');
-  const phoneEl = document.getElementById('pf-op-join-phone');
-  const errEl = document.getElementById('pf-op-join-error');
-  const btnEl = document.getElementById('pf-op-join-submit-btn');
+  const sessionSelect = document.getElementById('op-join-session-select');
+  const sessionId = (sessionSelect ? sessionSelect.value : '') || window.PF_OPEN_PLAY_STATE.activeSessionId;
+  const playDate = (document.getElementById('op-join-date')?.value || '').trim();
+  const name = (document.getElementById('op-join-name')?.value || '').trim();
+  const phone = (document.getElementById('op-join-phone')?.value || '').trim();
+  const skill = (document.getElementById('op-join-skill')?.value || 'All Levels').trim();
+  const seatsCount = Math.max(1, Math.min(4, Number(document.getElementById('op-join-seats-select')?.value || 1)));
+  const guestsRaw = (document.getElementById('op-join-guests')?.value || '').trim();
+  const payMethod = (document.getElementById('op-join-pay-method')?.value || 'GCash').trim();
+  const payRef = (document.getElementById('op-join-ref')?.value || '').trim();
 
-  const rawName = String(nameEl ? nameEl.value : '').trim();
-  const skill = String(skillEl ? skillEl.value : 'Intermediate (3.5)').trim();
-  const phone = String(phoneEl ? phoneEl.value : '').trim();
-
-  if (rawName.length < 3) {
-    if (errEl) {
-      errEl.textContent = 'Please enter your real First and Last Name (at least 3 characters).';
-      errEl.classList.remove('hidden');
-    }
+  if (!name || name.length < 2) {
+    alert('Please enter your Full Name to book Open Play.');
+    document.getElementById('op-join-name')?.focus();
+    return;
+  }
+  if (phone.replace(/[^0-9]/g, '').length < 10) {
+    alert('Please enter a valid 11-digit mobile number.');
+    document.getElementById('op-join-phone')?.focus();
+    return;
+  }
+  if (payMethod !== 'Counter' && payRef.replace(/[^A-Za-z0-9]/g, '').length < 4) {
+    alert('Please enter your GCash/Maya/BDO Reference Number, or select "Pay at Desk".');
+    document.getElementById('op-join-ref')?.focus();
     return;
   }
 
+  const allSessions = pfGetNormalizedOpenPlaySessions();
+  const targetSession = allSessions.find(s => s.id === sessionId) || allSessions[0];
+  const unitFee = Math.max(0, Number(targetSession.entryFee !== undefined ? targetSession.entryFee : 150));
+  const totalFee = unitFee * seatsCount;
+  const bookingRef = 'PF-OP-' + Math.floor(100000 + Math.random() * 900000);
+  const finalPayRef = payMethod === 'Counter' ? 'PAY-AT-DESK' : payRef;
+  const joinedAtStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  // Build list of player names for the seats booked
+  const guestNames = guestsRaw ? guestsRaw.split(',').map(g => g.trim()).filter(Boolean) : [];
+  const allNamesToBook = [name];
+  for (let i = 1; i < seatsCount; i++) {
+    allNamesToBook.push(guestNames[i - 1] || `${name} (Guest #${i + 1})`);
+  }
+
+  const submitBtn = document.getElementById('op-join-submit-btn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Confirming Booking...';
+  }
+
+  // Update local siteConfig openPlaySessions immediately
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
-  const sessions = pfGetNormalizedOpenPlaySessions();
-  const target = sessions.find(s => s.id === sessionId) || sessions[0];
-
-  if (target.players.length >= 24) {
-    if (errEl) {
-      errEl.textContent = 'This Open Play session already has 24 / 24 players joined.';
-      errEl.classList.remove('hidden');
-    }
-    return;
-  }
-
-  if (target.players.some(p => p.name.toLowerCase() === rawName.toLowerCase())) {
-    if (errEl) {
-      errEl.textContent = `"${rawName}" is already on the live roster for this Open Play session!`;
-      errEl.classList.remove('hidden');
-    }
-    return;
-  }
-
-  if (btnEl) {
-    btnEl.disabled = true;
-    btnEl.textContent = 'Joining Open Play Roster...';
-  }
-
-  target.players.push({
-    id: 'op-pl-' + Date.now(),
-    name: rawName,
-    skill: skill,
-    phone: phone,
-    joinedAt: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })
+  const updatedSessions = allSessions.map(s => {
+    if (s.id !== targetSession.id) return s;
+    const nextPlayers = s.players.slice();
+    allNamesToBook.forEach(pName => {
+      const existsIdx = nextPlayers.findIndex(p => String(p.name || '').toLowerCase() === pName.toLowerCase());
+      const entryObj = {
+        id: 'op-pl-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+        name: pName,
+        skill: skill,
+        phone: phone,
+        bookingRef: bookingRef,
+        paymentMethod: payMethod === 'Counter' ? 'Pay at Counter' : payMethod,
+        transactionRef: finalPayRef,
+        status: payMethod === 'Counter' ? 'PAY AT DESK' : 'PAID & BOOKED',
+        joinedAt: joinedAtStr
+      };
+      if (existsIdx >= 0) nextPlayers[existsIdx] = entryObj;
+      else if (nextPlayers.length < 24) nextPlayers.push(entryObj);
+    });
+    return Object.assign({}, s, { players: nextPlayers });
   });
 
-  cfg.openPlaySessions = sessions;
-  if (sessions[0]) {
-    cfg.openPlay24Roster = sessions[0].players.slice();
+  cfg.openPlaySessions = updatedSessions;
+  if (updatedSessions[0]) {
+    cfg.openPlay24Roster = updatedSessions[0].players;
   }
+  cfg.updatedAt = Date.now();
   window.PF_SITE_CONFIG = cfg;
+  try { localStorage.setItem('pf_site_config', JSON.stringify(cfg)); } catch (err) {}
+
+  // Create official booking record for localStorage + Admin Bookings + check-booking.html
+  const desigCourts = Array.isArray(targetSession.designatedCourts) && targetSession.designatedCourts.length
+    ? targetSession.designatedCourts
+    : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+  const bookingRecord = {
+    ref: bookingRef,
+    name: name,
+    phone: phone,
+    email: '',
+    date: playDate || ((typeof pfGetPhilippineTodayYMD === 'function') ? pfGetPhilippineTodayYMD() : 'Today'),
+    time: targetSession.schedule || '03:00 PM - 06:00 PM',
+    slots: [targetSession.schedule || '03:00 PM - 06:00 PM'],
+    courtName: `Open Play • ${targetSession.title} (${desigCourts.join(', ')})`,
+    court: `Open Play • ${targetSession.title}`,
+    players: seatsCount,
+    paymentMethod: payMethod === 'Counter' ? 'Pay at Counter' : payMethod,
+    paymentMode: payMethod === 'Counter' ? 'Pay at Counter' : payMethod,
+    transactionRef: finalPayRef,
+    paymentRef: finalPayRef,
+    status: 'PENDING',
+    total: totalFee,
+    isOpenPlay: true,
+    sessionId: targetSession.id,
+    createdAt: new Date().toISOString()
+  };
+
   try {
-    localStorage.setItem('pf_site_config', JSON.stringify(cfg));
+    const pubList = JSON.parse(localStorage.getItem('pf_public_bookings') || '[]');
+    pubList.unshift(bookingRecord);
+    localStorage.setItem('pf_public_bookings', JSON.stringify(pubList));
+  } catch (err) {}
+  try {
+    const sharedList = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]');
+    sharedList.unshift(bookingRecord);
+    localStorage.setItem('pf_shared_bookings', JSON.stringify(sharedList));
   } catch (err) {}
 
-  try {
-    await fetch('/api/openplay-join', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: target.id,
-        name: rawName,
-        skill: skill,
-        phone: phone
-      })
-    });
-  } catch (err) {
+  // Sync to backend /api/openplay-join (creates booking + adds players atomically)
+  const joinEndpoints = (typeof pfGetApiEndpoints === 'function') ? pfGetApiEndpoints('/api/openplay-join') : ['/api/openplay-join'];
+  let serverSaved = false;
+  for (const url of joinEndpoints) {
     try {
-      await fetch('/api/site-config', {
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ siteConfig: cfg })
+        body: JSON.stringify({
+          sessionId: targetSession.id,
+          name: name,
+          guestNames: allNamesToBook.slice(1),
+          skill: skill,
+          phone: phone,
+          date: bookingRecord.date,
+          players: seatsCount,
+          paymentMethod: bookingRecord.paymentMethod,
+          transactionRef: finalPayRef,
+          total: totalFee,
+          ref: bookingRef,
+          createBooking: true
+        })
       });
-    } catch (e2) {}
+      if (res.ok) {
+        serverSaved = true;
+        break;
+      }
+    } catch (err) {}
   }
 
-  pfCloseJoinOpenPlayModal();
+  window.PF_OPEN_PLAY_STATE.activeSessionId = targetSession.id;
   pfRenderOpenPlay24Board();
+
+  // Render Digital Open Play Booking Pass inside the modal
+  const dialog = document.getElementById('op-join-modal-dialog');
+  if (dialog) {
+    dialog.innerHTML = `
+      <div class="text-center space-y-4 py-2">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono text-xs font-black uppercase">
+          ✓ OPEN PLAY SEAT BOOKED &amp; ADDED TO SHUFFLER
+        </div>
+        <h3 class="text-2xl font-black text-slate-900">Your Open Play Pass Is Ready!</h3>
+        <p class="text-xs text-slate-600 max-w-md mx-auto">
+          Your name (${pfEscapeHtml(allNamesToBook.join(', '))}) is now live on the <b>${pfEscapeHtml(targetSession.title)}</b> 4-Player Pod Shuffler and recorded in our Club Booking System.
+        </p>
+
+        <div class="p-5 rounded-3xl bg-[#0F291E] text-white border-2 border-[#15803D] text-left space-y-3 max-w-lg mx-auto shadow-xl">
+          <div class="flex items-center justify-between border-b border-white/15 pb-3">
+            <div>
+              <span class="text-[10px] font-mono uppercase text-[#A3E635] block">OFFICIAL BOOKING REFERENCE</span>
+              <span class="font-mono text-xl font-black text-white">${pfEscapeHtml(bookingRef)}</span>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase">${payMethod === 'Counter' ? 'PAY AT DESK' : 'PAYMENT LOGGED'}</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Player(s) Joined</span>
+              <b class="text-white">${pfEscapeHtml(allNamesToBook.join(', '))}</b>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Session &amp; Date</span>
+              <b class="text-white">${pfEscapeHtml(targetSession.title)} • ${pfEscapeHtml(bookingRecord.date)}</b>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Designated Courts</span>
+              <b class="text-[#A3E635]">${pfEscapeHtml(desigCourts.join(', '))}</b>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Total Entry Fee</span>
+              <b class="font-mono text-[#A3E635]">₱${totalFee.toLocaleString()}.00 (${seatsCount} Seat${seatsCount > 1 ? 's' : ''})</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <a href="check-booking.html?ref=${encodeURIComponent(bookingRef)}" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 font-extrabold text-xs uppercase tracking-wider">
+            🔍 Verify in My Booking
+          </a>
+          <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="px-6 py-3 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider shadow-lg">
+            🏓 View My Seat on Pod Shuffler →
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    pfCloseJoinOpenPlayModal();
+  }
 }
 
 function pfRenderOpenPlay24Board() {
   const dedicatedRoot = document.getElementById('open-play-dedicated-page-root');
-  const homeContainer = document.getElementById('open-play-24-board-container');
+  const legacySummaryRoot = document.getElementById('openplay24-summary-root');
+  const legacyPodsRoot = document.getElementById('openplay24-pods-grid');
 
-  const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
+  if (!dedicatedRoot && !legacySummaryRoot && !legacyPodsRoot) return;
+
   const pubSessions = pfGetPublishedOpenPlaySessions();
   const activeSession = pfGetActiveOpenPlaySession();
-  const scheduleData = pfBuildOpenPlay24Schedule(undefined, activeSession.id);
-  const courtsActive = scheduleData.courtsCount;
-  const pods = scheduleData.pods || [];
-  const joinedCount = scheduleData.joinedCount;
-  const spotsLeft = scheduleData.spotsLeft;
-  const showCourts = activeSession.showCourtsOnSite !== false;
-  const desigLabel = Array.isArray(activeSession.designatedCourts) && activeSession.designatedCourts.length > 0
-    ? activeSession.designatedCourts.join(' • ')
-    : 'Courts 1 – 4';
+  const schedule = pfBuildOpenPlay24Schedule(undefined, activeSession.id);
+  const joinedCount = schedule.joinedCount;
+  const openSpotsCount = schedule.openSpotsCount;
+  const unitFee = Math.max(0, Number(activeSession.entryFee !== undefined ? activeSession.entryFee : 150));
+  const pct = Math.min(100, Math.round((joinedCount / 24) * 100));
+  const dcList = Array.isArray(activeSession.designatedCourts) && activeSession.designatedCourts.length > 0
+    ? activeSession.designatedCourts
+    : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
 
-  // 1. IF ON HOMEPAGE (index.html), RENDER COMPACT EDITORIAL CALLOUT CARD LINKING TO open-play.html (NO PRICES, NO BRACKET)
-  if (homeContainer && !dedicatedRoot) {
-    if (cfg && cfg.openPlayEnabled === false) {
-      homeContainer.innerHTML = '';
-      homeContainer.classList.add('hidden');
-      return;
-    }
-    homeContainer.classList.remove('hidden');
-    homeContainer.innerHTML = `
-      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-7 shadow-md flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-        <div class="space-y-2 max-w-2xl">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 text-[11px] font-mono font-extrabold uppercase tracking-wider">
-              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-              <span>COMMUNITY OPEN PLAY &amp; PLAYER SHUFFLER</span>
-            </span>
-            <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 text-[11px] font-mono font-bold">
-              👥 ${joinedCount} / 24 Players Joined (${spotsLeft} Spots Open)
-            </span>
-            ${showCourts ? `
-              <span class="pf-pill inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[11px] font-mono font-bold">
-                📍 ${pfEscapeHtml(desigLabel)}
-              </span>
-            ` : ''}
+  if (!dedicatedRoot && (legacySummaryRoot || legacyPodsRoot)) {
+    if (legacySummaryRoot) {
+      legacySummaryRoot.innerHTML = `
+        <div class="p-4 rounded-2xl bg-white border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="text-sm font-black text-slate-900">${pfEscapeHtml(activeSession.title)} (${joinedCount}/24 Joined • ₱${unitFee}/player)</div>
+            <div class="text-xs text-slate-600">${pfEscapeHtml(activeSession.schedule)}</div>
           </div>
-          <h3 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 font-sans">
-            ${pfEscapeHtml(activeSession.title)} • <span class="text-emerald-800">${pfEscapeHtml(activeSession.schedule)}</span>
-          </h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Join the live Open Play community roster and use our 4-Player Match Pod Shuffler on the dedicated Open Play page. No brackets—just balanced doubles rotation across ${showCourts ? pfEscapeHtml(desigLabel) : 'our courts'}.
-          </p>
+          <a href="open-play.html" class="px-4 py-2 rounded-xl bg-[#0F291E] text-white font-extrabold text-xs uppercase">Open Full Shuffler →</a>
         </div>
-
-        <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
-          <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-2 border-emerald-300 font-extrabold text-xs uppercase tracking-wider transition">
-            + Quick Join (${joinedCount}/24)
-          </button>
-          <a href="open-play.html" class="py-3.5 px-5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black text-xs uppercase tracking-wider transition shadow-md flex items-center gap-2 whitespace-nowrap">
-            <span>🏓 Open Player Shuffler Page</span>
-            <span>→</span>
-          </a>
-        </div>
-      </div>
-    `;
+      `;
+    }
     return;
   }
 
-  // 2. DEDICATED OPEN PLAY SUB-PAGE (open-play.html)
-  const targetContainer = dedicatedRoot || homeContainer;
-  if (!targetContainer) return;
+  // 1. Session Switcher Bar (Static Tailwind grid classes so CDN compiles properly)
+  const switcherGridCols = pubSessions.length === 2
+    ? 'sm:grid-cols-2'
+    : (pubSessions.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4');
 
-  const sessionSwitcherHtml = pubSessions.length > 1 ? `
-    <div class="rounded-2xl bg-white border-2 border-slate-200 p-4 shadow-xs space-y-3">
-      <div class="flex flex-wrap items-center justify-between gap-2">
+  const sessionSelectorBarHtml = pubSessions.length > 1 ? `
+    <div class="p-4 rounded-3xl bg-white border-2 border-[#E2E0D8] shadow-sm space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2 px-1">
         <div class="flex items-center gap-2">
-          <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 font-mono text-[10px] font-extrabold uppercase tracking-wider">
-            🏓 OPEN PLAY SESSIONS (${pubSessions.findIndex(s => s.id === activeSession.id) + 1} OF ${pubSessions.length})
-          </span>
-          <span class="text-xs font-semibold text-slate-600">Select an Open Play session below to view its live player roster &amp; pod shuffler</span>
+          <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">🏓 Active Open Play Sessions (${pubSessions.length} Live)</span>
+          <span class="text-xs font-bold text-[#52605A] hidden sm:inline">Select a session below to view its designated courts, book a seat, or shuffle its 4-player pods</span>
         </div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(4, pubSessions.length)} gap-2.5">
+      <div class="grid grid-cols-1 ${switcherGridCols} gap-2.5">
         ${pubSessions.map((s, idx) => {
           const isAct = s.id === activeSession.id;
-          const sCourts = (s.showCourtsOnSite !== false && Array.isArray(s.designatedCourts) && s.designatedCourts.length > 0)
-            ? s.designatedCourts.join(', ')
-            : '';
+          const sFee = Math.max(0, Number(s.entryFee !== undefined ? s.entryFee : 150));
           return `
-            <button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="text-left p-3.5 rounded-xl border-2 transition flex items-start gap-3 ${isAct ? 'bg-[#0F291E] text-white border-[#0F291E] shadow-sm' : 'bg-slate-50 hover:bg-white text-slate-900 border-slate-200'}">
-              <span class="w-7 h-7 rounded-lg font-mono text-xs font-black flex items-center justify-center flex-shrink-0 ${isAct ? 'bg-[#A3E635] text-[#050E1D]' : 'bg-slate-200 text-slate-700'}">0${idx + 1}</span>
+            <button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 ${isAct ? 'bg-[#0F291E] text-white border-[#0F291E] shadow-md' : 'bg-[#F8F7F3] hover:bg-white text-slate-900 border-[#E2E0D8]'}">
+              <span class="w-7 h-7 rounded-lg ${isAct ? 'bg-[#A3E635] text-[#04120B]' : 'bg-[#0F291E] text-white'} font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0${idx + 1}</span>
               <div class="min-w-0 flex-1">
-                <div class="text-xs font-extrabold truncate ${isAct ? 'text-white' : 'text-slate-900'}">${pfEscapeHtml(s.title)}</div>
-                <div class="text-[11px] font-mono truncate mt-0.5 ${isAct ? 'text-emerald-200' : 'text-slate-500'}">${pfEscapeHtml(s.schedule)}</div>
-                <div class="text-[10px] font-mono mt-1 ${isAct ? 'text-[#A3E635]' : 'text-emerald-700'}">👥 ${s.players.length}/24 Joined${sCourts ? ' • ' + pfEscapeHtml(sCourts) : ''}</div>
+                <div class="text-xs font-black truncate">${pfEscapeHtml(s.title)}</div>
+                <div class="text-[10px] font-mono ${isAct ? 'text-emerald-200' : 'text-slate-600'} truncate">${pfEscapeHtml(s.schedule)} &bull; ₱${sFee} &bull; ${s.players.length}/24</div>
               </div>
             </button>
           `;
@@ -4860,183 +5148,280 @@ function pfRenderOpenPlay24Board() {
     </div>
   ` : '';
 
-  const podsGridHtml = pods.map((pod) => {
-    const renderSeat = (seat) => {
-      if (seat && seat.isJoined) {
-        return `
-          <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-white border border-emerald-300 shadow-2xs">
-            <div class="min-w-0">
-              <div class="text-xs font-extrabold text-slate-900 truncate">✓ ${pfEscapeHtml(seat.name)}</div>
-              <div class="text-[10px] font-mono text-emerald-700 truncate">${pfEscapeHtml(seat.skill || 'Joined')}</div>
-            </div>
-            <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-mono text-[9px] font-black uppercase flex-shrink-0">#${seat.podSeat}</span>
-          </div>
-        `;
-      }
+  // Designated Court Pills (Matching Tournament Editorial Poster)
+  const designatedCourtPillsHtml = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
+    const isActiveCourt = dcList.includes(cName);
+    return isActiveCourt
+      ? `<span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-extrabold uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#A3E635]"></span>${cName}</span>`
+      : `<span class="px-2.5 py-1 rounded-lg bg-[#F1F5F9] text-[#94A3B8] border border-[#E2E8F0] font-mono text-[10px] font-semibold uppercase line-through opacity-60" title="Open for private court bookings">${cName}</span>`;
+  }).join('');
+
+  // Helper to render a single seat inside a Mini Pickleball Court Pod
+  const renderPodSeatHtml = (pl) => {
+    if (pl && pl.isJoined) {
       return `
-        <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="w-full text-left flex items-center justify-between gap-2 p-2 rounded-lg bg-white/80 hover:bg-emerald-50 border border-dashed border-slate-300 hover:border-emerald-500 transition group">
-          <span class="text-xs font-semibold text-slate-500 group-hover:text-emerald-900 truncate">+ Open Spot #${seat ? seat.podSeat : ''} (Click to Join)</span>
-          <span class="px-2 py-0.5 rounded bg-slate-100 group-hover:bg-emerald-200 text-slate-600 group-hover:text-emerald-950 font-mono text-[9px] font-bold uppercase flex-shrink-0">OPEN</span>
-        </button>
+        <div class="p-2.5 rounded-xl bg-[#071D14] border-2 border-[#A3E635] flex items-center justify-between gap-2 shadow-xs">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-6 h-6 rounded-lg bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${pl.podSeat}</span>
+            <div class="min-w-0">
+              <div class="text-xs font-extrabold text-white truncate" title="${pfEscapeHtml(pl.name)}">${pfEscapeHtml(pl.name)}</div>
+              <div class="text-[9px] font-mono text-emerald-300 truncate">${pfEscapeHtml(pl.skill || 'All Levels')}</div>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-[#A3E635] font-mono text-[9px] font-black uppercase flex-shrink-0">✓ Booked</span>
+        </div>
       `;
-    };
+    }
+    const seatNum = pl ? pl.podSeat : 1;
+    return `
+      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', ${seatNum})" class="w-full p-2.5 rounded-xl bg-black/30 hover:bg-black/50 border border-dashed border-emerald-300/45 hover:border-[#A3E635] text-left flex items-center justify-between gap-2 transition group">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-6 h-6 rounded-lg bg-white/10 text-emerald-200 font-mono text-[10px] font-bold flex items-center justify-center flex-shrink-0">#${seatNum}</span>
+          <div class="min-w-0">
+            <div class="text-xs font-bold text-emerald-100/90 group-hover:text-white truncate">Open Seat #${seatNum}</div>
+            <div class="text-[9px] font-mono text-emerald-300/75">Available • ₱${unitFee}</div>
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded bg-[#A3E635] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0">Book →</span>
+      </button>
+    `;
+  };
+
+  // 2. Build 6 Visual Pickleball Court Pod Cards (Pair A North vs Pair B South separated by Net)
+  const podsGridHtml = schedule.pods.map(pod => {
+    const p1 = pod.players[0];
+    const p2 = pod.players[1];
+    const p3 = pod.players[2];
+    const p4 = pod.players[3];
+    const statusBadge = pod.joinedInPod === 4
+      ? `<span class="px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase">✓ Pod Full (4/4)</span>`
+      : (pod.joinedInPod > 0
+        ? `<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-mono text-[10px] font-black uppercase">${pod.joinedInPod}/4 Booked • ${4 - pod.joinedInPod} Open</span>`
+        : `<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300 font-mono text-[10px] font-bold uppercase">4 Open Seats</span>`);
 
     return `
-      <div class="rounded-2xl bg-white border-2 border-slate-200 p-4 sm:p-5 space-y-3.5 shadow-xs hover:border-slate-300 transition">
-        <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div class="flex items-center gap-2">
-            <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-white font-mono text-[11px] font-extrabold uppercase">Pod ${pod.podIndex}</span>
-            ${showCourts ? `<span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 font-mono text-[11px] font-extrabold uppercase">📍 ${pfEscapeHtml(pod.courtLabel)}</span>` : ''}
+      <div class="rounded-3xl bg-[#F8F7F3] border-2 border-[#E2E0D8] p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-3.5">
+        <!-- Pod Card Header -->
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="px-2.5 py-0.5 rounded-lg bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase">POD #${pod.podIndex}</span>
+              ${activeSession.showCourtsOnSite !== false ? `
+                <span class="px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-950 border border-emerald-300 font-mono text-[10px] font-extrabold uppercase">📍 ${pfEscapeHtml(pod.courtLabel)}</span>
+              ` : ''}
+            </div>
+            <div class="text-xs font-extrabold text-slate-700 font-mono mt-1.5">${pfEscapeHtml(pod.roundLabel)}</div>
           </div>
-          <span class="text-[11px] font-mono font-bold text-slate-600">${pfEscapeHtml(pod.roundLabel)}</span>
+          ${statusBadge}
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono font-extrabold uppercase text-emerald-900">Side A (Doubles Pair)</span>
-              <span class="text-[10px] font-mono font-bold text-emerald-700">2 Spots</span>
-            </div>
-            ${renderSeat(pod.teamA[0])}
-            ${renderSeat(pod.teamA[1])}
+        <!-- Visual Mini Pickleball Court Surface -->
+        <div class="pf-court-pod-surface p-3.5 space-y-2">
+          <div class="flex items-center justify-between text-[9px] font-mono font-extrabold uppercase tracking-wider text-emerald-200/90 px-1">
+            <span>NORTH SIDE • PAIR A</span>
+            <span>DOUBLES SIDE 1</span>
+          </div>
+          <div class="grid grid-cols-1 gap-1.5">
+            ${renderPodSeatHtml(p1)}
+            ${renderPodSeatHtml(p2)}
           </div>
 
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-mono font-extrabold uppercase text-slate-700">Side B (Doubles Pair)</span>
-              <span class="text-[10px] font-mono font-bold text-slate-500">2 Spots</span>
-            </div>
-            ${renderSeat(pod.teamB[0])}
-            ${renderSeat(pod.teamB[1])}
+          <!-- Pickleball Net Divider -->
+          <div class="pf-court-net-line py-1">
+            <span class="relative z-10 px-3 py-0.5 rounded-full bg-[#04120B] border border-[#A3E635] text-[#A3E635] font-mono text-[9px] font-black uppercase tracking-widest">
+              🏓 NET • VS
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 gap-1.5">
+            ${renderPodSeatHtml(p3)}
+            ${renderPodSeatHtml(p4)}
+          </div>
+          <div class="flex items-center justify-between text-[9px] font-mono font-extrabold uppercase tracking-wider text-emerald-200/90 px-1 pt-0.5">
+            <span>SOUTH SIDE • PAIR B</span>
+            <span>DOUBLES SIDE 2</span>
           </div>
         </div>
       </div>
     `;
   }).join('');
 
-  const realRosterHtml = activeSession.players.length > 0
-    ? `
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
-        ${activeSession.players.map((pl, idx) => `
-          <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2.5 min-w-0">
-              <span class="w-6 h-6 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
-              <div class="min-w-0">
-                <div class="text-xs font-extrabold text-slate-900 truncate">${pfEscapeHtml(pl.name)}</div>
-                <div class="text-[10px] font-mono text-emerald-800 truncate">${pfEscapeHtml(pl.skill || 'All Levels')}</div>
+  // 3. Verified Community Check-In Roster List
+  const realRosterHtml = joinedCount === 0 ? `
+    <div class="p-6 rounded-2xl bg-[#F0FDF4] border-2 border-dashed border-[#86EFAC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-start sm:items-center gap-3.5">
+        <span class="w-10 h-10 rounded-2xl bg-[#15803D] text-white font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0/24</span>
+        <div>
+          <div class="text-sm font-black text-[#064E3B] uppercase">0 Players Booked Yet — All 24 Open Play Seats Are Open!</div>
+          <p class="text-xs text-[#166534] mt-0.5">We never display fake filler names. Book your Open Play seat (₱${unitFee}) to become Player #1 in today's community pod rotation.</p>
+        </div>
+      </div>
+      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', 1)" class="px-5 py-3 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0 shadow-sm">
+        🏓 Claim Seat #1 (₱${unitFee}) →
+      </button>
+    </div>
+  ` : `
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+      ${activeSession.players.map((pl, idx) => `
+        <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8] flex items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-8 h-8 rounded-xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
+            <div class="min-w-0">
+              <div class="text-xs font-black text-slate-900 truncate">${pfEscapeHtml(pl.name)}</div>
+              <div class="text-[10px] font-mono text-emerald-800 font-bold truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono text-[9px] font-black uppercase flex-shrink-0">✓ ${pfEscapeHtml(pl.status || 'BOOKED')}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  dedicatedRoot.innerHTML = `
+    <div class="space-y-6">
+      ${sessionSelectorBarHtml}
+
+      <!-- EDITORIAL OPEN PLAY STAGE (12-COLUMN SHOWCASE + ENTRY PASS + 6 COURT PODS) -->
+      <div class="rounded-3xl bg-white border-2 border-[#CBD5E1] p-5 sm:p-8 shadow-xl space-y-6 text-[#0D1F18]">
+
+        <!-- 12-COLUMN EDITORIAL HEADER -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+
+          <!-- LEFT 8 COLUMNS: SESSION DETAILS & DESIGNATED COURTS -->
+          <div class="xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-3xl p-5 sm:p-7 border border-[#E2E0D8]">
+            <div class="space-y-3.5">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏓 ${pfEscapeHtml(activeSession.rotationRule || '4-Player Doubles Pod Shuffler')}</span>
+                <span class="px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-extrabold uppercase">💳 Entry Fee: ₱${unitFee} / Player</span>
+                <span class="px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase">🟢 ${joinedCount} Booked &bull; ${openSpotsCount} Seats Open</span>
+              </div>
+
+              <div class="space-y-2">
+                <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-[#0D1F18] leading-[1.1]">${pfEscapeHtml(activeSession.title)}</h2>
+                <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                  Social doubles rotation designed for community play—no elimination bracket and no partner required. Book your seat online, check in at the club desk, and use the live Pod Shuffler below to rotate partners and opponents across ${dcList.length} designated court${dcList.length === 1 ? '' : 's'}.
+                </p>
               </div>
             </div>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-200/80 text-emerald-950 font-mono text-[9px] font-black uppercase flex-shrink-0">JOINED</span>
-          </div>
-        `).join('')}
-      </div>
-    `
-    : `
-      <div class="p-6 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 text-center space-y-2">
-        <div class="text-sm font-extrabold text-slate-800">0 Players Joined Yet — All 24 Open Play Spots Are Available!</div>
-        <p class="text-xs text-slate-600 max-w-xl mx-auto">No fake or filler names are shown. Be the first player to join this Open Play session—click <b>Join Open Play Roster</b> below to put your name on Spot #1!</p>
-      </div>
-    `;
 
-  targetContainer.innerHTML = `
-    <div class="space-y-6">
-      ${sessionSwitcherHtml}
+            <div class="pt-4 border-t border-[#DEDAD0] grid grid-cols-1 ${activeSession.showCourtsOnSite !== false ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4">
+              <div class="space-y-1 md:pr-3 md:border-r md:border-[#DEDAD0]">
+                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Session Schedule</span>
+                <div class="font-mono text-xs sm:text-sm font-black text-[#0D1F18]">${pfEscapeHtml(activeSession.schedule)}</div>
+                <div class="font-mono text-[11px] font-bold text-[#15803D]">6 Rotating 30-Min Waves</div>
+              </div>
 
-      <!-- Clean Basic Session Overview Card (No Prices, No Bracket) -->
-      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-8 shadow-sm space-y-6">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 border-b border-slate-200 pb-6">
-          <div class="space-y-2.5">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 font-mono text-[11px] font-extrabold uppercase tracking-wider">
-                🏓 ${pfEscapeHtml(activeSession.rotationRule)}
-              </span>
-              ${showCourts ? `
-                <span class="px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[11px] font-extrabold uppercase">
-                  📍 Designated: ${pfEscapeHtml(desigLabel)}
-                </span>
+              <div class="space-y-1 md:px-2 ${activeSession.showCourtsOnSite !== false ? 'md:border-r md:border-[#DEDAD0]' : ''}">
+                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Skill Level &amp; Format</span>
+                <div class="text-xs sm:text-sm font-extrabold text-[#0D1F18] leading-snug">${pfEscapeHtml(activeSession.skillLevel)}</div>
+                <div class="text-[11px] font-semibold text-[#52605A]">4-Player Doubles Pods (1 Game to 11 Pts)</div>
+              </div>
+
+              ${activeSession.showCourtsOnSite !== false ? `
+              <div class="space-y-1.5 md:pl-2">
+                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Designated Open Play Courts</span>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  ${designatedCourtPillsHtml}
+                </div>
+              </div>
               ` : ''}
-              <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-mono text-[11px] font-extrabold uppercase">
-                ${spotsLeft} OF 24 SPOTS OPEN (${joinedCount}/24 JOINED)
-              </span>
             </div>
-            <h2 class="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-slate-900 font-sans">
-              ${pfEscapeHtml(activeSession.title)}
-            </h2>
-            <p class="text-xs sm:text-sm text-slate-600 max-w-3xl leading-relaxed">
-              Open Play uses our live 4-Player Match Pod Shuffler instead of an elimination bracket. Players join the live community roster below and get shuffled into balanced doubles pods across ${showCourts ? pfEscapeHtml(desigLabel) : 'the designated courts'}.
-            </p>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
-            <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border-2 border-slate-200 font-extrabold text-xs uppercase tracking-wider transition flex items-center gap-2">
-              <span>🔀 Shuffle Players &amp; Pods</span>
-            </button>
-            <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="py-3.5 px-6 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black text-xs sm:text-sm uppercase tracking-wider transition shadow-md flex items-center gap-2">
-              <span>🏓 Join Open Play Roster</span>
-              <span>→</span>
-            </button>
+          <!-- RIGHT 4 COLUMNS: OFFICIAL OPEN PLAY SEAT BOOKING CARD -->
+          <div class="xl:col-span-4 rounded-3xl bg-gradient-to-br from-[#071912] via-[#0F291E] to-[#06150E] border-2 border-[#15803D] p-5 sm:p-6 flex flex-col justify-between space-y-5 shadow-xl text-white">
+            <div class="flex items-center justify-between gap-3.5">
+              <div class="flex items-center gap-3">
+                <div class="pf-rect-logo-badge" style="width:52px;height:62px;">
+                  <img src="assets/logo.png" alt="P&amp;F Rally Ground">
+                </div>
+                <div>
+                  <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block">OPEN PLAY PASS</span>
+                  <div class="text-xs font-extrabold uppercase tracking-wide text-white">P&amp;F Rally Ground</div>
+                  <div class="text-[10px] font-mono text-emerald-200">Daraga, Albay</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[9px] font-mono uppercase tracking-widest text-slate-300 block">Per Player</span>
+                <div class="font-mono text-2xl sm:text-3xl font-black text-[#A3E635]">₱${unitFee.toLocaleString()}</div>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-black/35 border border-[#A3E635]/35 space-y-1">
+              <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block">🏓 WHAT'S INCLUDED IN OPEN PLAY</span>
+              <div class="text-xs font-bold text-white leading-snug">3 Hours Social Rotation • 6 Balanced Doubles Pods • Instant <span class="font-mono text-[#A3E635]">PF-OP</span> Booking Reference</div>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                  <span class="text-slate-300">Booked Roster: <b class="text-white">${joinedCount} / 24 Players</b></span>
+                  <span class="font-bold text-[#A3E635]">${joinedCount === 0 ? 'All 24 Seats Open' : pct + '% Full'}</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-black/50 overflow-hidden border border-white/15">
+                  <div class="h-full rounded-full bg-gradient-to-r from-[#10B981] to-[#A3E635]" style="width:${pct}%"></div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] font-mono mt-1.5 text-emerald-200">
+                  <span>🟢 ${joinedCount} Confirmed</span>
+                  <span>${openSpotsCount} Seats Left</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 gap-2 pt-1">
+                <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="w-full py-3.5 px-4 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2">
+                  <span>🏓 Book &amp; Pay Open Play Seat (₱${unitFee}) →</span>
+                </button>
+                <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-extrabold text-[11px] uppercase transition flex items-center justify-center gap-1.5">
+                  <span>🔀 Shuffle 4-Player Court Pods</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Clean 3-Box Spec Strip (No Prices / No Prizes) -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-          <div class="p-4 rounded-2xl bg-[#F8F7F2] border border-slate-200/90">
-            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-500 block">📅 SCHEDULE WINDOW</span>
-            <div class="text-sm sm:text-base font-extrabold text-slate-900 mt-1">${pfEscapeHtml(activeSession.schedule)}</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-[#F8F7F2] border border-slate-200/90">
-            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-500 block">🎾 SKILL LEVEL &amp; FORMAT</span>
-            <div class="text-sm sm:text-base font-extrabold text-emerald-800 mt-1">${pfEscapeHtml(activeSession.skillLevel)}</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-[#F8F7F2] border border-slate-200/90">
-            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-500 block">👥 REAL PLAYERS JOINED</span>
-            <div class="text-sm sm:text-base font-extrabold text-sky-800 mt-1">${joinedCount} / 24 Players (${spotsLeft} Spots Open)</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live 4-Player Match Pod Shuffler Board (6 Pods = 24 Players) -->
-      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-8 shadow-sm space-y-5">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-          <div>
+        <!-- POD SHUFFLER CONTROL BAR & 6 VISUAL COURT PODS -->
+        <div class="space-y-4 pt-2">
+          <div class="p-4 rounded-2xl bg-[#0F291E] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase">LIVE 4-PLAYER POD SHUFFLER</span>
+                <span class="text-xs font-mono text-emerald-200">Last Shuffle: <b>${pfEscapeHtml(schedule.lastShuffleTime)}</b></span>
+              </div>
+              <h3 class="text-base sm:text-lg font-black text-white mt-1">6 Doubles Match Pods (4 Players per Court • Pair A vs Pair B)</h3>
+            </div>
             <div class="flex flex-wrap items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-full bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-extrabold uppercase">LIVE COURT POD SHUFFLER</span>
-              <span class="text-[11px] font-mono font-bold text-slate-500">Last Shuffle: ${pfEscapeHtml(scheduleData.lastShuffleTime)}</span>
+              <div class="inline-flex items-center rounded-xl bg-black/35 p-1 border border-white/15">
+                ${[1, 2, 3, 4].map(cnt => `
+                  <button type="button" onclick="pfSetOpenPlayCourtCount(${cnt}, '${pfEscapeHtml(activeSession.id)}')" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold transition ${schedule.courtsAvailable === cnt ? 'bg-[#A3E635] text-[#04120B]' : 'text-emerald-100 hover:text-white'}">
+                    ${cnt} ${cnt === 1 ? 'Court' : 'Courts'}
+                  </button>
+                `).join('')}
+              </div>
+              <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-md">
+                🔀 Shuffle Players Now
+              </button>
             </div>
-            <h3 class="text-lg sm:text-xl font-black text-slate-900 mt-1">6 Shuffled Doubles Match Pods (4 Players Per Pod)</h3>
-            <p class="text-xs text-slate-600">Click <b>Shuffle Players Now</b> before each round to randomize partners and opponents across ${courtsActive} active court${courtsActive > 1 ? 's' : ''}.</p>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2">
-            <div class="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px] font-bold">
-              <span class="px-2 text-slate-600 font-mono text-[10px] uppercase">Courts:</span>
-              ${[1, 2, 3, 4].map(c => `
-                <button type="button" onclick="pfSetOpenPlayCourtCount(${c})" class="px-2.5 py-1.5 rounded-lg transition font-mono ${courtsActive === c ? 'bg-[#0F291E] text-white font-extrabold' : 'text-slate-600 hover:text-slate-900'}">${c} ${c === 1 ? 'Court' : 'Courts'}</button>
-              `).join('')}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            ${podsGridHtml}
+          </div>
+        </div>
+
+        <!-- VERIFIED COMMUNITY CHECK-IN ROSTER -->
+        <div class="pt-4 border-t border-slate-200 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER</span>
+              <h3 class="text-lg font-black text-slate-900">Exact Players Booked (${joinedCount} / 24)</h3>
             </div>
-            <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-extrabold text-xs uppercase tracking-wider transition shadow-xs">
-              🔀 Shuffle Players Now
+            <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider transition">
+              + Book Open Play Seat (₱${unitFee})
             </button>
           </div>
+          ${realRosterHtml}
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          ${podsGridHtml}
-        </div>
-      </div>
-
-      <!-- Exact Community Players Joined List -->
-      <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-8 shadow-sm space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
-          <div>
-            <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER</span>
-            <h3 class="text-lg font-black text-slate-900">Exact Players Joined (${joinedCount} / 24)</h3>
-          </div>
-          <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs uppercase tracking-wider transition">
-            + Add My Name to Roster
-          </button>
-        </div>
-        ${realRosterHtml}
       </div>
     </div>
   `;
@@ -6755,25 +7140,62 @@ async function pfProceedTournamentToPayment() {
     } catch (e) {}
   }
 
-  // Also record a booking transaction so Admin Bookings & POS see this tournament entry
+  // Also call /api/tournament-register so the server atomically records the team & seed
+  const trnRegEndpoints = pfGetApiEndpoints('/api/tournament-register');
+  for (const url of trnRegEndpoints) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tournamentId: trn.id,
+          player1: name,
+          partner: partner || 'Solo / Partner TBD',
+          teamName: pairLabel,
+          phone: phone,
+          division: division,
+          paymentMethod: payMethod,
+          paymentRef: regEntry.paymentRef
+        })
+      });
+      if (r.ok) break;
+    } catch (e) {}
+  }
+
+  // Also record a booking transaction so Admin Bookings, check-booking.html & POS see this tournament entry
   const bookingRecord = {
     ref: 'PF-TRN-' + Math.floor(100000 + Math.random() * 900000),
     name: pairLabel,
     phone: phone,
     email: 'tournament@pfrally.ph',
+    courtName: `Tournament • ${trn.title} (Seed #${assignedSeedNum})`,
     court: `Tournament • ${trn.title} (Seed #${assignedSeedNum})`,
     date: trn.date,
     time: trn.time,
+    slots: [trn.time],
+    players: 2,
     total: fee,
     courtCost: fee,
-    paymentMode: payMethod,
+    paymentMethod: payMethod === 'Venue' ? 'Pay at Counter' : payMethod,
+    paymentMode: payMethod === 'Venue' ? 'Pay at Counter' : payMethod,
+    transactionRef: regEntry.paymentRef,
     paymentRef: regEntry.paymentRef,
-    status: payMethod === 'Venue' ? 'Pending Verification' : 'Confirmed',
+    status: 'PENDING',
     isTournament: true,
     tournamentId: trn.id,
     items: [`🏆 ${trn.title} — Seed #${assignedSeedNum}: ${pairLabel} (${division})`],
     createdAt: new Date().toISOString()
   };
+  try {
+    const pubList = JSON.parse(localStorage.getItem('pf_public_bookings') || '[]');
+    pubList.unshift(bookingRecord);
+    localStorage.setItem('pf_public_bookings', JSON.stringify(pubList));
+  } catch (e) {}
+  try {
+    const sharedList = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]');
+    sharedList.unshift(bookingRecord);
+    localStorage.setItem('pf_shared_bookings', JSON.stringify(sharedList));
+  } catch (e) {}
   const stateEndpoints = pfGetApiEndpoints('/api/bookings');
   for (const url of stateEndpoints) {
     try {

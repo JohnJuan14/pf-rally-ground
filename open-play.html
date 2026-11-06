@@ -2,9 +2,9 @@
 <html lang="en" data-theme="light" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <title>Open Play &amp; Live Player Pod Shuffler | P&amp;F Rally Ground Pickleball Club</title>
+  <title>Open Play &amp; Live 4-Player Pod Shuffler | P&amp;F Rally Ground Pickleball Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <meta name="description" content="Join the live Open Play community roster and use our 4-Player Match Pod Shuffler at P&F Rally Ground Pickleball Club in Daraga, Albay.">
+  <meta name="description" content="Book your Open Play seat (₱150/player), view the live verified community roster, and rotate across designated courts with our 4-Player Doubles Pod Shuffler at P&F Rally Ground Pickleball Club in Daraga, Albay.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
@@ -92,7 +92,7 @@
       position: absolute;
       top: calc(100% + 4px);
       left: 0;
-      min-width: 210px;
+      min-width: 220px;
       background: #FFFFFF;
       border: 1.5px solid #CBD5E1;
       border-radius: 12px;
@@ -132,6 +132,44 @@
     .pf-nav-dropdown-item.active span {
       color: #FFFFFF !important;
     }
+    .pf-rect-logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: #0F291E;
+      border: 1.5px solid rgba(163, 230, 53, 0.55);
+      padding: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .pf-rect-logo-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .pf-court-pod-surface {
+      background: linear-gradient(180deg, #0D3B2A 0%, #0A2E20 50%, #0D3B2A 100%);
+      border: 2px solid #34D399;
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pf-court-net-line {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+    }
+    .pf-court-net-line::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-top: 2px dashed rgba(163, 230, 53, 0.65);
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#F7F6F1] text-[#0D1F18]">
@@ -167,7 +205,7 @@
             </a>
             <a href="open-play.html" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item active">
               <span>Open Play</span>
-              <span class="text-[10px] font-mono text-emerald-600 font-bold">Shuffler</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">₱150 • Shuffler</span>
             </a>
             <a href="index.html#tournaments" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
               <span>Tournaments</span>
@@ -212,47 +250,88 @@
         </a>
       </nav>
 
-      <!-- Right Actions -->
+      <!-- Right Actions + Mobile Menu Button -->
       <div class="flex items-center gap-2">
-        <a href="index.html#schedule" class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-extrabold text-xs uppercase tracking-wider transition hidden sm:inline-flex items-center gap-1.5">
-          <span>📅 Court Timeline</span>
-        </a>
+        <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-3.5 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition hidden sm:inline-flex items-center gap-1.5 shadow-xs">
+          <span>🏓 Book Open Play (₱150)</span>
+        </button>
         <a href="book.html" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black text-xs uppercase tracking-wider transition shadow-sm inline-flex items-center gap-1.5">
           <span>Book Court</span>
           <span>→</span>
         </a>
+        <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu" class="lg:hidden p-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 hover:bg-slate-100">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-200 px-4 py-4 space-y-2 shadow-xl">
+      <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-2 pb-1">Courts &amp; Play</div>
+      <a href="index.html#schedule" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">📅 Live Court Schedule</a>
+      <a href="open-play.html" class="block px-3.5 py-2.5 rounded-xl font-black text-xs bg-[#0F291E] text-white">🏓 Open Play &amp; Pod Shuffler (₱150)</a>
+      <a href="index.html#tournaments" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">🏆 Official Club Tournaments</a>
+      <a href="pricing.html#court-rates" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">💳 Court Rates &amp; Pricing</a>
+      <a href="book.html" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">🎾 Reserve a Private Court</a>
+      <a href="check-booking.html" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">🔍 Check My Booking</a>
     </div>
   </header>
 
-  <!-- ================= DEDICATED OPEN PLAY HERO BANNER (BASIC, CLEAN, NO BRACKET, NO PRICES) ================= -->
-  <section class="bg-[#0F291E] text-white border-b border-emerald-900/60 py-10 sm:py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-      <div class="space-y-3 max-w-3xl">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-[#A3E635] font-mono text-[11px] font-extrabold uppercase tracking-wider">
-            <span class="w-2 h-2 rounded-full bg-[#A3E635]"></span>
-            <span>DEDICATED OPEN PLAY &amp; PLAYER SHUFFLER</span>
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-emerald-100 font-mono text-[11px] font-bold uppercase">
-            4-Player Doubles Pods • No Knockout Bracket
-          </span>
+  <!-- ================= EDITORIAL COUNTRY-CLUB OPEN PLAY HERO ================= -->
+  <section class="relative bg-[#0F291E] text-white border-b border-emerald-900/80 py-10 sm:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div class="max-w-7xl mx-auto space-y-8 relative z-10">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div class="space-y-3.5 max-w-3xl">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A3E635]/20 border border-[#A3E635]/50 text-[#A3E635] font-mono text-[11px] font-extrabold uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-[#A3E635]"></span>
+              <span>SOCIAL DOUBLES ROTATION • NO KNOCKOUT BRACKET</span>
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-emerald-100 font-mono text-[11px] font-bold uppercase">
+              ₱150 / Player Entry • 24-Player Max Capacity
+            </span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-[1.08]">
+            Community Open Play &amp; <span class="font-serif italic font-normal text-[#A3E635]">4-Player Pod Shuffler</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed max-w-2xl">
+            No partner needed and no elimination pressure. Book your Open Play seat online, get added to our verified community check-in roster, and let our automated 4-Player Pod Shuffler rotate everyone across designated courts every 30 minutes.
+          </p>
         </div>
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
-          Community Open Play &amp; Live Match Pod Shuffler
-        </h1>
-        <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed max-w-2xl">
-          Check the exact real community players who have joined today's Open Play session, see which courts are designated, and shuffle players into balanced 4-player doubles match pods for every round.
-        </p>
+
+        <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
+          <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-5 py-3.5 rounded-2xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2">
+            <span>🏓 Book &amp; Pay Open Play Seat (₱150) →</span>
+          </button>
+          <a href="check-booking.html" class="px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-extrabold text-xs uppercase tracking-wider transition">
+            🔍 My Booking Pass
+          </a>
+        </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2.5">
-        <a href="index.html#tournaments" class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-extrabold text-xs uppercase tracking-wider transition">
-          🏆 View Tournaments
-        </a>
-        <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-5 py-3.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#050E1D] font-black text-xs uppercase tracking-wider transition shadow-lg">
-          🏓 Join Open Play Roster →
-        </button>
+      <!-- 3-Step Country-Club Editorial How-It-Works Strip -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-2">
+        <div class="p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
+          <span class="w-8 h-8 rounded-xl bg-[#A3E635] text-[#04120B] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">01</span>
+          <div>
+            <div class="text-xs font-extrabold uppercase tracking-wide text-white">Book &amp; Pay Your Seat (₱150)</div>
+            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Select your Open Play session, pay via GCash, Maya, BDO, or Pay at Counter, and receive your official <span class="font-mono text-[#A3E635]">PF-OP</span> booking reference.</p>
+          </div>
+        </div>
+        <div class="p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
+          <span class="w-8 h-8 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">02</span>
+          <div>
+            <div class="text-xs font-extrabold uppercase tracking-wide text-white">Verified Real Community Roster</div>
+            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Zero fake filler names. Every booked player appears immediately on the live 24-player session board so the community sees exact attendance.</p>
+          </div>
+        </div>
+        <div class="p-4 rounded-2xl bg-black/25 border border-white/12 flex items-start gap-3.5">
+          <span class="w-8 h-8 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">03</span>
+          <div>
+            <div class="text-xs font-extrabold uppercase tracking-wide text-white">Shuffle 4-Player Doubles Pods</div>
+            <p class="text-[11px] text-emerald-100/80 mt-0.5 leading-relaxed">Click Shuffle at any time to Deal 6 balanced 4-player doubles pods (<span class="font-mono text-[#A3E635]">Pair A vs Pair B</span>) across the designated Open Play courts.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -278,6 +357,7 @@
         <a href="index.html" class="hover:text-white transition">Home</a>
         <a href="open-play.html" class="text-[#A3E635]">Open Play Shuffler</a>
         <a href="index.html#tournaments" class="hover:text-white transition">Tournaments</a>
+        <a href="check-booking.html" class="hover:text-white transition">My Booking</a>
         <a href="book.html" class="hover:text-white transition">Book a Court</a>
       </div>
     </div>

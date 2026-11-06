@@ -5110,6 +5110,13 @@ function clearFieldError(fieldId) {
           : '03:00 PM,04:00 PM,05:00 PM,06:00 PM';
         const opEn = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? Boolean(currentSiteConfig.openPlayEnabled !== false) : true;
         const calDate = (typeof getAdminSelectedDateYMD === 'function') ? getAdminSelectedDateYMD() : '';
+        const scTs = Number((typeof currentSiteConfig !== 'undefined' && currentSiteConfig && currentSiteConfig.updatedAt) || 0);
+        const trnSig = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig && Array.isArray(currentSiteConfig.tournaments))
+          ? currentSiteConfig.tournaments.map(t => `${t.id}:${t.published}:${t.entryFee}:${(t.registrations||[]).length}:${(t.designatedCourts||[]).join(',')}`).join('|')
+          : '';
+        const opSig = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySessions))
+          ? currentSiteConfig.openPlaySessions.map(s => `${s.id}:${s.published}:${s.entryFee||150}:${(s.players||[]).length}:${(s.designatedCourts||[]).join(',')}:${s.lastShuffleTime||''}`).join('|')
+          : '';
         return JSON.stringify({
           b: bookings,
           bl: courtBlocks,
@@ -5121,7 +5128,10 @@ function clearFieldError(fieldId) {
           sec: securityAuditLogs ? securityAuditLogs.length : 0,
           opSlots,
           opEn,
-          calDate
+          calDate,
+          scTs,
+          trnSig,
+          opSig
         });
       } catch (err) {
         return String(Date.now());
@@ -7630,7 +7640,7 @@ function clearFieldError(fieldId) {
     async function saveAndSyncAdminTournaments(toastMsg) {
       if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
       currentSiteConfig.updatedAt = Date.now();
-      renderAdminTournamentsManager();
+      renderAdminTournamentsManager(true);
       renderAdminNativeBracketWorkspace();
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
@@ -7639,10 +7649,13 @@ function clearFieldError(fieldId) {
       }
     }
 
-    function renderAdminTournamentsManager() {
+    function renderAdminTournamentsManager(forceRender = false) {
       const grid = document.getElementById('admin-tournaments-manager-grid');
       const visBar = document.getElementById('admin-tournament-visibility-bar');
       if (!grid) return;
+      if (!forceRender && document.activeElement && grid.contains(document.activeElement) && /^(INPUT|SELECT|TEXTAREA)$/i.test(document.activeElement.tagName)) {
+        return;
+      }
       const list = getAdminTournamentsList();
       if (!adminActiveBracketTrnId || !list.some(t => t.id === adminActiveBracketTrnId)) {
         adminActiveBracketTrnId = list[0] ? list[0].id : 'trn-bicol-dupr-open';
@@ -7917,7 +7930,7 @@ function clearFieldError(fieldId) {
       if (!found) return;
       adminActiveBracketTrnId = found.id;
       adminActiveBracketMatchId = 'QF1';
-      renderAdminTournamentsManager();
+      renderAdminTournamentsManager(true);
       renderAdminNativeBracketWorkspace();
       if (scrollToWorkspace) {
         const ws = document.getElementById('admin-native-bracket-workspace');
@@ -12700,6 +12713,10 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const srvTs = Number(serverCfg.updatedAt || 0);
       const locTs = Math.max(Number(currentSiteConfig.updatedAt || 0), Number(savedLocal.updatedAt || 0));
 
+      if (hasInitialSiteEditorLoaded && srvTs > 0 && locTs > 0 && srvTs <= locTs) {
+        return;
+      }
+
       const assetSlots = [
         'clubLogo', 'heroSlide1', 'heroSlide2', 'heroSlide3',
         'court1Img', 'court2Img', 'court3Img', 'court4Img',
@@ -12960,8 +12977,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         openPlayMaxPlayers: Number((currentSiteConfig && currentSiteConfig.openPlayMaxPlayers) || 24),
         openPlayCourtsCount: Number((currentSiteConfig && currentSiteConfig.openPlayCourtsCount) || 4),
         openPlayRoster: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlayRoster)) ? currentSiteConfig.openPlayRoster : undefined,
+        openPlay24Roster: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlay24Roster)) ? currentSiteConfig.openPlay24Roster : undefined,
+        openPlaySessions: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySessions)) ? currentSiteConfig.openPlaySessions : undefined,
         openPlaySchedule: (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySchedule)) ? currentSiteConfig.openPlaySchedule : undefined,
         tournaments: (currentSiteConfig && Array.isArray(currentSiteConfig.tournaments)) ? currentSiteConfig.tournaments : undefined,
+        tournamentsPublishedOnHome: (currentSiteConfig && typeof currentSiteConfig.tournamentsPublishedOnHome === 'boolean') ? currentSiteConfig.tournamentsPublishedOnHome : true,
         maxAdvanceBookingDays: 30,
 
         openPlayEnabled: (currentSiteConfig && currentSiteConfig.openPlayEnabled !== undefined) ? Boolean(currentSiteConfig.openPlayEnabled) : true,
@@ -13995,7 +14015,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     }
 
     function reloadAdminTournamentArena() {
-      renderAdminTournamentsManager();
+      renderAdminTournamentsManager(true);
       renderAdminNativeBracketWorkspace();
     }
     function ensureAdminTournamentsInitialized() {
@@ -14021,7 +14041,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       await saveAndSyncAdminTournaments(target.approved ? `✅ Published "${target.title}" on Homepage!` : `🔒 Moved "${target.title}" to Draft`);
     }
 
-    // ================= DEDICATED ADMIN OPEN PLAY & LIVE PLAYER POD SHUFFLER FEATURE ENGINE (NO BRACKET, NO PRICES) =================
+    // ================= DEDICATED ADMIN OPEN PLAY, BOOKING FEE & LIVE PLAYER POD SHUFFLER FEATURE ENGINE =================
     const ADMIN_DEFAULT_OPEN_PLAY_SESSIONS = [
       {
         id: 'op-afternoon-social',
@@ -14029,6 +14049,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         schedule: 'Daily • 03:00 PM – 06:00 PM',
         skillLevel: 'All Skill Levels (Beginner – Intermediate)',
         rotationRule: '4-Player Doubles Pods • Shuffle Players Every Round',
+        entryFee: 150,
         designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
         showCourtsOnSite: true,
         published: true,
@@ -14043,6 +14064,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         schedule: 'Daily • 07:00 AM – 10:00 AM',
         skillLevel: 'Social & Fitness Rotation (All Levels)',
         rotationRule: '4-Player Doubles Pods • Balanced Court Rotation',
+        entryFee: 150,
         designatedCourts: ['Court 1', 'Court 2'],
         showCourtsOnSite: true,
         published: false,
@@ -14057,6 +14079,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         schedule: 'Mon / Wed / Fri • 06:00 PM – 09:00 PM',
         skillLevel: 'Intermediate & Competitive Rally',
         rotationRule: '4-Player Doubles Pods • Winners Split Partners',
+        entryFee: 150,
         designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
         showCourtsOnSite: true,
         published: false,
@@ -14071,6 +14094,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         schedule: 'Sat & Sun • 04:00 PM – 07:00 PM',
         skillLevel: 'All Community Members & Walk-Ins',
         rotationRule: '4-Player Doubles Pods • Community Shuffler',
+        entryFee: 150,
         designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
         showCourtsOnSite: true,
         published: false,
@@ -14095,21 +14119,25 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         if (!s.schedule) s.schedule = def.schedule;
         if (!s.skillLevel) s.skillLevel = def.skillLevel;
         if (!s.rotationRule) s.rotationRule = def.rotationRule;
+        const parsedFee = Number(s.entryFee !== undefined ? s.entryFee : (def.entryFee || 150));
+        s.entryFee = Number.isFinite(parsedFee) && parsedFee >= 0 ? parsedFee : 150;
         if (!Array.isArray(s.designatedCourts) || s.designatedCourts.length === 0) {
           s.designatedCourts = def.designatedCourts.slice();
         }
         if (typeof s.showCourtsOnSite !== 'boolean') s.showCourtsOnSite = true;
         if (typeof s.published !== 'boolean') s.published = (idx === 0);
         if (!Array.isArray(s.players)) s.players = [];
-        // Filter out any legacy fake filler player names
         s.players = s.players.filter(p => {
           const nm = typeof p === 'string' ? p.trim() : String((p && p.name) || '').trim();
-          return nm && !/^Player\s*0?\d+/i.test(nm) && !/^Open\s*Spot/i.test(nm) && !/\(Spot\s*#\d+\)/i.test(nm);
+          return nm && !/^Player\s*0?\d+/i.test(nm) && !/^Open\s*Spot/i.test(nm) && !/^Open\s*Seat/i.test(nm) && !/\(Spot\s*#\d+\)/i.test(nm);
         }).map((p, pIdx) => ({
           id: (typeof p === 'object' && p.id) ? p.id : ('op-pl-' + (pIdx + 1)),
           name: typeof p === 'string' ? p.trim() : String(p.name || '').trim(),
           skill: (typeof p === 'object' && p.skill) ? p.skill : 'All Levels',
           phone: (typeof p === 'object' && p.phone) ? p.phone : '',
+          bookingRef: (typeof p === 'object' && p.bookingRef) ? p.bookingRef : '',
+          paymentMethod: (typeof p === 'object' && p.paymentMethod) ? p.paymentMethod : '',
+          status: (typeof p === 'object' && p.status) ? p.status : 'BOOKED',
           joinedAt: (typeof p === 'object' && p.joinedAt) ? p.joinedAt : 'Joined'
         }));
         if (!Array.isArray(s.shuffledOrder) || s.shuffledOrder.length !== 24) {
@@ -14125,10 +14153,12 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       currentSiteConfig.openPlaySessions = list;
       if (list[0]) {
         currentSiteConfig.openPlay24Roster = list[0].players.slice();
+        currentSiteConfig.openPlayRate = Number(list[0].entryFee || 150);
       }
       currentSiteConfig.updatedAt = Date.now();
+      siteConfigLockUntil = Date.now() + 5000;
       saveAdminState(true);
-      renderAdminOpenPlayFeaturePage();
+      renderAdminOpenPlayFeaturePage(true);
       try {
         await postSiteConfigToEndpoints(currentSiteConfig);
       } catch (e) {}
@@ -14204,15 +14234,20 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       const titleEl = document.getElementById('adm-op-title-' + sessionId);
       const schedEl = document.getElementById('adm-op-sched-' + sessionId);
       const skillEl = document.getElementById('adm-op-skill-' + sessionId);
+      const feeEl = document.getElementById('adm-op-fee-' + sessionId);
       if (titleEl && titleEl.value.trim()) target.title = titleEl.value.trim();
       if (schedEl && schedEl.value.trim()) target.schedule = schedEl.value.trim();
       if (skillEl && skillEl.value.trim()) target.skillLevel = skillEl.value.trim();
-      await saveAndSyncAdminOpenPlaySessions(`💾 Saved "${target.title}" details & synced to Open Play Page!`);
+      if (feeEl) {
+        const parsed = Number(feeEl.value);
+        if (Number.isFinite(parsed) && parsed >= 0) target.entryFee = parsed;
+      }
+      await saveAndSyncAdminOpenPlaySessions(`💾 Saved "${target.title}" (₱${target.entryFee}/player) & synced to Open Play Page!`);
     }
 
     function adminSelectActiveOpenPlaySession(sessionId) {
       adminSelectedOpenPlaySessionId = sessionId;
-      renderAdminOpenPlayFeaturePage();
+      renderAdminOpenPlayFeaturePage(true);
     }
 
     async function adminAddOpenPlayRealPlayer(e) {
@@ -14234,6 +14269,9 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         name: rawName,
         skill: skill,
         phone: '',
+        bookingRef: 'WALK-IN',
+        paymentMethod: 'Counter',
+        status: 'CHECKED IN',
         joinedAt: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })
       });
       if (nameInput) nameInput.value = '';
@@ -14251,14 +14289,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     async function adminShuffleOpenPlaySessionPods(sessionId) {
       const list = getAdminOpenPlaySessionsList();
       const active = list.find(s => s.id === (sessionId || adminSelectedOpenPlaySessionId)) || list[0];
-      const arr = Array.from({ length: 24 }, (_, i) => i);
-      for (let i = arr.length - 1; i > 0; i--) {
+      const realCount = active.players.length;
+      const realArr = Array.from({ length: realCount }, (_, i) => i);
+      for (let i = realArr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        const tmp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = tmp;
+        const tmp = realArr[i];
+        realArr[i] = realArr[j];
+        realArr[j] = tmp;
       }
-      active.shuffledOrder = arr;
+      const openArr = Array.from({ length: 24 - realCount }, (_, i) => i + realCount);
+      active.shuffledOrder = [...realArr, ...openArr];
       active.lastShuffleTime = new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       await saveAndSyncAdminOpenPlaySessions(`🔀 Shuffled all players & 4-player match pods for "${active.title}"!`);
     }
@@ -14269,7 +14309,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       active.players = [];
       active.shuffledOrder = Array.from({ length: 24 }, (_, i) => i);
       active.lastShuffleTime = 'Reset to 0 Players';
-      await saveAndSyncAdminOpenPlaySessions(`🧹 Cleared "${active.title}" to 0 / 24 Players (all 24 spots open)!`);
+      await saveAndSyncAdminOpenPlaySessions(`🧹 Cleared "${active.title}" to 0 / 24 Players (all 24 seats open)!`);
     }
 
     async function adminLoadOpenPlayDemoPlayers(sessionId) {
@@ -14294,14 +14334,20 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
         name: d.name,
         skill: d.skill,
         phone: '',
+        bookingRef: 'DEMO-TEST',
+        paymentMethod: 'GCash',
+        status: 'DEMO',
         joinedAt: 'Demo Test'
       }));
       await adminShuffleOpenPlaySessionPods(active.id);
     }
 
-    function renderAdminOpenPlayFeaturePage() {
+    function renderAdminOpenPlayFeaturePage(forceRender = false) {
       const container = document.getElementById('admin-openplay-feature-workspace');
       if (!container) return;
+      if (!forceRender && document.activeElement && container.contains(document.activeElement) && /^(INPUT|SELECT|TEXTAREA)$/i.test(document.activeElement.tagName)) {
+        return;
+      }
 
       const list = getAdminOpenPlaySessionsList();
       const active = list.find(s => s.id === adminSelectedOpenPlaySessionId) || list[0];
@@ -14315,11 +14361,17 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       // Build 6 shuffled pods for the active session preview
       const baseSlots = [];
       active.players.forEach((pl, idx) => {
-        baseSlots.push({ slotNumber: idx + 1, name: pl.name, skill: pl.skill || 'All Levels', isJoined: true });
+        baseSlots.push({
+          slotNumber: idx + 1,
+          name: pl.name,
+          skill: pl.skill || 'All Levels',
+          bookingRef: pl.bookingRef || '',
+          isJoined: true
+        });
       });
       while (baseSlots.length < 24) {
         const n = baseSlots.length + 1;
-        baseSlots.push({ slotNumber: n, name: `Open Spot #${n}`, skill: 'Available', isJoined: false });
+        baseSlots.push({ slotNumber: n, name: `Open Seat #${n}`, skill: 'Available', bookingRef: '', isJoined: false });
       }
 
       const order = Array.isArray(active.shuffledOrder) && active.shuffledOrder.length === 24
@@ -14345,22 +14397,22 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                <span class="text-xs font-extrabold text-slate-900 truncate">✓ ${pfEscapeHtml(seat.name)}</span>
                <span class="text-[9px] font-mono font-bold text-emerald-700">${pfEscapeHtml(seat.skill)}</span>
              </div>`
-          : `<div class="p-2 rounded-lg bg-white/70 border border-dashed border-slate-300 text-xs font-medium text-slate-400 truncate">Open Spot #${seat ? seat.podSeat : ''}</div>`;
+          : `<div class="p-2 rounded-lg bg-white/70 border border-dashed border-slate-300 text-xs font-medium text-slate-400 truncate">Open Seat #${seat ? seat.podSeat : ''}</div>`;
 
         podsHtml.push(`
           <div class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-3">
             <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
-              <span class="px-2.5 py-0.5 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-black uppercase">Pod ${p + 1}</span>
+              <span class="px-2.5 py-0.5 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-black uppercase">Pod #${p + 1}</span>
               <span class="px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-900 font-mono text-[10px] font-extrabold uppercase">📍 ${pfEscapeHtml(cName)}</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
-                <span class="text-[9px] font-mono font-black uppercase text-emerald-900 block">Side A (Doubles)</span>
+                <span class="text-[9px] font-mono font-black uppercase text-emerald-900 block">Pair A (North Side)</span>
                 ${renderSeat(grp[0])}
                 ${renderSeat(grp[1])}
               </div>
               <div class="p-2.5 rounded-xl bg-white border border-slate-200 space-y-1.5">
-                <span class="text-[9px] font-mono font-black uppercase text-slate-600 block">Side B (Doubles)</span>
+                <span class="text-[9px] font-mono font-black uppercase text-slate-600 block">Pair B (South Side)</span>
                 ${renderSeat(grp[2])}
                 ${renderSeat(grp[3])}
               </div>
@@ -14370,7 +14422,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       }
 
       container.innerHTML = `
-        <!-- 1. OPEN PLAY SESSIONS & COURT DISPLAY CONTROLLER (SAME SPECS AS TOURNAMENT, NO BRACKET, NO PRICES) -->
+        <!-- 1. OPEN PLAY SESSIONS, ENTRY FEE & COURT DISPLAY CONTROLLER -->
         <div class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 space-y-5 shadow-md">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div class="flex items-start sm:items-center gap-3.5">
@@ -14379,11 +14431,11 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
               </div>
               <div>
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🏓 DEDICATED OPEN PLAY &amp; PLAYER POD SHUFFLER MANAGER</span>
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase tracking-wider">No Bracket • No Prices • Pure Player Shuffler</span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🏓 DEDICATED OPEN PLAY &amp; POD SHUFFLER MANAGER</span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-black uppercase tracking-wider">Online Seat Booking (₱150) • 4-Player Shuffler • No Bracket</span>
                 </div>
-                <h2 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">Manage Open Play Sessions, Designated Courts &amp; Live Player Shuffler</h2>
-                <p class="text-xs text-slate-600">Choose whether to show 1, 2, 3, or 4 Open Play sessions on <code class="font-mono font-bold text-emerald-800">open-play.html</code>, designate courts (1–4), and shuffle real joined players into 4-player match pods.</p>
+                <h2 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">Manage Open Play Sessions, Entry Fee, Designated Courts &amp; Live Pod Shuffler</h2>
+                <p class="text-xs text-slate-600">Choose whether to show 1, 2, 3, or 4 Open Play sessions on <code class="font-mono font-bold text-emerald-800">open-play.html</code>, set the per-player entry fee, designate courts (1–4), and shuffle real booked players into 4-player match pods.</p>
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
@@ -14427,19 +14479,21 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
             </div>
           </div>
 
-          <!-- 4 OPEN PLAY SESSION CARDS GRID (NO PRICES, NO BRACKET) -->
+          <!-- 4 OPEN PLAY SESSION CARDS GRID -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             ${list.map((s, idx) => {
               const isOn = s.published !== false;
               const sDesig = Array.isArray(s.designatedCourts) ? s.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
               const showC = s.showCourtsOnSite !== false;
+              const sFee = Number(s.entryFee !== undefined ? s.entryFee : 150);
               return `
                 <div class="p-4 sm:p-5 rounded-2xl border-2 transition space-y-3.5 ${isOn ? 'bg-white border-emerald-500/70 shadow-sm' : 'bg-slate-50/80 border-slate-200'}">
                   <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
                     <div class="flex items-center gap-2">
                       <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-white font-mono text-[10px] font-black uppercase">Session #${idx + 1}</span>
+                      <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-mono text-[10px] font-black uppercase">₱${sFee} / Player</span>
                       <span class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-extrabold uppercase ${s.players.length > 0 ? 'bg-emerald-100 text-emerald-900' : 'bg-slate-200 text-slate-700'}">
-                        👥 ${s.players.length} / 24 Real Players
+                        👥 ${s.players.length} / 24 Booked
                       </span>
                     </div>
                     <button type="button" onclick="adminToggleSingleOpenPlaySessionPublished('${pfEscapeHtml(s.id)}')" class="px-3 py-1 rounded-lg font-mono text-[10px] font-black uppercase transition ${isOn ? 'bg-emerald-700 text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}">
@@ -14447,16 +14501,20 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                     </button>
                   </div>
 
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <div class="sm:col-span-2">
+                  <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                    <div class="sm:col-span-8">
                       <label class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-1">Session Title</label>
                       <input type="text" id="adm-op-title-${pfEscapeHtml(s.id)}" value="${pfEscapeHtml(s.title)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900">
                     </div>
-                    <div>
+                    <div class="sm:col-span-4">
+                      <label class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-1">Entry Fee (₱ / Player)</label>
+                      <input type="number" id="adm-op-fee-${pfEscapeHtml(s.id)}" value="${sFee}" min="0" step="10" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono font-black text-slate-900">
+                    </div>
+                    <div class="sm:col-span-6">
                       <label class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-1">Schedule / Time Window</label>
                       <input type="text" id="adm-op-sched-${pfEscapeHtml(s.id)}" value="${pfEscapeHtml(s.schedule)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900">
                     </div>
-                    <div>
+                    <div class="sm:col-span-6">
                       <label class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-1">Skill Division</label>
                       <input type="text" id="adm-op-skill-${pfEscapeHtml(s.id)}" value="${pfEscapeHtml(s.skillLevel)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900">
                     </div>
@@ -14494,7 +14552,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                       🔀 Manage Roster &amp; Shuffle Pods (${s.players.length}/24)
                     </button>
                     <button type="button" onclick="adminSaveOpenPlaySessionDetails('${pfEscapeHtml(s.id)}')" class="pf-trn-btn-primary px-4 py-2 rounded-xl text-[11px] uppercase transition">
-                      💾 Save Session
+                      💾 Save Session &amp; Fee
                     </button>
                   </div>
                 </div>
@@ -14503,16 +14561,16 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           </div>
         </div>
 
-        <!-- 2. LIVE OPEN PLAY PLAYER ROSTER & 6-POD SHUFFLER WORKSPACE (NO BRACKET, NO PRICES) -->
+        <!-- 2. LIVE OPEN PLAY PLAYER ROSTER & 6-POD SHUFFLER WORKSPACE -->
         <div id="adm-op-shuffler-workspace" class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 space-y-5 shadow-md">
           <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div class="space-y-1">
               <div class="flex flex-wrap items-center gap-2">
                 <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[10px] font-mono font-extrabold uppercase">🔀 LIVE 4-PLAYER MATCH POD SHUFFLER</span>
-                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[10px] font-mono font-extrabold uppercase">👥 ${active.players.length} / 24 Real Players Joined</span>
+                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[10px] font-mono font-extrabold uppercase">👥 ${active.players.length} / 24 Real Players Booked</span>
                 <span class="text-[11px] font-mono font-bold text-slate-500">Last Shuffle: ${pfEscapeHtml(active.lastShuffleTime)}</span>
               </div>
-              <h3 class="text-xl sm:text-2xl font-black text-slate-900">${pfEscapeHtml(active.title)} — Player Roster &amp; Court Pod Shuffler</h3>
+              <h3 class="text-xl sm:text-2xl font-black text-slate-900">${pfEscapeHtml(active.title)} — Booked Roster &amp; Court Pod Shuffler</h3>
               <p class="text-xs text-slate-600">Add walk-in players or shuffle everyone into 6 balanced 4-player doubles pods across ${pfEscapeHtml(desigCourts.join(', '))}. Starts at 0 players with zero fake fillers.</p>
             </div>
 
@@ -14558,8 +14616,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           <!-- Exact Real Players Joined Strip -->
           <div class="space-y-2.5">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-black uppercase text-slate-900">Joined Players Roster (${active.players.length} / 24 Real Players)</span>
-              <span class="text-[11px] font-mono text-slate-500">${Math.max(0, 24 - active.players.length)} Open Spots Available</span>
+              <span class="text-xs font-black uppercase text-slate-900">Booked &amp; Checked-In Players Roster (${active.players.length} / 24 Real Players)</span>
+              <span class="text-[11px] font-mono text-slate-500">${Math.max(0, 24 - active.players.length)} Open Seats Available</span>
             </div>
             ${active.players.length > 0 ? `
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -14567,7 +14625,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                   <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
                     <div class="min-w-0">
                       <div class="text-xs font-extrabold text-slate-900 truncate">#${pIdx + 1} • ${pfEscapeHtml(pl.name)}</div>
-                      <div class="text-[10px] font-mono text-emerald-700 truncate">${pfEscapeHtml(pl.skill || 'All Levels')}</div>
+                      <div class="text-[10px] font-mono text-emerald-700 truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
                     </div>
                     <button type="button" onclick="adminRemoveOpenPlayRealPlayer('${pfEscapeHtml(active.id)}', ${pIdx})" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 text-[10px] font-black transition" title="Remove Player">✕</button>
                   </div>
@@ -14575,7 +14633,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
               </div>
             ` : `
               <div class="p-4 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-center text-xs text-slate-600 font-semibold">
-                Currently <b>0 / 24 Players Joined</b> (no fake filler names). Add walk-in players above or let players join directly on <code class="font-mono font-bold">open-play.html</code>!
+                Currently <b>0 / 24 Players Booked</b> (no fake filler names). Add walk-in players above or let players book &amp; pay online on <code class="font-mono font-bold">open-play.html</code>!
               </div>
             `}
           </div>
