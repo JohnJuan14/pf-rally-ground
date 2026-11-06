@@ -989,8 +989,8 @@
     html[data-theme="light"] main h2,
     html[data-theme="light"] main h3,
     html[data-theme="light"] main h4,
-    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-white:not(button):not(a):not(tr):not(th):not(.tile-weekday):not(.tile-day):not(.tile-month),
-    html[data-theme="light"] main .text-white:not(button):not(a):not(tr):not(th):not(.tile-weekday):not(.tile-day):not(.tile-month) {
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-white:where(:not(button):not(a):not(tr):not(th):not(.tile-weekday):not(.tile-day):not(.tile-month)),
+    html[data-theme="light"] main .text-white:where(:not(button):not(a):not(tr):not(th):not(.tile-weekday):not(.tile-day):not(.tile-month)) {
       color: #0D1F18 !important;
     }
 
@@ -1451,6 +1451,93 @@
     }
     html[data-theme="light"] body main .pf-book-verified-card p {
       color: #334155 !important;
+    }
+
+    /* === V2.7 RESERVE COURT (book.html) LIGHT MODE COMPLETE CONTRAST FIX === */
+    html[data-theme="light"] body main .court-btn.court-btn-active,
+    html[data-theme="dark"] body main .court-btn.court-btn-active {
+      background-color: #0F291E !important;
+      border: 2px solid #15803D !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] body main .court-btn.court-btn-active b,
+    html[data-theme="dark"] body main .court-btn.court-btn-active b {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] body main .court-btn.court-btn-active span,
+    html[data-theme="dark"] body main .court-btn.court-btn-active span {
+      color: #6EE7B7 !important;
+    }
+    html[data-theme="light"] body main .duration-pill-btn.bg-\[\#0F291E\],
+    html[data-theme="light"] body main .duration-pill-btn.bg-brand-lime,
+    html[data-theme="light"] body main .duration-pill-btn.duration-pill-active {
+      background-color: #0F291E !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] body main .duration-pill-btn:not(.bg-\[\#0F291E\]):not(.bg-brand-lime):not(.duration-pill-active) {
+      background-color: transparent !important;
+      color: #334155 !important;
+    }
+    html[data-theme="light"] body main .duration-pill-btn:not(.bg-\[\#0F291E\]):not(.bg-brand-lime):not(.duration-pill-active):hover {
+      color: #0F291E !important;
+      background-color: #E2E8F0 !important;
+    }
+    html[data-theme="dark"] body main .duration-pill-btn:not(.bg-\[\#0F291E\]):not(.bg-brand-lime):not(.duration-pill-active) {
+      background-color: transparent !important;
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="light"] body main .bg-brand-lime,
+    html[data-theme="light"] body main .bg-brand-lime *,
+    html[data-theme="light"] body main #btn-submit-booking,
+    html[data-theme="light"] body main #btn-submit-booking * {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] body main .bg-brand-lime\/15,
+    html[data-theme="light"] #booking-drawer #drawer-gear-subtotal-badge {
+      background-color: #D1FAE5 !important;
+      border-color: #6EE7B7 !important;
+      color: #065F46 !important;
+    }
+    html[data-theme="light"] body main .bg-brand-lime\/15 span {
+      color: #065F46 !important;
+    }
+    html[data-theme="light"] body main .bg-brand-lime\/15 span.w-2 {
+      background-color: #10B981 !important;
+    }
+    html[data-theme="light"] body main .border-white\/10,
+    html[data-theme="light"] body main .border-white\/15,
+    html[data-theme="light"] body main .border-white\/20,
+    html[data-theme="light"] body main .border-white\/5,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 .border-white\/10,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 .border-white\/15,
+    html[data-theme="light"] #booking-drawer #drawer-step-1 .border-white\/20 {
+      border-color: #CBD5E1 !important;
+    }
+    html[data-theme="light"] body main #payment-controls .bg-white\/5 {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-controls .bg-white\/5 div,
+    html[data-theme="light"] body main #payment-controls .bg-white\/5 b:not(.text-brand-lime) {
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #pay-pill-gcash:not(.bg-brand-lime):not(.pay-pill-active),
+    html[data-theme="light"] body main #pay-pill-maya:not(.bg-brand-lime):not(.pay-pill-active),
+    html[data-theme="light"] body main #pay-pill-bank:not(.bg-brand-lime):not(.pay-pill-active) {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #pay-pill-gcash:not(.bg-brand-lime):not(.pay-pill-active):hover,
+    html[data-theme="light"] body main #pay-pill-maya:not(.bg-brand-lime):not(.pay-pill-active):hover,
+    html[data-theme="light"] body main #pay-pill-bank:not(.bg-brand-lime):not(.pay-pill-active):hover {
+      background-color: #F1F5F9 !important;
+      border-color: #15803D !important;
+      color: #15803D !important;
+    }
+    html[data-theme="light"] #booking-drawer #drawer-step-1 .text-white:not(button):not(.drawer-court.active *):not(.date-tile-active *) {
+      color: #0F172A !important;
     }
 
     /* Footer Admin Portal Button Styling */
@@ -2152,8 +2239,8 @@ button.pf-trn-btn-danger:hover,
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="court-selector">
             <button type="button" onclick="selectCourt(1)" class="court-btn court-btn-active py-3.5 px-4 rounded-2xl border-2 border-[#15803D] bg-[#0F291E] text-white text-left transition active:scale-95 shadow-md flex items-center justify-between" data-court="1">
-              <b class="text-sm sm:text-base font-black text-brand-lime block">Court 1</b>
-              <span class="text-brand-lime font-mono text-xs">→</span>
+              <b class="text-sm sm:text-base font-black text-white block" style="color:#FFFFFF !important;">Court 1</b>
+              <span class="text-[#6EE7B7] font-mono text-xs font-bold" style="color:#6EE7B7 !important;">→</span>
             </button>
             <button type="button" onclick="selectCourt(2)" class="court-btn py-3.5 px-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95 flex items-center justify-between" data-court="2">
               <b class="text-sm sm:text-base font-black text-white block">Court 2</b>
@@ -3518,11 +3605,13 @@ button.pf-trn-btn-danger:hover,
         const spEl = btn.querySelector("span");
         if (c === cNum) {
           btn.className = "court-btn court-btn-active py-3.5 px-4 rounded-2xl border-2 border-[#15803D] bg-[#0F291E] text-white text-left transition active:scale-95 shadow-md flex items-center justify-between";
-          if (bEl) bEl.className = "text-sm sm:text-base font-extrabold text-white block";
+          if (bEl) { bEl.className = "text-sm sm:text-base font-extrabold text-white block"; bEl.style.setProperty("color", "#FFFFFF", "important"); }
+          if (spEl) { spEl.className = "text-[#6EE7B7] font-mono text-xs font-bold"; spEl.style.setProperty("color", "#6EE7B7", "important"); }
           if (spEl) spEl.className = "text-[#6EE7B7] font-mono text-xs font-bold";
         } else {
           btn.className = "court-btn py-3.5 px-4 rounded-2xl border border-slate-300 bg-slate-50 hover:border-[#15803D] text-slate-900 text-left transition active:scale-95 flex items-center justify-between";
-          if (bEl) bEl.className = "text-sm sm:text-base font-bold text-slate-900 block";
+          if (bEl) { bEl.className = "text-sm sm:text-base font-bold text-slate-900 block"; bEl.style.removeProperty("color"); }
+          if (spEl) { spEl.className = "text-slate-500 font-mono text-xs"; spEl.style.removeProperty("color"); }
           if (spEl) spEl.className = "text-slate-500 font-mono text-xs";
         }
       });
@@ -3536,9 +3625,13 @@ button.pf-trn-btn-danger:hover,
       document.querySelectorAll(".duration-pill-btn").forEach(btn => {
         const d = Number(btn.getAttribute("data-dur"));
         if (d === dur) {
-          btn.className = "duration-pill-btn px-3 py-1 rounded-lg bg-[#0F291E] text-white font-black shadow-sm";
+          btn.className = "duration-pill-btn duration-pill-active px-3 py-1 rounded-lg bg-[#0F291E] text-white font-black shadow-sm";
+          btn.style.setProperty("background-color", "#0F291E", "important");
+          btn.style.setProperty("color", "#FFFFFF", "important");
         } else {
           btn.className = "duration-pill-btn px-3 py-1 rounded-lg text-slate-700 hover:text-slate-900 font-bold";
+          btn.style.removeProperty("background-color");
+          btn.style.removeProperty("color");
         }
       });
       renderTimeChips();
@@ -4303,7 +4396,7 @@ Your booking is now waiting in the Admin Portal for approval!`);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      generateDays();
+      generateDays(); selectCourt(1); setDuration(1);
       renderDateRail();
       renderTimeChips();
       updateSummary();
