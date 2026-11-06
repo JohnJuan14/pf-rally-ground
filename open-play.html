@@ -52,6 +52,86 @@
     .animate-fadeIn {
       animation: fadeIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    .pf-nav-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .pf-nav-dropdown-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #0D1F18;
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .pf-nav-dropdown:hover .pf-nav-dropdown-btn,
+    .pf-nav-dropdown.open .pf-nav-dropdown-btn,
+    .pf-nav-dropdown-btn.active {
+      background: #0F291E;
+      color: #FFFFFF;
+    }
+    .pf-nav-chevron {
+      width: 13px;
+      height: 13px;
+      transition: transform 0.2s ease;
+    }
+    .pf-nav-dropdown:hover .pf-nav-chevron,
+    .pf-nav-dropdown.open .pf-nav-chevron {
+      transform: rotate(180deg);
+    }
+    .pf-nav-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 210px;
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: all 0.18s ease;
+      z-index: 100;
+    }
+    .pf-nav-dropdown:hover .pf-nav-dropdown-menu,
+    .pf-nav-dropdown.open .pf-nav-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .pf-nav-dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0F172A;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .pf-nav-dropdown-item:hover,
+    .pf-nav-dropdown-item.active {
+      background: #0F291E;
+      color: #FFFFFF;
+    }
+    .pf-nav-dropdown-item:hover span,
+    .pf-nav-dropdown-item.active span {
+      color: #FFFFFF !important;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#F7F6F1] text-[#0D1F18]">
@@ -70,14 +150,66 @@
         </div>
       </a>
 
-      <!-- Center Desktop Links -->
-      <nav class="hidden lg:flex items-center gap-1.5 text-xs font-extrabold">
-        <a href="index.html" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Home</a>
-        <a href="index.html#schedule" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Court Schedule</a>
-        <a href="open-play.html" class="px-3.5 py-2 rounded-lg bg-[#0F291E] text-white shadow-xs transition">Open Play &amp; Shuffler</a>
-        <a href="index.html#tournaments" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Tournaments</a>
-        <a href="pricing.html" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">Rates &amp; Gear</a>
-        <a href="check-booking.html" class="px-3.5 py-2 rounded-lg text-slate-700 hover:text-[#0F291E] hover:bg-slate-200/60 transition">My Booking</a>
+      <!-- Center Desktop Links (Courts & Play Dropdown with Open Play & Tournaments Inside) -->
+      <nav class="hidden lg:flex items-center justify-center gap-2 text-xs uppercase tracking-wider flex-shrink-0" aria-label="Main Navigation">
+        <a href="index.html" class="whitespace-nowrap px-3.5 py-2 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-[#0D1F18] hover:bg-slate-200/60 font-extrabold">Home</a>
+
+        <!-- Dropdown 1: Courts & Play -->
+        <div class="pf-nav-dropdown" data-dropdown="courts">
+          <button type="button" onclick="pfToggleNavDropdown(event, this)" class="pf-nav-dropdown-btn active">
+            <span>Courts &amp; Play</span>
+            <svg class="pf-nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="pf-nav-dropdown-menu">
+            <a href="index.html#schedule" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Live Schedule</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">6AM–12AM</span>
+            </a>
+            <a href="open-play.html" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item active">
+              <span>Open Play</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">Shuffler</span>
+            </a>
+            <a href="index.html#tournaments" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Tournaments</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">🏆</span>
+            </a>
+            <a href="pricing.html#court-rates" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Court Rates</span>
+              <span class="text-[10px] font-mono opacity-75">₱400/hr</span>
+            </a>
+            <a href="pricing.html#gear-rentals" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Gear &amp; Rentals</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">From ₱50</span>
+            </a>
+            <a href="book.html" class="pf-nav-dropdown-item">
+              <span>Reserve a Court</span>
+              <span class="text-[10px] font-mono opacity-75">→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Dropdown 2: About -->
+        <div class="pf-nav-dropdown" data-dropdown="about">
+          <button type="button" onclick="pfToggleNavDropdown(event, this)" class="pf-nav-dropdown-btn">
+            <span>About</span>
+            <svg class="pf-nav-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="pf-nav-dropdown-menu">
+            <a href="index.html#courts" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Our 4 Courts</span>
+            </a>
+            <a href="index.html#location" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Location &amp; Map</span>
+            </a>
+            <a href="index.html#footer-contact" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+              <span>Contact</span>
+            </a>
+          </div>
+        </div>
+
+        <a href="check-booking.html" class="whitespace-nowrap px-3.5 py-2 rounded-lg transition-all duration-200 flex items-center gap-1.5 text-[#0D1F18] hover:bg-slate-200/60 font-extrabold">
+          <span>My Booking</span>
+        </a>
       </nav>
 
       <!-- Right Actions -->
