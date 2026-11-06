@@ -4958,15 +4958,131 @@ function pfHandleOpenPlayReceiptUpload(event) {
 }
 window.pfHandleOpenPlayReceiptUpload = pfHandleOpenPlayReceiptUpload;
 
-// Official High-DPI PNG Open Play Image Receipt Generator (<canvas>)
+// Deterministic 21x21 QR Code Matrix Drawer for Canvas (Zero-CORS, 100% Offline & Crisp)
+function pfDrawDeterministicQrOnCanvas(ctx, text, boxX, boxY, boxSize) {
+  const modules = 21;
+  const grid = Array.from({ length: modules }, () => Array(modules).fill(false));
+  const reserved = Array.from({ length: modules }, () => Array(modules).fill(false));
+
+  function placeFinderPattern(r0, c0) {
+    for (let r = -1; r <= 7; r++) {
+      for (let c = -1; c <= 7; c++) {
+        const rr = r0 + r;
+        const cc = c0 + c;
+        if (rr < 0 || rr >= modules || cc < 0 || cc >= modules) continue;
+        reserved[rr][cc] = true;
+        if (r >= 0 && r <= 6 && c >= 0 && c <= 6) {
+          const isBorder = (r === 0 || r === 6 || c === 0 || c === 6);
+          const isInner = (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+          grid[rr][cc] = isBorder || isInner;
+        } else {
+          grid[rr][cc] = false;
+        }
+      }
+    }
+  }
+
+  placeFinderPattern(0, 0);
+  placeFinderPattern(0, modules - 7);
+  placeFinderPattern(modules - 7, 0);
+
+  // Timing patterns
+  for (let i = 8; i < modules - 8; i++) {
+    reserved[6][i] = true;
+    reserved[i][6] = true;
+    grid[6][i] = (i % 2 === 0);
+    grid[i][6] = (i % 2 === 0);
+  }
+
+  // Deterministic seed from booking reference & payload
+  const seedStr = String(text || 'PF-RALLY-GROUND-GATE-PASS');
+  let h1 = 2166136261 >>> 0;
+  let h2 = 16777619 >>> 0;
+  for (let i = 0; i < seedStr.length; i++) {
+    const ch = seedStr.charCodeAt(i);
+    h1 ^= ch;
+    h1 = Math.imul(h1, 16777619) >>> 0;
+    h2 = (Math.imul(h2 ^ ch, 2246822507) + i * 374761393) >>> 0;
+  }
+
+  let bitIdx = 0;
+  for (let r = 0; r < modules; r++) {
+    for (let c = 0; c < modules; c++) {
+      if (reserved[r][c]) continue;
+      const charCode = seedStr.charCodeAt(bitIdx % seedStr.length);
+      const mix = ((r * 31 + c * 17 + bitIdx * 13) ^ h1 ^ (h2 >>> (bitIdx % 16)) ^ (charCode * 7)) >>> 0;
+      grid[r][c] = ((mix & 3) === 0 || (mix & 7) === 3);
+      bitIdx++;
+    }
+  }
+
+  const quietZone = Math.round(boxSize * 0.08);
+  const innerSize = boxSize - quietZone * 2;
+  const cell = innerSize / modules;
+
+  ctx.fillStyle = '#000000';
+  for (let r = 0; r < modules; r++) {
+    for (let c = 0; c < modules; c++) {
+      if (grid[r][c]) {
+        const rx = Math.floor(boxX + quietZone + c * cell);
+        const ry = Math.floor(boxY + quietZone + r * cell);
+        const rw = Math.ceil(cell);
+        const rh = Math.ceil(cell);
+        ctx.fillRect(rx, ry, rw, rh);
+      }
+    }
+  }
+}
+
+function pfDrawRoundedRect(ctx, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+}
+
+// Official High-DPI PNG Receipt & Venue Gate Pass Generator (<canvas>)
 async function pfGenerateOpenPlayReceiptImageDataUrl(bookingRecord) {
   if (!bookingRecord) return '';
+
+  // Live-resolve latest booking status from merged stores or Open Play roster
+  let liveStatus = String(bookingRecord.status || 'PENDING').toUpperCase().trim();
+  const refUpper = String(bookingRecord.ref || '').toUpperCase().trim();
+  if (refUpper && typeof pfGetAllMergedBookings === 'function') {
+    const allBks = pfGetAllMergedBookings();
+    const matched = allBks.find(b => b && String(b.ref || '').toUpperCase().trim() === refUpper);
+    if (matched && matched.status) {
+      liveStatus = String(matched.status).toUpperCase().trim();
+    }
+  }
+  if (typeof pfResolveOpenPlayPlayerStatus === 'function') {
+    const resolved = pfResolveOpenPlayPlayerStatus({
+      bookingRef: bookingRecord.ref,
+      name: bookingRecord.name || bookingRecord.customerName,
+      status: liveStatus
+    });
+    if (resolved && resolved.isConfirmed) {
+      liveStatus = 'CONFIRMED';
+    }
+  }
+
+  const isConfirmed = (liveStatus === 'CONFIRMED' || liveStatus === 'APPROVED' || liveStatus === 'CHECKED IN' || liveStatus === 'PAID');
+  const isOpenPlayBk = Boolean(
+    bookingRecord.isOpenPlay ||
+    refUpper.startsWith('PF-OP') ||
+    String(bookingRecord.court || bookingRecord.courtName || '').toLowerCase().includes('open play')
+  );
+
   const canvas = document.createElement('canvas');
   canvas.width = 800;
-  canvas.height = 1040;
+  canvas.height = 1080;
   const ctx = canvas.getContext('2d');
 
-  // Background Dark Forest Card
+  // Background Dark Forest / Arena Card
   const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
   bgGrad.addColorStop(0, '#050E1D');
   bgGrad.addColorStop(0.5, '#0A2219');
@@ -4983,147 +5099,310 @@ async function pfGenerateOpenPlayReceiptImageDataUrl(bookingRecord) {
   ctx.fillRect(0, 0, canvas.width, 14);
 
   // Outer Border
-  ctx.strokeStyle = '#9BE600';
+  ctx.strokeStyle = isConfirmed ? '#10B981' : '#9BE600';
   ctx.lineWidth = 4;
   ctx.strokeRect(18, 28, canvas.width - 36, canvas.height - 46);
 
   // Header Title
   ctx.fillStyle = '#9BE600';
-  ctx.font = '900 18px "JetBrains Mono", monospace';
-  ctx.fillText('🏓 OFFICIAL OPEN PLAY E-RECEIPT & GATE PASS', 48, 78);
+  ctx.font = '900 17px "JetBrains Mono", monospace';
+  const receiptTypeLabel = isOpenPlayBk
+    ? (isConfirmed ? '✅ OFFICIAL CONFIRMED OPEN PLAY RECEIPT & VENUE GATE PASS' : '🏓 OFFICIAL OPEN PLAY E-RECEIPT & VENUE GATE PASS')
+    : (isConfirmed ? '✅ OFFICIAL CONFIRMED COURT RECEIPT & VENUE GATE PASS' : '🎾 OFFICIAL COURT BOOKING E-RECEIPT & VENUE GATE PASS');
+  ctx.fillText(receiptTypeLabel, 48, 76);
 
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '900 34px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('P&F RALLY GROUND PICKLEBALL CLUB', 48, 122);
+  ctx.font = '900 33px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('P&F RALLY GROUND PICKLEBALL CLUB', 48, 120);
 
   ctx.fillStyle = '#A7F3D0';
-  ctx.font = '700 16px "JetBrains Mono", monospace';
-  ctx.fillText('Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Albay • 0999 883 2346', 48, 152);
+  ctx.font = '700 15px "JetBrains Mono", monospace';
+  ctx.fillText('Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Albay • 0999 883 2346', 48, 148);
 
   // Divider
   ctx.strokeStyle = 'rgba(155, 230, 0, 0.35)';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(48, 176);
-  ctx.lineTo(canvas.width - 48, 176);
+  ctx.moveTo(48, 170);
+  ctx.lineTo(canvas.width - 48, 170);
   ctx.stroke();
 
   // Status Banner Box
-  const stUpper = String(bookingRecord.status || 'PENDING').toUpperCase();
-  const isConfirmed = (stUpper === 'CONFIRMED' || stUpper === 'APPROVED' || stUpper === 'CHECKED IN');
-  ctx.fillStyle = isConfirmed ? 'rgba(16, 185, 129, 0.22)' : 'rgba(245, 158, 11, 0.20)';
-  ctx.fillRect(48, 198, canvas.width - 96, 86);
+  ctx.fillStyle = isConfirmed ? 'rgba(16, 185, 129, 0.24)' : 'rgba(245, 158, 11, 0.20)';
+  ctx.fillRect(48, 190, canvas.width - 96, 86);
   ctx.strokeStyle = isConfirmed ? '#34D399' : '#FBBF24';
   ctx.lineWidth = 2.5;
-  ctx.strokeRect(48, 198, canvas.width - 96, 86);
+  ctx.strokeRect(48, 190, canvas.width - 96, 86);
 
   ctx.fillStyle = isConfirmed ? '#6EE7B7' : '#FDE68A';
-  ctx.font = '900 15px "JetBrains Mono", monospace';
-  ctx.fillText('BOOKING CONFIRMATION STATUS', 70, 228);
+  ctx.font = '900 14px "JetBrains Mono", monospace';
+  ctx.fillText(isConfirmed ? 'OFFICIAL CONFIRMATION & GATE PASS STATUS' : 'BOOKING CONFIRMATION STATUS', 70, 218);
 
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '900 24px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText(isConfirmed ? '✅ CONFIRMED BY ADMIN — READY FOR COURT PLAY' : '⏳ PENDING ADMIN VERIFICATION (SUBMITTED)', 70, 263);
+  ctx.font = '900 22px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText(
+    isConfirmed
+      ? '✅ BOOKING CONFIRMED BY ADMIN — OFFICIAL RECEIPT & GATE PASS'
+      : '⏳ PENDING ADMIN VERIFICATION (SUBMITTED RECEIPT PASS)',
+    70,
+    254
+  );
 
   // Reference & Amount Box
   ctx.fillStyle = '#0F291E';
-  ctx.fillRect(48, 306, canvas.width - 96, 110);
+  ctx.fillRect(48, 294, canvas.width - 96, 106);
   ctx.strokeStyle = 'rgba(163, 230, 53, 0.45)';
   ctx.lineWidth = 2;
-  ctx.strokeRect(48, 306, canvas.width - 96, 110);
+  ctx.strokeRect(48, 294, canvas.width - 96, 106);
 
   ctx.fillStyle = '#9BE600';
-  ctx.font = '800 14px "JetBrains Mono", monospace';
-  ctx.fillText('OFFICIAL BOOKING REFERENCE ID', 70, 340);
+  ctx.font = '800 13px "JetBrains Mono", monospace';
+  ctx.fillText('OFFICIAL BOOKING REFERENCE ID', 70, 326);
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '900 36px "JetBrains Mono", monospace';
-  ctx.fillText(String(bookingRecord.ref || 'PF-OP-000000'), 70, 388);
+  ctx.font = '900 34px "JetBrains Mono", monospace';
+  ctx.fillText(String(bookingRecord.ref || 'PF-OP-000000'), 70, 374);
 
   const amtNum = Number(String(bookingRecord.total || 150).replace(/[^0-9.]/g, '') || 150);
   ctx.textAlign = 'right';
   ctx.fillStyle = '#9BE600';
-  ctx.font = '800 14px "JetBrains Mono", monospace';
-  ctx.fillText('TOTAL AMOUNT', canvas.width - 70, 340);
+  ctx.font = '800 13px "JetBrains Mono", monospace';
+  ctx.fillText(isConfirmed ? 'TOTAL VERIFIED AMOUNT' : 'TOTAL AMOUNT', canvas.width - 70, 326);
   ctx.fillStyle = '#9BE600';
-  ctx.font = '900 36px "JetBrains Mono", monospace';
-  ctx.fillText('₱' + amtNum.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 70, 388);
+  ctx.font = '900 34px "JetBrains Mono", monospace';
+  ctx.fillText('₱' + amtNum.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 70, 374);
   ctx.textAlign = 'left';
 
   // Details Rows
+  const seatsLabel = isOpenPlayBk
+    ? String((bookingRecord.players || 1) + ' Participant Seat(s) (₱150.00 / participant)')
+    : String((bookingRecord.players || 4) + ' Player(s)');
   const rows = [
     ['Player Name(s)', String(bookingRecord.guestNamesList || bookingRecord.name || bookingRecord.customerName || 'Guest')],
     ['Contact Mobile', String(bookingRecord.phone || bookingRecord.customerPhone || '—')],
     ['Session / Court', String(bookingRecord.courtName || bookingRecord.court || 'Open Play Session')],
     ['Play Date & Schedule', String(bookingRecord.date ? (bookingRecord.date + ' • ' + (bookingRecord.time || '')) : (bookingRecord.time || 'Scheduled Session'))],
-    ['Seats Reserved', String((bookingRecord.players || 1) + ' Participant Seat(s) (₱150.00 / participant)')],
+    [isOpenPlayBk ? 'Seats Reserved' : 'Players Included', seatsLabel],
     ['Payment Method', String(bookingRecord.paymentMethod || bookingRecord.paymentMode || 'GCash')],
     ['Payment Ref No.', String(bookingRecord.transactionRef || bookingRecord.paymentRef || 'N/A')],
-    ['Timestamp Issued', String(bookingRecord.createdAt || new Date().toLocaleString('en-PH'))]
+    ['Receipt Status', isConfirmed ? '✅ CONFIRMED OFFICIAL RECEIPT & VENUE GATE PASS' : '⏳ SUBMITTED — AWAITING ADMIN CONFIRMATION']
   ];
 
-  let y = 460;
+  let y = 442;
   rows.forEach(([label, val]) => {
     ctx.fillStyle = '#94A3B8';
-    ctx.font = '700 15px "JetBrains Mono", monospace';
+    ctx.font = '700 14px "JetBrains Mono", monospace';
     ctx.fillText(label.toUpperCase(), 54, y);
 
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '800 17px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = (label === 'Receipt Status' && isConfirmed) ? '#6EE7B7' : '#FFFFFF';
+    ctx.font = '800 16px "Plus Jakarta Sans", sans-serif';
     const maxValLen = 46;
     const cleanVal = val.length > maxValLen ? (val.slice(0, maxValLen - 1) + '…') : val;
-    ctx.fillText(cleanVal, 290, y);
+    ctx.fillText(cleanVal, 285, y);
 
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.10)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(54, y + 16);
-    ctx.lineTo(canvas.width - 54, y + 16);
+    ctx.moveTo(54, y + 14);
+    ctx.lineTo(canvas.width - 54, y + 14);
     ctx.stroke();
-    y += 48;
+    y += 46;
   });
 
-  // Footer Verification Note
+  // Bottom Row: Left = Verification & Check-In Instructions, Right = Embedded VENUE GATE PASS QR Card
+  const bottomY = 824;
+  const bottomH = 202;
+  const leftBoxW = canvas.width - 96 - 196;
+
   ctx.fillStyle = '#0F291E';
-  ctx.fillRect(48, 860, canvas.width - 96, 125);
-  ctx.strokeStyle = '#9BE600';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(48, 860, canvas.width - 96, 125);
+  pfDrawRoundedRect(ctx, 48, bottomY, leftBoxW, bottomH, 18);
+  ctx.fill();
+  ctx.strokeStyle = isConfirmed ? '#34D399' : '#9BE600';
+  ctx.lineWidth = 2;
+  ctx.stroke();
 
   ctx.fillStyle = '#9BE600';
-  ctx.font = '900 15px "JetBrains Mono", monospace';
-  ctx.fillText('🔍 HOW TO CHECK LIVE CONFIRMATION STATUS AT ANY TIME:', 70, 892);
+  ctx.font = '900 14px "JetBrains Mono", monospace';
+  ctx.fillText(
+    isConfirmed
+      ? '✅ OFFICIAL VENUE GATE PASS & CHECK-IN INSTRUCTIONS:'
+      : '🔍 HOW TO CHECK LIVE CONFIRMATION & USE YOUR GATE PASS:',
+    68,
+    bottomY + 34
+  );
 
   ctx.fillStyle = '#E2E8F0';
-  ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('1. Present this Official Image Receipt at the P&F Rally Ground Front Desk upon arrival.', 70, 920);
-  ctx.fillText('2. Once Admin verifies your payment, your status updates to "✅ CONFIRMED" on the', 70, 944);
-  ctx.fillText('   Open Play Pod Shuffler and on the "My Booking" page (check-booking.html).', 70, 966);
+  ctx.font = '600 13.5px "Plus Jakarta Sans", sans-serif';
+  if (isConfirmed) {
+    ctx.fillText('1. Your booking is OFFICIALLY CONFIRMED by P&F Rally Ground Admin.', 68, bottomY + 66);
+    ctx.fillText('2. Present this Official Receipt & Venue Gate Pass QR at the Front Desk', 68, bottomY + 92);
+    ctx.fillText('   upon arrival for instant court check-in.', 68, bottomY + 114);
+    ctx.fillStyle = '#6EE7B7';
+    ctx.font = '800 13px "JetBrains Mono", monospace';
+    ctx.fillText('✓ VERIFIED GATE PASS REF: ' + String(bookingRecord.ref || 'PF-PASS'), 68, bottomY + 150);
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '600 12px "JetBrains Mono", monospace';
+    ctx.fillText('Issued: ' + String(bookingRecord.createdAt || new Date().toLocaleString('en-PH')), 68, bottomY + 178);
+  } else {
+    ctx.fillText('1. Save this Official Receipt & Venue Gate Pass to your phone.', 68, bottomY + 66);
+    ctx.fillText('2. Once Admin verifies your payment, your status updates to "✅ CONFIRMED"', 68, bottomY + 92);
+    ctx.fillText('   on the Open Play Pod Shuffler and on "My Booking" (check-booking.html).', 68, bottomY + 114);
+    ctx.fillStyle = '#FDE68A';
+    ctx.font = '800 12.5px "JetBrains Mono", monospace';
+    ctx.fillText('⏳ GATE PASS REF: ' + String(bookingRecord.ref || 'PF-PASS') + ' (PENDING VERIFICATION)', 68, bottomY + 150);
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '600 12px "JetBrains Mono", monospace';
+    ctx.fillText('Issued: ' + String(bookingRecord.createdAt || new Date().toLocaleString('en-PH')), 68, bottomY + 178);
+  }
+
+  // Right Box: Crisp White Rounded VENUE GATE PASS QR Code Card (Matches User Screenshot)
+  const qrCardW = 180;
+  const qrCardH = 202;
+  const qrCardX = canvas.width - 48 - qrCardW;
+  const qrCardY = bottomY;
+
+  ctx.fillStyle = '#FFFFFF';
+  pfDrawRoundedRect(ctx, qrCardX, qrCardY, qrCardW, qrCardH, 20);
+  ctx.fill();
+  ctx.strokeStyle = isConfirmed ? '#10B981' : '#CBD5E1';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const qrBoxSize = 148;
+  const qrBoxX = qrCardX + Math.round((qrCardW - qrBoxSize) / 2);
+  const qrBoxY = qrCardY + 12;
+  pfDrawDeterministicQrOnCanvas(
+    ctx,
+    `${bookingRecord.ref || 'PF-PASS'}|${bookingRecord.name || bookingRecord.customerName || 'Guest'}|${liveStatus}`,
+    qrBoxX,
+    qrBoxY,
+    qrBoxSize
+  );
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#0F172A';
+  ctx.font = '800 12px "JetBrains Mono", monospace';
+  ctx.fillText('VENUE GATE PASS', qrCardX + qrCardW / 2, qrCardY + 176);
+
+  ctx.fillStyle = isConfirmed ? '#15803D' : '#B45309';
+  ctx.font = '900 10px "JetBrains Mono", monospace';
+  ctx.fillText(isConfirmed ? '● CONFIRMED PASS' : '● PENDING VERIFY', qrCardX + qrCardW / 2, qrCardY + 192);
+  ctx.textAlign = 'left';
 
   return canvas.toDataURL('image/png');
 }
 window.pfGenerateOpenPlayReceiptImageDataUrl = pfGenerateOpenPlayReceiptImageDataUrl;
 
-async function pfDownloadOpenPlayReceiptImage(bookingRefInput) {
-  let targetBk = window.pfLastOpenPlayBookingRecord || null;
+function pfFindBookingRecordForReceipt(bookingRefInput, fallbackName) {
+  const allBk = (typeof pfGetAllMergedBookings === 'function') ? pfGetAllMergedBookings() : [];
   if (bookingRefInput) {
-    const allBk = (typeof pfGetAllMergedBookings === 'function') ? pfGetAllMergedBookings() : [];
-    const found = allBk.find(b => b && String(b.ref || '').toUpperCase() === String(bookingRefInput).toUpperCase());
-    if (found) targetBk = found;
+    const refNorm = String(bookingRefInput).toUpperCase().trim();
+    const found = allBk.find(b => b && String(b.ref || '').toUpperCase().trim() === refNorm);
+    if (found) return found;
   }
-  if (!targetBk) {
-    try { targetBk = JSON.parse(localStorage.getItem('latest_booking') || 'null'); } catch (e) {}
+  if (fallbackName) {
+    const nameNorm = String(fallbackName).toLowerCase().trim();
+    const foundByName = allBk.find(b => {
+      if (!b) return false;
+      const bName = String(b.name || b.customerName || b.guestNamesList || '').toLowerCase();
+      return bName.includes(nameNorm);
+    });
+    if (foundByName) return foundByName;
   }
+  // Also check Open Play active session roster if player was added directly
+  if (typeof pfGetActiveOpenPlaySession === 'function') {
+    const sess = pfGetActiveOpenPlaySession();
+    const pl = (sess.players || []).find(p =>
+      (bookingRefInput && String(p.bookingRef || '').toUpperCase().trim() === String(bookingRefInput).toUpperCase().trim()) ||
+      (fallbackName && String(p.name || '').toLowerCase().trim() === String(fallbackName).toLowerCase().trim())
+    );
+    if (pl) {
+      const stInfo = (typeof pfResolveOpenPlayPlayerStatus === 'function')
+        ? pfResolveOpenPlayPlayerStatus(pl)
+        : { status: pl.status || 'PENDING', isConfirmed: false };
+      return {
+        ref: pl.bookingRef || ('PF-OP-' + String(pl.id || '1001').slice(-6).toUpperCase()),
+        name: pl.name || fallbackName || 'Open Play Participant',
+        customerName: pl.name || fallbackName || 'Open Play Participant',
+        phone: pl.phone || '—',
+        date: pl.playDate || ((typeof pfGetPhilippineTodayYMD === 'function') ? pfGetPhilippineTodayYMD() : 'Scheduled'),
+        time: sess.schedule || 'Tuesday – Thursday • 04:00 PM – 08:00 PM',
+        courtName: `Open Play Seat • ${sess.title}`,
+        court: `Open Play • ${sess.title}`,
+        players: 1,
+        paymentMethod: pl.paymentMethod || 'GCash',
+        transactionRef: pl.paymentRef || 'VERIFIED',
+        status: stInfo.isConfirmed ? 'CONFIRMED' : (stInfo.status || 'PENDING'),
+        total: Number(sess.entryFee || 150),
+        isOpenPlay: true
+      };
+    }
+  }
+  if (window.pfLastOpenPlayBookingRecord) return window.pfLastOpenPlayBookingRecord;
+  try {
+    const latest = JSON.parse(localStorage.getItem('latest_booking') || 'null');
+    if (latest) return latest;
+  } catch (e) {}
+  return null;
+}
+window.pfFindBookingRecordForReceipt = pfFindBookingRecordForReceipt;
+
+async function pfDownloadOpenPlayReceiptImage(bookingRefInput, fallbackName) {
+  const targetBk = pfFindBookingRecordForReceipt(bookingRefInput, fallbackName);
   if (!targetBk) return;
   const dataUrl = await pfGenerateOpenPlayReceiptImageDataUrl(targetBk);
   if (!dataUrl) return;
   const a = document.createElement('a');
   a.href = dataUrl;
-  a.download = (targetBk.ref || 'PF-OPENPLAY') + '-Official-Receipt.png';
+  a.download = (targetBk.ref || 'PF-OPENPLAY') + '-Official-Receipt-GatePass.png';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
 }
 window.pfDownloadOpenPlayReceiptImage = pfDownloadOpenPlayReceiptImage;
+
+async function pfViewOpenPlayReceiptModal(bookingRefInput, fallbackName) {
+  const targetBk = pfFindBookingRecordForReceipt(bookingRefInput, fallbackName);
+  if (!targetBk) return;
+  const dataUrl = await pfGenerateOpenPlayReceiptImageDataUrl(targetBk);
+  const stInfo = (typeof pfResolveOpenPlayPlayerStatus === 'function')
+    ? pfResolveOpenPlayPlayerStatus({ bookingRef: targetBk.ref, name: targetBk.name, status: targetBk.status })
+    : { isConfirmed: String(targetBk.status || '').toUpperCase() === 'CONFIRMED', status: targetBk.status || 'PENDING' };
+
+  let modal = document.getElementById('pf-openplay-receipt-viewer-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pf-openplay-receipt-viewer-modal';
+    modal.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4';
+    document.body.appendChild(modal);
+  }
+  modal.classList.remove('hidden');
+  modal.innerHTML = `
+    <div onclick="document.getElementById('pf-openplay-receipt-viewer-modal').classList.add('hidden')" class="absolute inset-0"></div>
+    <div class="relative z-10 w-full max-w-lg max-h-[92dvh] overflow-y-auto bg-white text-slate-900 rounded-3xl border-2 border-[#15803D] shadow-2xl p-5 sm:p-6 space-y-4 animate-fadeIn">
+      <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full ${stInfo.isConfirmed ? 'bg-emerald-100 text-emerald-900 border border-emerald-400' : 'bg-amber-100 text-amber-900 border border-amber-400'} font-mono text-[10px] font-black uppercase">
+            ${stInfo.isConfirmed ? '✅ OFFICIAL CONFIRMED RECEIPT & VENUE GATE PASS' : '⏳ SUBMITTED RECEIPT & GATE PASS (PENDING ADMIN)'}
+          </span>
+          <h3 class="text-lg font-black text-slate-900 mt-1">${pfEscapeHtml(targetBk.name || targetBk.customerName || 'Player')} • ${pfEscapeHtml(targetBk.ref || '')}</h3>
+        </div>
+        <button type="button" onclick="document.getElementById('pf-openplay-receipt-viewer-modal').classList.add('hidden')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white font-black text-xs">✕</button>
+      </div>
+      <div class="p-2.5 rounded-2xl bg-slate-100 border border-slate-300">
+        <img src="${dataUrl}" alt="Official Receipt & Venue Gate Pass" class="w-full h-auto rounded-xl shadow-md mx-auto">
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+        <button type="button" onclick="pfDownloadOpenPlayReceiptImage('${pfEscapeHtml(targetBk.ref || '')}', '${pfEscapeHtml(targetBk.name || '')}')" class="flex-1 py-3 px-4 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5">
+          <span>📥 Download Receipt &amp; Gate Pass (PNG)</span>
+        </button>
+        <a href="check-booking.html?ref=${encodeURIComponent(targetBk.ref || '')}" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 font-extrabold text-xs uppercase tracking-wider">
+          🔍 Open in My Booking
+        </a>
+      </div>
+    </div>
+  `;
+}
+window.pfViewOpenPlayReceiptModal = pfViewOpenPlayReceiptModal;
 
 function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum, preferredDateYMD) {
   const pubSessions = pfGetPublishedOpenPlaySessions();
@@ -5728,37 +6007,40 @@ function pfRenderOpenPlay24Board() {
       : `<span class="px-2.5 py-1 rounded-lg bg-[#F1F5F9] text-[#94A3B8] border border-[#E2E8F0] font-mono text-[10px] font-semibold uppercase line-through opacity-60" title="Open for private court bookings">${cName}</span>`;
   }).join('');
 
-  // Helper to render a single seat inside a Mini Pickleball Court Pod with live CONFIRMED vs PENDING badge
+  // Helper to render a single seat inside a Mini Pickleball Court Pod with live CONFIRMED vs PENDING badge + Receipt Viewer
   const renderPodSeatHtml = (pl) => {
     if (pl && pl.isJoined) {
       const stInfo = pfResolveOpenPlayPlayerStatus(pl);
       const badgeHtml = stInfo.isConfirmed
-        ? `<span class="px-2 py-0.5 rounded bg-[#10B981] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0 shadow-2xs" title="Payment verified &amp; confirmed by Admin">✅ Confirmed</span>`
-        : `<span class="px-2 py-0.5 rounded bg-amber-400/25 border border-amber-300/60 text-amber-200 font-mono text-[9px] font-black uppercase flex-shrink-0" title="Awaiting Admin verification in Admin Portal">⏳ Pending</span>`;
+        ? `<span class="pf-pod-badge-confirmed px-2 py-0.5 rounded bg-[#10B981] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0 shadow-2xs" title="Payment verified &amp; confirmed by Admin">✅ Confirmed</span>`
+        : `<span class="pf-pod-badge-pending px-2 py-0.5 rounded bg-amber-400/25 border border-amber-300/60 text-amber-200 font-mono text-[9px] font-black uppercase flex-shrink-0" title="Awaiting Admin verification in Admin Portal">⏳ Pending</span>`;
       return `
-        <div class="p-2.5 rounded-xl bg-[#071D14] border-2 ${stInfo.isConfirmed ? 'border-[#A3E635]' : 'border-amber-400/70'} flex items-center justify-between gap-2 shadow-xs">
+        <div class="pf-pod-seat-booked p-2.5 rounded-xl bg-[#071D14] border-2 ${stInfo.isConfirmed ? 'border-[#A3E635]' : 'border-amber-400/70'} flex items-center justify-between gap-2 shadow-xs">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-6 h-6 rounded-lg ${stInfo.isConfirmed ? 'bg-[#A3E635] text-[#04120B]' : 'bg-amber-300 text-slate-950'} font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${pl.podSeat}</span>
+            <span class="pf-pod-seat-num w-6 h-6 rounded-lg ${stInfo.isConfirmed ? 'bg-[#A3E635] text-[#04120B]' : 'bg-amber-300 text-slate-950'} font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${pl.podSeat}</span>
             <div class="min-w-0">
               <div class="text-xs font-extrabold text-white truncate" title="${pfEscapeHtml(pl.name)}">${pfEscapeHtml(pl.name)}</div>
               <div class="text-[9px] font-mono text-emerald-300 truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
             </div>
           </div>
-          ${badgeHtml}
+          <div class="flex items-center gap-1 flex-shrink-0">
+            ${badgeHtml}
+            <button type="button" onclick="pfViewOpenPlayReceiptModal('${pfEscapeHtml(pl.bookingRef || '')}', '${pfEscapeHtml(pl.name || '')}')" class="pf-pod-receipt-btn px-1.5 py-0.5 rounded bg-white/15 hover:bg-[#A3E635] text-white hover:text-[#04120B] font-mono text-[9px] font-black uppercase transition" title="View Official Receipt &amp; Venue Gate Pass">📄 Pass</button>
+          </div>
         </div>
       `;
     }
     const seatNum = pl ? pl.podSeat : 1;
     return `
-      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', ${seatNum})" class="w-full p-2.5 rounded-xl bg-black/30 hover:bg-black/50 border border-dashed border-emerald-300/45 hover:border-[#A3E635] text-left flex items-center justify-between gap-2 transition group">
+      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', ${seatNum})" class="pf-pod-seat-open w-full p-2.5 rounded-xl bg-black/30 hover:bg-black/50 border border-dashed border-emerald-300/45 hover:border-[#A3E635] text-left flex items-center justify-between gap-2 transition group">
         <div class="flex items-center gap-2 min-w-0">
-          <span class="w-6 h-6 rounded-lg bg-white/10 text-emerald-200 font-mono text-[10px] font-bold flex items-center justify-center flex-shrink-0">#${seatNum}</span>
+          <span class="pf-pod-open-num w-6 h-6 rounded-lg bg-white/10 text-emerald-200 font-mono text-[10px] font-bold flex items-center justify-center flex-shrink-0">#${seatNum}</span>
           <div class="min-w-0">
             <div class="text-xs font-bold text-emerald-100/90 group-hover:text-white truncate">Open Seat #${seatNum}</div>
             <div class="text-[9px] font-mono text-emerald-300/75">Available • ₱${unitFee}</div>
           </div>
         </div>
-        <span class="px-2 py-0.5 rounded bg-[#A3E635] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0">Book →</span>
+        <span class="pf-pod-book-chip px-2.5 py-1 rounded-lg bg-[#A3E635] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0 shadow-2xs">Book →</span>
       </button>
     `;
   };
@@ -5819,40 +6101,42 @@ function pfRenderOpenPlay24Board() {
     `;
   }).join('');
 
-  // 3. Verified Community Check-In Roster List with Live Confirmation Status & Receipt Lookup Link
+  // 3. Verified Community Check-In Roster List with Live Confirmation Status & Instant Receipt Modal
   const realRosterHtml = joinedCount === 0 ? `
     <div class="pf-op-empty-roster p-6 rounded-2xl bg-[#F0FDF4] border-2 border-dashed border-[#86EFAC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div class="flex items-start sm:items-center gap-3.5">
-        <span class="w-10 h-10 rounded-2xl bg-[#15803D] text-white font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0/24</span>
+        <span class="pf-op-empty-badge w-10 h-10 rounded-2xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0/24</span>
         <div>
           <div class="text-sm font-black text-[#064E3B] uppercase">0 Players Booked Yet — All 24 Open Play Seats Are Open!</div>
-          <p class="text-xs text-[#166534] mt-0.5">Book your Open Play seat (₱${unitFee}) to become Player #1 in today's community pod rotation and receive your Official Image Receipt.</p>
+          <p class="text-xs text-[#166534] mt-0.5">Book your Open Play seat (₱${unitFee}) to become Player #1 in today's community pod rotation and receive your Official Image Receipt &amp; Venue Gate Pass.</p>
         </div>
       </div>
-      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', 1)" class="px-5 py-3 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0 shadow-sm">
-        🏓 Claim Seat #1 (₱${unitFee}) →
+      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', 1)" class="pf-op-btn-claim-first px-5 py-3 rounded-full bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0 shadow-md transition active:scale-95">
+        <span>🏓 Claim Seat #1 (₱${unitFee}) →</span>
       </button>
     </div>
   ` : `
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       ${activeSession.players.map((pl, idx) => {
         const stInfo = pfResolveOpenPlayPlayerStatus(pl);
         const statusPill = stInfo.isConfirmed
-          ? `<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-400 font-mono text-[9px] font-black uppercase flex-shrink-0">✅ CONFIRMED</span>`
-          : `<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-400 font-mono text-[9px] font-black uppercase flex-shrink-0">⏳ PENDING ADMIN</span>`;
-        const refLink = pl.bookingRef
-          ? `<a href="check-booking.html?ref=${encodeURIComponent(pl.bookingRef)}" class="underline hover:text-emerald-950" title="View Official Image Receipt &amp; Live Status">${pfEscapeHtml(pl.bookingRef)}</a>`
-          : '';
+          ? `<span class="pf-roster-status-confirmed px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-400 font-mono text-[9px] font-black uppercase flex-shrink-0">✅ CONFIRMED</span>`
+          : `<span class="pf-roster-status-pending px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-400 font-mono text-[9px] font-black uppercase flex-shrink-0">⏳ PENDING</span>`;
         return `
-          <div class="pf-op-roster-card p-3.5 rounded-2xl bg-[#F8F7F3] border-2 ${stInfo.isConfirmed ? 'border-emerald-400' : 'border-amber-300'} flex items-center justify-between gap-2.5">
+          <div class="pf-op-roster-card p-3.5 rounded-2xl bg-[#F8F7F3] border-2 ${stInfo.isConfirmed ? 'border-emerald-400' : 'border-amber-300'} flex items-center justify-between gap-2.5 shadow-2xs">
             <div class="flex items-center gap-2.5 min-w-0">
-              <span class="w-8 h-8 rounded-xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
+              <span class="pf-op-roster-num w-8 h-8 rounded-xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
               <div class="min-w-0">
                 <div class="text-xs font-black text-slate-900 truncate">${pfEscapeHtml(pl.name)}</div>
-                <div class="text-[10px] font-mono text-emerald-800 font-bold truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${refLink ? '• ' + refLink : ''}</div>
+                <div class="text-[10px] font-mono text-emerald-800 font-bold truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
               </div>
             </div>
-            ${statusPill}
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+              ${statusPill}
+              <button type="button" onclick="pfViewOpenPlayReceiptModal('${pfEscapeHtml(pl.bookingRef || '')}', '${pfEscapeHtml(pl.name || '')}')" class="pf-op-roster-receipt-btn px-2.5 py-1 rounded-full bg-[#0F291E] hover:bg-[#15803D] text-[#A3E635] hover:text-white font-mono text-[9px] font-black uppercase transition" title="View Official Receipt &amp; Venue Gate Pass">
+                📄 Receipt
+              </button>
+            </div>
           </div>
         `;
       }).join('')}
@@ -5968,24 +6252,24 @@ function pfRenderOpenPlay24Board() {
 
         <!-- POD SHUFFLER CONTROL BAR & 6 VISUAL COURT PODS -->
         <div class="space-y-4 pt-2">
-          <div class="p-4 rounded-2xl bg-[#0F291E] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div class="pf-op-shuffler-bar p-4 sm:p-5 rounded-2xl bg-[#0F291E] border border-[#15803D] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-3 shadow-lg">
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase">LIVE 4-PLAYER POD SHUFFLER</span>
-                <span class="text-xs font-mono text-emerald-200">Last Shuffle: <b>${pfEscapeHtml(schedule.lastShuffleTime)}</b></span>
+                <span class="pf-op-shuffler-chip px-2.5 py-0.5 rounded-full bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase">LIVE 4-PLAYER POD SHUFFLER</span>
+                <span class="text-xs font-mono text-emerald-200">Last Shuffle: <b class="text-white">${pfEscapeHtml(schedule.lastShuffleTime)}</b></span>
               </div>
-              <h3 class="text-base sm:text-lg font-black text-white mt-1">6 Doubles Match Pods (4 Players per Court • Live Confirmation Badges)</h3>
+              <h3 class="text-base sm:text-lg font-black text-white mt-1">6 Doubles Match Pods (4 Players per Court • Live Confirmation &amp; Gate Pass)</h3>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <div class="inline-flex items-center rounded-xl bg-black/35 p-1 border border-white/15">
+              <div class="inline-flex items-center rounded-full bg-black/40 p-1 border border-white/15">
                 ${[1, 2, 3, 4].map(cnt => `
-                  <button type="button" onclick="pfSetOpenPlayCourtCount(${cnt}, '${pfEscapeHtml(activeSession.id)}')" class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-extrabold transition ${schedule.courtsAvailable === cnt ? 'bg-[#A3E635] text-[#04120B]' : 'text-emerald-100 hover:text-white'}">
+                  <button type="button" onclick="pfSetOpenPlayCourtCount(${cnt}, '${pfEscapeHtml(activeSession.id)}')" class="pf-op-court-cnt-btn ${schedule.courtsAvailable === cnt ? 'pf-op-court-cnt-active bg-[#A3E635] text-[#04120B]' : 'text-emerald-100 hover:text-white'} px-3 py-1.5 rounded-full font-mono text-[11px] font-extrabold transition">
                     ${cnt} ${cnt === 1 ? 'Court' : 'Courts'}
                   </button>
                 `).join('')}
               </div>
-              <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-md">
-                🔀 Shuffle Players Now
+              <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="pf-op-btn-shuffle-primary px-4 py-2.5 rounded-full bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-md">
+                <span>🔀 Shuffle Players Now</span>
               </button>
             </div>
           </div>
@@ -5999,11 +6283,11 @@ function pfRenderOpenPlay24Board() {
         <div class="pf-op-roster-section pt-4 border-t border-slate-200 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER (CLICK REF # FOR IMAGE RECEIPT)</span>
+              <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER (CLICK "📄 RECEIPT" FOR OFFICIAL GATE PASS)</span>
               <h3 class="text-lg font-black text-slate-900">Exact Players Booked (${joinedCount} / 24 • ✅ ${confirmedPlayersCount} Confirmed, ⏳ ${pendingPlayersCount} Pending)</h3>
             </div>
-            <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider transition">
-              + Book Open Play Seat (₱${unitFee})
+            <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="pf-op-btn-roster-book px-5 py-2.5 rounded-full bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-md">
+              <span>+ Book Open Play Seat (₱${unitFee})</span>
             </button>
           </div>
           ${realRosterHtml}

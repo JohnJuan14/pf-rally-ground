@@ -961,6 +961,14 @@
   
     /* === OPEN PLAY SUBPAGE (open-play.html) DAYLIGHT & NIGHT MODE OPTIMIZATION === */
     /* 1. Daylight Mode (html[data-theme="light"]) Editorial Country-Club Aesthetic */
+    html[data-theme="light"] body {
+      background-color: #F7F6F1 !important;
+      color: #0D1F18 !important;
+    }
+    html[data-theme="light"] header {
+      background: rgba(247, 246, 241, 0.96) !important;
+      border-bottom: 1px solid #E2E0D8 !important;
+    }
     html[data-theme="light"] #open-play-hero-section {
       background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 52%, #DCFCE7 100%) !important;
       border-bottom: 1px solid #BBF7D0 !important;
@@ -977,7 +985,7 @@
     }
     html[data-theme="light"] #open-play-hero-section .pf-op-hero-badge-primary {
       background-color: #D1FAE5 !important;
-      border-color: #6EE7B7 !important;
+      border: 1px solid #6EE7B7 !important;
       color: #065F46 !important;
     }
     html[data-theme="light"] #open-play-hero-section .pf-op-hero-badge-primary span.rounded-full {
@@ -985,27 +993,39 @@
     }
     html[data-theme="light"] #open-play-hero-section .pf-op-hero-badge-secondary {
       background-color: #FFFFFF !important;
-      border-color: #CBD5E1 !important;
+      border: 1px solid #CBD5E1 !important;
       color: #0F172A !important;
     }
-    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-primary {
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-primary,
+    html[data-theme="light"] header .pf-op-header-book-btn {
       background-color: #15803D !important;
       color: #FFFFFF !important;
       border: 1px solid #166534 !important;
       box-shadow: 0 10px 24px -6px rgba(21, 128, 61, 0.35) !important;
     }
-    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-primary * {
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-primary *,
+    html[data-theme="light"] header .pf-op-header-book-btn * {
       color: #FFFFFF !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-primary:hover,
+    html[data-theme="light"] header .pf-op-header-book-btn:hover {
+      background-color: #166534 !important;
     }
     html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-secondary {
       background-color: #FFFFFF !important;
       color: #0F172A !important;
-      border: 1px solid #CBD5E1 !important;
+      border: 1.5px solid #CBD5E1 !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05) !important;
+    }
+    html[data-theme="light"] #open-play-hero-section .pf-op-hero-cta-secondary:hover {
+      background-color: #0F291E !important;
+      color: #FFFFFF !important;
+      border-color: #0F291E !important;
     }
     html[data-theme="light"] #open-play-hero-section .pf-op-step-card {
       background-color: #FFFFFF !important;
-      border: 1px solid #CBD5E1 !important;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+      border: 1.5px solid #CBD5E1 !important;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05) !important;
     }
     html[data-theme="light"] #open-play-hero-section .pf-op-step-card .pf-op-step-title {
       color: #0F172A !important;
@@ -1013,16 +1033,39 @@
     html[data-theme="light"] #open-play-hero-section .pf-op-step-card p {
       color: #475569 !important;
     }
-    html[data-theme="light"] #open-play-hero-section .pf-op-step-card .font-mono {
+    /* Fix 01, 02, 03 step badge contrast so it is NEVER green-on-green in Daylight Mode */
+    html[data-theme="light"] #open-play-hero-section .pf-op-step-card .font-mono:not(.pf-op-step-num) {
       color: #15803D !important;
+      font-weight: 800 !important;
     }
-    html[data-theme="light"] #open-play-hero-section .pf-op-step-num {
-      background-color: #15803D !important;
-      color: #FFFFFF !important;
-      border-color: #15803D !important;
+    html[data-theme="light"] #open-play-hero-section .pf-op-step-card .pf-op-step-num {
+      background-color: #0F291E !important;
+      color: #A3E635 !important;
+      border: 1.5px solid #15803D !important;
+      box-shadow: 0 4px 10px rgba(15, 41, 30, 0.18) !important;
     }
 
-    /* 2. Night Mode (html[data-theme="dark"]) Arena Aesthetic for Open Play Workspace */
+    /* Daylight Mode Workspace Buttons & Cards */
+    html[data-theme="light"] .pf-op-session-btn.pf-op-session-btn-active {
+      background-color: #0F291E !important;
+      border-color: #15803D !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] .pf-op-session-btn.pf-op-session-btn-active .text-xs {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] .pf-op-btn-roster-book,
+    html[data-theme="light"] .pf-op-btn-claim-first {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border: 1px solid #166534 !important;
+    }
+    html[data-theme="light"] .pf-op-btn-roster-book *,
+    html[data-theme="light"] .pf-op-btn-claim-first * {
+      color: #FFFFFF !important;
+    }
+
+    /* 2. Night Mode (html[data-theme="dark"]) Arena Aesthetic for Open Play Subpage */
     html[data-theme="dark"] #open-play-hero-section {
       background:
         radial-gradient(circle at 18% 22%, rgba(155, 230, 0, 0.14) 0%, rgba(0, 114, 206, 0.14) 45%, rgba(5, 14, 29, 0.96) 90%),
@@ -1030,9 +1073,30 @@
       border-bottom: 1px solid rgba(155, 230, 0, 0.24) !important;
       color: #F8FAFC !important;
     }
+    html[data-theme="dark"] #open-play-hero-section .pf-op-hero-cta-primary,
+    html[data-theme="dark"] header .pf-op-header-book-btn {
+      background-color: #9BE600 !important;
+      color: #050E1D !important;
+      border: 1px solid #B4FF00 !important;
+      box-shadow: 0 10px 26px -6px rgba(155, 230, 0, 0.4) !important;
+    }
+    html[data-theme="dark"] #open-play-hero-section .pf-op-hero-cta-primary *,
+    html[data-theme="dark"] header .pf-op-header-book-btn * {
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] #open-play-hero-section .pf-op-hero-cta-secondary {
+      background-color: rgba(14, 34, 64, 0.9) !important;
+      color: #FFFFFF !important;
+      border: 1.5px solid rgba(155, 230, 0, 0.4) !important;
+    }
     html[data-theme="dark"] #open-play-hero-section .pf-op-step-card {
-      background-color: rgba(14, 34, 64, 0.85) !important;
-      border: 1px solid rgba(155, 230, 0, 0.22) !important;
+      background-color: rgba(14, 34, 64, 0.88) !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] #open-play-hero-section .pf-op-step-card .pf-op-step-num {
+      background-color: #9BE600 !important;
+      color: #050E1D !important;
+      border: 1px solid #B4FF00 !important;
     }
     html[data-theme="dark"] .pf-op-session-bar,
     html[data-theme="dark"] .pf-op-stage-card {
@@ -1078,6 +1142,10 @@
     html[data-theme="dark"] .pf-op-stage-left .border-\[\#DEDAD0\] {
       border-color: rgba(155, 230, 0, 0.18) !important;
     }
+    html[data-theme="dark"] .pf-op-shuffler-bar {
+      background-color: #050E1D !important;
+      border-color: rgba(155, 230, 0, 0.35) !important;
+    }
     html[data-theme="dark"] .pf-op-pod-card {
       background-color: #0E2240 !important;
       border-color: rgba(155, 230, 0, 0.22) !important;
@@ -1094,6 +1162,16 @@
     }
     html[data-theme="dark"] .pf-op-roster-section .text-emerald-800 {
       color: #9BE600 !important;
+    }
+    html[data-theme="dark"] .pf-op-btn-roster-book,
+    html[data-theme="dark"] .pf-op-btn-claim-first {
+      background-color: #9BE600 !important;
+      color: #050E1D !important;
+      border: 1px solid #B4FF00 !important;
+    }
+    html[data-theme="dark"] .pf-op-btn-roster-book *,
+    html[data-theme="dark"] .pf-op-btn-claim-first * {
+      color: #050E1D !important;
     }
     html[data-theme="dark"] .pf-op-empty-roster {
       background-color: rgba(14, 34, 64, 0.9) !important;
@@ -1116,7 +1194,6 @@
     html[data-theme="dark"] .pf-op-roster-card a {
       color: #9BE600 !important;
     }
-
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#F7F6F1] text-[#0D1F18]">
@@ -1185,7 +1262,7 @@
           </div>
         </div>
 
-        <!-- Dropdown 2: About -->
+        <!-- Dropdown 2: About (Matches All Subpages) -->
         <div class="pf-nav-dropdown" data-dropdown="about">
           <button type="button" onclick="pfToggleNavDropdown(event, this)" class="pf-nav-dropdown-btn">
             <span>About</span>
@@ -1198,7 +1275,11 @@
             <a href="index.html#location" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
               <span>Location &amp; Map</span>
             </a>
-            <a href="index.html#footer-contact" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
+            <button type="button" onclick="pfCloseAllNavDropdowns(); if(typeof toggleAnnouncementBoard==='function') toggleAnnouncementBoard();" class="pf-nav-dropdown-item w-full text-left">
+              <span>Club Updates</span>
+              <span id="dropdown-ann-badge" class="px-1.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] text-[10px] font-mono font-bold">Live</span>
+            </button>
+            <a href="#footer-contact" onclick="pfCloseAllNavDropdowns(); const f=document.querySelector('footer'); if(f){event.preventDefault(); f.scrollIntoView({behavior:'smooth'});}" class="pf-nav-dropdown-item">
               <span>Contact</span>
             </a>
           </div>
@@ -1209,35 +1290,52 @@
         </a>
       </nav>
 
-      <!-- Right Actions + Theme Toggle + Mobile Menu Button -->
-      <div class="flex items-center gap-2">
+      <!-- Right Action Pill Buttons (Consistent with index.html, pricing.html, book.html & check-booking.html) -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
         <!-- Daylight / Night Court Theme Switcher -->
-        <button type="button" id="pf-theme-toggle-btn" onclick="pfToggleClientTheme()" class="pf-bklit-theme-pill px-3 py-2 rounded-xl bg-[#F6F5F0] hover:bg-slate-200/80 text-[#0D1F18] border border-slate-300 font-mono text-[11px] font-extrabold uppercase tracking-wider transition inline-flex items-center gap-1.5 shadow-2xs" title="Switch between Daylight &amp; Night Court Mode">
+        <button type="button" id="pf-theme-toggle-btn" onclick="pfToggleClientTheme()" class="pf-bklit-theme-pill h-9 sm:h-10 px-3 rounded-full bg-[#F6F5F0] hover:bg-slate-200/80 text-[#0D1F18] border border-slate-300 font-mono text-[11px] font-extrabold uppercase tracking-wider transition inline-flex items-center gap-1.5 shadow-2xs flex-shrink-0" title="Switch between Daylight &amp; Night Court Mode">
           <span id="pf-theme-toggle-icon">🌙</span>
-          <span id="pf-theme-toggle-label" class="hidden sm:inline">Night Court</span>
+          <span id="pf-theme-toggle-label" class="hidden xl:inline">Night Court</span>
         </button>
-        <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-3.5 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition hidden sm:inline-flex items-center gap-1.5 shadow-xs">
-          <span>🏓 Book Open Play (₱150)</span>
+
+        <!-- Book Open Play Seat CTA -->
+        <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="pf-op-header-book-btn whitespace-nowrap h-9 sm:h-10 px-3.5 sm:px-4 rounded-full bg-[#15803D] hover:bg-[#166534] text-white font-black text-[11px] sm:text-xs uppercase tracking-wider transition active:scale-95 hidden sm:inline-flex items-center gap-1.5 shadow-md flex-shrink-0">
+          <span>🏓 Join Open Play (₱150)</span>
         </button>
-        <a href="book.html" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-white font-black text-xs uppercase tracking-wider transition shadow-sm inline-flex items-center gap-1.5">
+
+        <!-- Book Court CTA -->
+        <a href="book.html" class="whitespace-nowrap h-9 sm:h-10 px-3.5 sm:px-4 rounded-full bg-[#0F291E] hover:bg-[#163A2B] text-white border border-[#15803D] font-black text-[11px] sm:text-xs uppercase tracking-wider transition active:scale-95 shadow-md inline-flex items-center gap-1.5 flex-shrink-0">
           <span>Book Court</span>
           <span>→</span>
         </a>
-        <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu" class="lg:hidden p-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 hover:bg-slate-100">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+
+        <!-- Mobile & Tablet Menu Toggle -->
+        <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#050E1D] text-[#9BE600] hover:bg-[#0E2240] border border-[#050E1D] flex items-center justify-center transition active:scale-95 shadow-md flex-shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
     </div>
 
     <!-- Mobile Navigation Drawer -->
-    <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-200 px-4 py-4 space-y-2 shadow-xl">
-      <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 px-2 pb-1">Courts &amp; Play</div>
-      <a href="index.html#schedule" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">📅 Live Court Schedule</a>
-      <a href="open-play.html" class="block px-3.5 py-2.5 rounded-xl font-black text-xs bg-[#0F291E] text-white">🏓 Open Play &amp; Pod Shuffler (₱150)</a>
-      <a href="index.html#tournaments" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">🏆 Official Club Tournaments</a>
-      <a href="pricing.html#court-rates" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">💳 Court Rates &amp; Pricing</a>
-      <a href="book.html" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">🎾 Reserve a Private Court</a>
-      <a href="check-booking.html" class="block px-3.5 py-2.5 rounded-xl font-bold text-xs text-slate-900 hover:bg-slate-100">🔍 Check My Booking</a>
+    <div id="mobile-menu" class="hidden lg:hidden bg-white border-t-2 border-slate-200 text-[#050E1D] px-4 py-3.5 space-y-2 text-xs font-bold shadow-2xl border-b-4 border-b-[#0E8A2D]">
+      <a href="index.html" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-900 hover:text-white text-[#050E1D] font-black transition">
+        <span>Home</span> <span class="font-mono text-[10px]">→</span>
+      </a>
+      <a href="open-play.html" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-[#050E1D] text-[#9BE600] font-black transition">
+        <span>🏓 Open Play &amp; Pod Shuffler (₱150)</span> <span class="text-[#9BE600] font-mono text-[10px]">●</span>
+      </a>
+      <a href="index.html#schedule" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-900 hover:text-white text-[#050E1D] font-bold transition">
+        <span>📅 Live Court Schedule</span> <span class="font-mono text-[10px] text-emerald-700">6AM–12AM</span>
+      </a>
+      <a href="pricing.html#court-rates" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-900 hover:text-white text-[#050E1D] font-bold transition">
+        <span>💳 Court Rates &amp; Gear Rentals</span> <span class="font-mono text-[10px] text-slate-600">₱400/hr</span>
+      </a>
+      <a href="book.html" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-900 hover:text-white text-[#050E1D] font-bold transition">
+        <span>🎾 Reserve a Private Court</span> <span>→</span>
+      </a>
+      <a href="check-booking.html" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-900 hover:text-white text-[#050E1D] font-black transition">
+        <span>🔍 My Booking Pass &amp; Receipt</span> <span>→</span>
+      </a>
     </div>
   </header>
 
@@ -1264,11 +1362,11 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
-          <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="pf-op-hero-cta-primary px-5 py-3.5 rounded-2xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center gap-2">
+          <button type="button" onclick="if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="pf-op-hero-cta-primary px-6 py-3.5 rounded-full bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-lg flex items-center gap-2">
             <span>🏓 Book &amp; Pay Open Play Seat (₱150) →</span>
           </button>
-          <a href="check-booking.html" class="pf-op-hero-cta-secondary px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-extrabold text-xs uppercase tracking-wider transition">
-            🔍 My Booking Pass
+          <a href="check-booking.html" class="pf-op-hero-cta-secondary px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/15 text-white border border-white/20 font-extrabold text-xs uppercase tracking-wider transition active:scale-95 inline-flex items-center gap-1.5">
+            <span>🔍 My Booking Pass &amp; Receipt</span>
           </a>
         </div>
       </div>
@@ -1303,7 +1401,7 @@
   <!-- ================= MAIN OPEN PLAY SHUFFLER WORKSPACE ================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
     <div id="open-play-dedicated-page-root" class="space-y-6">
-      <!-- Populated automatically by pfRenderOpenPlay24Board() in app.js?v=20261106v13 -->
+      <!-- Populated automatically by pfRenderOpenPlay24Board() in app.js?v=20261106v14 -->
     </div>
   </main>
 
@@ -1380,7 +1478,73 @@
     </div>
   </footer>
 
-  <script src="app.js?v=20261106v13"></script>
+  <!-- FLOATING CLUB UPDATES & ADVISORIES BOARD (CONSISTENT ACROSS ALL SUBPAGES) -->
+  <div id="announcement-floating-root" class="fixed bottom-4 left-3 sm:bottom-6 sm:left-6 z-40 flex flex-col items-start">
+    <div id="announcement-board-window" class="hidden mb-3 w-[calc(100vw-1.5rem)] sm:w-[410px] max-h-[76dvh] rounded-2xl bg-[#F6F5F0] text-[#0D1F18] border border-[#D5D3CC] shadow-[0_24px_60px_rgba(13,31,24,0.22)] flex flex-col overflow-hidden">
+      <div class="h-1 w-full bg-gradient-to-r from-[#0D1F18] via-[#15803D] to-[#C85A32] flex-shrink-0"></div>
+      <div class="px-4 py-3.5 bg-white border-b border-[#E2E0D8] flex items-center justify-between gap-2 flex-shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="relative flex-shrink-0">
+            <img src="assets/logo.png" data-site-logo="1" alt="P&amp;F Admin" class="w-10 h-10 rounded-xl object-contain bg-white p-0.5 border border-[#E2E0D8] shadow-sm">
+            <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#15803D] ring-2 ring-white animate-pulse"></span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <h3 class="text-xs sm:text-sm font-bold tracking-tight text-[#0D1F18] truncate">Club Updates &amp; Advisories</h3>
+              <span class="px-2 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[9px] font-mono font-bold uppercase">Live</span>
+            </div>
+            <p class="text-[11px] text-[#52605A] font-medium truncate">Official news, Open Play schedules &amp; court advisories</p>
+          </div>
+        </div>
+        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#52605A] hover:text-white border border-[#E2E0D8] flex items-center justify-center text-xs font-bold transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
+      </div>
+      <div id="public-announcement-feed" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 bg-[#F6F5F0] overscroll-contain touch-scroll">
+        <article class="rounded-2xl bg-white border border-[#E2E0D8] p-3.5 sm:p-4 shadow-sm space-y-2.5 text-[#0D1F18]">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <img src="assets/logo.png" alt="P&amp;F" class="w-8 h-8 rounded-lg object-contain bg-[#F6F5F0] p-0.5 border border-[#E2E0D8] flex-shrink-0">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-xs font-bold text-[#0D1F18] truncate">P&amp;F Rally Ground Admin</span>
+                  <span class="pf-pill px-2 py-0.5 rounded-full border text-[9px] font-mono font-bold uppercase tracking-wider bg-[#D1FAE5] text-[#065F46] border-[#6EE7B7]">Club Update</span>
+                </div>
+                <span class="text-[10px] font-mono text-[#52605A] block font-medium">Official Broadcast</span>
+              </div>
+            </div>
+            <span class="pf-pill px-2 py-0.5 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] text-[9px] font-mono font-bold uppercase flex-shrink-0">📌 Pinned</span>
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">Welcome to P&amp;F Rally Ground Pickleball Club!</h4>
+            <p class="text-xs text-[#334139] leading-relaxed font-normal">All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Official Open Play runs Tue–Thu (4:00 PM – 8:00 PM) &amp; Fri–Sat (6:00 PM – 10:00 PM) at ₱150/participant!</p>
+          </div>
+        </article>
+      </div>
+      <div class="px-4 py-3 bg-white border-t border-[#E2E0D8] flex items-center justify-between gap-2 text-[11px] flex-shrink-0">
+        <span class="text-[#52605A] font-mono font-semibold flex items-center gap-1.5 truncate">
+          <span class="w-2 h-2 rounded-full bg-[#15803D]"></span>
+          <span>P&amp;F Rally Ground Desk</span>
+        </span>
+        <button type="button" onclick="toggleAnnouncementBoard(); if(typeof pfOpenJoinOpenPlayModal==='function') pfOpenJoinOpenPlayModal();" class="px-3.5 py-1.5 rounded-xl bg-[#0D1F18] hover:bg-[#15803D] text-white font-bold tracking-wide text-[11px] transition flex-shrink-0 shadow-sm">
+          Book Open Play (₱150) →
+        </button>
+      </div>
+    </div>
+
+    <button type="button" id="announcement-launcher-btn" onclick="toggleAnnouncementBoard()" class="group relative flex items-center gap-2.5 bg-white/95 backdrop-blur-md text-[#0D1F18] border border-[#D5D3CC] hover:border-[#15803D] shadow-[0_12px_32px_rgba(13,31,24,0.14)] px-3.5 py-2.5 rounded-2xl transition-all active:scale-95">
+      <div class="w-9 h-9 rounded-xl bg-[#0D1F18] text-[#A7F3D0] flex items-center justify-center relative flex-shrink-0 shadow-sm">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#10B981] ring-2 ring-white animate-pulse"></span>
+      </div>
+      <div class="text-left pr-0.5">
+        <span class="text-[9px] font-mono uppercase tracking-widest text-[#15803D] font-bold block leading-none">News &amp; Advisories</span>
+        <span class="text-xs font-bold text-[#0D1F18] block leading-tight mt-0.5">Club Updates</span>
+      </div>
+      <span id="ann-floating-badge" class="bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] rounded-full px-2 py-0.5 text-[10px] font-mono font-bold flex items-center justify-center leading-none">2</span>
+      <span id="floating-ann-badge" class="hidden">1</span>
+    </button>
+  </div>
+
+  <script src="app.js?v=20261106v14"></script>
   <script>
     function pfSyncThemeToggleButtons(mode) {
       const isDark = mode === 'dark';

@@ -3144,19 +3144,20 @@ button.pf-trn-btn-danger:hover,
           </div>
         </div>
 
-        <!-- Venue Gate QR Code -->
-        <div class="my-6 p-3.5 rounded-2xl bg-white max-w-[165px] mx-auto text-center shadow-lg">
-          <img id="res-gate-qr" src="assets/qr-gcash.png" alt="Venue Check-in QR" class="w-full h-auto">
-          <span class="text-[9px] font-mono text-slate-800 font-bold uppercase block mt-1">Venue Gate Pass</span>
-        </div>
-
-        <!-- Official Downloadable Image Receipt Preview -->
-        <div id="res-image-receipt-preview-wrap" class="hidden my-5 p-3.5 rounded-2xl bg-brand-black/80 border border-brand-lime/40 text-center space-y-2.5">
-          <div class="flex items-center justify-between text-[10px] font-mono font-bold uppercase text-brand-lime px-1">
-            <span>📄 Official Digital Image Receipt (PNG)</span>
-            <button type="button" onclick="pfDownloadCurrentBookingReceiptImage()" class="underline font-black">Download PNG ↓</button>
+        <!-- Official Downloadable Image Receipt & Embedded Venue Gate Pass QR -->
+        <div id="res-image-receipt-preview-wrap" class="my-5 p-4 rounded-2xl bg-brand-black/90 border-2 border-brand-lime/50 text-center space-y-3 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono font-black uppercase px-1">
+            <span id="res-receipt-status-pill" class="px-2.5 py-1 rounded-full bg-brand-lime/20 text-brand-lime border border-brand-lime/40">
+              📄 Official E-Receipt &amp; Venue Gate Pass (PNG)
+            </span>
+            <button type="button" onclick="pfDownloadCurrentBookingReceiptImage()" class="px-3 py-1 rounded-full bg-[#15803D] hover:bg-[#166534] text-white font-black transition">
+              📥 Download Receipt &amp; Gate Pass ↓
+            </button>
           </div>
-          <img id="res-generated-receipt-img" src="" alt="Official Booking Image Receipt" class="w-full max-w-sm h-auto rounded-xl border border-white/15 mx-auto shadow-lg">
+          <p id="res-receipt-helper-note" class="text-[11px] text-slate-300 leading-relaxed">
+            Your <b>Venue Gate Pass QR Code</b> is embedded directly on your Official Receipt below. Present this image at the P&amp;F Rally Ground Front Desk upon arrival.
+          </p>
+          <img id="res-generated-receipt-img" src="" alt="Official Booking Image Receipt &amp; Venue Gate Pass" class="w-full max-w-md h-auto rounded-xl border border-white/20 mx-auto shadow-2xl">
         </div>
 
         <!-- Action Buttons -->
@@ -3864,7 +3865,7 @@ button.pf-trn-btn-danger:hover,
           </div>
           <div class="space-y-1">
             <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">Welcome to P&amp;F Rally Ground Pickleball Club!</h4>
-            <p class="text-xs text-[#334139] leading-relaxed font-normal">All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs daily from 3:00 PM – 6:00 PM across all courts (₱150/player)!</p>
+            <p class="text-xs text-[#334139] leading-relaxed font-normal">All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs Tue–Thu (4:00 PM – 8:00 PM) & Fri–Sat (6:00 PM – 10:00 PM) at ₱150/participant!</p>
           </div>
         </article>
         <article class="rounded-2xl bg-white border border-[#E2E0D8] p-3.5 sm:p-4 shadow-sm space-y-2.5 text-[#0D1F18]">
@@ -3881,8 +3882,8 @@ button.pf-trn-btn-danger:hover,
             </div>
           </div>
           <div class="space-y-1">
-            <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">Daily Open Play • 3:00 PM – 6:00 PM (₱150/player)</h4>
-            <p class="text-xs text-[#334139] leading-relaxed font-normal">Join our daily community Open Play session across Courts 1 – 4 from 3:00 PM to 6:00 PM! All skill levels are welcome — bring your paddle or rent pro gear at the club.</p>
+            <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">Official Open Play • Tue–Thu 4–8 PM & Fri–Sat 6–10 PM (₱150/participant)</h4>
+            <p class="text-xs text-[#334139] leading-relaxed font-normal">Join our community Open Play sessions (Tue–Thu 4:00 PM – 8:00 PM & Fri–Sat 6:00 PM – 10:00 PM)! All skill levels are welcome — bring your paddle or rent pro gear at the club.</p>
           </div>
         </article>
       </div>
@@ -3965,7 +3966,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261106v13"></script>
+<script src="app.js?v=20261106v14"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -5122,10 +5123,29 @@ Your booking is now waiting in the Admin Portal for approval!`);
       setTxt('res-payref', data.transactionRef || 'N/A');
       const amt = Number(data.total || 0);
       setTxt('res-total', '₱' + amt.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-      setTxt('res-status-badge', data.status || 'PENDING VERIFICATION');
-      const gateQr = document.getElementById('res-gate-qr');
-      if (gateQr && data.ref) {
-        gateQr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(data.ref);
+      const stUpper = String(data.status || 'PENDING').toUpperCase().trim();
+      const isConfirmedBk = (stUpper === 'CONFIRMED' || stUpper === 'APPROVED' || stUpper === 'CHECKED IN' || stUpper === 'PAID');
+      setTxt('res-status-badge', isConfirmedBk ? '✅ CONFIRMED BY ADMIN' : (data.status || '⏳ PENDING VERIFICATION'));
+      const badgeEl = document.getElementById('res-status-badge');
+      if (badgeEl) {
+        badgeEl.className = isConfirmedBk
+          ? 'px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-300 font-mono text-xs font-black uppercase tracking-wider'
+          : 'px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400 text-amber-300 font-mono text-xs font-black uppercase tracking-wider';
+      }
+      const receiptPill = document.getElementById('res-receipt-status-pill');
+      const receiptNote = document.getElementById('res-receipt-helper-note');
+      if (receiptPill) {
+        receiptPill.textContent = isConfirmedBk
+          ? '✅ OFFICIAL CONFIRMED RECEIPT & VENUE GATE PASS'
+          : '⏳ SUBMITTED RECEIPT & GATE PASS (PENDING ADMIN)';
+        receiptPill.className = isConfirmedBk
+          ? 'px-2.5 py-1 rounded-full bg-emerald-500/25 text-emerald-300 border border-emerald-400 font-mono text-[10px] font-black uppercase'
+          : 'px-2.5 py-1 rounded-full bg-amber-500/25 text-amber-200 border border-amber-400 font-mono text-[10px] font-black uppercase';
+      }
+      if (receiptNote) {
+        receiptNote.innerHTML = isConfirmedBk
+          ? '✅ <b>Booking Confirmed!</b> Your official confirmed receipt with embedded <b>Venue Gate Pass QR</b> is ready below. Present this at the Front Desk for instant court entry.'
+          : '⏳ <b>Awaiting Admin Confirmation:</b> Your submitted receipt with embedded <b>Venue Gate Pass QR</b> is below. Once Admin verifies your payment, this receipt automatically upgrades to <b>✅ CONFIRMED</b>.';
       }
       if (typeof window.pfGenerateOpenPlayReceiptImageDataUrl === 'function') {
         window.pfGenerateOpenPlayReceiptImageDataUrl(data).then(url => {
