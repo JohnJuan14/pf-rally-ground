@@ -236,14 +236,19 @@ const courtNames = {
 
 // ================= REAL-TIME SERVER SYNC =================
 
-async function syncStateFromServer() {
-  const endpoints = pfGetApiEndpoints('/api/state');
+async function syncStateFromServer(forceFull = false) {
+  const sinceParam = (!forceFull && window.__pfLastServerVersion) ? `&since=${encodeURIComponent(window.__pfLastServerVersion)}` : '';
+  const endpoints = pfGetApiEndpoints(`/api/state?lite=1${sinceParam}`);
   for (const url of endpoints) {
     try {
       const res = await fetch(url, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
+        if (data && data.unchanged === true) {
+          return sharedServerState;
+        }
         if (data && Array.isArray(data.bookings)) {
+          if (data.version) window.__pfLastServerVersion = String(data.version);
           let localBlocks = [];
           try { localBlocks = JSON.parse(localStorage.getItem('pf_court_blocks') || '[]') || []; } catch (e) {}
           const localBlocksTs = Number(localStorage.getItem('pf_court_blocks_updated_at') || 0);
@@ -2017,8 +2022,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('slide-0')) {
     startCarouselTimer();
   }
-  // Poll every 4 seconds so Admin changes (blocks/confirmations) reflect live
-  setInterval(syncStateFromServer, 2500);
+  // Bandwidth-optimized delta poll (skips hidden tabs & returns 65-byte unchanged response via ?since=)
+  const isLocalHost = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  setInterval(() => {
+    if (document.hidden) return;
+    syncStateFromServer(false);
+  }, isLocalHost ? 3500 : 10000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) syncStateFromServer(false);
+  });
 });
 
 

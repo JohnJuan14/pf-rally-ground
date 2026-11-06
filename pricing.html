@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" data-theme="dark" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <title>Court Rates, Regulars & Pro Shop Gear | P&F Rally Ground Pickleball</title>
@@ -1218,8 +1218,8 @@
     html[data-theme="light"] #schedule-table-head,
     html[data-theme="light"] #schedule-table-head th,
     html[data-theme="light"] #schedule-table-head span,
-    html[data-theme="light"] .bg-\[\#050E1D\],
-    html[data-theme="light"] .bg-\[\#050E1D\] *,
+    html[data-theme="light"] :not(body):not(main):not(section).bg-\[\#050E1D\],
+    html[data-theme="light"] :not(body):not(main):not(section).bg-\[\#050E1D\] *,
     html[data-theme="light"] .bg-\[\#0D1F18\],
     html[data-theme="light"] .bg-\[\#0D1F18\] *,
     html[data-theme="light"] .bg-\[\#0F291E\],
@@ -2572,6 +2572,202 @@ button.pf-trn-btn-danger:hover,
     }
     html[data-theme="dark"] #announcement-board-window > div:last-child button:hover {
       background: #B4FF00 !important;
+      color: #050E1D !important;
+    }
+
+  
+    
+    
+    
+    /* === V3.0 BULLETPROOF DAYLIGHT & NIGHT MODE CONTRAST FIX === */
+    /* Expired / Past Time Slots: Crisp & Legible in Both Modes */
+    .pf-cal-slot-past,
+    html[data-theme="light"] .pf-cal-slot-past {
+      background-color: #F1F5F9 !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #334155 !important;
+      opacity: 1 !important;
+      cursor: not-allowed !important;
+    }
+    .pf-cal-slot-past span,
+    html[data-theme="light"] .pf-cal-slot-past span {
+      color: #475569 !important;
+      opacity: 1 !important;
+    }
+    html[data-theme="dark"] .pf-cal-slot-past {
+      background-color: #08182E !important;
+      border: 1px solid rgba(148, 163, 184, 0.35) !important;
+      color: #CBD5E1 !important;
+      opacity: 1 !important;
+      cursor: not-allowed !important;
+    }
+    html[data-theme="dark"] .pf-cal-slot-past span {
+      color: #94A3B8 !important;
+      opacity: 1 !important;
+    }
+
+    /* Header Active Nav Dropdown & Book Court CTA in Daylight Mode */
+    html[data-theme="light"] .pf-nav-dropdown:hover .pf-nav-dropdown-btn,
+    html[data-theme="light"] .pf-nav-dropdown.open .pf-nav-dropdown-btn,
+    html[data-theme="light"] .pf-nav-dropdown-btn.active,
+    html[data-theme="light"] .pf-nav-dropdown-btn.active * {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: #15803D !important;
+    }
+    html[data-theme="light"] header button[onclick*="openBookingDrawer"],
+    html[data-theme="light"] header button[onclick*="openBookingDrawer"] * {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] #pf-theme-toggle-btn {
+      background-color: #F6F5F0 !important;
+      color: #0D1F18 !important;
+      border: 1px solid rgba(13, 31, 24, 0.2) !important;
+    }
+    html[data-theme="light"] #pf-theme-toggle-btn * {
+      color: #0D1F18 !important;
+    }
+
+    /* Reserve Your Court (book.html) Daylight Mode Complete Typography & Surface Contrast */
+    html[data-theme="light"] body main > div h1 {
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main > div p {
+      color: #334155 !important;
+    }
+    html[data-theme="light"] body main section.bg-white,
+    html[data-theme="light"] body main section.bg-brand-card,
+    html[data-theme="light"] body main section[class*="bg-brand-card"],
+    html[data-theme="light"] body main .pf-book-summary-card,
+    html[data-theme="light"] body main .pf-book-verified-card {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+      box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.06) !important;
+    }
+    html[data-theme="light"] body main .pf-book-summary-card h3,
+    html[data-theme="light"] body main .pf-book-summary-card #summary-date,
+    html[data-theme="light"] body main .pf-book-summary-card #summary-time,
+    html[data-theme="light"] body main .pf-book-summary-card #summary-players,
+    html[data-theme="light"] body main .pf-book-summary-card #summary-court-cost,
+    html[data-theme="light"] body main .pf-book-summary-card #summary-extra-cost,
+    html[data-theme="light"] body main .pf-book-summary-card #summary-gear-cost,
+    html[data-theme="light"] body main .pf-book-summary-card .text-white {
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main .pf-book-summary-card .text-slate-400,
+    html[data-theme="light"] body main .pf-book-summary-card .text-slate-300,
+    html[data-theme="light"] body main #submit-validation-hint {
+      color: #475569 !important;
+    }
+    html[data-theme="light"] body main .pf-book-summary-card #summary-court,
+    html[data-theme="light"] body main .pf-book-summary-card #summary-grand-total {
+      color: #15803D !important;
+    }
+    html[data-theme="light"] body main #payment-section #payment-gate-notice {
+      color: #B45309 !important;
+    }
+    html[data-theme="light"] body main #payment-controls #book-pay-gcash,
+    html[data-theme="light"] body main #payment-controls #book-pay-maya,
+    html[data-theme="light"] body main #payment-controls #book-pay-bank {
+      background-color: #F8FAFC !important;
+      border-color: #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-controls .bg-brand-card {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-controls [data-pay-field="gcash-name"],
+    html[data-theme="light"] body main #payment-controls [data-pay-field="maya-name"],
+    html[data-theme="light"] body main #payment-controls [data-pay-field="bank-name"],
+    html[data-theme="light"] body main #payment-controls label[for="book-payment-ref"] {
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-controls #book-payment-ref {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #15803D !important;
+      color: #0F172A !important;
+    }
+
+    /* Reserve Your Court (book.html) Night Mode Step 1 & Step 7 Contrast Fix */
+    html[data-theme="dark"] body main section.bg-white h2,
+    html[data-theme="dark"] body main section.bg-white .text-slate-900 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body main section.bg-white .text-emerald-700 {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] body main section.bg-white .text-slate-600 {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="dark"] body main section.bg-white #selected-date-label,
+    html[data-theme="dark"] body main section.bg-white label.bg-slate-100 {
+      background-color: #050E1D !important;
+      border-color: rgba(155, 230, 0, 0.3) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main section.bg-white #book-native-date-picker {
+      color: #F8FAFC !important;
+      color-scheme: dark;
+    }
+    html[data-theme="dark"] body main .pf-policy-consent-card {
+      background-color: #050E1D !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+      color: #F8FAFC !important;
+    }
+    html[data-theme="dark"] body main .pf-policy-consent-card .text-slate-900 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body main .pf-policy-consent-card .text-slate-600 {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="dark"] body main .pf-policy-consent-card button {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] body main .pf-book-verified-card p {
+      color: #CBD5E1 !important;
+    }
+
+    /* Pricing & Subpages Daylight/Night Contrast Fixes */
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] {
+      background-color: #F6F5F0 !important;
+      color: #0D1F18 !important;
+      border: 1px solid rgba(13, 31, 24, 0.2) !important;
+    }
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] span:not(#header-ann-badge) {
+      color: #15803D !important;
+    }
+    html[data-theme="light"] header #header-ann-badge {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] main .text-emerald-400,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) .text-emerald-400 {
+      color: #15803D !important;
+    }
+    html[data-theme="light"] main a.bg-white\/10,
+    html[data-theme="light"] body > section:not(.min-h-\[92vh\]):not(.py-28) a.bg-white\/10 {
+      background-color: #0F291E !important;
+      color: #FFFFFF !important;
+      border: 1px solid #15803D !important;
+    }
+    html[data-theme="dark"] .bg-\[\#0072CE\] .text-slate-400,
+    html[data-theme="dark"] [class*="bg-[#0072CE]"] .text-slate-400,
+    html[data-theme="dark"] footer .text-slate-400,
+    html[data-theme="dark"] body .text-slate-400 {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="light"] .hero-cta-primary,
+    html[data-theme="light"] .hero-cta-primary * {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] .hero-cta-primary,
+    html[data-theme="dark"] .hero-cta-primary * {
+      background-color: #9BE600 !important;
       color: #050E1D !important;
     }
 

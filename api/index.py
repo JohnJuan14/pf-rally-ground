@@ -586,8 +586,35 @@ class handler(http.server.BaseHTTPRequestHandler):
         parsed = parsed._replace(path=resolve_api_route(parsed))
         db = load_db()
         if parsed.path == "/api/state":
+            qs = urllib.parse.parse_qs(parsed.query)
+            since_ver = (qs.get("since") or [""])[0].strip()
+            is_lite = (qs.get("lite") or [""])[0].strip() in ("1", "true")
+            ts_vals = [
+                int(db.get("updatedAt") or 0),
+                int(db.get("bookingsUpdatedAt") or 0),
+                int(db.get("blocksUpdatedAt") or 0),
+                int(db.get("announcementsUpdatedAt") or 0),
+                int((db.get("siteConfig") or {}).get("updatedAt") or 0),
+            ]
+            srv_ver = f"{max(ts_vals)}-{len(db.get('bookings') or [])}-{len(db.get('blocks') or [])}-{len(db.get('announcements') or [])}-{len(db.get('inventory') or [])}-{len(db.get('salesLedger') or [])}-{len(db.get('expenses') or [])}"
+            if since_ver and since_ver == srv_ver:
+                self._send_json({"ok": True, "unchanged": True, "version": srv_ver, "updatedAt": max(ts_vals)})
+                return
             public_state = {k: v for k, v in db.items() if k != "adminPassword"}
-            public_state["sales"] = db.get("salesLedger", [])
+            public_state["version"] = srv_ver
+            if is_lite:
+                lite_bookings = []
+                for b in (db.get("bookings") or []):
+                    if isinstance(b, dict):
+                        bc = {bk: bv for bk, bv in b.items() if bk != "receiptDataUrl"}
+                        bc["hasReceipt"] = bool(b.get("receiptDataUrl"))
+                        lite_bookings.append(bc)
+                public_state["bookings"] = lite_bookings
+                public_state.pop("salesLedger", None)
+                public_state.pop("expenses", None)
+                public_state.pop("securityLog", None)
+            else:
+                public_state["sales"] = db.get("salesLedger", [])
             public_state["passwordProtected"] = True
             gcfg = dict(db.get("gmailConfig") or {})
             gcfg["hasAppPassword"] = bool((gcfg.get("appPassword") or "").strip())
