@@ -1428,6 +1428,7 @@ html[data-adm-theme="dark"] td div.bg-\[\#DBEAFE\] {
   
     
     
+    
     /* === V3.0 ADMIN AUTH GATE & SIDEBAR BADGE CONTRAST FIX === */
     html body #admin-auth-gate #admin-auth-card {
       background: #FFFFFF !important;
@@ -5170,11 +5171,10 @@ function clearFieldError(fieldId) {
     ];
 
     const ADMIN_OPEN_PLAY_BY_DAY = {
-      1: { start: 15, end: 18 },
-      2: { start: 15, end: 20 },
-      3: { start: 15, end: 20 },
-      4: { start: 15, end: 20 },
-      5: { start: 15, end: 23 },
+      2: { start: 16, end: 20 },
+      3: { start: 16, end: 20 },
+      4: { start: 16, end: 20 },
+      5: { start: 18, end: 22 },
       6: { start: 18, end: 22 }
     };
 
@@ -5195,11 +5195,22 @@ function clearFieldError(fieldId) {
       return ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
     }
 
-    function isAdminOpenPlaySlot(slotStr, courtNum) {
+    function isAdminOpenPlaySlot(slotStr, courtNum, dateYMDInput) {
       if (!slotStr) return false;
       const cfg = (typeof currentSiteConfig !== 'undefined' && currentSiteConfig) ? currentSiteConfig : {};
       if (cfg.openPlayEnabled === false) return false;
-      const slots = Array.isArray(cfg.openPlaySlots) ? cfg.openPlaySlots : ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
+      let slots = [];
+      if (cfg.openPlaySlotsCustomized === true && Array.isArray(cfg.openPlaySlots)) {
+        slots = cfg.openPlaySlots;
+      } else {
+        const targetYMD = (dateYMDInput && /^\d{4}-\d{2}-\d{2}$/.test(String(dateYMDInput)))
+          ? String(dateYMDInput)
+          : ((typeof getAdminSelectedDateYMD === 'function') ? getAdminSelectedDateYMD() : getAdminLocalTodayYMD());
+        const _ymdParts = targetYMD.split('-').map(Number);
+        const dow = new Date(Date.UTC(_ymdParts[0], (_ymdParts[1] || 1) - 1, _ymdParts[2] || 1)).getUTCDay();
+        if (dow >= 2 && dow <= 4) slots = ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
+        else if (dow === 5 || dow === 6) slots = ['06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM'];
+      }
       if (!slots.includes(String(slotStr).trim())) return false;
       if (courtNum !== undefined && courtNum !== null && String(courtNum).toUpperCase() !== 'ALL') {
         const cNum = extractAdminCourtNum(courtNum);
@@ -6292,6 +6303,17 @@ function clearFieldError(fieldId) {
       const target = bookings.find(b => b.ref === ref);
       if (target) {
         target.status = 'CONFIRMED';
+        if (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySessions)) {
+          currentSiteConfig.openPlaySessions.forEach(s => {
+            if (s && Array.isArray(s.players)) {
+              s.players.forEach(pl => {
+                if (pl && String(pl.bookingRef || '').toUpperCase() === String(ref || '').toUpperCase()) {
+                  pl.status = 'CONFIRMED';
+                }
+              });
+            }
+          });
+        }
         if (!salesLedger.some(s => s.ref === ref)) {
           const amt = Number(String(target.total || 400).replace(/[^0-9.]/g, '') || 400);
           const isTrn = Boolean(target.isTournament || String(target.ref || '').startsWith('PF-TRN') || /tournament/i.test(String(target.court || '')));
@@ -6327,6 +6349,13 @@ function clearFieldError(fieldId) {
       const target = bookings.find(b => b.ref === ref);
       if (target) {
         target.status = 'DECLINED';
+        if (currentSiteConfig && Array.isArray(currentSiteConfig.openPlaySessions)) {
+          currentSiteConfig.openPlaySessions.forEach(s => {
+            if (s && Array.isArray(s.players)) {
+              s.players = s.players.filter(pl => String((pl && pl.bookingRef) || '').toUpperCase() !== String(ref || '').toUpperCase());
+            }
+          });
+        }
         salesLedger = salesLedger.filter(s => s.ref !== ref);
         appendLocalSecurityAuditLog('BOOKING_DECLINED', `Booking ${ref} marked DECLINED by Admin`);
         saveAdminState(true);
@@ -6663,6 +6692,7 @@ function clearFieldError(fieldId) {
       const deletedRefs = getDeletedBookingRefsSet();
       const matchedBooking = bookings.find(b => {
         if (!b || b.status === 'DECLINED' || b.status === 'CANCELLED') return false;
+        if (b.isOpenPlay || /^PF-OP-/i.test(String(b.ref || '')) || /open\s*play/i.test(String(b.court || '')) || /open\s*play/i.test(String(b.courtName || ''))) return false;
         const ru = String(b.ref || '').trim().toUpperCase();
         if (ru && deletedRefs.has(ru)) return false;
         const bCourt = String(b.court || '');
@@ -14865,8 +14895,8 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
     const ADMIN_DEFAULT_OPEN_PLAY_SESSIONS = [
       {
         id: 'op-afternoon-social',
-        title: 'Afternoon Social Open Play',
-        schedule: 'Daily • 03:00 PM – 06:00 PM',
+        title: 'Tue – Thu Open Play (Drop In. Rally On.)',
+        schedule: 'Tuesday – Thursday • 04:00 PM – 08:00 PM',
         skillLevel: 'All Skill Levels (Beginner – Intermediate)',
         rotationRule: '4-Player Doubles Pods • Shuffle Players Every Round',
         entryFee: 150,
@@ -14895,14 +14925,14 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
       },
       {
         id: 'op-evening-nightlights',
-        title: 'Evening Night-Lights Open Play',
-        schedule: 'Mon / Wed / Fri • 06:00 PM – 09:00 PM',
-        skillLevel: 'Intermediate & Competitive Rally',
+        title: 'Fri – Sat Night Open Play (Drop In. Rally On.)',
+        schedule: 'Friday – Saturday • 06:00 PM – 10:00 PM',
+        skillLevel: 'All Skill Levels • Night-Lights Social Rally',
         rotationRule: '4-Player Doubles Pods • Winners Split Partners',
         entryFee: 150,
         designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
         showCourtsOnSite: true,
-        published: false,
+        published: true,
         maxPlayers: 24,
         players: [],
         shuffledOrder: Array.from({ length: 24 }, (_, i) => i),

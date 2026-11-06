@@ -3039,6 +3039,7 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
   const bookingsArr = pfGetAllMergedBookings(liveBookings);
   const bookedMatch = bookingsArr.find(b => {
     if (!b || b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
+    if (b.isOpenPlay || /^PF-OP-/i.test(String(b.ref || '')) || /open\s*play/i.test(String(b.court || '')) || /open\s*play/i.test(String(b.courtName || ''))) return false;
     const bCourt = String(b.court || '');
     const matchesCourt = bCourt.includes(courtZero) || bCourt.includes(courtPlain) || bCourt.trim() === String(cNum) || pfNormalizeCourtNumber(bCourt) === cNum;
     if (!matchesCourt) return false;
@@ -3122,7 +3123,7 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
     return { status: 'EXPIRED', category: 'PAST', override: null, reason: 'Past' };
   }
   if (pfIsDefaultOpenPlaySlot(targetDate, slotStr, cNum)) {
-    return { status: 'OPEN_PLAY', category: 'OPEN_PLAY', override: null, reason: 'Open Play (3:00 PM – 6:00 PM)' };
+    return { status: 'OPEN_PLAY', category: 'OPEN_PLAY', override: null, reason: pfGetOpenPlaySlotLabel(targetDate, slotStr) };
   }
   return { status: 'AVAILABLE', category: 'AVAILABLE', override: null, reason: 'Available' };
 }
@@ -3153,12 +3154,49 @@ function pfGetOpenPlayDesignatedCourts(cfgObj) {
 }
 window.pfGetOpenPlayDesignatedCourts = pfGetOpenPlayDesignatedCourts;
 
+function pfGetOpenPlaySlotsForDate(dateYMD, cfgObj) {
+  const cfg = cfgObj || ((typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {}));
+  if (cfg && cfg.openPlayEnabled === false) return [];
+  if (cfg && cfg.openPlaySlotsCustomized === true && Array.isArray(cfg.openPlaySlots)) {
+    return cfg.openPlaySlots;
+  }
+  const todayYMD = pfGetPhilippineTodayYMD();
+  const targetYMD = (dateYMD && dateYMD !== 'Today' && /^\d{4}-\d{2}-\d{2}$/.test(String(dateYMD).trim()))
+    ? String(dateYMD).trim()
+    : todayYMD;
+  const _ymdParts = targetYMD.split('-').map(Number);
+  const dow = new Date(Date.UTC(_ymdParts[0], (_ymdParts[1] || 1) - 1, _ymdParts[2] || 1)).getUTCDay(); // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+  if (dow >= 2 && dow <= 4) {
+    // Official Poster: Tuesday – Thursday: 4:00 PM – 8:00 PM
+    return ['04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM'];
+  }
+  if (dow === 5 || dow === 6) {
+    // Official Poster: Friday – Saturday: 6:00 PM – 10:00 PM
+    return ['06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM'];
+  }
+  return [];
+}
+window.pfGetOpenPlaySlotsForDate = pfGetOpenPlaySlotsForDate;
+
+function pfGetOpenPlaySlotLabel(dateYMD, slotStr) {
+  const todayYMD = pfGetPhilippineTodayYMD();
+  const targetYMD = (dateYMD && dateYMD !== 'Today' && /^\d{4}-\d{2}-\d{2}$/.test(String(dateYMD).trim()))
+    ? String(dateYMD).trim()
+    : todayYMD;
+  const _ymdParts = targetYMD.split('-').map(Number);
+  const dow = new Date(Date.UTC(_ymdParts[0], (_ymdParts[1] || 1) - 1, _ymdParts[2] || 1)).getUTCDay();
+  if (dow === 5 || dow === 6) {
+    return 'Open Play (Fri–Sat • 6:00 PM – 10:00 PM • ₱150/player)';
+  }
+  return 'Open Play (Tue–Thu • 4:00 PM – 8:00 PM • ₱150/player)';
+}
+window.pfGetOpenPlaySlotLabel = pfGetOpenPlaySlotLabel;
+
 function pfIsDefaultOpenPlaySlot(dateYMD, slotStr, courtNum) {
   if (!slotStr) return false;
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   if (cfg && cfg.openPlayEnabled === false) return false;
-  const defaultSlots = ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'];
-  const activeSlots = (cfg && Array.isArray(cfg.openPlaySlots)) ? cfg.openPlaySlots : defaultSlots;
+  const activeSlots = pfGetOpenPlaySlotsForDate(dateYMD, cfg);
   if (!activeSlots.includes(String(slotStr).trim())) return false;
   if (courtNum !== undefined && courtNum !== null && String(courtNum).toUpperCase() !== 'ALL') {
     const cNum = pfNormalizeCourtNumber(courtNum);
@@ -4368,10 +4406,25 @@ window.addEventListener('DOMContentLoaded', () => {
 const DEFAULT_OPEN_PLAY_SESSIONS = [
   {
     id: 'op-afternoon-social',
-    title: 'Afternoon Social Open Play',
-    schedule: 'Daily • 03:00 PM – 06:00 PM',
-    skillLevel: 'All Skill Levels (Beginner – Intermediate)',
+    title: 'Tue – Thu Open Play (Drop In. Rally On.)',
+    schedule: 'Tuesday – Thursday • 04:00 PM – 08:00 PM',
+    skillLevel: 'All Skill Levels (Beginner – Advanced)',
     rotationRule: '4-Player Doubles Pods • Shuffle Players Every Round',
+    entryFee: 150,
+    designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
+    showCourtsOnSite: true,
+    published: true,
+    maxPlayers: 24,
+    players: [],
+    shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
+    lastShuffleTime: 'Ready to Shuffle'
+  },
+  {
+    id: 'op-evening-nightlights',
+    title: 'Fri – Sat Night Open Play (Drop In. Rally On.)',
+    schedule: 'Friday – Saturday • 06:00 PM – 10:00 PM',
+    skillLevel: 'All Skill Levels • Night-Lights Social Rally',
+    rotationRule: '4-Player Doubles Pods • Winners Split Partners',
     entryFee: 150,
     designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
     showCourtsOnSite: true,
@@ -4397,24 +4450,9 @@ const DEFAULT_OPEN_PLAY_SESSIONS = [
     lastShuffleTime: 'Ready to Shuffle'
   },
   {
-    id: 'op-evening-nightlights',
-    title: 'Evening Night-Lights Open Play',
-    schedule: 'Mon / Wed / Fri • 06:00 PM – 09:00 PM',
-    skillLevel: 'Intermediate & Competitive Rally',
-    rotationRule: '4-Player Doubles Pods • Winners Split Partners',
-    entryFee: 150,
-    designatedCourts: ['Court 1', 'Court 2', 'Court 3', 'Court 4'],
-    showCourtsOnSite: true,
-    published: false,
-    maxPlayers: 24,
-    players: [],
-    shuffledOrder: Array.from({ length: 24 }, (_, i) => i),
-    lastShuffleTime: 'Ready to Shuffle'
-  },
-  {
     id: 'op-weekend-mixer',
-    title: 'Weekend Club Open Play Mixer',
-    schedule: 'Sat & Sun • 04:00 PM – 07:00 PM',
+    title: 'Sunday Community Open Play Mixer',
+    schedule: 'Sunday • 04:00 PM – 08:00 PM',
     skillLevel: 'All Community Members & Walk-Ins',
     rotationRule: '4-Player Doubles Pods • Community Shuffler',
     entryFee: 150,
@@ -4498,16 +4536,26 @@ function pfGetNormalizedOpenPlaySessions() {
 
     const parsedFee = Number(found.entryFee !== undefined ? found.entryFee : (def.entryFee || fallbackFee || 150));
 
+    let normTitle = String(found.title || def.title).trim();
+    let normSched = String(found.schedule || def.schedule).trim();
+    if (normTitle === 'Afternoon Social Open Play' || normSched === 'Daily • 03:00 PM – 06:00 PM') {
+      normTitle = def.title;
+      normSched = def.schedule;
+    }
+    if (normTitle === 'Evening Night-Lights Open Play' || normSched === 'Mon / Wed / Fri • 06:00 PM – 09:00 PM') {
+      normTitle = def.title;
+      normSched = def.schedule;
+    }
     return {
       id: found.id || def.id,
-      title: String(found.title || (idx === 0 && cfg.openPlay24Title ? cfg.openPlay24Title : def.title)).trim(),
-      schedule: String(found.schedule || (idx === 0 && cfg.openPlay24Window ? cfg.openPlay24Window : def.schedule)).trim(),
+      title: normTitle,
+      schedule: normSched,
       skillLevel: String(found.skillLevel || def.skillLevel).trim(),
       rotationRule: String(found.rotationRule || def.rotationRule).trim(),
       entryFee: Number.isFinite(parsedFee) && parsedFee >= 0 ? parsedFee : 150,
       designatedCourts: desig,
       showCourtsOnSite: found.showCourtsOnSite !== false,
-      published: typeof found.published === 'boolean' ? found.published : (idx === 0),
+      published: typeof found.published === 'boolean' ? found.published : (idx <= 1),
       maxPlayers: Math.max(4, Number(found.maxPlayers || 24)),
       players: cleanRealPlayers.slice(0, 24),
       shuffledOrder: order,
@@ -4769,9 +4817,274 @@ function pfUpdateOpenPlayModalTotals() {
 }
 window.pfUpdateOpenPlayModalTotals = pfUpdateOpenPlayModalTotals;
 
-function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
+// Helper: Resolve real-time Admin confirmation status for an Open Play player
+function pfResolveOpenPlayPlayerStatus(pl) {
+  if (!pl) return { status: 'OPEN', isConfirmed: false, isDeclined: false, badgeLabel: 'Open' };
+  const refUpper = String(pl.bookingRef || '').trim().toUpperCase();
+  const nameLower = String(pl.name || '').trim().toLowerCase();
+  const allBk = (typeof pfGetAllMergedBookings === 'function') ? pfGetAllMergedBookings() : [];
+  let matchedBk = null;
+  if (refUpper) {
+    matchedBk = allBk.find(b => b && String(b.ref || '').trim().toUpperCase() === refUpper);
+  }
+  if (!matchedBk && nameLower) {
+    matchedBk = allBk.find(b => b && (b.isOpenPlay || /^PF-OP-/i.test(String(b.ref || ''))) && String(b.name || '').trim().toLowerCase() === nameLower);
+  }
+  const rawSt = String((matchedBk && matchedBk.status) || pl.status || 'PENDING').toUpperCase();
+  if (rawSt.includes('DECLINE') || rawSt.includes('CANCEL')) {
+    return { status: 'DECLINED', isConfirmed: false, isDeclined: true, badgeLabel: '✕ Declined', booking: matchedBk };
+  }
+  if (rawSt === 'CONFIRMED' || rawSt === 'CHECKED IN' || rawSt === 'APPROVED') {
+    return { status: 'CONFIRMED', isConfirmed: true, isDeclined: false, badgeLabel: '✓ Confirmed', booking: matchedBk };
+  }
+  if (rawSt.includes('DESK') || rawSt.includes('COUNTER')) {
+    return { status: 'PENDING', isConfirmed: false, isDeclined: false, badgeLabel: '⏳ Pay at Desk (Pending)', booking: matchedBk };
+  }
+  return { status: 'PENDING', isConfirmed: false, isDeclined: false, badgeLabel: '⏳ Pending Admin Approval', booking: matchedBk };
+}
+window.pfResolveOpenPlayPlayerStatus = pfResolveOpenPlayPlayerStatus;
+
+// Helper: Open Open Play Modal pre-configured for a calendar date & time slot
+function pfOpenJoinOpenPlayModalForDate(dateYMD, slotStr) {
+  const todayYMD = (typeof pfGetPhilippineTodayYMD === 'function') ? pfGetPhilippineTodayYMD() : new Date().toISOString().slice(0, 10);
+  const targetDate = (dateYMD && dateYMD !== 'Today' && /^\d{4}-\d{2}-\d{2}$/.test(String(dateYMD).trim()))
+    ? String(dateYMD).trim()
+    : todayYMD;
+  const _ymdParts = targetDate.split('-').map(Number);
+  const dow = new Date(Date.UTC(_ymdParts[0], (_ymdParts[1] || 1) - 1, _ymdParts[2] || 1)).getUTCDay();
+  const preferredSessionId = (dow === 5 || dow === 6) ? 'op-evening-nightlights' : 'op-afternoon-social';
+  pfOpenJoinOpenPlayModal(preferredSessionId, undefined, targetDate);
+}
+window.pfOpenJoinOpenPlayModalForDate = pfOpenJoinOpenPlayModalForDate;
+
+window.pfOpenPlayUploadedReceiptDataUrl = '';
+
+function pfHandleOpenPlayReceiptUpload(event) {
+  const file = event && event.target && event.target.files ? event.target.files[0] : null;
+  if (!file) return;
+  const statusEl = document.getElementById('op-join-receipt-status');
+  const previewWrap = document.getElementById('op-join-receipt-preview-wrap');
+  const previewImg = document.getElementById('op-join-receipt-preview-img');
+  if (statusEl) {
+    statusEl.textContent = 'Processing receipt image...';
+    statusEl.classList.remove('hidden');
+  }
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const rawDataUrl = ev.target.result;
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxDim = 900;
+      let w = img.width;
+      let h = img.height;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+        else { w = Math.round((w * maxDim) / h); h = maxDim; }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.82);
+      window.pfOpenPlayUploadedReceiptDataUrl = compressed;
+      if (previewImg) previewImg.src = compressed;
+      if (previewWrap) previewWrap.classList.remove('hidden');
+      if (statusEl) {
+        statusEl.innerHTML = '✅ <b>Receipt Image Attached!</b> Sent to Admin Portal for instant verification.';
+      }
+      // Optional OCR auto-extract reference number if Tesseract is loaded
+      if (typeof Tesseract !== 'undefined' && Tesseract.recognize) {
+        Tesseract.recognize(compressed, 'eng').then(res => {
+          const text = (res && res.data && res.data.text) ? res.data.text : '';
+          const m = text.match(/\b(\d{4}[\s-]?\d{3,4}[\s-]?\d{4,6}|\d{8,13})\b/);
+          const refInp = document.getElementById('op-join-ref');
+          if (m && refInp && !refInp.value.trim()) {
+            refInp.value = m[1].replace(/[^\d]/g, '');
+            if (statusEl) {
+              statusEl.innerHTML = '✅ <b>Receipt Attached &amp; Ref # Auto-Filled (' + pfEscapeHtml(refInp.value) + ')!</b>';
+            }
+          }
+        }).catch(() => {});
+      }
+    };
+    img.src = rawDataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+window.pfHandleOpenPlayReceiptUpload = pfHandleOpenPlayReceiptUpload;
+
+// Official High-DPI PNG Open Play Image Receipt Generator (<canvas>)
+async function pfGenerateOpenPlayReceiptImageDataUrl(bookingRecord) {
+  if (!bookingRecord) return '';
+  const canvas = document.createElement('canvas');
+  canvas.width = 800;
+  canvas.height = 1040;
+  const ctx = canvas.getContext('2d');
+
+  // Background Dark Forest Card
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  bgGrad.addColorStop(0, '#050E1D');
+  bgGrad.addColorStop(0.5, '#0A2219');
+  bgGrad.addColorStop(1, '#04120B');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Top Brand Stripe
+  const topGrad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  topGrad.addColorStop(0, '#0072CE');
+  topGrad.addColorStop(0.5, '#9BE600');
+  topGrad.addColorStop(1, '#0E8A2D');
+  ctx.fillStyle = topGrad;
+  ctx.fillRect(0, 0, canvas.width, 14);
+
+  // Outer Border
+  ctx.strokeStyle = '#9BE600';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(18, 28, canvas.width - 36, canvas.height - 46);
+
+  // Header Title
+  ctx.fillStyle = '#9BE600';
+  ctx.font = '900 18px "JetBrains Mono", monospace';
+  ctx.fillText('🏓 OFFICIAL OPEN PLAY E-RECEIPT & GATE PASS', 48, 78);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '900 34px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('P&F RALLY GROUND PICKLEBALL CLUB', 48, 122);
+
+  ctx.fillStyle = '#A7F3D0';
+  ctx.font = '700 16px "JetBrains Mono", monospace';
+  ctx.fillText('Velasco St., Phase 4, Doña Maria Subd., Tagas, Daraga, Albay • 0999 883 2346', 48, 152);
+
+  // Divider
+  ctx.strokeStyle = 'rgba(155, 230, 0, 0.35)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(48, 176);
+  ctx.lineTo(canvas.width - 48, 176);
+  ctx.stroke();
+
+  // Status Banner Box
+  const stUpper = String(bookingRecord.status || 'PENDING').toUpperCase();
+  const isConfirmed = (stUpper === 'CONFIRMED' || stUpper === 'APPROVED' || stUpper === 'CHECKED IN');
+  ctx.fillStyle = isConfirmed ? 'rgba(16, 185, 129, 0.22)' : 'rgba(245, 158, 11, 0.20)';
+  ctx.fillRect(48, 198, canvas.width - 96, 86);
+  ctx.strokeStyle = isConfirmed ? '#34D399' : '#FBBF24';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(48, 198, canvas.width - 96, 86);
+
+  ctx.fillStyle = isConfirmed ? '#6EE7B7' : '#FDE68A';
+  ctx.font = '900 15px "JetBrains Mono", monospace';
+  ctx.fillText('BOOKING CONFIRMATION STATUS', 70, 228);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '900 24px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText(isConfirmed ? '✅ CONFIRMED BY ADMIN — READY FOR COURT PLAY' : '⏳ PENDING ADMIN VERIFICATION (SUBMITTED)', 70, 263);
+
+  // Reference & Amount Box
+  ctx.fillStyle = '#0F291E';
+  ctx.fillRect(48, 306, canvas.width - 96, 110);
+  ctx.strokeStyle = 'rgba(163, 230, 53, 0.45)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(48, 306, canvas.width - 96, 110);
+
+  ctx.fillStyle = '#9BE600';
+  ctx.font = '800 14px "JetBrains Mono", monospace';
+  ctx.fillText('OFFICIAL BOOKING REFERENCE ID', 70, 340);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '900 36px "JetBrains Mono", monospace';
+  ctx.fillText(String(bookingRecord.ref || 'PF-OP-000000'), 70, 388);
+
+  const amtNum = Number(String(bookingRecord.total || 150).replace(/[^0-9.]/g, '') || 150);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#9BE600';
+  ctx.font = '800 14px "JetBrains Mono", monospace';
+  ctx.fillText('TOTAL AMOUNT', canvas.width - 70, 340);
+  ctx.fillStyle = '#9BE600';
+  ctx.font = '900 36px "JetBrains Mono", monospace';
+  ctx.fillText('₱' + amtNum.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), canvas.width - 70, 388);
+  ctx.textAlign = 'left';
+
+  // Details Rows
+  const rows = [
+    ['Player Name(s)', String(bookingRecord.guestNamesList || bookingRecord.name || bookingRecord.customerName || 'Guest')],
+    ['Contact Mobile', String(bookingRecord.phone || bookingRecord.customerPhone || '—')],
+    ['Session / Court', String(bookingRecord.courtName || bookingRecord.court || 'Open Play Session')],
+    ['Play Date & Schedule', String(bookingRecord.date ? (bookingRecord.date + ' • ' + (bookingRecord.time || '')) : (bookingRecord.time || 'Scheduled Session'))],
+    ['Seats Reserved', String((bookingRecord.players || 1) + ' Participant Seat(s) (₱150.00 / participant)')],
+    ['Payment Method', String(bookingRecord.paymentMethod || bookingRecord.paymentMode || 'GCash')],
+    ['Payment Ref No.', String(bookingRecord.transactionRef || bookingRecord.paymentRef || 'N/A')],
+    ['Timestamp Issued', String(bookingRecord.createdAt || new Date().toLocaleString('en-PH'))]
+  ];
+
+  let y = 460;
+  rows.forEach(([label, val]) => {
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '700 15px "JetBrains Mono", monospace';
+    ctx.fillText(label.toUpperCase(), 54, y);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '800 17px "Plus Jakarta Sans", sans-serif';
+    const maxValLen = 46;
+    const cleanVal = val.length > maxValLen ? (val.slice(0, maxValLen - 1) + '…') : val;
+    ctx.fillText(cleanVal, 290, y);
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.10)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(54, y + 16);
+    ctx.lineTo(canvas.width - 54, y + 16);
+    ctx.stroke();
+    y += 48;
+  });
+
+  // Footer Verification Note
+  ctx.fillStyle = '#0F291E';
+  ctx.fillRect(48, 860, canvas.width - 96, 125);
+  ctx.strokeStyle = '#9BE600';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(48, 860, canvas.width - 96, 125);
+
+  ctx.fillStyle = '#9BE600';
+  ctx.font = '900 15px "JetBrains Mono", monospace';
+  ctx.fillText('🔍 HOW TO CHECK LIVE CONFIRMATION STATUS AT ANY TIME:', 70, 892);
+
+  ctx.fillStyle = '#E2E8F0';
+  ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('1. Present this Official Image Receipt at the P&F Rally Ground Front Desk upon arrival.', 70, 920);
+  ctx.fillText('2. Once Admin verifies your payment, your status updates to "✅ CONFIRMED" on the', 70, 944);
+  ctx.fillText('   Open Play Pod Shuffler and on the "My Booking" page (check-booking.html).', 70, 966);
+
+  return canvas.toDataURL('image/png');
+}
+window.pfGenerateOpenPlayReceiptImageDataUrl = pfGenerateOpenPlayReceiptImageDataUrl;
+
+async function pfDownloadOpenPlayReceiptImage(bookingRefInput) {
+  let targetBk = window.pfLastOpenPlayBookingRecord || null;
+  if (bookingRefInput) {
+    const allBk = (typeof pfGetAllMergedBookings === 'function') ? pfGetAllMergedBookings() : [];
+    const found = allBk.find(b => b && String(b.ref || '').toUpperCase() === String(bookingRefInput).toUpperCase());
+    if (found) targetBk = found;
+  }
+  if (!targetBk) {
+    try { targetBk = JSON.parse(localStorage.getItem('latest_booking') || 'null'); } catch (e) {}
+  }
+  if (!targetBk) return;
+  const dataUrl = await pfGenerateOpenPlayReceiptImageDataUrl(targetBk);
+  if (!dataUrl) return;
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = (targetBk.ref || 'PF-OPENPLAY') + '-Official-Receipt.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+window.pfDownloadOpenPlayReceiptImage = pfDownloadOpenPlayReceiptImage;
+
+function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum, preferredDateYMD) {
   const pubSessions = pfGetPublishedOpenPlaySessions();
   const session = (sessionIdInput && pubSessions.find(s => s.id === sessionIdInput)) || pfGetActiveOpenPlaySession();
+  window.pfOpenPlayUploadedReceiptDataUrl = '';
   let modal = document.getElementById('pf-openplay-join-modal');
   if (!modal) {
     modal = document.createElement('div');
@@ -4783,6 +5096,9 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
   const todayYmd = (typeof pfGetPhilippineTodayYMD === 'function')
     ? pfGetPhilippineTodayYMD()
     : new Date().toISOString().slice(0, 10);
+  const initialDate = (preferredDateYMD && /^\d{4}-\d{2}-\d{2}$/.test(preferredDateYMD) && preferredDateYMD >= todayYmd)
+    ? preferredDateYMD
+    : todayYmd;
   const unitFee = Math.max(0, Number(session.entryFee !== undefined ? session.entryFee : 150));
   const spotsLeft = Math.max(0, 24 - session.players.length);
   const nextSeat = preferredSeatNum || (session.players.length + 1);
@@ -4791,7 +5107,7 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
     const sFee = Math.max(0, Number(s.entryFee !== undefined ? s.entryFee : 150));
     const sOpen = Math.max(0, 24 - s.players.length);
     const sel = s.id === session.id ? 'selected' : '';
-    return `<option value="${pfEscapeHtml(s.id)}" ${sel}>${pfEscapeHtml(s.title)} (${pfEscapeHtml(s.schedule)}) — ₱${sFee}/player (${sOpen} open)</option>`;
+    return `<option value="${pfEscapeHtml(s.id)}" ${sel}>${pfEscapeHtml(s.title)} (${pfEscapeHtml(s.schedule)}) — ₱${sFee}/player (${sOpen} seats open)</option>`;
   }).join('');
 
   modal.innerHTML = `
@@ -4804,20 +5120,20 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
             <img src="assets/logo.png" alt="P&amp;F Logo" class="w-full h-full object-contain">
           </div>
           <div>
-            <span class="px-2.5 py-0.5 rounded bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase tracking-wider">🏓 OFFICIAL OPEN PLAY BOOKING &amp; SEAT CHECKOUT</span>
-            <h3 class="text-lg sm:text-xl font-black text-slate-900 mt-1">Book Your Open Play Seat &amp; Join Pod Shuffler</h3>
-            <p id="op-join-session-meta" class="text-xs font-mono font-bold text-emerald-700">${pfEscapeHtml(session.schedule)} • ₱${unitFee}/player • ${spotsLeft} of 24 seats open</p>
+            <span class="px-2.5 py-0.5 rounded bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase tracking-wider">🏓 OFFICIAL OPEN PLAY PER-SEAT BOOKING (₱150 / PARTICIPANT)</span>
+            <h3 class="text-lg sm:text-xl font-black text-slate-900 mt-1">Book Your Open Play Seat &amp; Get Official Image Receipt</h3>
+            <p id="op-join-session-meta" class="text-xs font-mono font-bold text-emerald-700">${pfEscapeHtml(session.schedule)} • ₱${unitFee}/participant • ${spotsLeft} of 24 seats open</p>
           </div>
         </div>
         <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white font-black text-xs">✕</button>
       </div>
 
-      <!-- Seat Assignment Banner -->
-      <div class="p-3.5 rounded-2xl bg-[#F0FDF4] border border-[#86EFAC] flex items-center justify-between gap-3 text-xs">
-        <div class="font-bold text-[#065F46]">
-          🟢 <b>Seat #${nextSeat} Ready:</b> Booking adds your name to the live <b>24-Player Pod Shuffler</b> and generates an official <b>PF-OP</b> Booking Pass.
+      <!-- Seat Assignment & Confirmation Flow Banner -->
+      <div class="p-3.5 rounded-2xl bg-[#F0FDF4] border border-[#86EFAC] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div class="font-bold text-[#065F46] leading-relaxed">
+          🟢 <b>Per-Participant Seat #${nextSeat}:</b> Books <b>1 individual player seat</b> (does not block private courts). Generates an <b>Official Downloadable Image Receipt</b> &amp; shows <b>✅ CONFIRMED</b> on the Pod Shuffler once verified by Admin!
         </div>
-        <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-[#A3E635] font-mono text-[11px] font-black whitespace-nowrap">₱${unitFee} / Seat</span>
+        <span class="px-2.5 py-1 rounded-lg bg-[#0F291E] text-[#A3E635] font-mono text-[11px] font-black whitespace-nowrap self-start sm:self-center">₱${unitFee} / Seat</span>
       </div>
 
       <form id="pf-openplay-join-form" onsubmit="pfSubmitJoinOpenPlayForm(event)" class="space-y-4 text-xs">
@@ -4826,14 +5142,14 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
         <!-- Session & Play Date Row -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="sm:col-span-2">
-            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Open Play Session *</label>
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Open Play Schedule (Tue–Thu 4–8PM / Fri–Sat 6–10PM) *</label>
             <select id="op-join-session-select" onchange="pfUpdateOpenPlayModalTotals()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold">
               ${sessionOptionsHtml}
             </select>
           </div>
           <div>
             <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Play Date *</label>
-            <input id="op-join-date" type="date" value="${pfEscapeHtml(todayYmd)}" min="${pfEscapeHtml(todayYmd)}" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-mono font-bold">
+            <input id="op-join-date" type="date" value="${pfEscapeHtml(initialDate)}" min="${pfEscapeHtml(todayYmd)}" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-mono font-bold">
           </div>
         </div>
 
@@ -4841,7 +5157,7 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Player Full Name *</label>
-            <input id="op-join-name" type="text" required maxlength="60" placeholder="e.g., Marco Villanueva" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold focus:outline-none focus:border-emerald-700">
+            <input id="op-join-name" type="text" required maxlength="60" placeholder="e.g., Michael Jay Jan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold focus:outline-none focus:border-emerald-700">
           </div>
           <div>
             <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Mobile Number (11 Digits) *</label>
@@ -4857,12 +5173,12 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
             </select>
           </div>
           <div>
-            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Number of Seats to Book *</label>
+            <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Number of Participant Seats *</label>
             <select id="op-join-seats-select" onchange="pfUpdateOpenPlayModalTotals()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 font-bold">
-              <option value="1" selected>1 Player Seat — ₱${unitFee}</option>
-              <option value="2">2 Player Seats (Pair) — ₱${unitFee * 2}</option>
-              <option value="3">3 Player Seats — ₱${unitFee * 3}</option>
-              <option value="4">4 Player Seats (Full Pod) — ₱${unitFee * 4}</option>
+              <option value="1" selected>1 Participant Seat — ₱${unitFee}</option>
+              <option value="2">2 Participant Seats (Pair) — ₱${unitFee * 2}</option>
+              <option value="3">3 Participant Seats — ₱${unitFee * 3}</option>
+              <option value="4">4 Participant Seats (Full Pod) — ₱${unitFee * 4}</option>
             </select>
           </div>
         </div>
@@ -4873,7 +5189,7 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
           <input id="op-join-guests" type="text" placeholder="e.g., Paolo Santos, Bea Alonzo" class="w-full px-3.5 py-2 rounded-xl border border-emerald-300 bg-white text-slate-900 font-semibold">
         </div>
 
-        <!-- Payment Method & QR Verification -->
+        <!-- Payment Method, QR & Payment Receipt Image Upload -->
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="font-mono text-[10px] font-black uppercase text-slate-700">Select Open Play Payment Method:</span>
@@ -4889,13 +5205,29 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
             <img id="op-join-qr-img" src="assets/qr-gcash.png" alt="Official Payment QR" class="w-28 h-28 object-contain rounded-lg border border-slate-200 flex-shrink-0">
             <div class="space-y-1 text-center sm:text-left">
               <div id="op-join-qr-acc" class="font-mono text-xs font-black text-slate-900">GCash Express Send: 0999 883 2346 (P&amp;F Rally Ground)</div>
-              <p class="text-[11px] text-slate-600 leading-relaxed">Scan the official club QR code above and enter your 6+ digit Reference Number below, or choose <b>Pay at Desk</b> to reserve your Open Play seat and pay upon arrival.</p>
+              <p class="text-[11px] text-slate-600 leading-relaxed">Scan the official club QR code above, enter your Reference Number below, and upload your <b>Payment Receipt Screenshot</b> for fast Admin confirmation.</p>
             </div>
           </div>
 
-          <div id="op-join-ref-wrap">
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Payment Reference No. (Last 6–13 Digits)</label>
-            <input type="text" id="op-join-ref" placeholder="e.g. 8091234567 (or switch to Pay at Desk)" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
+          <div id="op-join-ref-wrap" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Payment Reference No. (Last 6–13 Digits) *</label>
+              <input type="text" id="op-join-ref" placeholder="e.g. 20267815 (or switch to Pay at Desk)" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-mono font-bold">
+            </div>
+            <div>
+              <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Upload Payment Receipt Image (Screenshot)</label>
+              <label class="flex items-center justify-center gap-2 w-full px-3.5 py-2.5 rounded-xl border-2 border-dashed border-emerald-600 bg-emerald-50/70 hover:bg-emerald-100/70 text-emerald-950 font-mono text-[11px] font-extrabold cursor-pointer transition">
+                <span>📸 Upload Receipt Image</span>
+                <input type="file" id="op-join-receipt-file" accept="image/*" onchange="pfHandleOpenPlayReceiptUpload(event)" class="hidden">
+              </label>
+            </div>
+            <div id="op-join-receipt-preview-wrap" class="hidden sm:col-span-2 p-3 rounded-xl bg-emerald-50 border border-emerald-300 flex items-center gap-3">
+              <img id="op-join-receipt-preview-img" src="" alt="Uploaded Receipt Preview" class="w-14 h-14 object-cover rounded-lg border border-emerald-400 flex-shrink-0">
+              <div class="text-[11px] text-emerald-950">
+                <div id="op-join-receipt-status" class="font-bold">✅ Payment Receipt Image Attached!</div>
+                <div class="text-[10px] text-emerald-800">Admin can view this receipt screenshot directly in the Admin Portal to confirm your seat.</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -4908,7 +5240,7 @@ function pfOpenJoinOpenPlayModal(sessionIdInput, preferredSeatNum) {
           <div class="flex items-center gap-2 w-full sm:w-auto">
             <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase">Cancel</button>
             <button id="op-join-submit-btn" type="submit" class="flex-1 sm:flex-initial px-6 py-3.5 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg">
-              🏓 Confirm Booking &amp; Join Pod Shuffler →
+              🏓 Confirm Booking &amp; Get Image Receipt →
             </button>
           </div>
         </div>
@@ -4941,6 +5273,7 @@ async function pfSubmitJoinOpenPlayForm(e) {
   const guestsRaw = (document.getElementById('op-join-guests')?.value || '').trim();
   const payMethod = (document.getElementById('op-join-pay-method')?.value || 'GCash').trim();
   const payRef = (document.getElementById('op-join-ref')?.value || '').trim();
+  const uploadedReceipt = window.pfOpenPlayUploadedReceiptDataUrl || '';
 
   if (!name || name.length < 2) {
     alert('Please enter your Full Name to book Open Play.');
@@ -4976,10 +5309,10 @@ async function pfSubmitJoinOpenPlayForm(e) {
   const submitBtn = document.getElementById('op-join-submit-btn');
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Confirming Booking...';
+    submitBtn.textContent = 'Generating Receipt & Saving...';
   }
 
-  // Update local siteConfig openPlaySessions immediately
+  // Update local siteConfig openPlaySessions immediately (Initial status: PENDING until Admin approves)
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   const updatedSessions = allSessions.map(s => {
     if (s.id !== targetSession.id) return s;
@@ -4994,7 +5327,7 @@ async function pfSubmitJoinOpenPlayForm(e) {
         bookingRef: bookingRef,
         paymentMethod: payMethod === 'Counter' ? 'Pay at Counter' : payMethod,
         transactionRef: finalPayRef,
-        status: payMethod === 'Counter' ? 'PAY AT DESK' : 'PAID & BOOKED',
+        status: 'PENDING',
         joinedAt: joinedAtStr
       };
       if (existsIdx >= 0) nextPlayers[existsIdx] = entryObj;
@@ -5018,44 +5351,55 @@ async function pfSubmitJoinOpenPlayForm(e) {
   const bookingRecord = {
     ref: bookingRef,
     name: name,
+    customerName: name,
+    guestNamesList: allNamesToBook.join(', '),
     phone: phone,
+    customerPhone: phone,
     email: '',
     date: playDate || ((typeof pfGetPhilippineTodayYMD === 'function') ? pfGetPhilippineTodayYMD() : 'Today'),
-    time: targetSession.schedule || '03:00 PM - 06:00 PM',
-    slots: [targetSession.schedule || '03:00 PM - 06:00 PM'],
-    courtName: `Open Play • ${targetSession.title} (${desigCourts.join(', ')})`,
+    time: targetSession.schedule || 'Tuesday – Thursday • 04:00 PM – 08:00 PM',
+    slots: [targetSession.schedule || 'Tuesday – Thursday • 04:00 PM – 08:00 PM'],
+    courtName: `Open Play Seat (${seatsCount} Pax) • ${targetSession.title}`,
     court: `Open Play • ${targetSession.title}`,
     players: seatsCount,
     paymentMethod: payMethod === 'Counter' ? 'Pay at Counter' : payMethod,
     paymentMode: payMethod === 'Counter' ? 'Pay at Counter' : payMethod,
     transactionRef: finalPayRef,
     paymentRef: finalPayRef,
+    receiptDataUrl: uploadedReceipt,
     status: 'PENDING',
     total: totalFee,
     isOpenPlay: true,
     sessionId: targetSession.id,
-    createdAt: new Date().toISOString()
+    items: [`Open Play Seat x${seatsCount} (${allNamesToBook.join(', ')}) — ${targetSession.schedule}`],
+    createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
   };
+  window.pfLastOpenPlayBookingRecord = bookingRecord;
 
+  // Save to all localStorage booking stores so My Booking (check-booking.html) and Admin Portal see it immediately
+  ['pf_all_bookings', 'pf_public_bookings', 'pf_shared_bookings'].forEach(k => {
+    try {
+      const list = JSON.parse(localStorage.getItem(k) || '[]') || [];
+      const filtered = list.filter(b => b && b.ref !== bookingRef);
+      filtered.unshift(bookingRecord);
+      localStorage.setItem(k, JSON.stringify(filtered));
+    } catch (err) {}
+  });
   try {
-    const pubList = JSON.parse(localStorage.getItem('pf_public_bookings') || '[]');
-    pubList.unshift(bookingRecord);
-    localStorage.setItem('pf_public_bookings', JSON.stringify(pubList));
-  } catch (err) {}
-  try {
-    const sharedList = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]');
-    sharedList.unshift(bookingRecord);
-    localStorage.setItem('pf_shared_bookings', JSON.stringify(sharedList));
+    localStorage.setItem('latest_booking', JSON.stringify(bookingRecord));
+    localStorage.setItem('booking_' + bookingRef, JSON.stringify(bookingRecord));
   } catch (err) {}
 
-  // Sync to backend /api/openplay-join (creates booking + adds players atomically)
+  // Sync to backend /api/openplay-join with fast 3.5s AbortController timeout so UI never hangs
   const joinEndpoints = (typeof pfGetApiEndpoints === 'function') ? pfGetApiEndpoints('/api/openplay-join') : ['/api/openplay-join'];
-  let serverSaved = false;
   for (const url of joinEndpoints) {
     try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 3500);
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: ctrl.signal,
         body: JSON.stringify({
           sessionId: targetSession.id,
           name: name,
@@ -5066,69 +5410,56 @@ async function pfSubmitJoinOpenPlayForm(e) {
           players: seatsCount,
           paymentMethod: bookingRecord.paymentMethod,
           transactionRef: finalPayRef,
+          receiptDataUrl: uploadedReceipt,
           total: totalFee,
           ref: bookingRef,
           createBooking: true
         })
       });
-      if (res.ok) {
-        serverSaved = true;
-        break;
-      }
+      clearTimeout(timer);
+      if (res.ok) break;
     } catch (err) {}
   }
 
   window.PF_OPEN_PLAY_STATE.activeSessionId = targetSession.id;
   pfRenderOpenPlay24Board();
 
-  // Render Digital Open Play Booking Pass inside the modal
+  // Generate Official PNG Image Receipt Data URL
+  const generatedReceiptPngUrl = await pfGenerateOpenPlayReceiptImageDataUrl(bookingRecord);
+
+  // Render Digital Open Play Booking Pass + Official Image Receipt inside the modal
   const dialog = document.getElementById('op-join-modal-dialog');
   if (dialog) {
     dialog.innerHTML = `
-      <div class="text-center space-y-4 py-2">
+      <div class="text-center space-y-4 py-1">
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono text-xs font-black uppercase">
-          ✓ OPEN PLAY SEAT BOOKED &amp; ADDED TO SHUFFLER
+          ✓ OPEN PLAY SEAT RESERVED &amp; IMAGE RECEIPT GENERATED
         </div>
-        <h3 class="text-2xl font-black text-slate-900">Your Open Play Pass Is Ready!</h3>
-        <p class="text-xs text-slate-600 max-w-md mx-auto">
-          Your name (${pfEscapeHtml(allNamesToBook.join(', '))}) is now live on the <b>${pfEscapeHtml(targetSession.title)}</b> 4-Player Pod Shuffler and recorded in our Club Booking System.
+        <h3 class="text-xl sm:text-2xl font-black text-slate-900">Your Open Play Image Receipt Is Ready!</h3>
+        <p class="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
+          <b>How to know when your seat is confirmed:</b> Your seat for <b>${pfEscapeHtml(allNamesToBook.join(', '))}</b> is now on the Pod Shuffler with a <span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-mono font-bold text-[10px]">⏳ PENDING ADMIN</span> badge. As soon as Admin verifies your payment, your badge automatically turns <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 font-mono font-bold text-[10px]">✅ CONFIRMED</span> on both the Pod Shuffler and <b>My Booking</b>!
         </p>
 
-        <div class="p-5 rounded-3xl bg-[#0F291E] text-white border-2 border-[#15803D] text-left space-y-3 max-w-lg mx-auto shadow-xl">
-          <div class="flex items-center justify-between border-b border-white/15 pb-3">
-            <div>
-              <span class="text-[10px] font-mono uppercase text-[#A3E635] block">OFFICIAL BOOKING REFERENCE</span>
-              <span class="font-mono text-xl font-black text-white">${pfEscapeHtml(bookingRef)}</span>
-            </div>
-            <span class="px-3 py-1 rounded-full bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase">${payMethod === 'Counter' ? 'PAY AT DESK' : 'PAYMENT LOGGED'}</span>
-          </div>
-          <div class="grid grid-cols-2 gap-3 text-xs">
-            <div>
-              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Player(s) Joined</span>
-              <b class="text-white">${pfEscapeHtml(allNamesToBook.join(', '))}</b>
-            </div>
-            <div>
-              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Session &amp; Date</span>
-              <b class="text-white">${pfEscapeHtml(targetSession.title)} • ${pfEscapeHtml(bookingRecord.date)}</b>
-            </div>
-            <div>
-              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Designated Courts</span>
-              <b class="text-[#A3E635]">${pfEscapeHtml(desigCourts.join(', '))}</b>
-            </div>
-            <div>
-              <span class="text-[10px] font-mono uppercase text-emerald-200/80 block">Total Entry Fee</span>
-              <b class="font-mono text-[#A3E635]">₱${totalFee.toLocaleString()}.00 (${seatsCount} Seat${seatsCount > 1 ? 's' : ''})</b>
-            </div>
-          </div>
+        <!-- Download & Verify Action Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+          <button type="button" onclick="pfDownloadOpenPlayReceiptImage('${pfEscapeHtml(bookingRef)}')" class="px-5 py-3 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2 transition">
+            <span>📥 Download Image Receipt (PNG)</span>
+          </button>
+          <a href="check-booking.html?ref=${encodeURIComponent(bookingRef)}" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 font-extrabold text-xs uppercase tracking-wider">
+            🔍 Check Live Status in My Booking
+          </a>
+          <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="px-4 py-3 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider shadow">
+            🏓 View My Pod Seat →
+          </button>
         </div>
 
-        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <a href="check-booking.html?ref=${encodeURIComponent(bookingRef)}" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 font-extrabold text-xs uppercase tracking-wider">
-            🔍 Verify in My Booking
-          </a>
-          <button type="button" onclick="pfCloseJoinOpenPlayModal()" class="px-6 py-3 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider shadow-lg">
-            🏓 View My Seat on Pod Shuffler →
-          </button>
+        <!-- Official Generated Image Receipt Preview -->
+        <div class="p-3 rounded-2xl bg-slate-100 border border-slate-300 max-w-md mx-auto space-y-2">
+          <div class="flex items-center justify-between text-[10px] font-mono font-extrabold uppercase text-slate-700 px-1">
+            <span>📄 Official Open Play Image Receipt (${pfEscapeHtml(bookingRef)})</span>
+            <button type="button" onclick="pfDownloadOpenPlayReceiptImage('${pfEscapeHtml(bookingRef)}')" class="text-emerald-700 underline font-black">Save Image ↓</button>
+          </div>
+          <img id="op-generated-receipt-img" src="${generatedReceiptPngUrl}" alt="Official Open Play Image Receipt" class="w-full h-auto rounded-xl border border-slate-300 shadow-md mx-auto">
         </div>
       </div>
     `;
@@ -5157,6 +5488,15 @@ function pfRenderOpenPlay24Board() {
     ? activeSession.designatedCourts
     : pfGetOpenPlayDesignatedCourts(cfg);
 
+  // Count how many players are CONFIRMED by Admin vs PENDING verification
+  let confirmedPlayersCount = 0;
+  let pendingPlayersCount = 0;
+  activeSession.players.forEach(pl => {
+    const stInfo = pfResolveOpenPlayPlayerStatus(pl);
+    if (stInfo.isConfirmed) confirmedPlayersCount++;
+    else if (!stInfo.isDeclined) pendingPlayersCount++;
+  });
+
   // Render Live Open Play Banner on index.html (#open-play-24-board-container)
   if (homeBannerRoot) {
     if (cfg && cfg.openPlayEnabled === false) {
@@ -5173,7 +5513,7 @@ function pfRenderOpenPlay24Board() {
 
       const sessionTabsHtml = pubSessions.length > 1 ? `
         <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-[#E2E0D8]">
-          <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] mr-1">Active Open Play Sessions (${pubSessions.length}):</span>
+          <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] mr-1">Official Open Play Schedule (${pubSessions.length} Sessions):</span>
           ${pubSessions.map((s, idx) => {
             const isAct = s.id === activeSession.id;
             return `<button type="button" onclick="pfSelectOpenPlaySession('${pfEscapeHtml(s.id)}')" class="px-3.5 py-1.5 rounded-xl font-mono text-[11px] font-extrabold uppercase transition ${isAct ? 'bg-[#0F291E] text-[#A3E635] shadow-sm' : 'bg-[#F8F7F3] hover:bg-slate-200 text-[#0D1F18] border border-[#D5D3CC]'}" data-active-session="${isAct ? '1' : '0'}">0${idx + 1} • ${pfEscapeHtml(s.title)} (${s.players.length}/24)</button>`;
@@ -5185,47 +5525,52 @@ function pfRenderOpenPlay24Board() {
         <div id="open-play-card-surface" class="rounded-3xl bg-white border border-slate-200 p-5 sm:p-7 shadow-2xl text-[#0D1F18] space-y-5">
           <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 items-stretch">
 
-            <!-- LEFT 8 COLUMNS: EDITORIAL SESSION OVERVIEW & COURT ALLOCATION -->
+            <!-- LEFT 8 COLUMNS: EDITORIAL SESSION OVERVIEW, OFFICIAL POSTER & COURT ALLOCATION -->
             <div class="xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-2xl p-5 sm:p-6 border border-[#E2E0D8]">
-              <div class="space-y-3">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">
-                    <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
-                    <span>Live Open Play Session</span>
-                  </span>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase tracking-wider">
-                    4-Player Pod Shuffler
-                  </span>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase tracking-wider">
-                    ${joinedCount} / 24 Booked &bull; ${openSpotsCount} Seats Open
-                  </span>
-                </div>
+              <div class="flex flex-col md:flex-row gap-5 items-start">
+                <a href="open-play.html" class="w-full md:w-44 flex-shrink-0 rounded-2xl overflow-hidden border-2 border-[#15803D] shadow-md group block">
+                  <img src="assets/open-play-poster.jpg" alt="Official Open Play Schedule Poster" class="w-full h-auto object-cover group-hover:scale-105 transition duration-300">
+                </a>
+                <div class="space-y-3 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                      <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                      <span>Official Open Play • Drop In. Rally On.</span>
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                      ₱${unitFee}.00 / Participant
+                    </span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                      ${confirmedPlayersCount} Confirmed • ${pendingPlayersCount} Pending • ${openSpotsCount} Open
+                    </span>
+                  </div>
 
-                <div class="space-y-1.5">
-                  <h3 class="text-xl sm:text-3xl font-black tracking-tight text-[#0D1F18] leading-tight">
-                    ${pfEscapeHtml(activeSession.title)}
-                  </h3>
-                  <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                    Social doubles rotation designed for community play — no elimination bracket and no partner required. Book your seat online and use the live 4-player Pod Shuffler to rotate courts.
-                  </p>
+                  <div class="space-y-1.5">
+                    <h3 class="text-xl sm:text-3xl font-black tracking-tight text-[#0D1F18] leading-tight">
+                      ${pfEscapeHtml(activeSession.title)}
+                    </h3>
+                    <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                      <b>Official Club Schedule:</b> <b>Tuesday – Thursday (4:00 PM – 8:00 PM)</b> &amp; <b>Friday – Saturday (6:00 PM – 10:00 PM)</b> at <b>₱150.00 per participant</b>. Booking reserves your individual Pod Shuffler seat and generates a downloadable <b>Official Image Receipt</b>.
+                    </p>
+                  </div>
                 </div>
               </div>
 
               <div class="pt-4 border-t border-[#DEDAD0] grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
-                <div class="md:col-span-4 space-y-1 md:pr-3 md:border-r md:border-[#DEDAD0]">
-                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Session Schedule</span>
-                  <div class="font-mono text-xs sm:text-sm font-black text-[#0D1F18]">${pfEscapeHtml(activeSession.schedule)}</div>
-                  <div class="font-mono text-[11px] font-bold text-[#15803D]">6 Rotating 30-Min Waves</div>
+                <div class="md:col-span-5 space-y-1 md:pr-3 md:border-r md:border-[#DEDAD0]">
+                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Official Open Play Hours</span>
+                  <div class="font-mono text-xs font-black text-[#0D1F18]">Tue – Thu: 4:00 PM – 8:00 PM</div>
+                  <div class="font-mono text-xs font-black text-[#15803D]">Fri – Sat: 6:00 PM – 10:00 PM</div>
                 </div>
 
                 <div class="md:col-span-3 space-y-1 md:px-2 md:border-r md:border-[#DEDAD0]">
-                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Skill Level</span>
-                  <div class="text-xs sm:text-sm font-extrabold text-[#0D1F18] leading-snug">${pfEscapeHtml(activeSession.skillLevel || 'All Skill Levels')}</div>
-                  <div class="text-[11px] font-semibold text-[#52605A]">Doubles Pods (To 11 Pts)</div>
+                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Rate &amp; Confirmation</span>
+                  <div class="text-xs sm:text-sm font-extrabold text-[#0D1F18] leading-snug">₱${unitFee}.00 / Participant</div>
+                  <div class="text-[11px] font-semibold text-[#15803D]">✓ Instant PNG Receipt Pass</div>
                 </div>
 
-                <div class="md:col-span-5 space-y-1.5 md:pl-1">
-                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Court Allocation (${dcList.length} of 4 Active)</span>
+                <div class="md:col-span-4 space-y-1.5 md:pl-1">
+                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Court Allocation (${dcList.length} Courts)</span>
                   <div class="grid grid-cols-2 gap-1.5">
                     ${homeCourtPillsHtml}
                   </div>
@@ -5247,31 +5592,31 @@ function pfRenderOpenPlay24Board() {
                   </div>
                 </div>
                 <div class="text-right">
-                  <span class="text-[9px] font-mono uppercase tracking-widest block" style="color:#CBD5E1 !important;">Per Player</span>
+                  <span class="text-[9px] font-mono uppercase tracking-widest block" style="color:#CBD5E1 !important;">Per Participant</span>
                   <div class="font-mono text-2xl sm:text-3xl font-black" style="color:#A3E635 !important;">₱${unitFee.toLocaleString()}</div>
                 </div>
               </div>
 
               <div class="space-y-2">
                 <div class="flex items-center justify-between text-[11px] font-mono">
-                  <span style="color:#CBD5E1 !important;">Booked Roster: <b style="color:#FFFFFF !important;">${joinedCount} / 24 Players</b></span>
+                  <span style="color:#CBD5E1 !important;">Session Roster: <b style="color:#FFFFFF !important;">${joinedCount} / 24 Players</b></span>
                   <span class="font-bold" style="color:#A3E635 !important;">${joinedCount === 0 ? 'All 24 Open' : pct + '% Full'}</span>
                 </div>
                 <div class="w-full h-2 rounded-full bg-black/50 overflow-hidden border border-white/15">
                   <div class="h-full rounded-full bg-gradient-to-r from-[#10B981] to-[#A3E635]" style="width:${pct}%"></div>
                 </div>
                 <div class="flex items-center justify-between text-[10px] font-mono" style="color:#A7F3D0 !important;">
-                  <span>${joinedCount} Confirmed</span>
+                  <span>✅ ${confirmedPlayersCount} Confirmed • ⏳ ${pendingPlayersCount} Pending</span>
                   <span>${openSpotsCount} Seats Left</span>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 gap-2 pt-1">
                 <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="pf-trn-btn-volt w-full py-3.5 px-4 rounded-xl bg-[#A3E635] hover:bg-[#BEF264] text-[#04120B] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2" style="background:#A3E635 !important;color:#04120B !important;">
-                  <span style="color:#04120B !important;">Book &amp; Pay Open Play Seat (₱${unitFee}) →</span>
+                  <span style="color:#04120B !important;">Book Open Play Seat (₱${unitFee}) →</span>
                 </button>
                 <a href="open-play.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 font-mono font-extrabold text-[11px] uppercase tracking-wider transition flex items-center justify-center gap-1.5" style="color:#FFFFFF !important;">
-                  <span>Open Live Pod Shuffler (${joinedCount}/24) →</span>
+                  <span>View Live Roster &amp; Confirmation Status →</span>
                 </a>
               </div>
             </div>
@@ -5298,7 +5643,9 @@ function pfRenderOpenPlay24Board() {
     return;
   }
 
-  // 1. Session Switcher Bar (Static Tailwind grid classes so CDN compiles properly)
+  if (!dedicatedRoot) return;
+
+  // 1. Session Switcher Bar
   const switcherGridCols = pubSessions.length === 2
     ? 'sm:grid-cols-2'
     : (pubSessions.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4');
@@ -5307,8 +5654,8 @@ function pfRenderOpenPlay24Board() {
     <div class="p-4 rounded-3xl bg-white border-2 border-[#E2E0D8] shadow-sm space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2 px-1">
         <div class="flex items-center gap-2">
-          <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">🏓 Active Open Play Sessions (${pubSessions.length} Live)</span>
-          <span class="text-xs font-bold text-[#52605A] hidden sm:inline">Select a session below to view its designated courts, book a seat, or shuffle its 4-player pods</span>
+          <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">🏓 Official Open Play Schedule (${pubSessions.length} Active Windows)</span>
+          <span class="text-xs font-bold text-[#52605A] hidden sm:inline">Select Tuesday–Thursday (4–8 PM) or Friday–Saturday (6–10 PM) below</span>
         </div>
       </div>
       <div class="grid grid-cols-1 ${switcherGridCols} gap-2.5">
@@ -5320,7 +5667,7 @@ function pfRenderOpenPlay24Board() {
               <span class="w-7 h-7 rounded-lg ${isAct ? 'bg-[#A3E635] text-[#04120B]' : 'bg-[#0F291E] text-white'} font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0${idx + 1}</span>
               <div class="min-w-0 flex-1">
                 <div class="text-xs font-black truncate">${pfEscapeHtml(s.title)}</div>
-                <div class="text-[10px] font-mono ${isAct ? 'text-emerald-200' : 'text-slate-600'} truncate">${pfEscapeHtml(s.schedule)} &bull; ₱${sFee} &bull; ${s.players.length}/24</div>
+                <div class="text-[10px] font-mono ${isAct ? 'text-emerald-200' : 'text-slate-600'} truncate">${pfEscapeHtml(s.schedule)} &bull; ₱${sFee} &bull; ${s.players.length}/24 Seats</div>
               </div>
             </button>
           `;
@@ -5329,7 +5676,7 @@ function pfRenderOpenPlay24Board() {
     </div>
   ` : '';
 
-  // Designated Court Pills (Matching Tournament Editorial Poster)
+  // Designated Court Pills
   const designatedCourtPillsHtml = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
     const isActiveCourt = dcList.includes(cName);
     return isActiveCourt
@@ -5337,19 +5684,23 @@ function pfRenderOpenPlay24Board() {
       : `<span class="px-2.5 py-1 rounded-lg bg-[#F1F5F9] text-[#94A3B8] border border-[#E2E8F0] font-mono text-[10px] font-semibold uppercase line-through opacity-60" title="Open for private court bookings">${cName}</span>`;
   }).join('');
 
-  // Helper to render a single seat inside a Mini Pickleball Court Pod
+  // Helper to render a single seat inside a Mini Pickleball Court Pod with live CONFIRMED vs PENDING badge
   const renderPodSeatHtml = (pl) => {
     if (pl && pl.isJoined) {
+      const stInfo = pfResolveOpenPlayPlayerStatus(pl);
+      const badgeHtml = stInfo.isConfirmed
+        ? `<span class="px-2 py-0.5 rounded bg-[#10B981] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0 shadow-2xs" title="Payment verified &amp; confirmed by Admin">✅ Confirmed</span>`
+        : `<span class="px-2 py-0.5 rounded bg-amber-400/25 border border-amber-300/60 text-amber-200 font-mono text-[9px] font-black uppercase flex-shrink-0" title="Awaiting Admin verification in Admin Portal">⏳ Pending</span>`;
       return `
-        <div class="p-2.5 rounded-xl bg-[#071D14] border-2 border-[#A3E635] flex items-center justify-between gap-2 shadow-xs">
+        <div class="p-2.5 rounded-xl bg-[#071D14] border-2 ${stInfo.isConfirmed ? 'border-[#A3E635]' : 'border-amber-400/70'} flex items-center justify-between gap-2 shadow-xs">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-6 h-6 rounded-lg bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${pl.podSeat}</span>
+            <span class="w-6 h-6 rounded-lg ${stInfo.isConfirmed ? 'bg-[#A3E635] text-[#04120B]' : 'bg-amber-300 text-slate-950'} font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${pl.podSeat}</span>
             <div class="min-w-0">
               <div class="text-xs font-extrabold text-white truncate" title="${pfEscapeHtml(pl.name)}">${pfEscapeHtml(pl.name)}</div>
-              <div class="text-[9px] font-mono text-emerald-300 truncate">${pfEscapeHtml(pl.skill || 'All Levels')}</div>
+              <div class="text-[9px] font-mono text-emerald-300 truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
             </div>
           </div>
-          <span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-[#A3E635] font-mono text-[9px] font-black uppercase flex-shrink-0">✓ Booked</span>
+          ${badgeHtml}
         </div>
       `;
     }
@@ -5368,7 +5719,7 @@ function pfRenderOpenPlay24Board() {
     `;
   };
 
-  // 2. Build 6 Visual Pickleball Court Pod Cards (Pair A North vs Pair B South separated by Net)
+  // 2. Build 6 Visual Pickleball Court Pod Cards
   const podsGridHtml = schedule.pods.map(pod => {
     const p1 = pod.players[0];
     const p2 = pod.players[1];
@@ -5382,7 +5733,6 @@ function pfRenderOpenPlay24Board() {
 
     return `
       <div class="rounded-3xl bg-[#F8F7F3] border-2 border-[#E2E0D8] p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-3.5">
-        <!-- Pod Card Header -->
         <div class="flex items-start justify-between gap-2">
           <div>
             <div class="flex flex-wrap items-center gap-1.5">
@@ -5396,7 +5746,6 @@ function pfRenderOpenPlay24Board() {
           ${statusBadge}
         </div>
 
-        <!-- Visual Mini Pickleball Court Surface -->
         <div class="pf-court-pod-surface p-3.5 space-y-2">
           <div class="flex items-center justify-between text-[9px] font-mono font-extrabold uppercase tracking-wider text-emerald-200/90 px-1">
             <span>NORTH SIDE • PAIR A</span>
@@ -5407,7 +5756,6 @@ function pfRenderOpenPlay24Board() {
             ${renderPodSeatHtml(p2)}
           </div>
 
-          <!-- Pickleball Net Divider -->
           <div class="pf-court-net-line py-1">
             <span class="relative z-10 px-3 py-0.5 rounded-full bg-[#04120B] border border-[#A3E635] text-[#A3E635] font-mono text-[9px] font-black uppercase tracking-widest">
               🏓 NET • VS
@@ -5427,14 +5775,14 @@ function pfRenderOpenPlay24Board() {
     `;
   }).join('');
 
-  // 3. Verified Community Check-In Roster List
+  // 3. Verified Community Check-In Roster List with Live Confirmation Status & Receipt Lookup Link
   const realRosterHtml = joinedCount === 0 ? `
     <div class="p-6 rounded-2xl bg-[#F0FDF4] border-2 border-dashed border-[#86EFAC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div class="flex items-start sm:items-center gap-3.5">
         <span class="w-10 h-10 rounded-2xl bg-[#15803D] text-white font-mono text-xs font-black flex items-center justify-center flex-shrink-0">0/24</span>
         <div>
           <div class="text-sm font-black text-[#064E3B] uppercase">0 Players Booked Yet — All 24 Open Play Seats Are Open!</div>
-          <p class="text-xs text-[#166534] mt-0.5">We never display fake filler names. Book your Open Play seat (₱${unitFee}) to become Player #1 in today's community pod rotation.</p>
+          <p class="text-xs text-[#166534] mt-0.5">Book your Open Play seat (₱${unitFee}) to become Player #1 in today's community pod rotation and receive your Official Image Receipt.</p>
         </div>
       </div>
       <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', 1)" class="px-5 py-3 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0 shadow-sm">
@@ -5443,18 +5791,27 @@ function pfRenderOpenPlay24Board() {
     </div>
   ` : `
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-      ${activeSession.players.map((pl, idx) => `
-        <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border border-[#E2E0D8] flex items-center justify-between gap-2.5">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="w-8 h-8 rounded-xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
-            <div class="min-w-0">
-              <div class="text-xs font-black text-slate-900 truncate">${pfEscapeHtml(pl.name)}</div>
-              <div class="text-[10px] font-mono text-emerald-800 font-bold truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
+      ${activeSession.players.map((pl, idx) => {
+        const stInfo = pfResolveOpenPlayPlayerStatus(pl);
+        const statusPill = stInfo.isConfirmed
+          ? `<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-400 font-mono text-[9px] font-black uppercase flex-shrink-0">✅ CONFIRMED</span>`
+          : `<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-400 font-mono text-[9px] font-black uppercase flex-shrink-0">⏳ PENDING ADMIN</span>`;
+        const refLink = pl.bookingRef
+          ? `<a href="check-booking.html?ref=${encodeURIComponent(pl.bookingRef)}" class="underline hover:text-emerald-950" title="View Official Image Receipt &amp; Live Status">${pfEscapeHtml(pl.bookingRef)}</a>`
+          : '';
+        return `
+          <div class="p-3.5 rounded-2xl bg-[#F8F7F3] border-2 ${stInfo.isConfirmed ? 'border-emerald-400' : 'border-amber-300'} flex items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-8 h-8 rounded-xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
+              <div class="min-w-0">
+                <div class="text-xs font-black text-slate-900 truncate">${pfEscapeHtml(pl.name)}</div>
+                <div class="text-[10px] font-mono text-emerald-800 font-bold truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${refLink ? '• ' + refLink : ''}</div>
+              </div>
             </div>
+            ${statusPill}
           </div>
-          <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono text-[9px] font-black uppercase flex-shrink-0">✓ ${pfEscapeHtml(pl.status || 'BOOKED')}</span>
-        </div>
-      `).join('')}
+        `;
+      }).join('')}
     </div>
   `;
 
@@ -5468,34 +5825,39 @@ function pfRenderOpenPlay24Board() {
         <!-- 12-COLUMN EDITORIAL HEADER -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
 
-          <!-- LEFT 8 COLUMNS: SESSION DETAILS & DESIGNATED COURTS -->
+          <!-- LEFT 8 COLUMNS: OFFICIAL POSTER, SESSION DETAILS & DESIGNATED COURTS -->
           <div class="xl:col-span-8 flex flex-col justify-between space-y-5 bg-[#F8F7F3] rounded-3xl p-5 sm:p-7 border border-[#E2E0D8]">
-            <div class="space-y-3.5">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏓 ${pfEscapeHtml(activeSession.rotationRule || '4-Player Doubles Pod Shuffler')}</span>
-                <span class="px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-extrabold uppercase">💳 Entry Fee: ₱${unitFee} / Player</span>
-                <span class="px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-extrabold uppercase">🟢 ${joinedCount} Booked &bull; ${openSpotsCount} Seats Open</span>
+            <div class="flex flex-col md:flex-row gap-5 items-start">
+              <div class="w-full md:w-48 flex-shrink-0 rounded-2xl overflow-hidden border-2 border-[#15803D] shadow-lg">
+                <img src="assets/open-play-poster.jpg" alt="Official P&amp;F Rally Ground Open Play Schedule Poster" class="w-full h-auto object-cover">
               </div>
+              <div class="space-y-3.5 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase tracking-wider">🏓 ${pfEscapeHtml(activeSession.rotationRule || '4-Player Doubles Pod Shuffler')}</span>
+                  <span class="px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-extrabold uppercase">💳 Rate: ₱${unitFee}.00 / Participant</span>
+                  <span class="px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-extrabold uppercase">✅ ${confirmedPlayersCount} Confirmed &bull; ⏳ ${pendingPlayersCount} Pending</span>
+                </div>
 
-              <div class="space-y-2">
-                <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-[#0D1F18] leading-[1.1]">${pfEscapeHtml(activeSession.title)}</h2>
-                <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  Social doubles rotation designed for community play—no elimination bracket and no partner required. Book your seat online, check in at the club desk, and use the live Pod Shuffler below to rotate partners and opponents across ${dcList.length} designated court${dcList.length === 1 ? '' : 's'}.
-                </p>
+                <div class="space-y-2">
+                  <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-[#0D1F18] leading-[1.1]">${pfEscapeHtml(activeSession.title)}</h2>
+                  <p class="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                    <b>Drop In. Rally On.</b> Book your individual Open Play seat online (₱150/participant), upload your payment receipt screenshot, and download your <b>Official Open Play Image Receipt (PNG)</b>. Once Admin verifies your payment, your seat badge updates from <b>⏳ Pending</b> to <b>✅ Confirmed</b>!
+                  </p>
+                </div>
               </div>
             </div>
 
             <div class="pt-4 border-t border-[#DEDAD0] grid grid-cols-1 ${activeSession.showCourtsOnSite !== false ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4">
               <div class="space-y-1 md:pr-3 md:border-r md:border-[#DEDAD0]">
-                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Session Schedule</span>
-                <div class="font-mono text-xs sm:text-sm font-black text-[#0D1F18]">${pfEscapeHtml(activeSession.schedule)}</div>
-                <div class="font-mono text-[11px] font-bold text-[#15803D]">6 Rotating 30-Min Waves</div>
+                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Official Club Schedule</span>
+                <div class="font-mono text-xs font-black text-[#0D1F18]">Tue – Thu: 4:00 PM – 8:00 PM</div>
+                <div class="font-mono text-xs font-black text-[#15803D]">Fri – Sat: 6:00 PM – 10:00 PM</div>
               </div>
 
               <div class="space-y-1 md:px-2 ${activeSession.showCourtsOnSite !== false ? 'md:border-r md:border-[#DEDAD0]' : ''}">
-                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">Skill Level &amp; Format</span>
-                <div class="text-xs sm:text-sm font-extrabold text-[#0D1F18] leading-snug">${pfEscapeHtml(activeSession.skillLevel)}</div>
-                <div class="text-[11px] font-semibold text-[#52605A]">4-Player Doubles Pods (1 Game to 11 Pts)</div>
+                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#64748B] block">How Confirmation Works</span>
+                <div class="text-xs font-extrabold text-[#0D1F18] leading-snug">✅ Live Badge + PNG Image Pass</div>
+                <div class="text-[11px] font-semibold text-[#52605A]">Check status anytime in "My Booking"</div>
               </div>
 
               ${activeSession.showCourtsOnSite !== false ? `
@@ -5523,34 +5885,34 @@ function pfRenderOpenPlay24Board() {
                 </div>
               </div>
               <div class="text-right">
-                <span class="text-[9px] font-mono uppercase tracking-widest text-slate-300 block">Per Player</span>
+                <span class="text-[9px] font-mono uppercase tracking-widest text-slate-300 block">Per Participant</span>
                 <div class="font-mono text-2xl sm:text-3xl font-black text-[#A3E635]">₱${unitFee.toLocaleString()}</div>
               </div>
             </div>
 
             <div class="p-3.5 rounded-2xl bg-black/35 border border-[#A3E635]/35 space-y-1">
-              <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block">🏓 WHAT'S INCLUDED IN OPEN PLAY</span>
-              <div class="text-xs font-bold text-white leading-snug">3 Hours Social Rotation • 6 Balanced Doubles Pods • Instant <span class="font-mono text-[#A3E635]">PF-OP</span> Booking Reference</div>
+              <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block">📄 OFFICIAL IMAGE RECEIPT INCLUDED</span>
+              <div class="text-xs font-bold text-white leading-snug">Per-Participant Seat • 6 Balanced Doubles Pods • Downloadable <span class="font-mono text-[#A3E635]">PF-OP</span> PNG Image Receipt</div>
             </div>
 
             <div class="space-y-3">
               <div>
                 <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
-                  <span class="text-slate-300">Booked Roster: <b class="text-white">${joinedCount} / 24 Players</b></span>
+                  <span class="text-slate-300">Session Roster: <b class="text-white">${joinedCount} / 24 Players</b></span>
                   <span class="font-bold text-[#A3E635]">${joinedCount === 0 ? 'All 24 Seats Open' : pct + '% Full'}</span>
                 </div>
                 <div class="w-full h-2 rounded-full bg-black/50 overflow-hidden border border-white/15">
                   <div class="h-full rounded-full bg-gradient-to-r from-[#10B981] to-[#A3E635]" style="width:${pct}%"></div>
                 </div>
                 <div class="flex items-center justify-between text-[10px] font-mono mt-1.5 text-emerald-200">
-                  <span>🟢 ${joinedCount} Confirmed</span>
+                  <span>✅ ${confirmedPlayersCount} Confirmed • ⏳ ${pendingPlayersCount} Pending</span>
                   <span>${openSpotsCount} Seats Left</span>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 gap-2 pt-1">
                 <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="w-full py-3.5 px-4 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2">
-                  <span>🏓 Book &amp; Pay Open Play Seat (₱${unitFee}) →</span>
+                  <span>🏓 Book Open Play Seat (₱${unitFee}) →</span>
                 </button>
                 <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-extrabold text-[11px] uppercase transition flex items-center justify-center gap-1.5">
                   <span>🔀 Shuffle 4-Player Court Pods</span>
@@ -5568,7 +5930,7 @@ function pfRenderOpenPlay24Board() {
                 <span class="px-2.5 py-0.5 rounded bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase">LIVE 4-PLAYER POD SHUFFLER</span>
                 <span class="text-xs font-mono text-emerald-200">Last Shuffle: <b>${pfEscapeHtml(schedule.lastShuffleTime)}</b></span>
               </div>
-              <h3 class="text-base sm:text-lg font-black text-white mt-1">6 Doubles Match Pods (4 Players per Court • Pair A vs Pair B)</h3>
+              <h3 class="text-base sm:text-lg font-black text-white mt-1">6 Doubles Match Pods (4 Players per Court • Live Confirmation Badges)</h3>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <div class="inline-flex items-center rounded-xl bg-black/35 p-1 border border-white/15">
@@ -5593,8 +5955,8 @@ function pfRenderOpenPlay24Board() {
         <div class="pt-4 border-t border-slate-200 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER</span>
-              <h3 class="text-lg font-black text-slate-900">Exact Players Booked (${joinedCount} / 24)</h3>
+              <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER (CLICK REF # FOR IMAGE RECEIPT)</span>
+              <h3 class="text-lg font-black text-slate-900">Exact Players Booked (${joinedCount} / 24 • ✅ ${confirmedPlayersCount} Confirmed, ⏳ ${pendingPlayersCount} Pending)</h3>
             </div>
             <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="px-4 py-2.5 rounded-xl bg-[#0F291E] hover:bg-[#163A2B] text-[#A3E635] font-black text-xs uppercase tracking-wider transition">
               + Book Open Play Seat (₱${unitFee})

@@ -266,7 +266,7 @@
     html[data-theme="dark"] header nav > a.bg-brand-lime * {
       color: #050E1D !important;
     }
-    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background: #0E2240 !important;
       color: #FFFFFF !important;
       border-color: rgba(155, 230, 0, 0.3) !important;
@@ -685,6 +685,7 @@
     
     
     
+    
     /* === V3.0 BULLETPROOF DAYLIGHT & NIGHT MODE CONTRAST FIX === */
     /* Expired / Past Time Slots: Crisp & Legible in Both Modes */
     .pf-cal-slot-past,
@@ -772,7 +773,26 @@
       color: #15803D !important;
     }
     html[data-theme="light"] body main #payment-section #payment-gate-notice {
-      color: #B45309 !important;
+      color: #334155 !important;
+    }
+    html[data-theme="light"] body main #payment-section #policies-consent-subbox {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-section #book-ref-subbox {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-section #btn-accept-all-policies,
+    html[data-theme="light"] body main #payment-section #btn-accept-all-policies * {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: #15803D !important;
+    }
+    html[data-theme="light"] body main #payment-section #payment-box-total-badge {
+      color: #15803D !important;
     }
     html[data-theme="light"] body main #payment-controls #book-pay-gcash,
     html[data-theme="light"] body main #payment-controls #book-pay-maya,
@@ -819,6 +839,19 @@
       color: #F8FAFC !important;
       color-scheme: dark;
     }
+    html[data-theme="dark"] body main #policies-consent-subbox {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] body main #book-ref-subbox {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] body main #btn-accept-all-policies,
+    html[data-theme="dark"] body main #btn-accept-all-policies * {
+      background-color: #9BE600 !important;
+      color: #050E1D !important;
+    }
     html[data-theme="dark"] body main .pf-policy-consent-card {
       background-color: #050E1D !important;
       border: 1px solid rgba(155, 230, 0, 0.25) !important;
@@ -837,13 +870,50 @@
       color: #CBD5E1 !important;
     }
 
+    /* About & Courts Dropdown Menu Items ("Club Updates" etc.) — Never Dark-on-Dark */
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item {
+      background: #FFFFFF !important;
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border: 1px solid transparent !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child {
+      color: #0F172A !important;
+      font-weight: 700 !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item #dropdown-ann-badge {
+      background-color: #D1FAE5 !important;
+      color: #065F46 !important;
+      font-weight: 800 !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover {
+      background: #0F291E !important;
+      background-color: #0F291E !important;
+      color: #FFFFFF !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child {
+      color: #FFFFFF !important;
+    }
+
     /* Pricing & Subpages Daylight/Night Contrast Fixes */
-    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background-color: #F6F5F0 !important;
       color: #0D1F18 !important;
       border: 1px solid rgba(13, 31, 24, 0.2) !important;
     }
-    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] span:not(#header-ann-badge) {
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) span:not(#header-ann-badge) {
       color: #15803D !important;
     }
     html[data-theme="light"] header #header-ann-badge {
@@ -1014,7 +1084,7 @@
             Community Open Play &amp; <span class="font-serif italic font-normal text-[#A3E635]">4-Player Pod Shuffler</span>
           </h1>
           <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed max-w-2xl">
-            No partner needed and no elimination pressure. Book your Open Play seat online, get added to our verified community check-in roster, and let our automated 4-Player Pod Shuffler rotate everyone across designated courts every 30 minutes.
+            <b>Official Schedule:</b> <b>Tuesday – Thursday (4:00 PM – 8:00 PM)</b> &amp; <b>Friday – Saturday (6:00 PM – 10:00 PM)</b> at <b>₱150.00 per participant</b>. Book your individual Open Play seat online, receive an instant <b>Downloadable Official Image Receipt (PNG)</b>, and see your live <b>✅ CONFIRMED</b> status on the 4-Player Pod Shuffler!
           </p>
         </div>
 
@@ -1058,7 +1128,7 @@
   <!-- ================= MAIN OPEN PLAY SHUFFLER WORKSPACE ================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
     <div id="open-play-dedicated-page-root" class="space-y-6">
-      <!-- Populated automatically by pfRenderOpenPlay24Board() in app.js?v=20261105v9 -->
+      <!-- Populated automatically by pfRenderOpenPlay24Board() in app.js?v=20261106v12 -->
     </div>
   </main>
 
@@ -1082,7 +1152,7 @@
     </div>
   </footer>
 
-  <script src="app.js?v=20261105v9"></script>
+  <script src="app.js?v=20261106v12"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       if (typeof pfRenderOpenPlay24Board === 'function') {

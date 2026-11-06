@@ -1259,7 +1259,7 @@
       background: #15803D !important;
       color: #FFFFFF !important;
     }
-    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background: #18352A !important;
       color: #FFFFFF !important;
       border-color: rgba(52, 211, 153, 0.3) !important;
@@ -2351,7 +2351,7 @@ button.pf-trn-btn-danger:hover,
     html[data-theme="dark"] header nav > a.bg-brand-lime * {
       color: #050E1D !important;
     }
-    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background: #0E2240 !important;
       color: #FFFFFF !important;
       border-color: rgba(155, 230, 0, 0.3) !important;
@@ -2770,6 +2770,7 @@ button.pf-trn-btn-danger:hover,
     
     
     
+    
     /* === V3.0 BULLETPROOF DAYLIGHT & NIGHT MODE CONTRAST FIX === */
     /* Expired / Past Time Slots: Crisp & Legible in Both Modes */
     .pf-cal-slot-past,
@@ -2857,7 +2858,26 @@ button.pf-trn-btn-danger:hover,
       color: #15803D !important;
     }
     html[data-theme="light"] body main #payment-section #payment-gate-notice {
-      color: #B45309 !important;
+      color: #334155 !important;
+    }
+    html[data-theme="light"] body main #payment-section #policies-consent-subbox {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-section #book-ref-subbox {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-section #btn-accept-all-policies,
+    html[data-theme="light"] body main #payment-section #btn-accept-all-policies * {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: #15803D !important;
+    }
+    html[data-theme="light"] body main #payment-section #payment-box-total-badge {
+      color: #15803D !important;
     }
     html[data-theme="light"] body main #payment-controls #book-pay-gcash,
     html[data-theme="light"] body main #payment-controls #book-pay-maya,
@@ -2904,6 +2924,19 @@ button.pf-trn-btn-danger:hover,
       color: #F8FAFC !important;
       color-scheme: dark;
     }
+    html[data-theme="dark"] body main #policies-consent-subbox {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] body main #book-ref-subbox {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] body main #btn-accept-all-policies,
+    html[data-theme="dark"] body main #btn-accept-all-policies * {
+      background-color: #9BE600 !important;
+      color: #050E1D !important;
+    }
     html[data-theme="dark"] body main .pf-policy-consent-card {
       background-color: #050E1D !important;
       border: 1px solid rgba(155, 230, 0, 0.25) !important;
@@ -2922,13 +2955,50 @@ button.pf-trn-btn-danger:hover,
       color: #CBD5E1 !important;
     }
 
+    /* About & Courts Dropdown Menu Items ("Club Updates" etc.) — Never Dark-on-Dark */
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item {
+      background: #FFFFFF !important;
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border: 1px solid transparent !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child {
+      color: #0F172A !important;
+      font-weight: 700 !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item #dropdown-ann-badge {
+      background-color: #D1FAE5 !important;
+      color: #065F46 !important;
+      font-weight: 800 !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover {
+      background: #0F291E !important;
+      background-color: #0F291E !important;
+      color: #FFFFFF !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child {
+      color: #FFFFFF !important;
+    }
+
     /* Pricing & Subpages Daylight/Night Contrast Fixes */
-    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background-color: #F6F5F0 !important;
       color: #0D1F18 !important;
       border: 1px solid rgba(13, 31, 24, 0.2) !important;
     }
-    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] span:not(#header-ann-badge) {
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) span:not(#header-ann-badge) {
       color: #15803D !important;
     }
     html[data-theme="light"] header #header-ann-badge {
@@ -3449,7 +3519,7 @@ button.pf-trn-btn-danger:hover,
       <!-- Live Spectator Bracket Status Banner (Read-Only on Public Site, Synced from Admin 3D Tournament Host) -->
       <div id="public-live-bracket-spectator-banner" class="hidden"></div>
 
-      <!-- Dynamic Tournaments Grid (Populated by pfRenderPublicTournaments in app.js?v=20261105v9 & editable in Admin) -->
+      <!-- Dynamic Tournaments Grid (Populated by pfRenderPublicTournaments in app.js?v=20261106v12 & editable in Admin) -->
       <div id="public-tournaments-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
           <div class="w-11 h-11 rounded-xl bg-[#E2E0D8] text-[#475569] flex items-center justify-center mx-auto mb-4">
@@ -4335,7 +4405,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261105v9"></script>
+<script src="app.js?v=20261106v12"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -4414,11 +4484,10 @@ button.pf-trn-btn-danger:hover,
 
     // Helper: Exact Open Play Schedule from Main Website (Mon 3-6PM, Tue-Thu 3-8PM, Fri 3-11PM, Sat 6-10PM)
     const OPEN_PLAY_HOURS_BY_DAY = {
-      1: { start: 15, end: 18 }, // Monday: 3:00 PM - 6:00 PM
-      2: { start: 15, end: 20 }, // Tuesday: 3:00 PM - 8:00 PM
-      3: { start: 15, end: 20 }, // Wednesday: 3:00 PM - 8:00 PM
-      4: { start: 15, end: 20 }, // Thursday: 3:00 PM - 8:00 PM
-      5: { start: 15, end: 23 }, // Friday: 3:00 PM - 11:00 PM
+      2: { start: 16, end: 20 }, // Tuesday: 4:00 PM - 8:00 PM
+      3: { start: 16, end: 20 }, // Wednesday: 4:00 PM - 8:00 PM
+      4: { start: 16, end: 20 }, // Thursday: 4:00 PM - 8:00 PM
+      5: { start: 18, end: 22 }, // Friday: 6:00 PM - 10:00 PM
       6: { start: 18, end: 22 }  // Saturday: 6:00 PM - 10:00 PM
     };
 
@@ -4709,9 +4778,9 @@ button.pf-trn-btn-danger:hover,
             const opRate = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
             const opPriceTag = opRate > 0 ? `₱${opRate}` : 'Free';
             return `<td class="p-1 sm:p-1.5 text-center relative">
-              <button type="button" onclick="openBookingDrawer(${cNum}, '${h.time}')" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] transition text-[10px] sm:text-xs font-extrabold flex items-center justify-center gap-1 leading-tight shadow-sm" title="Open Play Session (${opPriceTag}/player) — Click to Join">
-                <span class="sm:hidden">Open Play • ${opPriceTag}</span>
-                <span class="hidden sm:inline">Open Play • ${opPriceTag}</span>
+              <button type="button" onclick="if(typeof window.pfOpenJoinOpenPlayModalForDate==='function'){window.pfOpenJoinOpenPlayModalForDate(selectedScheduleDateYMD, '${h.time}');}else{window.location.href='open-play.html';}" class="w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] transition text-[10px] sm:text-xs font-extrabold flex items-center justify-center gap-1 leading-tight shadow-sm" title="Official Open Play (${opPriceTag}/participant) — Click to Book 1 Open Play Seat">
+                <span class="sm:hidden">Open Play • ${opPriceTag}/seat</span>
+                <span class="hidden sm:inline">🏓 Open Play • ${opPriceTag}/seat</span>
               </button>
             </td>`;
           } else {

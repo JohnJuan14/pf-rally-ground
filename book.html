@@ -899,7 +899,7 @@
       background: #15803D !important;
       color: #FFFFFF !important;
     }
-    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background: #18352A !important;
       color: #FFFFFF !important;
       border-color: rgba(52, 211, 153, 0.3) !important;
@@ -2048,7 +2048,7 @@ button.pf-trn-btn-danger:hover,
     html[data-theme="dark"] header nav > a.bg-brand-lime * {
       color: #050E1D !important;
     }
-    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="dark"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background: #0E2240 !important;
       color: #FFFFFF !important;
       border-color: rgba(155, 230, 0, 0.3) !important;
@@ -2467,6 +2467,7 @@ button.pf-trn-btn-danger:hover,
     
     
     
+    
     /* === V3.0 BULLETPROOF DAYLIGHT & NIGHT MODE CONTRAST FIX === */
     /* Expired / Past Time Slots: Crisp & Legible in Both Modes */
     .pf-cal-slot-past,
@@ -2554,7 +2555,26 @@ button.pf-trn-btn-danger:hover,
       color: #15803D !important;
     }
     html[data-theme="light"] body main #payment-section #payment-gate-notice {
-      color: #B45309 !important;
+      color: #334155 !important;
+    }
+    html[data-theme="light"] body main #payment-section #policies-consent-subbox {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-section #book-ref-subbox {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html[data-theme="light"] body main #payment-section #btn-accept-all-policies,
+    html[data-theme="light"] body main #payment-section #btn-accept-all-policies * {
+      background-color: #15803D !important;
+      color: #FFFFFF !important;
+      border-color: #15803D !important;
+    }
+    html[data-theme="light"] body main #payment-section #payment-box-total-badge {
+      color: #15803D !important;
     }
     html[data-theme="light"] body main #payment-controls #book-pay-gcash,
     html[data-theme="light"] body main #payment-controls #book-pay-maya,
@@ -2601,6 +2621,19 @@ button.pf-trn-btn-danger:hover,
       color: #F8FAFC !important;
       color-scheme: dark;
     }
+    html[data-theme="dark"] body main #policies-consent-subbox {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] body main #book-ref-subbox {
+      background-color: #08182E !important;
+      border: 1px solid rgba(155, 230, 0, 0.25) !important;
+    }
+    html[data-theme="dark"] body main #btn-accept-all-policies,
+    html[data-theme="dark"] body main #btn-accept-all-policies * {
+      background-color: #9BE600 !important;
+      color: #050E1D !important;
+    }
     html[data-theme="dark"] body main .pf-policy-consent-card {
       background-color: #050E1D !important;
       border: 1px solid rgba(155, 230, 0, 0.25) !important;
@@ -2619,13 +2652,50 @@ button.pf-trn-btn-danger:hover,
       color: #CBD5E1 !important;
     }
 
+    /* About & Courts Dropdown Menu Items ("Club Updates" etc.) — Never Dark-on-Dark */
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item {
+      background: #FFFFFF !important;
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border: 1px solid transparent !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child {
+      color: #0F172A !important;
+      font-weight: 700 !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item #dropdown-ann-badge {
+      background-color: #D1FAE5 !important;
+      color: #065F46 !important;
+      font-weight: 800 !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover {
+      background: #0F291E !important;
+      background-color: #0F291E !important;
+      color: #FFFFFF !important;
+    }
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child {
+      color: #FFFFFF !important;
+    }
+
     /* Pricing & Subpages Daylight/Night Contrast Fixes */
-    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] {
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) {
       background-color: #F6F5F0 !important;
       color: #0D1F18 !important;
       border: 1px solid rgba(13, 31, 24, 0.2) !important;
     }
-    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"] span:not(#header-ann-badge) {
+    html[data-theme="light"] header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item):not([onclick*="toggleMobileMenu"]) span:not(#header-ann-badge) {
       color: #15803D !important;
     }
     html[data-theme="light"] header #header-ann-badge {
@@ -3121,172 +3191,207 @@ button.pf-trn-btn-danger:hover,
           </div>
         </section>
 
-        <!-- STEP 7: POLICIES AND GUEST CONSENT (3 EXACT POLICIES SCRAPED) -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-white text-slate-900 border border-slate-200 shadow-2xl space-y-4" style="border-radius: 18px !important;">
-          <div>
-            <h2 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 font-sans">Policies and guest consent</h2>
-            <p class="text-xs sm:text-sm text-slate-600 mt-1 font-medium">Review and accept each item before payment options are enabled.</p>
-          </div>
-
-          <div class="space-y-3 pt-1">
-            <!-- Policy 1 -->
-            <label class="pf-policy-consent-card p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3.5 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
-              <input type="checkbox" id="consent-waiver" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
-              <div class="text-xs">
-                <span class="text-slate-900 font-bold text-sm block">I accept the facility waiver and court conduct rules.</span>
-                <span class="text-slate-600 text-xs leading-relaxed block mt-1">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
-                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-2 font-bold text-[#1d4ed8] hover:text-blue-900 underline text-xs inline-block transition">Read waiver and court rules</button>
-              </div>
-            </label>
-
-            <!-- Policy 2 -->
-            <label class="pf-policy-consent-card p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3.5 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
-              <input type="checkbox" id="consent-cancel" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
-              <div class="text-xs">
-                <span class="text-slate-900 font-bold text-sm block">I accept the cancellation and rescheduling terms.</span>
-                <span class="text-slate-600 text-xs leading-relaxed block mt-1">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
-                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-2 font-bold text-[#1d4ed8] hover:text-blue-900 underline text-xs inline-block transition">Read booking-change policy</button>
-              </div>
-            </label>
-
-            <!-- Policy 3 -->
-            <label class="pf-policy-consent-card p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3.5 cursor-pointer transition shadow-sm" style="border-radius: 12px !important;">
-              <input type="checkbox" id="consent-charges" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-1 rounded border-slate-300 accent-[#1d4ed8] flex-shrink-0">
-              <div class="text-xs">
-                <span class="text-slate-900 font-bold text-sm block">I understand that processing and convenience charges are non-refundable.</span>
-                <span class="text-slate-600 text-xs leading-relaxed block mt-1">These service charges cannot be returned after the transaction is processed.</span>
-              </div>
-            </label>
-          </div>
-        </section>
-
-        <!-- STEP 8: PAYMENT -->
-        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-4" id="payment-section">
-          <div>
-            <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 8 &bull; Settlement</span>
-            <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Payment</h2>
-            <p id="payment-gate-notice" class="text-xs text-brand-clay font-bold mt-1">Accept all three policy confirmations above to continue with payment.</p>
-          </div>
-
-          <div id="payment-controls" class="space-y-5 opacity-40 pointer-events-none transition-opacity duration-300">
-            <!-- Payment Channel Selector -->
-            <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="selectBookPaymentMode('gcash')" id="pay-pill-gcash" class="py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition">GCash</button>
-              <button type="button" onclick="selectBookPaymentMode('maya')" id="pay-pill-maya" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Maya</button>
-              <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Bank Transfer</button>
+        <!-- STEP 7: UNIFIED PAYMENT & CLUB POLICIES (ALL IN ONE BOX) -->
+        <section class="p-6 sm:p-7 rounded-3xl bg-brand-card/90 border border-white/10 shadow-xl space-y-6" id="payment-section">
+          <!-- Unified Box Header with 3-Step Mini Guide & Live Amount Due -->
+          <div class="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 7 &bull; Final Step</span>
+              <h2 class="text-lg sm:text-2xl font-black uppercase tracking-tight text-white font-display">Payment &amp; Club Policies</h2>
+              <p class="text-xs sm:text-sm text-slate-300 mt-1">All in one place: choose your payment method, enter your reference number, and accept the club policies below.</p>
             </div>
+            <div class="px-4 py-2.5 rounded-2xl bg-brand-black border border-brand-lime/40 text-right flex-shrink-0">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Amount to Pay</span>
+              <span id="payment-box-total-badge" class="text-xl sm:text-2xl font-black font-mono text-brand-lime">₱400.00</span>
+            </div>
+          </div>
 
-            <!-- GCash Channel Card -->
-            <div id="book-pay-gcash" class="p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-brand-lime/40 space-y-3 shadow-lg">
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-                <div class="sm:col-span-5 flex flex-col items-center">
-                  <div class="text-center p-3 bg-white rounded-2xl shadow-2xl w-52 sm:w-full max-w-[215px] mx-auto border-2 border-brand-lime">
-                    <img id="book-gcash-qr-img" data-qr-mode="qr" src="assets/qr-gcash.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" onclick="pfOpenQrStandeeLightbox('gcash')" alt="Official GCash QR Ph" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
-                    <span class="text-[9px] font-mono font-black text-[#0057E7] block mt-1.5 uppercase">Official GCash QR Ph</span>
-                  </div>
-                  <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
-                    <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
-                    <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
-                  </div>
-                </div>
-                <div class="sm:col-span-7 space-y-2.5 text-xs">
-                  <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
-                    <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
-                      <span class="text-[10px] text-slate-400 uppercase font-bold">Account Name</span>
-                      <b data-pay-field="gcash-name" class="text-white font-mono text-sm">KA******E L.</b>
+          <div id="payment-controls" class="space-y-6 transition-opacity duration-300">
+            <!-- PART 1: CHOOSE PAYMENT CHANNEL & SCAN / COPY -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-black uppercase tracking-wider text-brand-lime">1. Select Payment Method &amp; Send Payment</span>
+                <span class="text-[11px] font-mono text-slate-400">Instant QR Ph / Account Transfer</span>
+              </div>
+
+              <!-- Payment Channel Selector -->
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="selectBookPaymentMode('gcash')" id="pay-pill-gcash" class="py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition">GCash</button>
+                <button type="button" onclick="selectBookPaymentMode('maya')" id="pay-pill-maya" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Maya</button>
+                <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Bank Transfer</button>
+              </div>
+
+              <!-- GCash Channel Card -->
+              <div id="book-pay-gcash" class="p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-brand-lime/40 space-y-3 shadow-lg">
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                  <div class="sm:col-span-5 flex flex-col items-center">
+                    <div class="text-center p-3 bg-white rounded-2xl shadow-2xl w-52 sm:w-full max-w-[215px] mx-auto border-2 border-brand-lime">
+                      <img id="book-gcash-qr-img" data-qr-mode="qr" src="assets/qr-gcash.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-gcash.png';" onclick="pfOpenQrStandeeLightbox('gcash')" alt="Official GCash QR Ph" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                      <span class="text-[9px] font-mono font-black text-[#0057E7] block mt-1.5 uppercase">Official GCash QR Ph</span>
                     </div>
-                    <div class="flex items-center justify-between">
-                      <span class="text-[10px] text-slate-400 uppercase font-bold">GCash Number</span>
-                      <div class="flex items-center gap-1.5">
-                        <b id="book-gcash-number" data-pay-field="gcash-num" class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
-                        <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black font-mono font-black text-[10px] uppercase transition">Copy</button>
+                    <div class="w-52 sm:w-full max-w-[215px] mt-2.5 grid grid-cols-2 gap-2">
+                      <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">🔍 Zoom QR</button>
+                      <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">📥 Save QR</button>
+                    </div>
+                  </div>
+                  <div class="sm:col-span-7 space-y-2.5 text-xs">
+                    <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
+                      <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Account Name</span>
+                        <b data-pay-field="gcash-name" class="text-white font-mono text-sm">KA******E L.</b>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">GCash Number</span>
+                        <div class="flex items-center gap-1.5">
+                          <b id="book-gcash-number" data-pay-field="gcash-num" class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
+                          <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black font-mono font-black text-[10px] uppercase transition">Copy</button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
-                    <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay with GCash:</span>
-                    <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload inside the <b>GCash App (QR &rarr; Upload QR)</b>.</div>
-                    <div>2. Or use <b>Express Send</b> to <b>0999 883 2346</b>.</div>
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
+                      <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay with GCash:</span>
+                      <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload inside the <b>GCash App (QR &rarr; Upload QR)</b>.</div>
+                      <div>2. Or use <b>Express Send</b> to <b>0999 883 2346</b>.</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Maya Channel Card -->
-            <div id="book-pay-maya" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-emerald-500/40 space-y-3 shadow-lg">
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-                <div class="sm:col-span-5 flex flex-col items-center">
-                  <div class="text-center p-3 bg-white rounded-2xl shadow-2xl w-52 sm:w-full max-w-[215px] mx-auto border-2 border-emerald-500">
-                    <img id="book-maya-qr-img" data-qr-mode="qr" src="assets/qr-maya.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-maya.png';" onclick="pfOpenQrStandeeLightbox('maya')" alt="Official Maya QR Ph" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
-                    <span class="text-[9px] font-mono font-black text-emerald-800 block mt-1.5 uppercase">Official Maya QR Ph</span>
-                  </div>
-                  <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
-                    <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
-                    <button type="button" onclick="pfDownloadOfficialQr('maya')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
-                  </div>
-                </div>
-                <div class="sm:col-span-7 space-y-2.5 text-xs">
-                  <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
-                    <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
-                      <span class="text-[10px] text-slate-400 uppercase font-bold">Account Name</span>
-                      <b data-pay-field="maya-name" class="text-white font-mono text-sm">KATHERINE LIM</b>
+              <!-- Maya Channel Card -->
+              <div id="book-pay-maya" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-emerald-500/40 space-y-3 shadow-lg">
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                  <div class="sm:col-span-5 flex flex-col items-center">
+                    <div class="text-center p-3 bg-white rounded-2xl shadow-2xl w-52 sm:w-full max-w-[215px] mx-auto border-2 border-emerald-500">
+                      <img id="book-maya-qr-img" data-qr-mode="qr" src="assets/qr-maya.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-maya.png';" onclick="pfOpenQrStandeeLightbox('maya')" alt="Official Maya QR Ph" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                      <span class="text-[9px] font-mono font-black text-emerald-800 block mt-1.5 uppercase">Official Maya QR Ph</span>
                     </div>
-                    <div class="flex items-center justify-between">
-                      <span class="text-[10px] text-slate-400 uppercase font-bold">Maya Number</span>
-                      <div class="flex items-center gap-1.5">
-                        <b data-pay-field="maya-num" class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
-                        <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black font-mono font-black text-[10px] uppercase transition">Copy</button>
+                    <div class="w-52 sm:w-full max-w-[215px] mt-2.5 grid grid-cols-2 gap-2">
+                      <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">🔍 Zoom QR</button>
+                      <button type="button" onclick="pfDownloadOfficialQr('maya')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">📥 Save QR</button>
+                    </div>
+                  </div>
+                  <div class="sm:col-span-7 space-y-2.5 text-xs">
+                    <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
+                      <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Account Name</span>
+                        <b data-pay-field="maya-name" class="text-white font-mono text-sm">KATHERINE LIM</b>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Maya Number</span>
+                        <div class="flex items-center gap-1.5">
+                          <b data-pay-field="maya-num" class="text-sm font-mono text-brand-lime font-black">0999 883 2346</b>
+                          <button type="button" onclick="copyPaymentNumber('09998832346', this)" class="px-2.5 py-1 rounded-lg bg-brand-lime text-brand-black font-mono font-black text-[10px] uppercase transition">Copy</button>
+                        </div>
                       </div>
                     </div>
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
+                      <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay with Maya:</span>
+                      <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload inside the <b>Maya App</b>.</div>
+                      <div>2. Or send money directly to Maya number <b>0999 883 2346</b>.</div>
+                    </div>
                   </div>
-                  <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
-                    <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay with Maya:</span>
-                    <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload inside the <b>Maya App</b>.</div>
-                    <div>2. Or send money directly to Maya number <b>0999 883 2346</b>.</div>
+                </div>
+              </div>
+
+              <!-- Bank Transfer Channel Card -->
+              <div id="book-pay-bank" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-[#0072CE]/50 space-y-3 shadow-lg">
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                  <div class="sm:col-span-5 flex flex-col items-center">
+                    <div class="text-center p-3 bg-white rounded-2xl shadow-2xl w-52 sm:w-full max-w-[215px] mx-auto border-2 border-[#0072CE]">
+                      <img id="book-bank-qr-img" data-qr-mode="qr" src="assets/qr-bdo.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-bdo.png';" onclick="pfOpenQrStandeeLightbox('bank')" alt="Official BDO InstaPay QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
+                      <span class="text-[9px] font-mono font-black text-[#0072CE] block mt-1.5 uppercase">Official BDO InstaPay QR</span>
+                    </div>
+                    <div class="w-52 sm:w-full max-w-[215px] mt-2.5 grid grid-cols-2 gap-2">
+                      <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">🔍 Zoom QR</button>
+                      <button type="button" onclick="pfDownloadOfficialQr('bank')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">📥 Save QR</button>
+                    </div>
+                  </div>
+                  <div class="sm:col-span-7 space-y-2.5 text-xs">
+                    <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
+                      <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Bank &amp; Recipient</span>
+                        <b data-pay-field="bank-name" class="text-white font-mono text-sm">BDO Unibank &bull; Dex</b>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">BDO Account No.</span>
+                        <b data-pay-field="bank-num" class="text-sm font-mono text-brand-lime font-black">••••••••8678</b>
+                      </div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
+                      <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay via BDO / Bank:</span>
+                      <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload in your mobile banking app (BDO, BPI, UnionBank, GCash, Maya).</div>
+                      <div>2. Enter the <b>Reference Number</b> below after paying.</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Bank Transfer Channel Card -->
-            <div id="book-pay-bank" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-[#0072CE]/50 space-y-3 shadow-lg">
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-                <div class="sm:col-span-5 flex flex-col items-center">
-                  <div class="text-center p-3 bg-white rounded-2xl shadow-2xl w-52 sm:w-full max-w-[215px] mx-auto border-2 border-[#0072CE]">
-                    <img id="book-bank-qr-img" data-qr-mode="qr" src="assets/qr-bdo.png?v=20261029v10" onerror="this.onerror=null;this.src='assets/qr-bdo.png';" onclick="pfOpenQrStandeeLightbox('bank')" alt="Official BDO InstaPay QR" class="w-full aspect-square object-contain rounded-lg cursor-pointer" style="image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;">
-                    <span class="text-[9px] font-mono font-black text-[#0072CE] block mt-1.5 uppercase">Official BDO InstaPay QR</span>
-                  </div>
-                  <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
-                    <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
-                    <button type="button" onclick="pfDownloadOfficialQr('bank')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
-                  </div>
-                </div>
-                <div class="sm:col-span-7 space-y-2.5 text-xs">
-                  <div class="p-3.5 rounded-xl bg-brand-card border border-white/10 space-y-2">
-                    <div class="flex items-center justify-between border-b border-white/5 pb-1.5">
-                      <span class="text-[10px] text-slate-400 uppercase font-bold">Bank &amp; Recipient</span>
-                      <b data-pay-field="bank-name" class="text-white font-mono text-sm">BDO Unibank &bull; Dex</b>
-                    </div>
-                    <div class="flex items-center justify-between">
-                      <span class="text-[10px] text-slate-400 uppercase font-bold">BDO Account No.</span>
-                      <b data-pay-field="bank-num" class="text-sm font-mono text-brand-lime font-black">••••••••8678</b>
-                    </div>
-                  </div>
-                  <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
-                    <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay via BDO / Bank:</span>
-                    <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload in your mobile banking app (BDO, BPI, UnionBank, GCash, Maya).</div>
-                    <div>2. Enter the <b>Reference Number</b> below after paying.</div>
-                  </div>
-                </div>
+            <!-- PART 2: PAYMENT REFERENCE NUMBER INPUT -->
+            <div id="book-ref-subbox" class="p-4 sm:p-5 rounded-2xl bg-brand-card border border-white/15 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-1">
+                <label for="book-payment-ref" class="block text-xs font-mono font-black uppercase tracking-wider text-brand-lime">2. Payment Reference Number *</label>
+                <span class="text-[10px] font-mono text-slate-400">From your GCash / Maya / Bank receipt</span>
               </div>
-            </div>
-
-            <!-- Reference Number Input -->
-            <div class="p-4 rounded-2xl bg-brand-card border border-white/15 space-y-2">
-              <label for="book-payment-ref" class="block text-xs font-mono font-bold uppercase tracking-wider text-white">Payment Reference Number *</label>
               <input type="text" id="book-payment-ref" required placeholder="e.g. 1029 3847 5612" class="w-full bg-brand-black border border-white/20 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-brand-lime font-mono font-black focus:outline-none transition">
-              <p class="text-[10px] text-slate-400">Enter the 8-13 digit transaction number from your payment receipt.</p>
+              <p class="text-[11px] text-slate-400">Enter the 6–13 digit transaction reference number from your payment receipt.</p>
               <p id="book-ref-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
+            </div>
+
+            <!-- PART 3: INTEGRATED CLUB POLICIES & GUEST CONSENT (IN THE SAME BOX!) -->
+            <div id="policies-consent-subbox" class="p-4 sm:p-5 rounded-2xl bg-brand-black/80 border border-white/15 space-y-3.5">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+                <div>
+                  <span class="text-xs font-mono font-black uppercase tracking-wider text-brand-lime block">3. Club Policies &amp; Guest Consent *</span>
+                  <p id="payment-gate-notice" class="text-[11px] text-slate-300 mt-0.5">Tick the 3 boxes below (or tap <b>Accept All</b>) before submitting your reservation.</p>
+                </div>
+                <button type="button" id="btn-accept-all-policies" onclick="acceptAllBookPolicies()" class="px-3.5 py-2 rounded-xl bg-brand-lime text-brand-black font-mono font-black text-xs uppercase tracking-wider hover:opacity-95 transition active:scale-95 shadow-sm flex items-center gap-1.5">
+                  <span>✓ Accept All 3 Policies</span>
+                </button>
+              </div>
+
+              <div class="space-y-2.5">
+                <!-- Policy 1 -->
+                <label class="pf-policy-consent-card p-3.5 rounded-xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3 cursor-pointer transition shadow-sm">
+                  <input type="checkbox" id="consent-waiver" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-0.5 rounded border-slate-300 accent-[#15803D] flex-shrink-0">
+                  <div class="text-xs flex-1">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <span class="text-slate-900 font-bold text-xs sm:text-sm">I accept the facility waiver and court conduct rules.</span>
+                      <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="font-bold text-[#15803D] hover:underline text-[11px] whitespace-nowrap">Read waiver &amp; rules &rarr;</button>
+                    </div>
+                    <span class="text-slate-600 text-[11px] leading-relaxed block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
+                  </div>
+                </label>
+
+                <!-- Policy 2 -->
+                <label class="pf-policy-consent-card p-3.5 rounded-xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3 cursor-pointer transition shadow-sm">
+                  <input type="checkbox" id="consent-cancel" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-0.5 rounded border-slate-300 accent-[#15803D] flex-shrink-0">
+                  <div class="text-xs flex-1">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <span class="text-slate-900 font-bold text-xs sm:text-sm">I accept the cancellation and rescheduling terms.</span>
+                      <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="font-bold text-[#15803D] hover:underline text-[11px] whitespace-nowrap">Read change policy &rarr;</button>
+                    </div>
+                    <span class="text-slate-600 text-[11px] leading-relaxed block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
+                  </div>
+                </label>
+
+                <!-- Policy 3 -->
+                <label class="pf-policy-consent-card p-3.5 rounded-xl bg-white border border-slate-200 hover:border-blue-400 flex items-start gap-3 cursor-pointer transition shadow-sm">
+                  <input type="checkbox" id="consent-charges" onchange="checkPoliciesConsent()" class="w-4 h-4 mt-0.5 rounded border-slate-300 accent-[#15803D] flex-shrink-0">
+                  <div class="text-xs flex-1">
+                    <span class="text-slate-900 font-bold text-xs sm:text-sm block">I understand that processing and convenience charges are non-refundable.</span>
+                    <span class="text-slate-600 text-[11px] leading-relaxed block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- PART 4: DIRECT SUBMIT CTA INSIDE THE UNIFIED BOX -->
+            <div class="pt-1">
+              <button type="button" onclick="submitReservation()" id="btn-submit-booking-inline" class="w-full py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase text-sm sm:text-base tracking-wider hover:bg-brand-limeHover transition active:scale-95 shadow-lg shadow-brand-lime/25 flex items-center justify-center gap-2">
+                <span>Confirm &amp; Submit Booking</span>
+                <span class="text-lg font-bold">&rarr;</span>
+              </button>
             </div>
           </div>
         </section>
@@ -4085,7 +4190,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261105v9"></script>
+<script src="app.js?v=20261106v12"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>
@@ -4512,6 +4617,8 @@ button.pf-trn-btn-danger:hover,
       // Grand total
       const grandTotal = courtCost + extraCost + gearTotal;
       document.getElementById("summary-grand-total").textContent = `₱${grandTotal.toLocaleString()}.00`;
+      const payBoxBadge = document.getElementById("payment-box-total-badge");
+      if (payBoxBadge) payBoxBadge.textContent = `₱${grandTotal.toLocaleString()}.00`;
 
       // Header labels
       document.getElementById("summary-date").textContent = selectedDateLabel.split(",")[0] + ", " + selectedDateLabel.split(",")[1];
@@ -4520,7 +4627,15 @@ button.pf-trn-btn-danger:hover,
       document.getElementById("summary-players").textContent = `${selectedPlayerCount} players`;
     }
 
-    // 9. Policies Consent
+    // 9. Policies Consent (Integrated inside Unified Payment & Policies Box — Never dims/locks QR or Payment Tabs)
+    function acceptAllBookPolicies() {
+      const ids = ["consent-waiver", "consent-cancel", "consent-charges"];
+      const els = ids.map(id => document.getElementById(id)).filter(Boolean);
+      const allChecked = els.every(el => el.checked);
+      els.forEach(el => { el.checked = !allChecked; });
+      checkPoliciesConsent();
+    }
+
     function checkPoliciesConsent() {
       const p1El = document.getElementById("consent-waiver");
       const p2El = document.getElementById("consent-cancel");
@@ -4530,27 +4645,41 @@ button.pf-trn-btn-danger:hover,
         const card = inp.closest('.pf-policy-consent-card');
         if (card) {
           if (inp.checked) {
-            card.classList.add('border-blue-600', 'bg-blue-50/50');
+            card.classList.add('border-emerald-600', 'bg-emerald-50/40');
             card.classList.remove('border-slate-200', 'bg-white');
           } else {
-            card.classList.remove('border-blue-600', 'bg-blue-50/50');
+            card.classList.remove('border-emerald-600', 'bg-emerald-50/40');
             card.classList.add('border-slate-200', 'bg-white');
           }
         }
       });
-      const p1 = p1El?.checked;
-      const p2 = p2El?.checked;
-      const p3 = p3El?.checked;
+      const p1 = Boolean(p1El?.checked);
+      const p2 = Boolean(p2El?.checked);
+      const p3 = Boolean(p3El?.checked);
       const allPassed = Boolean(p1 && p2 && p3);
 
       const controls = document.getElementById("payment-controls");
-      const notice = document.getElementById("payment-gate-notice");
-      if (allPassed) {
+      if (controls) {
         controls.classList.remove("opacity-40", "pointer-events-none");
-        if (notice) notice.classList.add("hidden");
+      }
+      const notice = document.getElementById("payment-gate-notice");
+      const acceptAllBtn = document.getElementById("btn-accept-all-policies");
+      if (allPassed) {
+        if (notice) {
+          notice.innerHTML = "✅ <b>All 3 policies accepted</b> &mdash; ready to confirm &amp; submit your booking.";
+          notice.className = "text-[11px] text-brand-lime font-bold mt-0.5";
+        }
+        if (acceptAllBtn) {
+          acceptAllBtn.innerHTML = "<span>✓ All 3 Accepted</span>";
+        }
       } else {
-        controls.classList.add("opacity-40", "pointer-events-none");
-        if (notice) notice.classList.remove("hidden");
+        if (notice) {
+          notice.innerHTML = "Tick the 3 boxes below (or tap <b>Accept All 3 Policies</b>) before submitting your reservation.";
+          notice.className = "text-[11px] text-slate-300 mt-0.5";
+        }
+        if (acceptAllBtn) {
+          acceptAllBtn.innerHTML = "<span>✓ Accept All 3 Policies</span>";
+        }
       }
     }
 
