@@ -2729,6 +2729,58 @@ button.pf-trn-btn-danger:hover,
       color: #050E1D !important;
     }
 
+  
+    /* === V3.2 RESERVE A COURT DRAWER (#booking-drawer) GEAR & LABELS CONTRAST FIX === */
+    html body #booking-drawer #drawer-step-1,
+    html[data-theme="dark"] body #booking-drawer #drawer-step-1,
+    html[data-theme="light"] body #booking-drawer #drawer-step-1 {
+      background-color: #F6F5F0 !important;
+      color: #0F172A !important;
+    }
+    html body #booking-drawer #drawer-step-1 > div,
+    html[data-theme="dark"] body #booking-drawer #drawer-step-1 > div,
+    html[data-theme="light"] body #booking-drawer #drawer-step-1 > div {
+      background-color: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    /* Ensure "5. Equipment Rentals", gear item names, and guest labels are NEVER white-on-white */
+    html body #booking-drawer #drawer-step-1 .pf-gear-qty-card,
+    html[data-theme="dark"] body #booking-drawer #drawer-step-1 .pf-gear-qty-card,
+    html[data-theme="light"] body #booking-drawer #drawer-step-1 .pf-gear-qty-card {
+      background-color: #F8FAFC !important;
+      border: 1px solid #CBD5E1 !important;
+      color: #0F172A !important;
+    }
+    html body #booking-drawer #drawer-step-1 .pf-gear-qty-card span.text-white,
+    html body #booking-drawer #drawer-step-1 .pf-gear-qty-card .pr-2 > span:first-child,
+    html body #booking-drawer #drawer-step-1 > div > div > div > span.text-white,
+    html body #booking-drawer #drawer-step-1 > div > div > span.text-white,
+    html body #booking-drawer #drawer-step-1 h2.text-white,
+    html body #booking-drawer #drawer-step-1 h4.text-white,
+    html body #booking-drawer #drawer-step-1 label[for="cust-name"],
+    html body #booking-drawer #drawer-step-1 label[for="cust-phone"],
+    html body #booking-drawer #drawer-step-1 label[for="cust-email"] {
+      color: #0F172A !important;
+      font-weight: 800 !important;
+    }
+    html body #booking-drawer #drawer-step-1 .pf-gear-qty-card span.text-brand-lime,
+    html body #booking-drawer #drawer-step-1 #drawer-gear-subtotal-badge,
+    html body #booking-drawer #drawer-step-1 #player-count {
+      color: #15803D !important;
+      font-weight: 800 !important;
+    }
+    html body #booking-drawer #drawer-step-1 #drawer-gear-subtotal-badge {
+      background-color: #D1FAE5 !important;
+      border: 1px solid #6EE7B7 !important;
+    }
+    html body #booking-drawer #drawer-step-1 .pf-gear-qty-card input[type="number"] {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #94A3B8 !important;
+      color: #0F172A !important;
+      font-weight: 800 !important;
+    }
+
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-brand-black text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
@@ -3089,7 +3141,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 1. Standard Paddle (₱50.00) -->
             <div id="card-gear-standard" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-white block">Standard paddle</span>
+                <span class="text-xs font-bold text-slate-900 block">Standard paddle</span>
                 <span data-site-price="paddle-std-dec" class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3102,7 +3154,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 2. Carbon Paddle (₱100.00) -->
             <div id="card-gear-carbon" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-white block">Carbon paddle</span>
+                <span class="text-xs font-bold text-slate-900 block">Carbon paddle</span>
                 <span data-site-price="paddle-carbon-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3115,7 +3167,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 3. Branded Carbon Paddle (₱200.00) -->
             <div id="card-gear-branded" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-white block">Branded carbon paddle</span>
+                <span class="text-xs font-bold text-slate-900 block">Branded carbon paddle</span>
                 <span data-site-price="paddle-branded-dec" class="text-xs text-brand-lime font-mono font-bold">₱200.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3128,7 +3180,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 4. Pickleball Ball (₱50.00) -->
             <div id="card-gear-ball" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-white block">Pickleball ball</span>
+                <span class="text-xs font-bold text-slate-900 block">Pickleball ball</span>
                 <span data-site-price="ball-single-dec" class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3141,7 +3193,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 5. Training Balls 50 pcs (₱100.00) -->
             <div id="card-gear-training" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-white block">Training balls (50 pcs)</span>
+                <span class="text-xs font-bold text-slate-900 block">Training balls (50 pcs)</span>
                 <span data-site-price="balls-bucket-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3154,7 +3206,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 6. Training Machine (₱100.00 / hour) -->
             <div id="card-gear-training-machine" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-white block">Training machine (per hour)</span>
+                <span class="text-xs font-bold text-slate-900 block">Training machine (per hour)</span>
                 <span data-site-price="machine-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00 / hr</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3694,7 +3746,7 @@ button.pf-trn-btn-danger:hover,
           <div class="flex items-center justify-between">
             <div>
               <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Optional</span>
-              <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-white">5. Equipment Rentals</span>
+              <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">5. Equipment Rentals</span>
             </div>
             <span id="drawer-gear-subtotal-badge" class="px-2.5 py-1 rounded-full bg-brand-lime/15 border border-brand-lime/30 text-xs font-mono font-black text-brand-lime">₱0.00</span>
           </div>
@@ -3703,7 +3755,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 1. Standard paddle -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-white block">Standard paddle</span>
+                <span class="text-xs font-bold text-slate-900 block">Standard paddle</span>
                 <span data-site-price="paddle-std-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -3716,7 +3768,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 2. Carbon paddle -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-white block">Carbon paddle</span>
+                <span class="text-xs font-bold text-slate-900 block">Carbon paddle</span>
                 <span data-site-price="paddle-carbon-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -3729,7 +3781,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 3. Branded carbon paddle -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-white block">Branded carbon paddle</span>
+                <span class="text-xs font-bold text-slate-900 block">Branded carbon paddle</span>
                 <span data-site-price="paddle-branded-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱200.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -3742,7 +3794,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 4. Pickleball ball -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-white block">Pickleball ball</span>
+                <span class="text-xs font-bold text-slate-900 block">Pickleball ball</span>
                 <span data-site-price="ball-single-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -3755,7 +3807,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 5. Training balls (50 pcs) -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-white block">Training balls (50 pcs)</span>
+                <span class="text-xs font-bold text-slate-900 block">Training balls (50 pcs)</span>
                 <span data-site-price="balls-bucket-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -3768,7 +3820,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 6. Training machine (per hour) -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-white block">Training machine (per hour)</span>
+                <span class="text-xs font-bold text-slate-900 block">Training machine (per hour)</span>
                 <span data-site-price="machine-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00 / hr</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -4190,7 +4242,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261106v14"></script>
+<script src="app.js?v=20261106v15"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>

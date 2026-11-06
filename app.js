@@ -6111,7 +6111,7 @@ function pfRenderOpenPlay24Board() {
           <p class="text-xs text-[#166534] mt-0.5">Book your Open Play seat (₱${unitFee}) to become Player #1 in today's community pod rotation and receive your Official Image Receipt &amp; Venue Gate Pass.</p>
         </div>
       </div>
-      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', 1)" class="pf-op-btn-claim-first px-5 py-3 rounded-full bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0 shadow-md transition active:scale-95">
+      <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', 1)" class="pf-op-cta-btn-primary btn-sheen px-5 py-3 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-black text-xs uppercase tracking-wider whitespace-nowrap flex-shrink-0 shadow-md transition active:scale-95">
         <span>🏓 Claim Seat #1 (₱${unitFee}) →</span>
       </button>
     </div>
@@ -6239,10 +6239,10 @@ function pfRenderOpenPlay24Board() {
               </div>
 
               <div class="grid grid-cols-1 gap-2 pt-1">
-                <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="w-full py-3.5 px-4 rounded-xl bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition shadow-lg flex items-center justify-center gap-2">
+                <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="pf-op-cta-btn-primary btn-sheen w-full py-3.5 px-5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
                   <span>🏓 Book Open Play Seat (₱${unitFee}) →</span>
                 </button>
-                <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-mono font-extrabold text-[11px] uppercase transition flex items-center justify-center gap-1.5">
+                <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="w-full py-3 px-5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/25 font-mono font-extrabold text-[11px] uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-1.5">
                   <span>🔀 Shuffle 4-Player Court Pods</span>
                 </button>
               </div>
@@ -6268,7 +6268,7 @@ function pfRenderOpenPlay24Board() {
                   </button>
                 `).join('')}
               </div>
-              <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="pf-op-btn-shuffle-primary px-4 py-2.5 rounded-full bg-[#A3E635] hover:bg-[#bef264] text-[#04120B] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-md">
+              <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="pf-op-cta-btn-primary btn-sheen px-5 py-2.5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-md">
                 <span>🔀 Shuffle Players Now</span>
               </button>
             </div>
@@ -6286,7 +6286,7 @@ function pfRenderOpenPlay24Board() {
               <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 block">VERIFIED COMMUNITY CHECK-IN ROSTER (CLICK "📄 RECEIPT" FOR OFFICIAL GATE PASS)</span>
               <h3 class="text-lg font-black text-slate-900">Exact Players Booked (${joinedCount} / 24 • ✅ ${confirmedPlayersCount} Confirmed, ⏳ ${pendingPlayersCount} Pending)</h3>
             </div>
-            <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="pf-op-btn-roster-book px-5 py-2.5 rounded-full bg-[#15803D] hover:bg-[#166534] text-white font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-md">
+            <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="pf-op-cta-btn-primary btn-sheen px-5 py-2.5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-md">
               <span>+ Book Open Play Seat (₱${unitFee})</span>
             </button>
           </div>
