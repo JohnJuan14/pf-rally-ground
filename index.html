@@ -1426,8 +1426,16 @@
     html[data-theme="light"] .bg-\[\#0F291E\] .bg-\[\#A3E635\] *,
     html[data-theme="dark"] .bg-\[\#0F291E\] .bg-\[\#A3E635\],
     html[data-theme="dark"] .bg-\[\#0F291E\] .bg-\[\#A3E635\] *,
+    html[data-theme="light"] .bg-\[\#0F291E\] .pf-trn-btn-volt,
+    html[data-theme="light"] .bg-\[\#0F291E\] .pf-trn-btn-volt *,
+    html[data-theme="dark"] .bg-\[\#0F291E\] .pf-trn-btn-volt,
+    html[data-theme="dark"] .bg-\[\#0F291E\] .pf-trn-btn-volt *,
     html body button.pf-trn-btn-volt,
     html body button.pf-trn-btn-volt *,
+    html body button.pf-trn-btn-volt:hover,
+    html body button.pf-trn-btn-volt:hover *,
+    html body button.pf-trn-btn-volt:active,
+    html body button.pf-trn-btn-volt:active *,
     html body .pf-trn-btn-volt,
     html body .pf-trn-btn-volt * {
       color: #04120B !important;
@@ -1584,15 +1592,26 @@
       font-weight: 700 !important;
     }
     .pf-nav-dropdown-menu .pf-nav-dropdown-item:hover,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:active,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus-visible,
     .pf-nav-dropdown-menu .pf-nav-dropdown-item.active,
     .pf-nav-dropdown-menu #nav-link-schedule:hover,
+    .pf-nav-dropdown-menu #nav-link-schedule:active,
+    .pf-nav-dropdown-menu #nav-link-schedule:focus,
     .pf-nav-dropdown-menu #nav-link-schedule.active {
       background: #0F291E !important;
+      background-color: #0F291E !important;
       color: #FFFFFF !important;
     }
     .pf-nav-dropdown-menu .pf-nav-dropdown-item:hover span,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:active span,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus span,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus-visible span,
     .pf-nav-dropdown-menu .pf-nav-dropdown-item.active span,
     .pf-nav-dropdown-menu #nav-link-schedule:hover span,
+    .pf-nav-dropdown-menu #nav-link-schedule:active span,
+    .pf-nav-dropdown-menu #nav-link-schedule:focus span,
     .pf-nav-dropdown-menu #nav-link-schedule.active span {
       color: #FFFFFF !important;
     }
@@ -2955,11 +2974,13 @@ button.pf-trn-btn-danger:hover,
       color: #CBD5E1 !important;
     }
 
-    /* About & Courts Dropdown Menu Items ("Club Updates" etc.) — Never Dark-on-Dark */
+    /* About & Courts Dropdown Menu Items ("Club Updates", "Reserve a Court" etc.) — Never Dark-on-Dark */
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item {
       background: #FFFFFF !important;
       background-color: #FFFFFF !important;
       color: #0F172A !important;
@@ -2968,7 +2989,9 @@ button.pf-trn-btn-danger:hover,
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child {
       color: #0F172A !important;
       font-weight: 700 !important;
     }
@@ -2978,18 +3001,124 @@ button.pf-trn-btn-danger:hover,
       font-weight: 800 !important;
     }
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus-visible,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus-visible,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active {
       background: #0F291E !important;
       background-color: #0F291E !important;
       color: #FFFFFF !important;
     }
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus-visible > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active > span:first-child,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus-visible > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:first-child,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:first-child {
       color: #FFFFFF !important;
+    }
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:last-child:not(:first-child),
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:last-child:not(:first-child),
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:last-child:not(:first-child),
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:last-child:not(:first-child) {
+      color: #A3E635 !important;
+    }
+
+    /* STEP 5: Equipment Rentals (#equipment-grid) High-Contrast Rules (Dark & Daylight Mode + Active/Pressed State) */
+    html[data-theme="dark"] body main #equipment-grid > div {
+      background-color: #050E1D !important;
+      border-color: rgba(255, 255, 255, 0.14) !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div:active,
+    html[data-theme="dark"] body main #equipment-grid > div.pf-gear-card-selected {
+      background-color: rgba(155, 230, 0, 0.14) !important;
+      border-color: #9BE600 !important;
+      box-shadow: 0 0 0 1px rgba(155, 230, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div .pf-gear-item-name,
+    html[data-theme="dark"] body main #equipment-grid > div span.text-slate-900,
+    html[data-theme="dark"] body main #equipment-grid > div span.text-white,
+    html[data-theme="dark"] body main #equipment-grid > div > div:first-child > span:first-child {
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div .pf-gear-item-price,
+    html[data-theme="dark"] body main #equipment-grid > div [data-site-price] {
+      color: #9BE600 !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div input[type="number"] {
+      background-color: #0E2240 !important;
+      color: #FFFFFF !important;
+      border-color: rgba(255, 255, 255, 0.25) !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div {
+      background-color: #F8FAFC !important;
+      border-color: #CBD5E1 !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div:active,
+    html[data-theme="light"] body main #equipment-grid > div.pf-gear-card-selected {
+      background-color: #ECFDF5 !important;
+      border-color: #15803D !important;
+      box-shadow: 0 0 0 1px rgba(21, 128, 61, 0.25) !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div .pf-gear-item-name,
+    html[data-theme="light"] body main #equipment-grid > div span.text-slate-900,
+    html[data-theme="light"] body main #equipment-grid > div span.text-white,
+    html[data-theme="light"] body main #equipment-grid > div > div:first-child > span:first-child {
+      color: #0F172A !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div .pf-gear-item-price,
+    html[data-theme="light"] body main #equipment-grid > div [data-site-price] {
+      color: #15803D !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div input[type="number"] {
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border-color: #94A3B8 !important;
     }
 
     /* Pricing & Subpages Daylight/Night Contrast Fixes */

@@ -319,6 +319,12 @@ async function syncStateFromServer(forceFull = false) {
             bl: (data.blocks || []).map(x => `${x.id}:${x.court}:${x.date}:${x.hours}:${x.statusType}`),
             opE: data.siteConfig ? data.siteConfig.openPlayEnabled : true,
             opS: data.siteConfig ? data.siteConfig.openPlaySlots : [],
+            opP: (data.siteConfig && Array.isArray(data.siteConfig.openPlaySessions))
+              ? data.siteConfig.openPlaySessions.map(s => `${s.id}:${(s.players || []).length}:${s.lastShuffleTime || ''}`)
+              : [],
+            trn: (data.siteConfig && Array.isArray(data.siteConfig.tournaments))
+              ? data.siteConfig.tournaments.map(t => `${t.id}:${t.published}:${(t.registrations || []).length}:${(t.players || []).join('|')}`)
+              : [],
             scT: data.siteConfig ? data.siteConfig.updatedAt : 0,
             hr: (typeof pfGetPhilippineNow === 'function') ? pfGetPhilippineNow().getHours() : new Date().getHours()
           });
@@ -357,11 +363,18 @@ async function syncStateFromServer(forceFull = false) {
             renderPublicInventoryCatalog();
           }
           if (data.siteConfig && typeof data.siteConfig === 'object') {
-            const bestSc = Object.assign({}, DEFAULT_PF_SITE_CONFIG, data.siteConfig);
+            let localSc = null;
+            try { localSc = JSON.parse(localStorage.getItem('pf_site_config') || 'null'); } catch (e) {}
+            const srvScTs = Number(data.siteConfig.updatedAt || 0);
+            const locScTs = Number((localSc && localSc.updatedAt) || 0);
+            const chosenScSource = (localSc && locScTs > srvScTs && (locScTs - srvScTs) < 60000) ? localSc : data.siteConfig;
+            const bestSc = Object.assign({}, DEFAULT_PF_SITE_CONFIG, chosenScSource);
             sharedServerState.siteConfig = bestSc;
             window.PF_SITE_CONFIG = bestSc;
             try { localStorage.setItem('pf_site_config', JSON.stringify(bestSc)); } catch (e) {}
-            if (typeof applySiteConfig === 'function') applySiteConfig(bestSc);
+            if (sigChanged && typeof applySiteConfig === 'function') {
+              applySiteConfig(bestSc);
+            }
           }
           if (data.paymentConfig && typeof data.paymentConfig === 'object') {
             sharedServerState.paymentConfig = data.paymentConfig;
@@ -3084,6 +3097,7 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
   const bookedMatch = bookingsArr.find(b => {
     if (!b || b.status === 'CANCELLED' || b.status === 'DECLINED') return false;
     if (b.isOpenPlay || /^PF-OP-/i.test(String(b.ref || '')) || /open\s*play/i.test(String(b.court || '')) || /open\s*play/i.test(String(b.courtName || ''))) return false;
+    if (b.isTournament || /^PF-TRN-/i.test(String(b.ref || '')) || /tournament/i.test(String(b.court || '')) || /tournament/i.test(String(b.courtName || ''))) return false;
     const bCourt = String(b.court || '');
     const matchesCourt = bCourt.includes(courtZero) || bCourt.includes(courtPlain) || bCourt.trim() === String(cNum) || pfNormalizeCourtNumber(bCourt) === cNum;
     if (!matchesCourt) return false;
@@ -5071,10 +5085,18 @@ async function pfGenerateOpenPlayReceiptImageDataUrl(bookingRecord) {
   }
 
   const isConfirmed = (liveStatus === 'CONFIRMED' || liveStatus === 'APPROVED' || liveStatus === 'CHECKED IN' || liveStatus === 'PAID');
+  const isTournamentBk = Boolean(
+    bookingRecord.isTournament ||
+    refUpper.startsWith('PF-TRN') ||
+    refUpper.startsWith('TRN-') ||
+    String(bookingRecord.court || bookingRecord.courtName || '').toLowerCase().includes('tournament')
+  );
   const isOpenPlayBk = Boolean(
-    bookingRecord.isOpenPlay ||
-    refUpper.startsWith('PF-OP') ||
-    String(bookingRecord.court || bookingRecord.courtName || '').toLowerCase().includes('open play')
+    !isTournamentBk && (
+      bookingRecord.isOpenPlay ||
+      refUpper.startsWith('PF-OP') ||
+      String(bookingRecord.court || bookingRecord.courtName || '').toLowerCase().includes('open play')
+    )
   );
 
   const canvas = document.createElement('canvas');
@@ -5106,9 +5128,11 @@ async function pfGenerateOpenPlayReceiptImageDataUrl(bookingRecord) {
   // Header Title
   ctx.fillStyle = '#9BE600';
   ctx.font = '900 17px "JetBrains Mono", monospace';
-  const receiptTypeLabel = isOpenPlayBk
-    ? (isConfirmed ? '✅ OFFICIAL CONFIRMED OPEN PLAY RECEIPT & VENUE GATE PASS' : '🏓 OFFICIAL OPEN PLAY E-RECEIPT & VENUE GATE PASS')
-    : (isConfirmed ? '✅ OFFICIAL CONFIRMED COURT RECEIPT & VENUE GATE PASS' : '🎾 OFFICIAL COURT BOOKING E-RECEIPT & VENUE GATE PASS');
+  const receiptTypeLabel = isTournamentBk
+    ? (isConfirmed ? '🏆 OFFICIAL CONFIRMED TOURNAMENT RECEIPT & BRACKET PASS' : '🏆 OFFICIAL TOURNAMENT ENTRY E-RECEIPT & GATE PASS')
+    : (isOpenPlayBk
+      ? (isConfirmed ? '✅ OFFICIAL CONFIRMED OPEN PLAY RECEIPT & VENUE GATE PASS' : '🏓 OFFICIAL OPEN PLAY E-RECEIPT & VENUE GATE PASS')
+      : (isConfirmed ? '✅ OFFICIAL CONFIRMED COURT RECEIPT & VENUE GATE PASS' : '🎾 OFFICIAL COURT BOOKING E-RECEIPT & VENUE GATE PASS'));
   ctx.fillText(receiptTypeLabel, 48, 76);
 
   ctx.fillStyle = '#FFFFFF';
@@ -5335,6 +5359,35 @@ function pfFindBookingRecordForReceipt(bookingRefInput, fallbackName) {
         total: Number(sess.entryFee || 150),
         isOpenPlay: true
       };
+    }
+  }
+  if (typeof pfGetTournamentsList === 'function') {
+    const tList = pfGetTournamentsList();
+    for (const trn of tList) {
+      const regs = Array.isArray(trn.registrations) ? trn.registrations : [];
+      const matchedReg = regs.find(r =>
+        (bookingRefInput && (String(r.bookingRef || '').toUpperCase().trim() === String(bookingRefInput).toUpperCase().trim() || String(r.id || '').toUpperCase().trim() === String(bookingRefInput).toUpperCase().trim())) ||
+        (fallbackName && String(r.teamName || r.player1 || '').toLowerCase().trim() === String(fallbackName).toLowerCase().trim())
+      );
+      if (matchedReg) {
+        const refCode = matchedReg.bookingRef || matchedReg.id || ('PF-TRN-' + String(Date.now()).slice(-6));
+        return {
+          ref: refCode,
+          name: matchedReg.teamName || matchedReg.player1 || fallbackName || 'Tournament Team',
+          customerName: matchedReg.teamName || matchedReg.player1 || fallbackName || 'Tournament Team',
+          phone: matchedReg.phone || '—',
+          date: trn.date || 'Scheduled',
+          time: trn.time || '08:00 AM – 05:00 PM',
+          courtName: `Tournament • ${trn.title} (Seed #${matchedReg.seedNumber || 1})`,
+          court: `Tournament • ${trn.title} (Seed #${matchedReg.seedNumber || 1})`,
+          players: 2,
+          paymentMethod: matchedReg.paymentMethod || 'GCash',
+          transactionRef: matchedReg.paymentRef || 'VERIFIED',
+          status: matchedReg.status || 'PENDING',
+          total: Number(trn.entryFee || 850),
+          isTournament: true
+        };
+      }
     }
   }
   if (window.pfLastOpenPlayBookingRecord) return window.pfLastOpenPlayBookingRecord;
@@ -7583,17 +7636,35 @@ function pfRenderPublicTournaments() {
 
         ${realRegistrations.length > 0 ? `
           <div class="pt-3 border-t border-white/15 space-y-2.5">
-            <span class="text-[10px] font-mono font-black uppercase tracking-widest block" style="color:#38BDF8 !important;">📋 OFFICIAL TIMESTAMPED COMMUNITY REGISTRATION LOG (${realRegistrations.length})</span>
+            <span class="text-[10px] font-mono font-black uppercase tracking-widest block" style="color:#38BDF8 !important;">📋 OFFICIAL TIMESTAMPED COMMUNITY REGISTRATION LOG (${realRegistrations.length} • CLICK "📄 RECEIPT" FOR GATE PASS)</span>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              ${realRegistrations.map((r, rIdx) => `
+              ${realRegistrations.map((r, rIdx) => {
+                const rRef = String(r.bookingRef || r.id || '').trim();
+                const allMerged = (typeof pfGetAllMergedBookings === 'function') ? pfGetAllMergedBookings() : [];
+                const matchedBk = allMerged.find(b => b && (
+                  (rRef && String(b.ref || '').toUpperCase().trim() === rRef.toUpperCase()) ||
+                  (b.isTournament && String(b.name || b.customerName || '').toLowerCase().trim() === String(r.teamName || r.player1 || '').toLowerCase().trim())
+                ));
+                const rawSt = String((matchedBk && matchedBk.status) || r.status || 'PENDING').toUpperCase();
+                const isConf = rawSt === 'CONFIRMED' || rawSt === 'APPROVED' || rawSt === 'PAID' || rawSt === 'CHECKED IN';
+                const badgeHtml = isConf
+                  ? `<span class="px-2.5 py-1 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-black uppercase flex-shrink-0" style="background:#064E3B !important;color:#A7F3D0 !important;">✅ CONFIRMED</span>`
+                  : `<span class="px-2.5 py-1 rounded-full bg-[#78350F] border border-[#FBBF24] font-mono text-[9px] font-black uppercase flex-shrink-0" style="background:#78350F !important;color:#FDE68A !important;">⏳ PENDING</span>`;
+                const safeRefAttr = pfEscapeHtml(matchedBk ? matchedBk.ref : (rRef || ('PF-TRN-SEED' + (r.seedNumber || (rIdx + 1)))));
+                const safeNameAttr = pfEscapeHtml(r.teamName || r.player1 || 'Team');
+                return `
                 <div class="p-3 rounded-xl bg-[#04120B]/90 border border-white/15 flex items-center justify-between gap-2 text-xs">
                   <div class="min-w-0">
-                    <div class="font-extrabold truncate" style="color:#FFFFFF !important;">${rIdx + 1}. ${pfEscapeHtml(r.teamName || r.player1)}</div>
-                    <div class="text-[10px] font-mono" style="color:#A7F3D0 !important;">${pfEscapeHtml(r.division || 'Open Division')} &bull; Joined ${pfEscapeHtml(r.registeredAt || 'Today')}</div>
+                    <div class="font-extrabold truncate" style="color:#FFFFFF !important;">Seed #${r.seedNumber || (rIdx + 1)} • ${pfEscapeHtml(r.teamName || r.player1)}</div>
+                    <div class="text-[10px] font-mono" style="color:#A7F3D0 !important;">${pfEscapeHtml(r.division || 'Open Division')} &bull; ${pfEscapeHtml(r.paymentMethod || 'GCash')} &bull; ${pfEscapeHtml(r.registeredAt || 'Today')}</div>
                   </div>
-                  <span class="px-2.5 py-1 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-black uppercase flex-shrink-0" style="background:#064E3B !important;color:#A7F3D0 !important;">✓ ${pfEscapeHtml(r.status || 'CONFIRMED')}</span>
+                  <div class="flex items-center gap-1.5 flex-shrink-0">
+                    ${badgeHtml}
+                    <button type="button" onclick="pfViewOpenPlayReceiptModal('${safeRefAttr}', '${safeNameAttr}')" class="px-2.5 py-1 rounded-lg bg-[#A3E635] hover:bg-[#BEF264] text-[#04120B] font-mono text-[9px] font-black uppercase transition shadow-2xs" style="background:#A3E635 !important;color:#04120B !important;">📄 Receipt</button>
+                  </div>
                 </div>
-              `).join('')}
+              `;
+              }).join('')}
             </div>
           </div>
         ` : ''}
@@ -7775,7 +7846,7 @@ function pfSwitchTournamentPayMethod(methodKey) {
   const qrImg = document.getElementById('trn-reg-qr-img');
   const qrAcc = document.getElementById('trn-reg-qr-acc');
   const qrMerch = document.getElementById('trn-reg-qr-merchant');
-  const qrCfg = (typeof getPaymentQrConfig === 'function') ? getPaymentQrConfig() : {};
+  const qrCfg = (typeof pfGetPaymentConfig === 'function') ? pfGetPaymentConfig() : {};
   const chKey = m.toLowerCase();
   if (m === 'Venue') {
     if (qrWrap) qrWrap.classList.add('hidden');
@@ -7783,9 +7854,14 @@ function pfSwitchTournamentPayMethod(methodKey) {
   } else {
     if (qrWrap) qrWrap.classList.remove('hidden');
     if (refWrap) refWrap.classList.remove('hidden');
-    const resolvedQrSrc = (typeof pfGetQrUrlForChannel === 'function')
-      ? pfGetQrUrlForChannel(chKey, 'qr')
-      : (m === 'GCash' ? (qrCfg.gcashQr || 'assets/qr-gcash.png') : (m === 'Maya' ? (qrCfg.mayaQr || 'assets/qr-maya.png') : (qrCfg.bdoQr || 'assets/qr-bdo.png')));
+    const feeTxt = document.getElementById('trn-reg-fee-display')?.textContent || '850';
+    const feeVal = Number(String(feeTxt).replace(/[^0-9.]/g, '') || 850);
+    if (typeof pfSetExactQrAmount === 'function') {
+      try { pfSetExactQrAmount(feeVal); } catch (e) {}
+    }
+    const resolvedQrSrc = (typeof pfGetOfficialQrUrl === 'function')
+      ? pfGetOfficialQrUrl(chKey)
+      : (m === 'GCash' ? (qrCfg.gcashQrUrl || 'assets/qr-gcash.png') : (m === 'Maya' ? (qrCfg.mayaQrUrl || 'assets/qr-maya.png') : (qrCfg.bankQrUrl || 'assets/qr-bdo.png')));
     if (qrImg) {
       qrImg.src = resolvedQrSrc;
       qrImg.onerror = function() {
@@ -7794,13 +7870,13 @@ function pfSwitchTournamentPayMethod(methodKey) {
       };
     }
     const accNo = m === 'GCash'
-      ? (qrCfg.gcashNumber || '0999-883-2346')
-      : (m === 'Maya' ? (qrCfg.mayaNumber || '0999-883-2346') : (qrCfg.bdoNumber || '0012-3456-7890'));
+      ? (qrCfg.gcashNumber || '0999 883 2346')
+      : (m === 'Maya' ? (qrCfg.mayaNumber || '0999 883 2346') : (qrCfg.bdoNumber || '••••••••8678'));
     const merchName = m === 'GCash'
-      ? (qrCfg.gcashMerchant || 'P&F RALLY GROUND CLUB')
-      : (m === 'Maya' ? (qrCfg.mayaMerchant || 'P&F RALLY GROUND MAYA') : (qrCfg.bdoMerchant || 'P&F RALLY GROUND CORP.'));
+      ? (qrCfg.gcashName || 'KA******E L.')
+      : (m === 'Maya' ? (qrCfg.mayaName || 'KATHERINE LIM') : (qrCfg.bdoName || 'BDO Unibank • Dex'));
     if (qrAcc) qrAcc.textContent = `${m} Account / Mobile: ${accNo}`;
-    if (qrMerch) qrMerch.textContent = `Merchant: ${merchName}`;
+    if (qrMerch) qrMerch.textContent = `Account Name: ${merchName}`;
   }
 }
 window.pfSwitchTournamentPayMethod = pfSwitchTournamentPayMethod;
@@ -7982,29 +8058,40 @@ async function pfProceedTournamentToPayment() {
     trn.registrations = [];
   }
 
-  // Find first open seed slot in the 8-seed bracket
-  const openSlotIdx = trn.players.findIndex(p => pfIsOpenSeedSlot(p));
+  // Unified booking reference for both the tournament registration and the booking record
+  const unifiedBookingRef = 'PF-TRN-' + Math.floor(100000 + Math.random() * 900000);
+  const shortDiv = division.split('•')[0].trim();
+
+  // Check if this team is already seeded to avoid duplicate seed assignment
+  const existingPlayerIdx = trn.players.findIndex(p => !pfIsOpenSeedSlot(p) && String(p).toLowerCase().includes(pairLabel.toLowerCase()));
+  const openSlotIdx = existingPlayerIdx >= 0 ? existingPlayerIdx : trn.players.findIndex(p => pfIsOpenSeedSlot(p));
   const assignedSeedNum = openSlotIdx >= 0 ? (PF_SEED_SLOT_NUMBERS[openSlotIdx] || (openSlotIdx + 1)) : (trn.registrations.length + 1);
-  const formattedBracketLabel = `Seed #${assignedSeedNum} • ${pairLabel} (${division})`;
+  const formattedBracketLabel = `Seed #${assignedSeedNum} • ${pairLabel} (${shortDiv})`;
 
   if (openSlotIdx >= 0) {
     trn.players[openSlotIdx] = formattedBracketLabel;
   }
 
   const regEntry = {
-    id: 'TRN-ENT-' + Date.now().toString().slice(-6),
+    id: unifiedBookingRef,
+    bookingRef: unifiedBookingRef,
     teamName: pairLabel,
     player1: name,
     partner: partner || 'Solo / Partner TBD',
     phone: phone,
     division: division,
-    paymentMethod: payMethod,
+    paymentMethod: payMethod === 'Venue' ? 'Pay at Counter' : payMethod,
     paymentRef: payMethod === 'Venue' ? 'PAY-AT-DESK' : payRef,
-    status: payMethod === 'Venue' ? 'RESERVED (PAY AT DESK)' : 'CONFIRMED',
+    status: 'PENDING',
     seedNumber: assignedSeedNum,
     registeredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   };
-  trn.registrations.push(regEntry);
+  const existingRegIdx = trn.registrations.findIndex(r => r && String(r.teamName || '').toLowerCase() === pairLabel.toLowerCase());
+  if (existingRegIdx >= 0) {
+    trn.registrations[existingRegIdx] = regEntry;
+  } else {
+    trn.registrations.push(regEntry);
+  }
   trn.registeredCount = pfCountRealTournamentTeams(trn);
 
   const dcList = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length
@@ -8012,51 +8099,20 @@ async function pfProceedTournamentToPayment() {
     : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
   trn.bracket = pfBuildDefaultBracketForPlayers(trn.players, dcList);
 
-  // Persist updated tournament roster & bracket to siteConfig and sync with server
+  // Persist updated tournament roster & bracket to siteConfig
   cfg.tournaments = list;
   cfg.updatedAt = Date.now();
   window.PF_SITE_CONFIG = cfg;
   try { localStorage.setItem('pf_site_config', JSON.stringify(cfg)); } catch (e) {}
 
-  const cfgEndpoints = pfGetApiEndpoints('/api/site-config');
-  for (const url of cfgEndpoints) {
-    try {
-      const r = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cfg)
-      });
-      if (r.ok) break;
-    } catch (e) {}
-  }
-
-  // Also call /api/tournament-register so the server atomically records the team & seed
-  const trnRegEndpoints = pfGetApiEndpoints('/api/tournament-register');
-  for (const url of trnRegEndpoints) {
-    try {
-      const r = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tournamentId: trn.id,
-          player1: name,
-          partner: partner || 'Solo / Partner TBD',
-          teamName: pairLabel,
-          phone: phone,
-          division: division,
-          paymentMethod: payMethod,
-          paymentRef: regEntry.paymentRef
-        })
-      });
-      if (r.ok) break;
-    } catch (e) {}
-  }
-
-  // Also record a booking transaction so Admin Bookings, check-booking.html & POS see this tournament entry
+  // Record the official booking transaction so Admin Bookings, check-booking.html & Receipt Modal see this tournament entry
   const bookingRecord = {
-    ref: 'PF-TRN-' + Math.floor(100000 + Math.random() * 900000),
+    ref: unifiedBookingRef,
     name: pairLabel,
+    customerName: pairLabel,
+    guestNamesList: pairLabel,
     phone: phone,
+    customerPhone: phone,
     email: 'tournament@pfrally.ph',
     courtName: `Tournament • ${trn.title} (Seed #${assignedSeedNum})`,
     court: `Tournament • ${trn.title} (Seed #${assignedSeedNum})`,
@@ -8074,18 +8130,47 @@ async function pfProceedTournamentToPayment() {
     isTournament: true,
     tournamentId: trn.id,
     items: [`🏆 ${trn.title} — Seed #${assignedSeedNum}: ${pairLabel} (${division})`],
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
   };
+  window.pfLastOpenPlayBookingRecord = bookingRecord;
+
+  ['pf_all_bookings', 'pf_public_bookings', 'pf_shared_bookings'].forEach(k => {
+    try {
+      const arr = JSON.parse(localStorage.getItem(k) || '[]') || [];
+      const filtered = arr.filter(b => b && b.ref !== unifiedBookingRef);
+      filtered.unshift(bookingRecord);
+      localStorage.setItem(k, JSON.stringify(filtered));
+    } catch (e) {}
+  });
   try {
-    const pubList = JSON.parse(localStorage.getItem('pf_public_bookings') || '[]');
-    pubList.unshift(bookingRecord);
-    localStorage.setItem('pf_public_bookings', JSON.stringify(pubList));
+    localStorage.setItem('latest_booking', JSON.stringify(bookingRecord));
+    localStorage.setItem('booking_' + unifiedBookingRef, JSON.stringify(bookingRecord));
   } catch (e) {}
-  try {
-    const sharedList = JSON.parse(localStorage.getItem('pf_shared_bookings') || '[]');
-    sharedList.unshift(bookingRecord);
-    localStorage.setItem('pf_shared_bookings', JSON.stringify(sharedList));
-  } catch (e) {}
+
+  // Call /api/tournament-register with unified bookingRef (server updates tournament & deduplicates by bookingRef/teamName)
+  const trnRegEndpoints = pfGetApiEndpoints('/api/tournament-register');
+  for (const url of trnRegEndpoints) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tournamentId: trn.id,
+          bookingRef: unifiedBookingRef,
+          ref: unifiedBookingRef,
+          player1: name,
+          partner: partner || 'Solo / Partner TBD',
+          teamName: pairLabel,
+          phone: phone,
+          division: division,
+          paymentMethod: bookingRecord.paymentMethod,
+          paymentRef: regEntry.paymentRef
+        })
+      });
+      if (r.ok) break;
+    } catch (e) {}
+  }
+
   const stateEndpoints = pfGetApiEndpoints('/api/bookings');
   for (const url of stateEndpoints) {
     try {
@@ -8109,8 +8194,11 @@ async function pfProceedTournamentToPayment() {
   if (refInp) refInp.value = '';
 
   pfCloseTournamentRegModal();
+  pfActivePublicPhaseIndex = 0;
   pfRenderPublicTournaments();
-  alert(`🎉 Official Tournament Registration Confirmed!\n\nTeam: ${pairLabel}\nAssigned Seed: Seed #${assignedSeedNum}\nTournament: ${trn.title}\nTotal Confirmed Teams: ${trn.registeredCount} / ${trn.maxTeams || 24}\n\nYour team is now live on the Community Roster & Championship Bracket!`);
+  if (typeof pfViewOpenPlayReceiptModal === 'function') {
+    pfViewOpenPlayReceiptModal(unifiedBookingRef, pairLabel);
+  }
 }
 
 window.pfGetDefaultTournaments = pfGetDefaultTournaments;
@@ -8370,7 +8458,7 @@ function pfSetGearOrderPayMethod(method) {
   const qrImg = document.getElementById('pf-gear-qr-img');
   const qrAcc = document.getElementById('pf-gear-qr-acc');
   const qrBadge = document.getElementById('pf-gear-qr-badge');
-  const qrCfg = (typeof getPaymentQrConfig === 'function') ? getPaymentQrConfig() : {};
+  const qrCfg = (typeof pfGetPaymentConfig === 'function') ? pfGetPaymentConfig() : {};
 
   if (pfGearOrderPayMethod === 'Cash') {
     if (cashNote) cashNote.classList.remove('hidden');
@@ -8381,8 +8469,8 @@ function pfSetGearOrderPayMethod(method) {
     if (qrWrap) qrWrap.classList.remove('hidden');
     if (refWrap) refWrap.classList.remove('hidden');
     const chKey = pfGearOrderPayMethod.toLowerCase();
-    const resolvedSrc = (typeof pfGetQrUrlForChannel === 'function')
-      ? pfGetQrUrlForChannel(chKey, 'qr')
+    const resolvedSrc = (typeof pfGetOfficialQrUrl === 'function')
+      ? pfGetOfficialQrUrl(chKey)
       : (pfGearOrderPayMethod === 'GCash' ? 'assets/qr-gcash.png' : (pfGearOrderPayMethod === 'Maya' ? 'assets/qr-maya.png' : 'assets/qr-bdo.png'));
     if (qrImg) {
       qrImg.src = resolvedSrc;
@@ -8395,8 +8483,8 @@ function pfSetGearOrderPayMethod(method) {
       qrBadge.textContent = pfGearOrderPayMethod === 'BDO' ? '🏦 OFFICIAL BANK TRANSFER QR' : `📱 OFFICIAL ${pfGearOrderPayMethod.toUpperCase()} E-WALLET QR`;
     }
     const accNo = pfGearOrderPayMethod === 'GCash'
-      ? (qrCfg.gcashNumber || '0999-883-2346')
-      : (pfGearOrderPayMethod === 'Maya' ? (qrCfg.mayaNumber || '0999-883-2346') : (qrCfg.bdoNumber || '0012-3456-7890'));
+      ? (qrCfg.gcashNumber || '0999 883 2346')
+      : (pfGearOrderPayMethod === 'Maya' ? (qrCfg.mayaNumber || '0999 883 2346') : (qrCfg.bdoNumber || '••••••••8678'));
     if (qrAcc) qrAcc.textContent = `${pfGearOrderPayMethod} Account / Mobile: ${accNo} (P&F Rally Ground)`;
   }
 }

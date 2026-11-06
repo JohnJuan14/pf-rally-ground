@@ -1194,15 +1194,26 @@
       font-weight: 700 !important;
     }
     .pf-nav-dropdown-menu .pf-nav-dropdown-item:hover,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:active,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus-visible,
     .pf-nav-dropdown-menu .pf-nav-dropdown-item.active,
     .pf-nav-dropdown-menu #nav-link-schedule:hover,
+    .pf-nav-dropdown-menu #nav-link-schedule:active,
+    .pf-nav-dropdown-menu #nav-link-schedule:focus,
     .pf-nav-dropdown-menu #nav-link-schedule.active {
       background: #0F291E !important;
+      background-color: #0F291E !important;
       color: #FFFFFF !important;
     }
     .pf-nav-dropdown-menu .pf-nav-dropdown-item:hover span,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:active span,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus span,
+    .pf-nav-dropdown-menu .pf-nav-dropdown-item:focus-visible span,
     .pf-nav-dropdown-menu .pf-nav-dropdown-item.active span,
     .pf-nav-dropdown-menu #nav-link-schedule:hover span,
+    .pf-nav-dropdown-menu #nav-link-schedule:active span,
+    .pf-nav-dropdown-menu #nav-link-schedule:focus span,
     .pf-nav-dropdown-menu #nav-link-schedule.active span {
       color: #FFFFFF !important;
     }
@@ -2652,11 +2663,13 @@ button.pf-trn-btn-danger:hover,
       color: #CBD5E1 !important;
     }
 
-    /* About & Courts Dropdown Menu Items ("Club Updates" etc.) — Never Dark-on-Dark */
+    /* About & Courts Dropdown Menu Items ("Club Updates", "Reserve a Court" etc.) — Never Dark-on-Dark */
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item {
       background: #FFFFFF !important;
       background-color: #FFFFFF !important;
       color: #0F172A !important;
@@ -2665,7 +2678,9 @@ button.pf-trn-btn-danger:hover,
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item > span:first-child {
       color: #0F172A !important;
       font-weight: 700 !important;
     }
@@ -2675,18 +2690,124 @@ button.pf-trn-btn-danger:hover,
       font-weight: 800 !important;
     }
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus-visible,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus-visible,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active {
       background: #0F291E !important;
       background-color: #0F291E !important;
       color: #FFFFFF !important;
     }
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus-visible > span:first-child,
+    html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active > span:first-child,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus-visible > span:first-child,
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:first-child,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
-    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child {
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="dark"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item.active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:first-child,
+    html[data-theme="light"] body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:first-child {
       color: #FFFFFF !important;
+    }
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:hover > span:last-child:not(:first-child),
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:active > span:last-child:not(:first-child),
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item:focus > span:last-child:not(:first-child),
+    html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item.active > span:last-child:not(:first-child) {
+      color: #A3E635 !important;
+    }
+
+    /* STEP 5: Equipment Rentals (#equipment-grid) High-Contrast Rules (Dark & Daylight Mode + Active/Pressed State) */
+    html[data-theme="dark"] body main #equipment-grid > div {
+      background-color: #050E1D !important;
+      border-color: rgba(255, 255, 255, 0.14) !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div:active,
+    html[data-theme="dark"] body main #equipment-grid > div.pf-gear-card-selected {
+      background-color: rgba(155, 230, 0, 0.14) !important;
+      border-color: #9BE600 !important;
+      box-shadow: 0 0 0 1px rgba(155, 230, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div .pf-gear-item-name,
+    html[data-theme="dark"] body main #equipment-grid > div span.text-slate-900,
+    html[data-theme="dark"] body main #equipment-grid > div span.text-white,
+    html[data-theme="dark"] body main #equipment-grid > div > div:first-child > span:first-child {
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div .pf-gear-item-price,
+    html[data-theme="dark"] body main #equipment-grid > div [data-site-price] {
+      color: #9BE600 !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="dark"] body main #equipment-grid > div input[type="number"] {
+      background-color: #0E2240 !important;
+      color: #FFFFFF !important;
+      border-color: rgba(255, 255, 255, 0.25) !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div {
+      background-color: #F8FAFC !important;
+      border-color: #CBD5E1 !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div:active,
+    html[data-theme="light"] body main #equipment-grid > div.pf-gear-card-selected {
+      background-color: #ECFDF5 !important;
+      border-color: #15803D !important;
+      box-shadow: 0 0 0 1px rgba(21, 128, 61, 0.25) !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div .pf-gear-item-name,
+    html[data-theme="light"] body main #equipment-grid > div span.text-slate-900,
+    html[data-theme="light"] body main #equipment-grid > div span.text-white,
+    html[data-theme="light"] body main #equipment-grid > div > div:first-child > span:first-child {
+      color: #0F172A !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div .pf-gear-item-price,
+    html[data-theme="light"] body main #equipment-grid > div [data-site-price] {
+      color: #15803D !important;
+      font-weight: 800 !important;
+    }
+    html[data-theme="light"] body main #equipment-grid > div input[type="number"] {
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border-color: #94A3B8 !important;
     }
 
     /* Pricing & Subpages Daylight/Night Contrast Fixes */
@@ -3141,7 +3262,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 1. Standard Paddle (₱50.00) -->
             <div id="card-gear-standard" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Standard paddle</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Standard paddle</span>
                 <span data-site-price="paddle-std-dec" class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3154,7 +3275,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 2. Carbon Paddle (₱100.00) -->
             <div id="card-gear-carbon" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Carbon paddle</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Carbon paddle</span>
                 <span data-site-price="paddle-carbon-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3167,7 +3288,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 3. Branded Carbon Paddle (₱200.00) -->
             <div id="card-gear-branded" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Branded carbon paddle</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Branded carbon paddle</span>
                 <span data-site-price="paddle-branded-dec" class="text-xs text-brand-lime font-mono font-bold">₱200.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3180,7 +3301,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 4. Pickleball Ball (₱50.00) -->
             <div id="card-gear-ball" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Pickleball ball</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Pickleball ball</span>
                 <span data-site-price="ball-single-dec" class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3193,7 +3314,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 5. Training Balls 50 pcs (₱100.00) -->
             <div id="card-gear-training" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Training balls (50 pcs)</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Training balls (50 pcs)</span>
                 <span data-site-price="balls-bucket-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3206,7 +3327,7 @@ button.pf-trn-btn-danger:hover,
             <!-- 6. Training Machine (₱100.00 / hour) -->
             <div id="card-gear-training-machine" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-900 block">Training machine (per hour)</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Training machine (per hour)</span>
                 <span data-site-price="machine-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00 / hr</span>
               </div>
               <div class="flex items-center gap-1.5">
@@ -4541,7 +4662,11 @@ button.pf-trn-btn-danger:hover,
         btn.type = "button";
         const isSelected = (slot === selectedStartSlot);
 
-        if (cat === 'PRIVATE') {
+        if (cat === 'TOURNAMENT') {
+          btn.className = "py-2.5 px-2 rounded-xl bg-[#FEF9C3] text-[#854D0E] border border-[#FACC15] text-xs font-sans font-bold cursor-not-allowed leading-tight";
+          btn.disabled = true;
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#854D0E] font-black">🏆 Tournament</span>`;
+        } else if (cat === 'PRIVATE') {
           btn.className = "py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-xs font-sans font-bold cursor-not-allowed leading-tight";
           btn.disabled = true;
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#64748B] font-black">Private</span>`;
@@ -4617,9 +4742,9 @@ button.pf-trn-btn-danger:hover,
       if (card) {
         if (q > 0) {
           card.classList.remove('border-white/10');
-          card.classList.add('border-brand-lime', 'bg-brand-lime/10');
+          card.classList.add('border-brand-lime', 'bg-brand-lime/10', 'pf-gear-card-selected');
         } else {
-          card.classList.remove('border-brand-lime', 'bg-brand-lime/10');
+          card.classList.remove('border-brand-lime', 'bg-brand-lime/10', 'pf-gear-card-selected');
           card.classList.add('border-white/10');
         }
       }

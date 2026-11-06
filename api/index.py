@@ -1668,12 +1668,20 @@ class handler(http.server.BaseHTTPRequestHandler):
                 target_t["registrations"] = []
 
             seed_Order = [1, 8, 4, 5, 2, 7, 3, 6]
-            open_idx = -1
+            existing_idx = -1
             for idx_p, slot_val in enumerate(target_t["players"]):
                 sv = str(slot_val or "").strip()
-                if not sv or sv.lower().startswith(("open seed", "open slot", "available", "empty", "tbd", "waiting")):
-                    open_idx = idx_p
-                    break
+                if sv and not sv.lower().startswith(("open seed", "open slot", "available", "empty", "tbd", "waiting")):
+                    if team_name.lower() in sv.lower():
+                        existing_idx = idx_p
+                        break
+            open_idx = existing_idx
+            if open_idx < 0:
+                for idx_p, slot_val in enumerate(target_t["players"]):
+                    sv = str(slot_val or "").strip()
+                    if not sv or sv.lower().startswith(("open seed", "open slot", "available", "empty", "tbd", "waiting")):
+                        open_idx = idx_p
+                        break
 
             seed_num = seed_Order[open_idx] if open_idx >= 0 else (len(target_t["registrations"]) + 1)
             short_div = division.split("•")[0].strip()
@@ -1693,7 +1701,11 @@ class handler(http.server.BaseHTTPRequestHandler):
                         if not ta.lower().startswith("open seed") and not tb.lower().startswith("open seed"):
                             qf_match["status"] = "READY"
 
-            if not any(str(r.get("bookingRef") or r.get("id")) == booking_ref for r in target_t["registrations"] if isinstance(r, dict)):
+            if not any(
+                (str(r.get("bookingRef") or r.get("id")) == booking_ref) or
+                (str(r.get("teamName") or "").strip().lower() == team_name.lower())
+                for r in target_t["registrations"] if isinstance(r, dict)
+            ):
                 target_t["registrations"].append({
                     "id": booking_ref,
                     "bookingRef": booking_ref,
@@ -1705,7 +1717,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                     "division": division,
                     "paymentMethod": pay_mode,
                     "paymentRef": pay_ref,
-                    "status": "CONFIRMED",
+                    "status": "PENDING",
                     "seedNumber": seed_num,
                     "registeredAt": get_pht_now().strftime("%Y-%m-%d %I:%M %p")
                 })
