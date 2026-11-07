@@ -1908,18 +1908,23 @@ def cleanup_existing_port_listeners(ports):
         pass
 
 if __name__ == "__main__":
-    all_ports = [8088, 8089, 8188, 8189]
-    cleanup_existing_port_listeners(all_ports)
-    load_db()
-    threads = []
-    for pub_p in (8088, 8188):
-        t = threading.Thread(target=run_server, args=(pub_p, PUBLIC_DIR), daemon=True)
-        t.start()
-        threads.append(t)
-    for adm_p in (8089, 8189):
-        t = threading.Thread(target=run_server, args=(adm_p, ADMIN_DIR), daemon=True)
-        t.start()
-        threads.append(t)
-    print("Unified P&F Rally Ground Server running on Public (8088, 8188) and Admin (8089, 8189)!")
-    for t in threads:
-        t.join()
+    cloud_port = os.environ.get("PORT", "").strip()
+    if cloud_port.isdigit():
+        load_db()
+        run_server(int(cloud_port), PUBLIC_DIR)
+    else:
+        all_ports = [8088, 8089, 8188, 8189]
+        cleanup_existing_port_listeners(all_ports)
+        load_db()
+        threads = []
+        for pub_p in (8088, 8188):
+            t = threading.Thread(target=run_server, args=(pub_p, PUBLIC_DIR), daemon=True)
+            t.start()
+            threads.append(t)
+        for adm_p in (8089, 8189):
+            t = threading.Thread(target=run_server, args=(adm_p, ADMIN_DIR), daemon=True)
+            t.start()
+            threads.append(t)
+        print("Unified P&F Rally Ground Server running on Public (8088, 8188) and Admin (8089, 8189)!")
+        for t in threads:
+            t.join()

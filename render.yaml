@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: pf-rally-ground
+    env: python
+    plan: free
+    buildCommand: "echo 'Build ready'"
+    startCommand: "python sync_server_v2.py"
