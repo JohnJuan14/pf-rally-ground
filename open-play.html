@@ -2868,10 +2868,26 @@ button.pf-trn-btn-danger:hover,
     }
 
     /* Keep white/emerald text inside the dark pickleball court surface (.pf-court-pod-surface) in BOTH themes */
+    html[data-theme="light"] body section .pf-court-pod-surface .text-white,
+    html[data-theme="dark"] body section .pf-court-pod-surface .text-white,
+    html[data-theme="light"] body main .pf-court-pod-surface .text-white,
+    html[data-theme="dark"] body main .pf-court-pod-surface .text-white,
     html[data-theme="light"] .pf-court-pod-surface .text-white,
     html[data-theme="dark"] .pf-court-pod-surface .text-white {
       color: #FFFFFF !important;
     }
+    html[data-theme="light"] body section .pf-pass-dark-card .text-white,
+    html[data-theme="light"] body main .pf-pass-dark-card .text-white,
+    html[data-theme="light"] body section .pf-op-shuffler-bar .text-white,
+    html[data-theme="light"] body main .pf-op-shuffler-bar .text-white,
+    html[data-theme="light"] body section .pf-op-shuffler-bar h3,
+    html[data-theme="light"] body main .pf-op-shuffler-bar h3 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] body section .pf-court-pod-surface .text-emerald-200\/90,
+    html[data-theme="light"] body section .pf-court-pod-surface .text-emerald-100\/90,
+    html[data-theme="light"] body section .pf-court-pod-surface .text-emerald-300,
+    html[data-theme="light"] body section .pf-court-pod-surface .text-emerald-300\/75,
     html[data-theme="light"] .pf-court-pod-surface .text-emerald-200\/90,
     html[data-theme="light"] .pf-court-pod-surface .text-emerald-100\/90,
     html[data-theme="light"] .pf-court-pod-surface .text-emerald-300,
@@ -3126,6 +3142,16 @@ button.pf-trn-btn-danger:hover,
       color: #050E1D !important;
       border-color: #B4FF00 !important;
     }
+    html[data-theme="dark"] header #pf-theme-toggle-btn {
+      background-color: #0E2240 !important;
+      border-color: rgba(155, 230, 0, 0.35) !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] header #pf-theme-toggle-btn {
+      background-color: #F2F0E8 !important;
+      border-color: #D5D3CC !important;
+      color: #0D1F18 !important;
+    }
 
   </style>
 </head>
@@ -3232,6 +3258,12 @@ button.pf-trn-btn-danger:hover,
       <!-- Right Action Buttons -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
         
+        <!-- Client Theme Toggle (Light / Dark Mode) -->
+        <button type="button" onclick="pfToggleClientTheme()" id="pf-theme-toggle-btn" class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-[#F2F0E8] hover:bg-[#E6E4DC] border border-[#D5D3CC] text-[#0D1F18] flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 flex-shrink-0" title="Switch Light / Dark Mode">
+          <span id="pf-theme-toggle-icon" class="text-sm leading-none">☀️</span>
+          <span id="pf-theme-toggle-label" class="hidden xl:inline font-mono text-[10px] uppercase tracking-wider font-bold">Light</span>
+        </button>
+
         <!-- Live Announcements Board Button -->
         <button type="button" onclick="toggleAnnouncementBoard()" class="whitespace-nowrap h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#9BE600]/40 text-white hidden md:flex items-center gap-1.5 transition active:scale-95 shadow-md relative flex-shrink-0" title="Open Live Club Announcement Board">
           <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
@@ -4119,7 +4151,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261106v15"></script>
+<script src="app.js?v=20261107v16"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -4196,13 +4228,12 @@ button.pf-trn-btn-danger:hover,
       }
     }
 
-    // Helper: Exact Open Play Schedule from Main Website (Mon 3-6PM, Tue-Thu 3-8PM, Fri 3-11PM, Sat 6-10PM)
+    // Helper: Exact Open Play Schedule from Main Website (Tue-Thu 4-8PM, Fri-Sat 6-10PM)
     const OPEN_PLAY_HOURS_BY_DAY = {
-      1: { start: 15, end: 18 }, // Monday: 3:00 PM - 6:00 PM
-      2: { start: 15, end: 20 }, // Tuesday: 3:00 PM - 8:00 PM
-      3: { start: 15, end: 20 }, // Wednesday: 3:00 PM - 8:00 PM
-      4: { start: 15, end: 20 }, // Thursday: 3:00 PM - 8:00 PM
-      5: { start: 15, end: 23 }, // Friday: 3:00 PM - 11:00 PM
+      2: { start: 16, end: 20 }, // Tuesday: 4:00 PM - 8:00 PM
+      3: { start: 16, end: 20 }, // Wednesday: 4:00 PM - 8:00 PM
+      4: { start: 16, end: 20 }, // Thursday: 4:00 PM - 8:00 PM
+      5: { start: 18, end: 22 }, // Friday: 6:00 PM - 10:00 PM
       6: { start: 18, end: 22 }  // Saturday: 6:00 PM - 10:00 PM
     };
 
@@ -4214,11 +4245,18 @@ button.pf-trn-btn-danger:hover,
       return hour24;
     }
 
-    function isOpenPlaySlot(dateYMD, slotStr) {
+    function isOpenPlaySlot(dateYMD, slotStr, courtNum) {
       if (typeof window.pfIsDefaultOpenPlaySlot === 'function') {
-        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr);
+        return window.pfIsDefaultOpenPlaySlot(dateYMD, slotStr, courtNum);
       }
-      return ['03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'].includes(String(slotStr || '').trim());
+      if (!dateYMD || !slotStr) return false;
+      const parts = String(dateYMD).split('-').map(Number);
+      if (parts.length !== 3) return false;
+      const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+      const rule = OPEN_PLAY_HOURS_BY_DAY[dt.getDay()];
+      if (!rule) return false;
+      const hr = slotTo24Hour(slotStr);
+      return hr >= rule.start && hr < rule.end;
     }
 
     function ensureDynamicScheduleDateExists(ymd) {
@@ -4432,7 +4470,13 @@ button.pf-trn-btn-danger:hover,
             slotInfo.status !== 'CLOSED'
           );
 
-          if (cat === 'PRIVATE') {
+          if (cat === 'TOURNAMENT') {
+            return `<td class="p-1 sm:p-1.5 text-center relative">
+              <a href="index.html#tournaments" class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#FEF9C3] hover:bg-[#FEF08A] text-[#854D0E] border border-[#FACC15] text-[10px] sm:text-xs font-extrabold shadow-sm truncate transition" title="${pfEscapeHtml(slotInfo.reason || 'Official Club Tournament')}">
+                🏆 Tournament
+              </a>
+            </td>`;
+          } else if (cat === 'PRIVATE') {
             return `<td class="p-1 sm:p-1.5 text-center relative">
               <span class="block w-full py-2 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[10px] sm:text-xs font-extrabold shadow-sm truncate" title="${pfEscapeHtml(slotInfo.reason || 'Private')}">
                 Private
@@ -4661,7 +4705,11 @@ button.pf-trn-btn-danger:hover,
         const isSelected = (slot === DRAWER_STATE.selectedStartSlot);
         const rate = getHourlyRate(slot);
 
-        if (cat === 'PRIVATE') {
+        if (cat === 'TOURNAMENT') {
+          btn.disabled = true;
+          btn.className = 'py-2.5 px-2 rounded-xl bg-[#FEF9C3] text-[#854D0E] border border-[#FACC15] text-[11px] font-sans font-bold cursor-not-allowed';
+          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#854D0E] font-black">🏆 Tournament</span>`;
+        } else if (cat === 'PRIVATE') {
           btn.disabled = true;
           btn.className = 'py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-[11px] font-sans font-bold cursor-not-allowed';
           btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#64748B] font-black">Private</span>`;

@@ -7,6 +7,10 @@
   <script>
     (function() {
       try {
+        var savedTheme = localStorage.getItem('pf_v3_theme_night_default') || localStorage.getItem('pf_client_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme === 'light' ? 'light' : 'dark');
+      } catch (e) {}
+      try {
         var raw = localStorage.getItem('pf_site_config');
         if (!raw) return;
         var sc = JSON.parse(raw);
@@ -2849,6 +2853,16 @@ button.pf-trn-btn-danger:hover,
       background-color: #9BE600 !important;
       color: #050E1D !important;
     }
+    html[data-theme="dark"] header #pf-theme-toggle-btn {
+      background-color: #0E2240 !important;
+      border-color: rgba(155, 230, 0, 0.35) !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] header #pf-theme-toggle-btn {
+      background-color: #F2F0E8 !important;
+      border-color: #D5D3CC !important;
+      color: #0D1F18 !important;
+    }
 
   
     /* === V3.2 RESERVE A COURT DRAWER (#booking-drawer) GEAR & LABELS CONTRAST FIX === */
@@ -3175,8 +3189,8 @@ button.pf-trn-btn-danger:hover,
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="court-selector">
             <button type="button" onclick="selectCourt(1)" class="court-btn court-btn-active py-3.5 px-4 rounded-2xl border-2 border-[#15803D] bg-[#0F291E] text-white text-left transition active:scale-95 shadow-md flex items-center justify-between" data-court="1">
-              <b class="text-sm sm:text-base font-black text-white block" style="color:#FFFFFF !important;">Court 1</b>
-              <span class="text-[#6EE7B7] font-mono text-xs font-bold" style="color:#6EE7B7 !important;">→</span>
+              <b class="text-sm sm:text-base font-black text-white block">Court 1</b>
+              <span class="text-[#6EE7B7] font-mono text-xs font-bold">→</span>
             </button>
             <button type="button" onclick="selectCourt(2)" class="court-btn py-3.5 px-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95 flex items-center justify-between" data-court="2">
               <b class="text-sm sm:text-base font-black text-white block">Court 2</b>
@@ -4363,7 +4377,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261106v15"></script>
+<script src="app.js?v=20261107v16"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>
@@ -4584,14 +4598,12 @@ button.pf-trn-btn-danger:hover,
         const spEl = btn.querySelector("span");
         if (c === cNum) {
           btn.className = "court-btn court-btn-active py-3.5 px-4 rounded-2xl border-2 border-[#15803D] bg-[#0F291E] text-white text-left transition active:scale-95 shadow-md flex items-center justify-between";
-          if (bEl) { bEl.className = "text-sm sm:text-base font-extrabold text-white block"; bEl.style.setProperty("color", "#FFFFFF", "important"); }
-          if (spEl) { spEl.className = "text-[#6EE7B7] font-mono text-xs font-bold"; spEl.style.setProperty("color", "#6EE7B7", "important"); }
-          if (spEl) spEl.className = "text-[#6EE7B7] font-mono text-xs font-bold";
+          if (bEl) { bEl.className = "text-sm sm:text-base font-extrabold text-white block"; bEl.style.removeProperty("color"); }
+          if (spEl) { spEl.className = "text-[#6EE7B7] font-mono text-xs font-bold"; spEl.style.removeProperty("color"); }
         } else {
           btn.className = "court-btn py-3.5 px-4 rounded-2xl border border-slate-300 bg-slate-50 hover:border-[#15803D] text-slate-900 text-left transition active:scale-95 flex items-center justify-between";
           if (bEl) { bEl.className = "text-sm sm:text-base font-bold text-slate-900 block"; bEl.style.removeProperty("color"); }
           if (spEl) { spEl.className = "text-slate-500 font-mono text-xs"; spEl.style.removeProperty("color"); }
-          if (spEl) spEl.className = "text-slate-500 font-mono text-xs";
         }
       });
       renderTimeChips();
@@ -4605,8 +4617,8 @@ button.pf-trn-btn-danger:hover,
         const d = Number(btn.getAttribute("data-dur"));
         if (d === dur) {
           btn.className = "duration-pill-btn duration-pill-active px-3 py-1 rounded-lg bg-[#0F291E] text-white font-black shadow-sm";
-          btn.style.setProperty("background-color", "#0F291E", "important");
-          btn.style.setProperty("color", "#FFFFFF", "important");
+          btn.style.removeProperty("background-color");
+          btn.style.removeProperty("color");
         } else {
           btn.className = "duration-pill-btn px-3 py-1 rounded-lg text-slate-700 hover:text-slate-900 font-bold";
           btn.style.removeProperty("background-color");

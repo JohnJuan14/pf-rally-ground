@@ -236,12 +236,39 @@ def _get_supabase_credentials():
     )
 
 
-def _supabase_get_db():
+_SB_MEM_CACHE = {
+    "data": None,
+    "updated_at": 0,
+    "checked_at": 0.0
+}
+
+
+def _supabase_get_db(force_refresh=False):
     sb_url, sb_key = _get_supabase_credentials()
     if not sb_url or not sb_key:
         return None
+    now_sec = time.time()
+    if not force_refresh and _SB_MEM_CACHE["data"] is not None and (now_sec - _SB_MEM_CACHE["checked_at"]) < 2.5:
+        return _SB_MEM_CACHE["data"]
     try:
         import urllib.request
+        if not force_refresh and _SB_MEM_CACHE["data"] is not None and _SB_MEM_CACHE["updated_at"] > 0:
+            req_meta = urllib.request.Request(
+                f"{sb_url}/rest/v1/pf_cloud_state?id=eq.pf_rally_ground_db&select=updated_at",
+                headers={
+                    "apikey": sb_key,
+                    "Authorization": f"Bearer {sb_key}",
+                    "Accept": "application/json",
+                }
+            )
+            with urllib.request.urlopen(req_meta, timeout=2.5) as resp_meta:
+                meta_rows = json.loads(resp_meta.read().decode("utf-8"))
+                if isinstance(meta_rows, list) and len(meta_rows) > 0 and isinstance(meta_rows[0], dict):
+                    remote_ts = int(meta_rows[0].get("updated_at") or 0)
+                    if remote_ts > 0 and remote_ts == _SB_MEM_CACHE["updated_at"]:
+                        _SB_MEM_CACHE["checked_at"] = now_sec
+                        return _SB_MEM_CACHE["data"]
+
         req = urllib.request.Request(
             f"{sb_url}/rest/v1/pf_cloud_state?id=eq.pf_rally_ground_db&select=data,updated_at",
             headers={
@@ -254,10 +281,15 @@ def _supabase_get_db():
             rows = json.loads(resp.read().decode("utf-8"))
             if isinstance(rows, list) and len(rows) > 0 and isinstance(rows[0], dict):
                 raw_data = rows[0].get("data")
+                remote_ts = int(rows[0].get("updated_at") or 0)
                 if isinstance(raw_data, dict) and len(raw_data) > 0:
+                    _SB_MEM_CACHE["data"] = raw_data
+                    _SB_MEM_CACHE["updated_at"] = remote_ts
+                    _SB_MEM_CACHE["checked_at"] = now_sec
                     return raw_data
     except Exception:
-        pass
+        if _SB_MEM_CACHE["data"] is not None:
+            return _SB_MEM_CACHE["data"]
     return None
 
 
@@ -267,10 +299,11 @@ def _supabase_set_db(data):
         return
     try:
         import urllib.request
+        now_ms = int(time.time() * 1000)
         payload = {
             "id": "pf_rally_ground_db",
             "data": data,
-            "updated_at": int(time.time() * 1000)
+            "updated_at": now_ms
         }
         body_bytes = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
@@ -285,6 +318,9 @@ def _supabase_set_db(data):
             method="POST"
         )
         urllib.request.urlopen(req, timeout=3.5).read()
+        _SB_MEM_CACHE["data"] = data
+        _SB_MEM_CACHE["updated_at"] = now_ms
+        _SB_MEM_CACHE["checked_at"] = time.time()
     except Exception:
         pass
 
@@ -303,43 +339,53 @@ def _scrub_corrupted_utf8(obj):
 
 def load_db():
     with db_lock:
+        sb_cloud = _supabase_get_db()
         if not os.path.exists(DB_FILE):
-            sb_initial = _supabase_get_db()
-            initial_db = _scrub_corrupted_utf8(sb_initial) if isinstance(sb_initial, dict) and len(sb_initial) > 0 else DEFAULT_DB
+            initial_db = _scrub_corrupted_utf8(sb_cloud) if isinstance(sb_cloud, dict) and len(sb_cloud) > 0 else DEFAULT_DB
             with open(DB_FILE, "w", encoding="utf-8") as f:
                 json.dump(initial_db, f, indent=2)
             return json.loads(json.dumps(initial_db))
         try:
             with open(DB_FILE, "r", encoding="utf-8") as f:
                 data = _scrub_corrupted_utf8(json.load(f))
-                if "adminPassword" not in data or not data["adminPassword"]:
-                    data["adminPassword"] = ""
-                for k in ["bookings", "deletedBookingRefs", "deletedInventoryIds", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
-                    if k not in data or not isinstance(data[k], list):
-                        data[k] = []
-                if len(data["announcements"]) == 0:
-                    data["announcements"] = json.loads(json.dumps(DEFAULT_ANNOUNCEMENTS))
-                if len(data["securityLog"]) == 0:
-                    data["securityLog"] = json.loads(json.dumps(DEFAULT_SECURITY_LOG))
-                if "bookingsUpdatedAt" not in data:
-                    data["bookingsUpdatedAt"] = 0
-                if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
-                    data["gmailConfig"] = dict(DEFAULT_DB["gmailConfig"])
-                if "paymentConfig" not in data or not isinstance(data["paymentConfig"], dict):
-                    data["paymentConfig"] = dict(DEFAULT_DB["paymentConfig"])
-                else:
-                    merged_pc = dict(DEFAULT_DB["paymentConfig"])
-                    merged_pc.update(data["paymentConfig"])
-                    data["paymentConfig"] = merged_pc
-                if "siteConfig" not in data or not isinstance(data["siteConfig"], dict):
-                    data["siteConfig"] = dict(DEFAULT_DB["siteConfig"])
-                else:
-                    merged_sc = dict(DEFAULT_DB["siteConfig"])
-                    merged_sc.update(data["siteConfig"])
-                    if not str(merged_sc.get("liveBannerText") or "").strip() or str(merged_sc.get("liveBannerText")).strip() == "0":
-                        merged_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
-                    data["siteConfig"] = merged_sc
-                return data
+            if isinstance(sb_cloud, dict) and len(sb_cloud) > 0:
+                cloud_ts = max(int(sb_cloud.get("updatedAt") or 0), int(_SB_MEM_CACHE.get("updated_at") or 0))
+                local_ts = int(data.get("updatedAt") or 0)
+                if cloud_ts >= local_ts or len(sb_cloud.get("bookings") or []) > len(data.get("bookings") or []):
+                    data = _scrub_corrupted_utf8(json.loads(json.dumps(sb_cloud)))
+                    try:
+                        with open(DB_FILE, "w", encoding="utf-8") as fw:
+                            json.dump(data, fw, indent=2)
+                    except Exception:
+                        pass
+            if "adminPassword" not in data or not data["adminPassword"]:
+                data["adminPassword"] = ""
+            for k in ["bookings", "deletedBookingRefs", "deletedInventoryIds", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
+                if k not in data or not isinstance(data[k], list):
+                    data[k] = []
+            if len(data["announcements"]) == 0:
+                data["announcements"] = json.loads(json.dumps(DEFAULT_ANNOUNCEMENTS))
+            if len(data["securityLog"]) == 0:
+                data["securityLog"] = json.loads(json.dumps(DEFAULT_SECURITY_LOG))
+            if "bookingsUpdatedAt" not in data:
+                data["bookingsUpdatedAt"] = 0
+            if "gmailConfig" not in data or not isinstance(data["gmailConfig"], dict):
+                data["gmailConfig"] = dict(DEFAULT_DB["gmailConfig"])
+            if "paymentConfig" not in data or not isinstance(data["paymentConfig"], dict):
+                data["paymentConfig"] = dict(DEFAULT_DB["paymentConfig"])
+            else:
+                merged_pc = dict(DEFAULT_DB["paymentConfig"])
+                merged_pc.update(data["paymentConfig"])
+                data["paymentConfig"] = merged_pc
+            if "siteConfig" not in data or not isinstance(data["siteConfig"], dict):
+                data["siteConfig"] = dict(DEFAULT_DB["siteConfig"])
+            else:
+                merged_sc = dict(DEFAULT_DB["siteConfig"])
+                merged_sc.update(data["siteConfig"])
+                if not str(merged_sc.get("liveBannerText") or "").strip() or str(merged_sc.get("liveBannerText")).strip() == "0":
+                    merged_sc["liveBannerText"] = DEFAULT_DB["siteConfig"]["liveBannerText"]
+                data["siteConfig"] = merged_sc
+            return data
         except Exception:
             return json.loads(json.dumps(DEFAULT_DB))
 

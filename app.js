@@ -567,19 +567,25 @@ function initDrawerSlots() {
   if (badge) badge.textContent = isCurrentSlotPeak ? 'Peak Hour (₱500/hr)' : 'Regular Hour (₱400/hr)';
 }
 
-function drawerSetCourt(c) {
-  currentSelectedCourt = c;
-  document.querySelectorAll('#drawer-court-buttons button').forEach((b, idx) => {
-    const isAct = (idx === c - 1);
-    b.className = isAct
-      ? 'drawer-court active p-3 rounded-xl border border-brand-lime bg-brand-lime/10 text-left transition'
-      : 'drawer-court p-3 rounded-xl border border-white/10 bg-brand-card text-left transition hover:border-white/20';
-    const label = b.querySelector('span:last-child');
-    if (label) {
-      label.className = isAct ? 'text-xs font-black text-brand-lime' : 'text-xs font-black text-white';
+function drawerSetCourt(courtNum) {
+  const normalized = Math.max(1, Math.min(4, Number(courtNum) || 1));
+  currentSelectedCourt = normalized;
+  if (typeof DRAWER_STATE !== 'undefined') DRAWER_STATE.selectedCourt = normalized;
+  document.querySelectorAll('#drawer-court-buttons button').forEach((btn, idx) => {
+    const c = Number(btn.getAttribute('data-court')) || (idx + 1);
+    const spans = btn.querySelectorAll('span');
+    if (c === normalized) {
+      btn.className = 'drawer-court active py-3 px-3.5 rounded-2xl bg-[#0D1F18] text-white border-2 border-[#15803D] shadow-sm text-center transition flex items-center justify-between';
+      if (spans[0]) spans[0].className = 'text-xs sm:text-sm font-bold text-white block';
+      if (spans[1]) spans[1].className = 'text-[#A7F3D0] font-mono text-xs';
+    } else {
+      btn.className = 'drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between';
+      if (spans[0]) spans[0].className = 'text-xs sm:text-sm font-bold text-[#0D1F18] block';
+      if (spans[1]) spans[1].className = 'text-[#52605A] font-mono text-xs';
     }
   });
-  recalculateDrawerTotal();
+  if (typeof renderDrawerSlots === 'function') renderDrawerSlots();
+  if (typeof recalculateDrawerTotal === 'function') recalculateDrawerTotal();
 }
 
 function changePlayers(delta) {
@@ -6069,17 +6075,17 @@ function pfRenderOpenPlay24Board() {
         ? `<span class="pf-pod-badge-confirmed px-2 py-0.5 rounded bg-[#10B981] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0 shadow-2xs" title="Payment verified &amp; confirmed by Admin">✅ Confirmed</span>`
         : `<span class="pf-pod-badge-pending px-2 py-0.5 rounded bg-amber-400/25 border border-amber-300/60 text-amber-200 font-mono text-[9px] font-black uppercase flex-shrink-0" title="Awaiting Admin verification in Admin Portal">⏳ Pending</span>`;
       return `
-        <div class="pf-pod-seat-booked p-2.5 rounded-xl bg-[#071D14] border-2 ${stInfo.isConfirmed ? 'border-[#A3E635]' : 'border-amber-400/70'} flex items-center justify-between gap-2 shadow-xs">
-          <div class="flex items-center gap-2 min-w-0">
+        <div class="pf-pod-seat-booked p-2.5 rounded-xl bg-[#071D14] border-2 ${stInfo.isConfirmed ? 'border-[#A3E635]' : 'border-amber-400/70'} flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 shadow-xs">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
             <span class="pf-pod-seat-num w-6 h-6 rounded-lg ${stInfo.isConfirmed ? 'bg-[#A3E635] text-[#04120B]' : 'bg-amber-300 text-slate-950'} font-mono text-[10px] font-black flex items-center justify-center flex-shrink-0">#${pl.podSeat}</span>
-            <div class="min-w-0">
-              <div class="text-xs font-extrabold text-white truncate" title="${pfEscapeHtml(pl.name)}">${pfEscapeHtml(pl.name)}</div>
-              <div class="text-[9px] font-mono text-emerald-300 truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-extrabold text-white truncate" style="color:#FFFFFF !important;" title="${pfEscapeHtml(pl.name)}">${pfEscapeHtml(pl.name)}</div>
+              <div class="text-[9px] font-mono text-emerald-300 truncate" style="color:#6EE7B7 !important;">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
             </div>
           </div>
-          <div class="flex items-center gap-1 flex-shrink-0">
+          <div class="flex items-center gap-1 flex-shrink-0 ml-auto">
             ${badgeHtml}
-            <button type="button" onclick="pfViewOpenPlayReceiptModal('${pfEscapeHtml(pl.bookingRef || '')}', '${pfEscapeHtml(pl.name || '')}')" class="pf-pod-receipt-btn px-1.5 py-0.5 rounded bg-white/15 hover:bg-[#A3E635] text-white hover:text-[#04120B] font-mono text-[9px] font-black uppercase transition" title="View Official Receipt &amp; Venue Gate Pass">📄 Pass</button>
+            <button type="button" onclick="pfViewOpenPlayReceiptModal('${pfEscapeHtml(pl.bookingRef || '')}', '${pfEscapeHtml(pl.name || '')}')" class="pf-pod-receipt-btn px-2 py-0.5 rounded bg-white/15 hover:bg-[#A3E635] text-white hover:text-[#04120B] font-mono text-[9px] font-black uppercase transition whitespace-nowrap" style="color:#FFFFFF;" title="View Official Receipt &amp; Venue Gate Pass">📄 Pass</button>
           </div>
         </div>
       `;
@@ -6087,14 +6093,14 @@ function pfRenderOpenPlay24Board() {
     const seatNum = pl ? pl.podSeat : 1;
     return `
       <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}', ${seatNum})" class="pf-pod-seat-open w-full p-2.5 rounded-xl bg-black/30 hover:bg-black/50 border border-dashed border-emerald-300/45 hover:border-[#A3E635] text-left flex items-center justify-between gap-2 transition group">
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="pf-pod-open-num w-6 h-6 rounded-lg bg-white/10 text-emerald-200 font-mono text-[10px] font-bold flex items-center justify-center flex-shrink-0">#${seatNum}</span>
-          <div class="min-w-0">
-            <div class="text-xs font-bold text-emerald-100/90 group-hover:text-white truncate">Open Seat #${seatNum}</div>
-            <div class="text-[9px] font-mono text-emerald-300/75">Available • ₱${unitFee}</div>
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <span class="pf-pod-open-num w-6 h-6 rounded-lg bg-white/10 text-emerald-200 font-mono text-[10px] font-bold flex items-center justify-center flex-shrink-0" style="color:#A7F3D0 !important;">#${seatNum}</span>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-bold text-emerald-100/90 group-hover:text-white truncate" style="color:#ECFDF5 !important;">Open Seat #${seatNum}</div>
+            <div class="text-[9px] font-mono text-emerald-300/75" style="color:#6EE7B7 !important;">Available • ₱${unitFee}</div>
           </div>
         </div>
-        <span class="pf-pod-book-chip px-2.5 py-1 rounded-lg bg-[#A3E635] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0 shadow-2xs">Book →</span>
+        <span class="pf-pod-book-chip px-2.5 py-1 rounded-lg bg-[#A3E635] text-[#04120B] font-mono text-[9px] font-black uppercase flex-shrink-0 shadow-2xs" style="background:#A3E635 !important;color:#04120B !important;">Book →</span>
       </button>
     `;
   };
@@ -6113,10 +6119,10 @@ function pfRenderOpenPlay24Board() {
 
     return `
       <div class="pf-op-pod-card rounded-3xl bg-[#F8F7F3] border-2 border-[#E2E0D8] p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-3.5">
-        <div class="flex items-start justify-between gap-2">
-          <div>
+        <div class="flex flex-wrap items-start justify-between gap-2">
+          <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-1.5">
-              <span class="px-2.5 py-0.5 rounded-lg bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase">POD #${pod.podIndex}</span>
+              <span class="px-2.5 py-0.5 rounded-lg bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase" style="background:#0F291E !important;color:#A3E635 !important;">POD #${pod.podIndex}</span>
               ${activeSession.showCourtsOnSite !== false ? `
                 <span class="px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-950 border border-emerald-300 font-mono text-[10px] font-extrabold uppercase">📍 ${pfEscapeHtml(pod.courtLabel)}</span>
               ` : ''}
@@ -6127,9 +6133,9 @@ function pfRenderOpenPlay24Board() {
         </div>
 
         <div class="pf-court-pod-surface p-3.5 space-y-2">
-          <div class="flex items-center justify-between text-[9px] font-mono font-extrabold uppercase tracking-wider text-emerald-200/90 px-1">
-            <span>NORTH SIDE • PAIR A</span>
-            <span>DOUBLES SIDE 1</span>
+          <div class="flex items-center justify-between text-[9px] font-mono font-extrabold uppercase tracking-wider text-emerald-200/90 px-1" style="color:#A7F3D0 !important;">
+            <span style="color:#A7F3D0 !important;">NORTH SIDE • PAIR A</span>
+            <span style="color:#A7F3D0 !important;">DOUBLES SIDE 1</span>
           </div>
           <div class="grid grid-cols-1 gap-1.5">
             ${renderPodSeatHtml(p1)}
@@ -6137,7 +6143,7 @@ function pfRenderOpenPlay24Board() {
           </div>
 
           <div class="pf-court-net-line py-1">
-            <span class="relative z-10 px-3 py-0.5 rounded-full bg-[#04120B] border border-[#A3E635] text-[#A3E635] font-mono text-[9px] font-black uppercase tracking-widest">
+            <span class="relative z-10 px-3 py-0.5 rounded-full bg-[#04120B] border border-[#A3E635] text-[#A3E635] font-mono text-[9px] font-black uppercase tracking-widest" style="background:#04120B !important;color:#A3E635 !important;">
               🏓 NET • VS
             </span>
           </div>
@@ -6146,9 +6152,9 @@ function pfRenderOpenPlay24Board() {
             ${renderPodSeatHtml(p3)}
             ${renderPodSeatHtml(p4)}
           </div>
-          <div class="flex items-center justify-between text-[9px] font-mono font-extrabold uppercase tracking-wider text-emerald-200/90 px-1 pt-0.5">
-            <span>SOUTH SIDE • PAIR B</span>
-            <span>DOUBLES SIDE 2</span>
+          <div class="flex items-center justify-between text-[9px] font-mono font-extrabold uppercase tracking-wider text-emerald-200/90 px-1 pt-0.5" style="color:#A7F3D0 !important;">
+            <span style="color:#A7F3D0 !important;">SOUTH SIDE • PAIR B</span>
+            <span style="color:#A7F3D0 !important;">DOUBLES SIDE 2</span>
           </div>
         </div>
       </div>
@@ -6177,17 +6183,17 @@ function pfRenderOpenPlay24Board() {
           ? `<span class="pf-roster-status-confirmed px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-400 font-mono text-[9px] font-black uppercase flex-shrink-0">✅ CONFIRMED</span>`
           : `<span class="pf-roster-status-pending px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-400 font-mono text-[9px] font-black uppercase flex-shrink-0">⏳ PENDING</span>`;
         return `
-          <div class="pf-op-roster-card p-3.5 rounded-2xl bg-[#F8F7F3] border-2 ${stInfo.isConfirmed ? 'border-emerald-400' : 'border-amber-300'} flex items-center justify-between gap-2.5 shadow-2xs">
-            <div class="flex items-center gap-2.5 min-w-0">
+          <div class="pf-op-roster-card p-3.5 rounded-2xl bg-[#F8F7F3] border-2 ${stInfo.isConfirmed ? 'border-emerald-400' : 'border-amber-300'} flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 shadow-2xs">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
               <span class="pf-op-roster-num w-8 h-8 rounded-xl bg-[#0F291E] text-[#A3E635] font-mono text-xs font-black flex items-center justify-center flex-shrink-0">#${idx + 1}</span>
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <div class="text-xs font-black text-slate-900 truncate">${pfEscapeHtml(pl.name)}</div>
                 <div class="text-[10px] font-mono text-emerald-800 font-bold truncate">${pfEscapeHtml(pl.skill || 'All Levels')} ${pl.bookingRef ? '• ' + pfEscapeHtml(pl.bookingRef) : ''}</div>
               </div>
             </div>
-            <div class="flex items-center gap-1.5 flex-shrink-0">
+            <div class="flex items-center gap-1.5 flex-shrink-0 ml-auto">
               ${statusPill}
-              <button type="button" onclick="pfViewOpenPlayReceiptModal('${pfEscapeHtml(pl.bookingRef || '')}', '${pfEscapeHtml(pl.name || '')}')" class="pf-op-roster-receipt-btn px-2.5 py-1 rounded-full bg-[#0F291E] hover:bg-[#15803D] text-[#A3E635] hover:text-white font-mono text-[9px] font-black uppercase transition" title="View Official Receipt &amp; Venue Gate Pass">
+              <button type="button" onclick="pfViewOpenPlayReceiptModal('${pfEscapeHtml(pl.bookingRef || '')}', '${pfEscapeHtml(pl.name || '')}')" class="pf-op-roster-receipt-btn px-2.5 py-1 rounded-full bg-[#0F291E] hover:bg-[#15803D] text-[#A3E635] hover:text-white font-mono text-[9px] font-black uppercase transition whitespace-nowrap" style="background:#0F291E !important;color:#A3E635 !important;" title="View Official Receipt &amp; Venue Gate Pass">
                 📄 Receipt
               </button>
             </div>
@@ -6261,34 +6267,34 @@ function pfRenderOpenPlay24Board() {
                   <img src="assets/logo.png" alt="P&amp;F Rally Ground">
                 </div>
                 <div>
-                  <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block">OPEN PLAY PASS</span>
-                  <div class="text-xs font-extrabold uppercase tracking-wide text-white">P&amp;F Rally Ground</div>
-                  <div class="text-[10px] font-mono text-emerald-200">Daraga, Albay</div>
+                  <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block" style="color:#A3E635 !important;">OPEN PLAY PASS</span>
+                  <div class="text-xs font-extrabold uppercase tracking-wide text-white" style="color:#FFFFFF !important;">P&amp;F Rally Ground</div>
+                  <div class="text-[10px] font-mono text-emerald-200" style="color:#A7F3D0 !important;">Daraga, Albay</div>
                 </div>
               </div>
               <div class="text-right">
-                <span class="text-[9px] font-mono uppercase tracking-widest text-slate-300 block">Per Participant</span>
-                <div class="font-mono text-2xl sm:text-3xl font-black text-[#A3E635]">₱${unitFee.toLocaleString()}</div>
+                <span class="text-[9px] font-mono uppercase tracking-widest text-slate-300 block" style="color:#CBD5E1 !important;">Per Participant</span>
+                <div class="font-mono text-2xl sm:text-3xl font-black text-[#A3E635]" style="color:#A3E635 !important;">₱${unitFee.toLocaleString()}</div>
               </div>
             </div>
 
             <div class="p-3.5 rounded-2xl bg-black/35 border border-[#A3E635]/35 space-y-1">
-              <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block">📄 OFFICIAL IMAGE RECEIPT INCLUDED</span>
-              <div class="text-xs font-bold text-white leading-snug">Per-Participant Seat • 6 Balanced Doubles Pods • Downloadable <span class="font-mono text-[#A3E635]">PF-OP</span> PNG Image Receipt</div>
+              <span class="text-[9px] font-mono font-black uppercase tracking-widest text-[#A3E635] block" style="color:#A3E635 !important;">📄 OFFICIAL IMAGE RECEIPT INCLUDED</span>
+              <div class="text-xs font-bold text-white leading-snug" style="color:#FFFFFF !important;">Per-Participant Seat • 6 Balanced Doubles Pods • Downloadable <span class="font-mono text-[#A3E635]" style="color:#A3E635 !important;">PF-OP</span> PNG Image Receipt</div>
             </div>
 
             <div class="space-y-3">
               <div>
                 <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
-                  <span class="text-slate-300">Session Roster: <b class="text-white">${joinedCount} / 24 Players</b></span>
-                  <span class="font-bold text-[#A3E635]">${joinedCount === 0 ? 'All 24 Seats Open' : pct + '% Full'}</span>
+                  <span class="text-slate-300" style="color:#CBD5E1 !important;">Session Roster: <b class="text-white" style="color:#FFFFFF !important;">${joinedCount} / 24 Players</b></span>
+                  <span class="font-bold text-[#A3E635]" style="color:#A3E635 !important;">${joinedCount === 0 ? 'All 24 Seats Open' : pct + '% Full'}</span>
                 </div>
                 <div class="w-full h-2 rounded-full bg-black/50 overflow-hidden border border-white/15">
                   <div class="h-full rounded-full bg-gradient-to-r from-[#10B981] to-[#A3E635]" style="width:${pct}%"></div>
                 </div>
-                <div class="flex items-center justify-between text-[10px] font-mono mt-1.5 text-emerald-200">
-                  <span>✅ ${confirmedPlayersCount} Confirmed • ⏳ ${pendingPlayersCount} Pending</span>
-                  <span>${openSpotsCount} Seats Left</span>
+                <div class="flex items-center justify-between text-[10px] font-mono mt-1.5 text-emerald-200" style="color:#A7F3D0 !important;">
+                  <span style="color:#A7F3D0 !important;">✅ ${confirmedPlayersCount} Confirmed • ⏳ ${pendingPlayersCount} Pending</span>
+                  <span style="color:#A7F3D0 !important;">${openSpotsCount} Seats Left</span>
                 </div>
               </div>
 
@@ -6296,8 +6302,8 @@ function pfRenderOpenPlay24Board() {
                 <button type="button" onclick="pfOpenJoinOpenPlayModal('${pfEscapeHtml(activeSession.id)}')" class="pf-op-cta-btn-primary btn-sheen w-full py-3.5 px-5 rounded-full bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
                   <span>🏓 Book Open Play Seat (₱${unitFee}) →</span>
                 </button>
-                <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="w-full py-3 px-5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/25 font-mono font-extrabold text-[11px] uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-1.5">
-                  <span>🔀 Shuffle 4-Player Court Pods</span>
+                <button type="button" onclick="pfShuffleOpenPlay24Players('${pfEscapeHtml(activeSession.id)}')" class="w-full py-3 px-5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/25 font-mono font-extrabold text-[11px] uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-1.5" style="color:#FFFFFF !important;">
+                  <span style="color:#FFFFFF !important;">🔀 Shuffle 4-Player Court Pods</span>
                 </button>
               </div>
             </div>
@@ -6309,15 +6315,15 @@ function pfRenderOpenPlay24Board() {
           <div class="pf-op-shuffler-bar p-4 sm:p-5 rounded-2xl bg-[#0F291E] border border-[#15803D] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-3 shadow-lg">
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <span class="pf-op-shuffler-chip px-2.5 py-0.5 rounded-full bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase">LIVE 4-PLAYER POD SHUFFLER</span>
-                <span class="text-xs font-mono text-emerald-200">Last Shuffle: <b class="text-white">${pfEscapeHtml(schedule.lastShuffleTime)}</b></span>
+                <span class="pf-op-shuffler-chip px-2.5 py-0.5 rounded-full bg-[#A3E635] text-[#04120B] font-mono text-[10px] font-black uppercase" style="background:#A3E635 !important;color:#04120B !important;">LIVE 4-PLAYER POD SHUFFLER</span>
+                <span class="text-xs font-mono text-emerald-200" style="color:#A7F3D0 !important;">Last Shuffle: <b class="text-white" style="color:#FFFFFF !important;">${pfEscapeHtml(schedule.lastShuffleTime)}</b></span>
               </div>
-              <h3 class="text-base sm:text-lg font-black text-white mt-1">6 Doubles Match Pods (4 Players per Court • Live Confirmation &amp; Gate Pass)</h3>
+              <h3 class="text-base sm:text-lg font-black text-white mt-1" style="color:#FFFFFF !important;">6 Doubles Match Pods (4 Players per Court • Live Confirmation &amp; Gate Pass)</h3>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <div class="inline-flex items-center rounded-full bg-black/40 p-1 border border-white/15">
+              <div class="inline-flex flex-wrap items-center rounded-2xl sm:rounded-full bg-black/40 p-1 border border-white/15 gap-0.5">
                 ${[1, 2, 3, 4].map(cnt => `
-                  <button type="button" onclick="pfSetOpenPlayCourtCount(${cnt}, '${pfEscapeHtml(activeSession.id)}')" class="pf-op-court-cnt-btn ${schedule.courtsAvailable === cnt ? 'pf-op-court-cnt-active bg-[#A3E635] text-[#04120B]' : 'text-emerald-100 hover:text-white'} px-3 py-1.5 rounded-full font-mono text-[11px] font-extrabold transition">
+                  <button type="button" onclick="pfSetOpenPlayCourtCount(${cnt}, '${pfEscapeHtml(activeSession.id)}')" class="pf-op-court-cnt-btn ${schedule.courtsAvailable === cnt ? 'pf-op-court-cnt-active bg-[#A3E635] text-[#04120B]' : 'text-emerald-100 hover:text-white'} px-2.5 sm:px-3 py-1.5 rounded-full font-mono text-[11px] font-extrabold transition" style="${schedule.courtsAvailable === cnt ? 'background:#A3E635 !important;color:#04120B !important;' : 'color:#ECFDF5 !important;'}">
                     ${cnt} ${cnt === 1 ? 'Court' : 'Courts'}
                   </button>
                 `).join('')}
@@ -8584,3 +8590,80 @@ Payment Mode: ${methodLabel}${payRef ? ' (Ref: ' + payRef + ')' : ''}
 Your order has been sent directly to the P&F Rally Ground POS System!`);
 }
 window.pfSubmitStandaloneGearOrder = pfSubmitStandaloneGearOrder;
+
+// ============================================================================
+// UNIFIED CLIENT THEME SWITCHER (LIGHT / DARK MODE) ACROSS ALL PUBLIC PAGES
+// ============================================================================
+function pfSyncThemeToggleButtons(mode) {
+  const isDark = mode === 'dark';
+  const iconEl = document.getElementById('pf-theme-toggle-icon');
+  const lblEl = document.getElementById('pf-theme-toggle-label');
+  if (iconEl) iconEl.textContent = isDark ? '🌙' : '☀️';
+  if (lblEl) lblEl.textContent = isDark ? 'Night Court' : 'Daylight';
+  const mobIconEl = document.getElementById('pf-mob-theme-toggle-icon');
+  const mobLblEl = document.getElementById('pf-mob-theme-toggle-label');
+  if (mobIconEl) mobIconEl.textContent = isDark ? '🌙' : '☀️';
+  if (mobLblEl) mobLblEl.textContent = isDark ? 'Night Court (Dark)' : 'Daylight (Light)';
+  document.querySelectorAll('.pf-theme-toggle-btn').forEach(btn => {
+    const sun = btn.querySelector('.pf-theme-icon-sun');
+    const moon = btn.querySelector('.pf-theme-icon-moon');
+    const lbl = btn.querySelector('.pf-theme-label');
+    if (sun) sun.classList.toggle('hidden', !isDark);
+    if (moon) moon.classList.toggle('hidden', isDark);
+    if (lbl) lbl.textContent = isDark ? 'Dark' : 'Light';
+  });
+}
+
+function pfToggleClientTheme() {
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  if (document.body) document.body.setAttribute('data-theme', next);
+  try {
+    localStorage.setItem('pf_v3_theme_night_default', next);
+    localStorage.setItem('pf_client_theme', next);
+  } catch (e) {}
+  pfSyncThemeToggleButtons(next);
+}
+
+window.pfSyncThemeToggleButtons = pfSyncThemeToggleButtons;
+window.pfToggleClientTheme = pfToggleClientTheme;
+
+(function pfInitClientThemeOnLoad() {
+  try {
+    const saved = localStorage.getItem('pf_v3_theme_night_default') || localStorage.getItem('pf_client_theme') || document.documentElement.getAttribute('data-theme') || 'dark';
+    const mode = saved === 'light' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', mode);
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.body) document.body.setAttribute('data-theme', mode);
+      // Ensure theme toggle button is present in header & mobile menu on all pages
+      if (!document.getElementById('pf-theme-toggle-btn')) {
+        const annBtn = document.querySelector('header button[onclick*="toggleAnnouncementBoard"]:not(.pf-nav-dropdown-item)');
+        const actionWrap = annBtn ? annBtn.parentElement : document.querySelector('header button[onclick*="openBookingDrawer"]')?.parentElement;
+        if (actionWrap) {
+          const tBtn = document.createElement('button');
+          tBtn.type = 'button';
+          tBtn.id = 'pf-theme-toggle-btn';
+          tBtn.onclick = pfToggleClientTheme;
+          tBtn.title = 'Switch Light / Dark Mode';
+          tBtn.className = 'h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-[#F2F0E8] hover:bg-[#E6E4DC] border border-[#D5D3CC] text-[#0D1F18] flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 flex-shrink-0';
+          tBtn.innerHTML = `<span id="pf-theme-toggle-icon" class="text-sm leading-none">${mode === 'dark' ? '🌙' : '☀️'}</span><span id="pf-theme-toggle-label" class="hidden xl:inline font-mono text-[10px] uppercase tracking-wider font-bold">${mode === 'dark' ? 'Night Court' : 'Daylight'}</span>`;
+          actionWrap.insertBefore(tBtn, actionWrap.firstChild);
+        }
+      }
+      const mobMenu = document.getElementById('mobile-menu');
+      if (mobMenu && !document.getElementById('pf-mob-theme-toggle-btn')) {
+        const mobBtn = document.createElement('button');
+        mobBtn.type = 'button';
+        mobBtn.id = 'pf-mob-theme-toggle-btn';
+        mobBtn.onclick = () => { pfToggleClientTheme(); };
+        mobBtn.className = 'w-full flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-900 hover:text-white text-[#050E1D] font-black transition';
+        mobBtn.innerHTML = `<span class="flex items-center gap-2"><span id="pf-mob-theme-toggle-icon">${mode === 'dark' ? '🌙' : '☀️'}</span><span>Theme Mode</span></span><span id="pf-mob-theme-toggle-label" class="font-mono text-[10px] text-emerald-700">${mode === 'dark' ? 'Night Court (Dark)' : 'Daylight (Light)'}</span>`;
+        mobMenu.appendChild(mobBtn);
+      }
+      pfSyncThemeToggleButtons(mode);
+    });
+  } catch (e) {}
+})();
+

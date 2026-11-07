@@ -8,6 +8,10 @@
   <script>
     (function() {
       try {
+        var savedTheme = localStorage.getItem('pf_v3_theme_night_default') || localStorage.getItem('pf_client_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme === 'light' ? 'light' : 'dark');
+      } catch (e) {}
+      try {
         var raw = localStorage.getItem('pf_site_config');
         if (!raw) return;
         var sc = JSON.parse(raw);
@@ -3161,6 +3165,50 @@ button.pf-trn-btn-danger:hover,
       color: #050E1D !important;
     }
 
+    /* Unified Quick Court Bar (Court 1 - Court 4) in Daylight vs Night Mode */
+    html[data-theme="light"] section#courts .pf-quick-court-btn {
+      background-color: #FFFFFF !important;
+      border: 1.5px solid #CBD5E1 !important;
+      color: #0D1F18 !important;
+      box-shadow: 0 2px 6px rgba(13, 31, 24, 0.05) !important;
+    }
+    html[data-theme="light"] section#courts .pf-quick-court-btn:hover {
+      background-color: #ECFDF5 !important;
+      border-color: #15803D !important;
+    }
+    html[data-theme="light"] section#courts .pf-quick-court-btn [data-site-court-short] {
+      color: #0D1F18 !important;
+    }
+    html[data-theme="light"] section#courts .pf-quick-court-btn:hover [data-site-court-short],
+    html[data-theme="light"] section#courts .pf-quick-court-btn > span:last-child {
+      color: #15803D !important;
+    }
+    html[data-theme="dark"] section#courts .pf-quick-court-btn {
+      background-color: #050E1D !important;
+      border: 1.5px solid rgba(155, 230, 0, 0.25) !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] section#courts .pf-quick-court-btn:hover {
+      border-color: #9BE600 !important;
+    }
+    html[data-theme="dark"] section#courts .pf-quick-court-btn [data-site-court-short] {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] section#courts .pf-quick-court-btn:hover [data-site-court-short],
+    html[data-theme="dark"] section#courts .pf-quick-court-btn > span:last-child {
+      color: #9BE600 !important;
+    }
+    html[data-theme="dark"] header #pf-theme-toggle-btn {
+      background-color: #0E2240 !important;
+      border-color: rgba(155, 230, 0, 0.35) !important;
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] header #pf-theme-toggle-btn {
+      background-color: #F2F0E8 !important;
+      border-color: #D5D3CC !important;
+      color: #0D1F18 !important;
+    }
+
   
     /* === V3.2 RESERVE A COURT DRAWER (#booking-drawer) GEAR & LABELS CONTRAST FIX === */
     html body #booking-drawer #drawer-step-1,
@@ -3317,6 +3365,12 @@ button.pf-trn-btn-danger:hover,
       <!-- Right Action Buttons -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
         
+        <!-- Client Theme Toggle (Light / Dark Mode) -->
+        <button type="button" onclick="pfToggleClientTheme()" id="pf-theme-toggle-btn" class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-[#F2F0E8] hover:bg-[#E6E4DC] border border-[#D5D3CC] text-[#0D1F18] flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 flex-shrink-0" title="Switch Light / Dark Mode">
+          <span id="pf-theme-toggle-icon" class="text-sm leading-none">☀️</span>
+          <span id="pf-theme-toggle-label" class="hidden xl:inline font-mono text-[10px] uppercase tracking-wider font-bold">Light</span>
+        </button>
+
         <!-- Live Announcements Board Button -->
         <button type="button" onclick="toggleAnnouncementBoard()" class="whitespace-nowrap h-10 px-2.5 sm:px-3.5 rounded-full bg-[#050E1D] lg:bg-brand-card hover:bg-[#0E2240] border border-[#9BE600]/40 text-white hidden md:flex items-center gap-1.5 transition active:scale-95 shadow-md relative flex-shrink-0" title="Open Live Club Announcement Board">
           <span class="w-2 h-2 rounded-full bg-[#9BE600] animate-ping"></span>
@@ -3522,28 +3576,28 @@ button.pf-trn-btn-danger:hover,
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full lg:w-auto flex-1 lg:max-w-4xl">
-          <button onclick="openBookingDrawer(1)" class="p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-brand-lime/30 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
+          <button onclick="openBookingDrawer(1)" class="pf-quick-court-btn p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-white/10 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
             <div class="min-w-0">
               <span data-site-court-short="1" class="text-sm sm:text-base font-black text-white group-hover:text-brand-lime transition truncate block">Court 1</span>
             </div>
             <span class="text-brand-lime font-mono text-xs flex-shrink-0">→</span>
           </button>
 
-          <button onclick="openBookingDrawer(2)" class="p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-white/10 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
+          <button onclick="openBookingDrawer(2)" class="pf-quick-court-btn p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-white/10 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
             <div class="min-w-0">
               <span data-site-court-short="2" class="text-sm sm:text-base font-black text-white group-hover:text-brand-lime transition truncate block">Court 2</span>
             </div>
             <span class="text-brand-lime font-mono text-xs flex-shrink-0">→</span>
           </button>
 
-          <button onclick="openBookingDrawer(3)" class="p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-white/10 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
+          <button onclick="openBookingDrawer(3)" class="pf-quick-court-btn p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-white/10 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
             <div class="min-w-0">
               <span data-site-court-short="3" class="text-sm sm:text-base font-black text-white group-hover:text-brand-lime transition truncate block">Court 3</span>
             </div>
             <span class="text-brand-lime font-mono text-xs flex-shrink-0">→</span>
           </button>
 
-          <button onclick="openBookingDrawer(4)" class="p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-white/10 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
+          <button onclick="openBookingDrawer(4)" class="pf-quick-court-btn p-3 sm:px-4 sm:py-3 rounded-2xl bg-brand-black border border-white/10 hover:border-brand-lime transition flex items-center justify-between gap-2 text-left group min-w-0 active:scale-95">
             <div class="min-w-0">
               <span data-site-court-short="4" class="text-sm sm:text-base font-black text-white group-hover:text-brand-lime transition truncate block">Court 4</span>
             </div>
@@ -4586,7 +4640,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261106v15"></script>
+<script src="app.js?v=20261107v16"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
