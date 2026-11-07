@@ -3476,10 +3476,8 @@ html[data-adm-theme="dark"] td div.bg-\[\#DBEAFE\] {
 
       </section>
 
-      <!-- ================= 4B. UNIFIED OFFICIAL TOURNAMENTS, PRICING, PLAYER ROSTERS, BRACKETS & LIVE SCOREKEEPER TAB ================= -->
-                  <section id="tab-tournament" class="hidden space-y-6">
-
-        <!-- 1. MANAGE OFFICIAL PICKLEBALL TOURNAMENTS, PRICING & PUBLIC VISIBILITY -->
+      <!-- ================= 4B. SIMPLIFIED TOURNAMENT MANAGER (2 TYPES: SINGLE & DOUBLE • TIMER • EVENT DETAILS • FULL CUSTOMER DETAILS & STATUS) ================= -->
+      <section id="tab-tournament" class="hidden space-y-6">
         <div class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 space-y-5 shadow-md">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div class="flex items-start sm:items-center gap-3.5">
@@ -3488,11 +3486,11 @@ html[data-adm-theme="dark"] td div.bg-\[\#DBEAFE\] {
               </div>
               <div>
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🏆 OFFICIAL PICKLEBALL TOURNAMENTS &amp; PRICING MANAGER</span>
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase tracking-wider">Synced Live with #tournaments</span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase tracking-wider">🏆 SIMPLIFIED TOURNAMENT &amp; REGISTRATION PORTAL</span>
+                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase tracking-wider">🔒 Customer Names Private on Public Site</span>
                 </div>
-                <h2 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">Manage Official Pickleball Tournaments, Entry Fees, Players &amp; Formats</h2>
-                <p class="text-xs text-slate-600">Edit tournament entry fees (₱), prize pools, registered player names, and live brackets below. All updates sync immediately to the public website.</p>
+                <h2 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">Tournament Manager: Single &amp; Double Events, Countdown Timer &amp; Customer Bookings</h2>
+                <p class="text-xs text-slate-600">Adjust the live countdown timer, edit tournament title &amp; event details, and manage full customer registrations (Accept, Pending, Hold, or Decline).</p>
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
@@ -3500,263 +3498,20 @@ html[data-adm-theme="dark"] td div.bg-\[\#DBEAFE\] {
                 ✅ Homepage Section: ON
               </button>
               <button type="button" onclick="adminResetDefaultTournaments()" class="pf-trn-btn-secondary px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
-                ↺ Restore Defaults (1 Event)
-              </button>
-              <button type="button" onclick="adminOpenTournamentEditorModal()" class="pf-trn-btn-primary px-4 py-2.5 rounded-xl text-xs uppercase transition">
-                + Add Tournament
+                ↺ Restore Default (Single &amp; Double)
               </button>
             </div>
           </div>
 
-          <!-- FLEXIBLE WEBSITE EVENT & COURT DISPLAY CONTROLLER (1 DEFAULT, OR CHOOSE 2, 3, 4 OR ANY COMBINATION) -->
-          <div id="admin-tournament-visibility-bar" class="p-4 rounded-2xl bg-[#F8FAFC] border-2 border-slate-200 space-y-3.5"></div>
+          <!-- Visibility & 2-Type Selector Bar -->
+          <div id="admin-tournament-visibility-bar" class="p-4 rounded-2xl bg-[#F8FAFC] border-2 border-slate-200 space-y-3"></div>
 
-          <div id="admin-tournaments-manager-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs"></div>
+          <!-- Main Tournament Editor + Timer + Customer Registration Manager Mount -->
+          <div id="admin-tournaments-manager-grid" class="space-y-6 text-xs"></div>
         </div>
 
-        <!-- 2. SYMMETRICAL LOGO-CENTER TOURNAMENT BRACKET ARENA & PRO BROADCAST SCORING PORTAL -->
-        <div id="admin-native-bracket-workspace" class="space-y-6">
-          <!-- Top Tournament Control Bar -->
-          <div class="p-5 sm:p-6 rounded-3xl bg-white text-slate-900 border-2 border-slate-200 shadow-md space-y-4">
-            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-              <div class="space-y-1.5">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span id="adm-brk-format-pill" class="cal-cat-pill px-3 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-mono font-extrabold uppercase">ROUND ROBIN + MEDAL PLAYOFFS</span>
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[10px] font-mono font-extrabold uppercase">🟢 SYMMETRICAL PRO BRACKET &amp; SCORING PORTAL</span>
-                  <span id="adm-brk-fee-pill" class="cal-cat-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] text-[10px] font-mono font-extrabold uppercase">Entry: ₱850</span>
-                  <span id="adm-brk-progress-pill" class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[10px] font-mono font-extrabold uppercase">0 / 7 Completed</span>
-                </div>
-                <h3 id="adm-brk-title" class="text-xl sm:text-2xl font-black tracking-tight text-slate-900">Bicol Open DUPR Pickleball Cup</h3>
-                <p id="adm-brk-meta" class="text-xs text-slate-600 font-medium">Courts 1 – 4 • Click any match on the Championship Bracket Tree below to score it live in the Referee Scoring Portal.</p>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                <div>
-                  <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-500 mb-0.5">Active Tournament</label>
-                  <select id="adm-brk-trn-select" onchange="adminSelectActiveBracketTournament(this.value)" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900 focus:outline-none focus:border-emerald-600"></select>
-                </div>
-                <div>
-                  <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-500 mb-0.5">Scoring Target</label>
-                  <select id="adm-brk-target-select" onchange="adminChangeBracketScoringTarget(this.value)" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-extrabold text-slate-900 focus:outline-none focus:border-emerald-600">
-                    <option value="11">11 Pts (Win by 2)</option>
-                    <option value="15">15 Pts (Win by 2)</option>
-                    <option value="21">21 Pts (MLP Rally)</option>
-                  </select>
-                </div>
-                <button type="button" onclick="adminOpenTournamentPlayersModal()" class="pf-trn-btn-violet px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
-                  👥 Edit Players (8 Seeds)
-                </button>
-                <button type="button" onclick="adminConfirmShuffleActiveBracket()" class="pf-trn-btn-secondary px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
-                  🔀 Shuffle Seeds
-                </button>
-                <button type="button" onclick="adminConfirmResetActiveBracket()" class="pf-trn-btn-danger px-3.5 py-2.5 rounded-xl text-xs uppercase transition">
-                  ↺ Reset Bracket
-                </button>
-              </div>
-            </div>
-
-            <!-- REGISTERED PLAYERS & SEEDED PAIRS STRIP FOR SELECTED TOURNAMENT -->
-            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] text-[10px] font-mono font-extrabold uppercase">👥 REGISTERED PLAYERS &amp; 8 SEEDED PAIRS</span>
-                  <span class="text-xs font-bold text-slate-600">Click any seed slot to edit player names</span>
-                </div>
-                <button type="button" onclick="adminOpenTournamentPlayersModal()" class="pf-trn-btn-violet px-3 py-1 rounded-lg text-[11px] font-mono uppercase">✏️ Edit All 8 Seed Names →</button>
-              </div>
-              <div id="adm-brk-players-strip" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs"></div>
-            </div>
-          </div>
-
-          <!-- SYMMETRICAL LOGO-CENTER CHAMPIONSHIP BRACKET ARENA (WITH PHASE SLIDER BAR) -->
-          <div class="pf-arena-stage p-5 sm:p-7">
-            <div class="pf-arena-shard-tl"></div>
-            <div class="pf-arena-shard-tr"></div>
-            <div class="pf-arena-shard-bl"></div>
-            <div class="pf-arena-shard-br"></div>
-
-            <div class="relative z-10 space-y-5">
-              <!-- Top Arena Title Header -->
-              <div class="text-center space-y-1.5">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635]/60 text-[10px] font-mono font-extrabold uppercase tracking-widest" style="background:#04120B !important;color:#BEF264 !important;">
-                  <span>🏓 P&amp;F RALLY GROUND OFFICIAL CHAMPIONSHIP BRACKET</span>
-                  <span>•</span>
-                  <span id="adm-arena-sub-format" style="color:#38BDF8 !important;">ROUND ROBIN + PLAYOFFS</span>
-                </div>
-                <div class="flex items-center justify-center gap-3 sm:gap-5">
-                  <span class="hidden sm:inline-block w-14 md:w-24 h-1 rounded-full bg-gradient-to-r from-transparent via-[#38BDF8] to-[#A3E635]"></span>
-                  <h2 id="adm-arena-banner-title" class="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-wider drop-shadow-[0_3px_12px_rgba(0,0,0,0.8)]" style="color:#FFFFFF !important;">BICOL OPEN DUPR PICKLEBALL CUP</h2>
-                  <span class="hidden sm:inline-block w-14 md:w-24 h-1 rounded-full bg-gradient-to-l from-transparent via-[#38BDF8] to-[#A3E635]"></span>
-                </div>
-                <p class="text-xs font-mono" style="color:#E2E8F0 !important;">Click any match card (`1/4`, `1/2`, or `FINAL`) to load it into the Referee Scoring Portal below</p>
-              </div>
-
-              <!-- Dynamic Symmetrical Bracket Container -->
-              <div id="adm-brk-stages-grid"></div>
-            </div>
-          </div>
-
-          <!-- PRO BROADCAST REFEREE SCORING PORTAL (EDITORIAL HIGH-CONTRAST CONSOLE) -->
-          <div id="admin-pro-scoring-portal" class="pf-scoring-portal p-5 sm:p-7 space-y-6">
-            <!-- Top Broadcast Bar: Match Selector Pills + Court + Stopwatch + Voice Call -->
-            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-              <div class="space-y-2">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] text-[10px] font-mono font-black uppercase tracking-wider">
-                    <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
-                    <span>PRO REFEREE SCORING PORTAL</span>
-                  </span>
-                  <span id="adm-sk-match-label" class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-xs font-black uppercase">Quarterfinal 1 (QF1)</span>
-                  <span id="adm-sk-point-alert" class="hidden cal-cat-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B] font-mono text-[10px] font-black uppercase animate-pulse">🔥 GAME POINT</span>
-                </div>
-                <!-- Quick Match Switcher Bar -->
-                <div id="adm-sk-quick-match-pills" class="flex flex-wrap items-center gap-1.5 pt-0.5"></div>
-              </div>
-
-              <!-- Right Controls: Court Selector, Match Stopwatch & Audio Announcer -->
-              <div class="flex flex-wrap items-center gap-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                <div class="px-1">
-                  <span class="block text-[9px] font-mono font-extrabold uppercase text-slate-500">Assigned Court</span>
-                  <select id="adm-sk-court-select" onchange="adminChangeActiveMatchCourt(this.value)" class="mt-0.5 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono font-extrabold text-slate-900">
-                    <option value="Court 1">Court 1 (Championship)</option>
-                    <option value="Court 2">Court 2</option>
-                    <option value="Court 3">Court 3</option>
-                    <option value="Court 4">Court 4</option>
-                  </select>
-                </div>
-
-                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
-
-                <!-- Match Stopwatch -->
-                <div class="flex items-center gap-2 px-1">
-                  <div>
-                    <span class="block text-[9px] font-mono font-extrabold uppercase text-slate-500">Match Timer</span>
-                    <span id="adm-sk-timer-display" class="font-mono text-sm font-black text-slate-900">00:00</span>
-                  </div>
-                  <button type="button" id="adm-sk-timer-btn" onclick="adminToggleMatchStopwatch()" class="pf-trn-btn-emerald px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase transition">▶ Start</button>
-                  <button type="button" onclick="adminResetMatchStopwatch()" class="pf-trn-btn-secondary px-2.5 py-1.5 rounded-lg font-mono text-[10px] transition" title="Reset Stopwatch">↺</button>
-                </div>
-
-                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
-
-                <!-- Voice Score Callout Button -->
-                <button type="button" onclick="adminSpeakOfficialScoreCall()" class="pf-trn-btn-gold px-3.5 py-2 rounded-xl font-mono text-xs uppercase tracking-wider transition flex items-center gap-1.5">
-                  <span>🔊 Call Score</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- USA Pickleball Official 3-Number Broadcast Scorebug -->
-            <div class="rounded-2xl bg-[#071912] border-2 border-[#15803D] p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-md" style="background:#071912 !important;color:#FFFFFF !important;">
-              <div class="flex items-center gap-3.5">
-                <div class="pf-rect-logo-badge">
-                  <img src="../assets/logo.png" alt="P&amp;F Logo">
-                </div>
-                <div>
-                  <span class="text-[10px] font-mono uppercase tracking-widest font-extrabold block" style="color:#A3E635 !important;">USA PICKLEBALL OFFICIAL 3-NUMBER SCORE CALL (SERVER • RECEIVER • SERVER #)</span>
-                  <div id="adm-sk-serving-info" class="text-sm sm:text-base font-extrabold mt-0.5" style="color:#FFFFFF !important;">Serving: Side A • Server #2</div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-3">
-                <div id="adm-sk-callout" class="px-5 py-2.5 rounded-2xl bg-[#030B07] border-2 border-[#A3E635] font-mono text-3xl sm:text-4xl font-black tracking-widest shadow-inner" style="background:#030B07 !important;color:#BEF264 !important;">0 - 0 - 2</div>
-              </div>
-            </div>
-
-            <!-- Dual Team Broadcast Consoles (SIDE A ROYAL BLUE COURT vs CENTER REFEREE DECK vs SIDE B EMERALD COURT) -->
-            <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 items-stretch">
-              <!-- SIDE A CONSOLE (4 Cols — Royal Blue Top-Court Brand Accent) -->
-              <div id="adm-sk-card-a" class="lg:col-span-4 rounded-3xl bg-[#F8FAFC] border-2 border-[#0284C7] p-5 flex flex-col justify-between space-y-4 shadow-sm">
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-[10px] font-mono font-black uppercase">SIDE A • BLUE COURT</span>
-                    <span id="adm-sk-badge-a" class="cal-cat-pill px-3 py-1 rounded-full bg-[#0F291E] text-white text-[10px] font-mono font-black uppercase" style="background:#0F291E !important;color:#FFFFFF !important;">🎾 SERVING #2</span>
-                  </div>
-                  <div id="adm-sk-team-a" class="text-base sm:text-lg font-black text-slate-900 leading-snug break-words">Seed #1</div>
-                </div>
-
-                <div class="my-1 py-4 rounded-2xl bg-white border-2 border-[#BAE6FD] text-center shadow-inner">
-                  <span class="block text-[9px] font-mono font-extrabold uppercase tracking-widest text-[#0369A1] mb-1">SIDE A POINTS</span>
-                  <div id="adm-sk-score-a" class="font-mono text-6xl sm:text-7xl font-black text-[#0369A1]">0</div>
-                </div>
-
-                <div class="space-y-2.5">
-                  <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="adminAdjustBracketScore('A', -1)" class="pf-trn-btn-secondary py-3 rounded-xl font-mono text-sm transition">-1 PT</button>
-                    <button type="button" onclick="adminAdjustBracketScore('A', 1)" class="pf-trn-btn-royal col-span-2 py-3 rounded-xl font-mono text-sm uppercase tracking-wider transition active:scale-95">+1 POINT (SIDE A)</button>
-                  </div>
-                  <div class="flex items-center justify-between gap-2 pt-1">
-                    <span id="adm-sk-timeouts-a" class="text-[11px] font-mono font-extrabold text-slate-700">⏱️ Time-Outs Left: 2</span>
-                    <button type="button" onclick="adminUseBracketTimeout('A')" class="pf-trn-btn-secondary px-3 py-1.5 rounded-lg text-[10px] font-mono uppercase transition">Call 60s Time-Out</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- CENTER REFEREE COMMAND COLUMN (3 Cols) -->
-              <div class="lg:col-span-3 rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 flex flex-col items-center justify-between space-y-4 text-center">
-                <div class="space-y-2 pt-1 flex flex-col items-center">
-                  <div class="pf-rect-logo-badge" style="width:54px;height:66px;">
-                    <img src="../assets/logo.png" alt="P&amp;F Logo">
-                  </div>
-                  <div class="text-[10px] font-mono font-extrabold uppercase tracking-widest text-[#0F291E]">OFFICIAL COURT CONTROL</div>
-                  <div id="adm-sk-target-pill" class="cal-cat-pill px-3 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[11px] font-mono font-bold">Game to 11 Pts (Win by 2)</div>
-                </div>
-
-                <div class="w-full space-y-2">
-                  <button type="button" onclick="adminRotateBracketServer()" class="pf-trn-btn-primary w-full py-3 px-3.5 rounded-2xl text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5">
-                    <span>⇄ Rally Lost: Next Server / Side Out</span>
-                  </button>
-                  <button type="button" onclick="adminSwapMatchSides()" class="pf-trn-btn-secondary w-full py-2.5 px-3 rounded-xl text-[11px] uppercase tracking-wider transition">
-                    ⇄ Swap Court Ends (A ↔ B)
-                  </button>
-                  <button type="button" onclick="adminConfirmResetSingleMatch()" class="pf-trn-btn-danger w-full py-2.5 px-3 rounded-xl text-[11px] uppercase tracking-wider transition">
-                    ↺ Reset Match Score (0 - 0)
-                  </button>
-                </div>
-
-                <!-- Live Rally Log Mini Ticker -->
-                <div class="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-left space-y-0.5">
-                  <span class="text-[9px] font-mono font-extrabold uppercase text-[#15803D] block">📋 Latest Referee Action</span>
-                  <div id="adm-sk-last-action" class="text-[11px] font-mono font-bold text-slate-800 truncate">Match ready on court</div>
-                </div>
-              </div>
-
-              <!-- SIDE B CONSOLE (4 Cols — Championship Green Bottom-Court Brand Accent) -->
-              <div id="adm-sk-card-b" class="lg:col-span-4 rounded-3xl bg-[#F8FAFC] border-2 border-[#15803D] p-5 flex flex-col justify-between space-y-4 shadow-sm">
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[10px] font-mono font-black uppercase">SIDE B • GREEN COURT</span>
-                    <span id="adm-sk-badge-b" class="cal-cat-pill px-3 py-1 rounded-full bg-slate-200 text-slate-800 text-[10px] font-mono font-black uppercase">RECEIVING</span>
-                  </div>
-                  <div id="adm-sk-team-b" class="text-base sm:text-lg font-black text-slate-900 leading-snug break-words">Seed #8</div>
-                </div>
-
-                <div class="my-1 py-4 rounded-2xl bg-white border-2 border-[#A7F3D0] text-center shadow-inner">
-                  <span class="block text-[9px] font-mono font-extrabold uppercase tracking-widest text-[#15803D] mb-1">SIDE B POINTS</span>
-                  <div id="adm-sk-score-b" class="font-mono text-6xl sm:text-7xl font-black text-[#15803D]">0</div>
-                </div>
-
-                <div class="space-y-2.5">
-                  <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="adminAdjustBracketScore('B', -1)" class="pf-trn-btn-secondary py-3 rounded-xl font-mono text-sm transition">-1 PT</button>
-                    <button type="button" onclick="adminAdjustBracketScore('B', 1)" class="pf-trn-btn-emerald col-span-2 py-3 rounded-xl font-mono text-sm uppercase tracking-wider transition active:scale-95">+1 POINT (SIDE B)</button>
-                  </div>
-                  <div class="flex items-center justify-between gap-2 pt-1">
-                    <span id="adm-sk-timeouts-b" class="text-[11px] font-mono font-extrabold text-slate-700">⏱️ Time-Outs Left: 2</span>
-                    <button type="button" onclick="adminUseBracketTimeout('B')" class="pf-trn-btn-secondary px-3 py-1.5 rounded-lg text-[10px] font-mono uppercase transition">Call 60s Time-Out</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Confirm Match Winner & Advance Bar -->
-            <button type="button" onclick="adminConfirmDeclareMatchWinner()" class="pf-trn-btn-primary w-full py-4 px-6 rounded-2xl text-sm uppercase tracking-wider transition flex items-center justify-center gap-2.5">
-              <span>🏆 CONFIRM MATCH WINNER &amp; ADVANCE IN CHAMPIONSHIP BRACKET</span>
-              <span>→</span>
-            </button>
-          </div>
-        </div>
-
+        <!-- Hidden legacy mount so any old references stay safe -->
+        <div id="admin-native-bracket-workspace" class="hidden"></div>
       </section>
 
       <!-- ================= 4C. DEDICATED OPEN PLAY & LIVE PLAYER POD SHUFFLER FEATURE TAB ================= -->
@@ -7420,7 +7175,7 @@ function clearFieldError(fieldId) {
       }).join('');
     }
 
-    // ================= ADMIN PICKLEBALL TOURNAMENTS MANAGER =================
+    // ================= ADMIN PICKLEBALL TOURNAMENTS MANAGER (SIMPLIFIED 2-TYPE: SINGLE & DOUBLE) =================
     const ADMIN_OPEN_SEED_LABELS = [
       'Open Seed #1 — Available',
       'Open Seed #8 — Available',
@@ -7432,17 +7187,6 @@ function clearFieldError(fieldId) {
       'Open Seed #6 — Available'
     ];
     const ADMIN_SEED_SLOT_NUMBERS = [1, 8, 4, 5, 2, 7, 3, 6];
-
-    const DEMO_SAMPLE_TOURNAMENT_PLAYERS = [
-      'Seed #1 • Marco Santos & Luis Villanueva (DUPR 4.1)',
-      'Seed #8 • Kevin Imperial & Paolo Reyes (DUPR 3.5)',
-      'Seed #4 • Bea Alcantara & Clarisse Tan (DUPR 3.8)',
-      'Seed #5 • Anton Mendoza & Miguel Borromeo (DUPR 3.7)',
-      'Seed #2 • Rafa Elizalde & Gabriel Lim (DUPR 4.0)',
-      'Seed #7 • Enzo Navarro & Jomar Peña (DUPR 3.6)',
-      'Seed #3 • Dan Soriano & Trish Dy (DUPR 3.9)',
-      'Seed #6 • Vince Ocampo & Nico Salazar (DUPR 3.6)'
-    ];
 
     function adminIsOpenSeedSlot(str) {
       const s = String(str || '').trim();
@@ -7459,664 +7203,145 @@ function clearFieldError(fieldId) {
     function adminCountRealTournamentTeams(t) {
       if (!t) return 0;
       const regs = Array.isArray(t.registrations) ? t.registrations : [];
-      const filledSeeds = adminCountFilledBracketSeeds(t.players);
-      if (regs.length === 0 && filledSeeds === 0) return 0;
-      return Math.max(regs.length, filledSeeds);
+      const activeRegs = regs.filter(r => {
+        if (!r || typeof r !== 'object') return false;
+        const st = String(r.status || 'PENDING').toUpperCase();
+        return st !== 'DECLINED' && st !== 'CANCELLED' && st !== 'REJECTED';
+      });
+      return activeRegs.length;
     }
-
-    const DEFAULT_ADMIN_TOURNAMENTS = [
-  {
-    "id": "trn-bicol-dupr-open",
-    "title": "Bicol Open DUPR Pickleball Cup",
-    "format": "Round Robin + Medal Playoffs",
-    "formatKey": "ROUND_ROBIN",
-    "division": "Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)",
-    "category": "Men's, Women's & Mixed Doubles",
-    "date": "2026-11-21",
-    "time": "08:00 AM – 05:00 PM",
-    "courts": "All 4 Courts (Courts 1 – 4)",
-    "designatedCourts": [
-      "Court 1",
-      "Court 2",
-      "Court 3",
-      "Court 4"
-    ],
-    "entryFee": 850,
-    "prizePool": "₱25,000 + Trophies & Official DUPR Submission",
-    "maxTeams": 24,
-    "registeredCount": 0,
-    "registrations": [],
-    "approved": true,
-    "published": true,
-    "showCourtsOnSite": true,
-    "scoringTarget": 11,
-    "status": "OPEN FOR REGISTRATION",
-    "description": "Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 – 4.",
-    "players": [
-      "Open Seed #1 — Available",
-      "Open Seed #8 — Available",
-      "Open Seed #4 — Available",
-      "Open Seed #5 — Available",
-      "Open Seed #2 — Available",
-      "Open Seed #7 — Available",
-      "Open Seed #3 — Available",
-      "Open Seed #6 — Available"
-    ],
-    "bracket": [
-      {
-        "id": "QF1",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 1",
-        "court": "Court 1",
-        "teamA": "Open Seed #1 — Available",
-        "teamB": "Open Seed #8 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF2",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 2",
-        "court": "Court 2",
-        "teamA": "Open Seed #4 — Available",
-        "teamB": "Open Seed #5 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF3",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 3",
-        "court": "Court 3",
-        "teamA": "Open Seed #2 — Available",
-        "teamB": "Open Seed #7 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF4",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 4",
-        "court": "Court 4",
-        "teamA": "Open Seed #3 — Available",
-        "teamB": "Open Seed #6 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF1",
-        "stage": "Semifinals",
-        "label": "Semifinal 1",
-        "court": "Court 1",
-        "teamA": "Winner QF1",
-        "teamB": "Winner QF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF2",
-        "stage": "Semifinals",
-        "label": "Semifinal 2",
-        "court": "Court 2",
-        "teamA": "Winner QF3",
-        "teamB": "Winner QF4",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "FIN",
-        "stage": "Championship Final",
-        "label": "Gold Medal Final",
-        "court": "Court 1",
-        "teamA": "Winner SF1",
-        "teamB": "Winner SF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      }
-    ]
-  },
-  {
-    "id": "trn-mayon-king-court",
-    "title": "Mayon Smash: King & Queen of the Court",
-    "format": "Ladder Split Rotation (Individual Points)",
-    "formatKey": "KING_COURT",
-    "division": "All-Levels Social & Competitive (3.0–3.8)",
-    "category": "Individual Entry (Rotating Doubles Partners)",
-    "date": "2026-11-14",
-    "time": "05:00 PM – 09:00 PM",
-    "courts": "4 Courts (Challenger to Crown Court)",
-    "designatedCourts": [
-      "Court 1",
-      "Court 2",
-      "Court 3",
-      "Court 4"
-    ],
-    "entryFee": 350,
-    "prizePool": "₱6,000 Cash + Carbon Pro Paddle & Medals",
-    "maxTeams": 24,
-    "registeredCount": 0,
-    "registrations": [],
-    "approved": true,
-    "published": false,
-    "showCourtsOnSite": true,
-    "scoringTarget": 11,
-    "status": "OPEN FOR REGISTRATION",
-    "description": "Play 12-minute timed ladder rounds across Courts 1 – 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!",
-    "players": [
-      "Open Seed #1 — Available",
-      "Open Seed #8 — Available",
-      "Open Seed #4 — Available",
-      "Open Seed #5 — Available",
-      "Open Seed #2 — Available",
-      "Open Seed #7 — Available",
-      "Open Seed #3 — Available",
-      "Open Seed #6 — Available"
-    ],
-    "bracket": [
-      {
-        "id": "QF1",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 1",
-        "court": "Court 1",
-        "teamA": "Open Seed #1 — Available",
-        "teamB": "Open Seed #8 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF2",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 2",
-        "court": "Court 2",
-        "teamA": "Open Seed #4 — Available",
-        "teamB": "Open Seed #5 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF3",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 3",
-        "court": "Court 3",
-        "teamA": "Open Seed #2 — Available",
-        "teamB": "Open Seed #7 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF4",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 4",
-        "court": "Court 4",
-        "teamA": "Open Seed #3 — Available",
-        "teamB": "Open Seed #6 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF1",
-        "stage": "Semifinals",
-        "label": "Semifinal 1",
-        "court": "Court 1",
-        "teamA": "Winner QF1",
-        "teamB": "Winner QF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF2",
-        "stage": "Semifinals",
-        "label": "Semifinal 2",
-        "court": "Court 2",
-        "teamA": "Winner QF3",
-        "teamB": "Winner QF4",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "FIN",
-        "stage": "Championship Final",
-        "label": "Gold Medal Final",
-        "court": "Court 1",
-        "teamA": "Winner SF1",
-        "teamB": "Winner SF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      }
-    ]
-  },
-  {
-    "id": "trn-daraga-mlp-rally",
-    "title": "Daraga MLP-Style Team Rally Showdown",
-    "format": "MLP 4-Player Co-Ed Squad Format (Rally Scoring)",
-    "formatKey": "MLP_TEAM",
-    "division": "Club Squads (2 Men + 2 Women per Squad)",
-    "category": "Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)",
-    "date": "2026-11-28",
-    "time": "09:00 AM – 06:00 PM",
-    "courts": "All 4 Courts (Courts 1 – 4)",
-    "designatedCourts": [
-      "Court 1",
-      "Court 2",
-      "Court 3",
-      "Court 4"
-    ],
-    "entryFee": 2000,
-    "prizePool": "₱18,000 Cash + Club Championship Banner",
-    "maxTeams": 12,
-    "registeredCount": 0,
-    "registrations": [],
-    "approved": true,
-    "published": false,
-    "showCourtsOnSite": true,
-    "scoringTarget": 21,
-    "status": "OPEN FOR REGISTRATION",
-    "description": "Major League Pickleball 4-player squad format! Each clash features Women's Doubles, Men's Doubles, and Mixed Doubles to 21 points (rally scoring) plus Dreambreaker tiebreak.",
-    "players": [
-      "Open Seed #1 — Available",
-      "Open Seed #8 — Available",
-      "Open Seed #4 — Available",
-      "Open Seed #5 — Available",
-      "Open Seed #2 — Available",
-      "Open Seed #7 — Available",
-      "Open Seed #3 — Available",
-      "Open Seed #6 — Available"
-    ],
-    "bracket": [
-      {
-        "id": "QF1",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 1",
-        "court": "Court 1",
-        "teamA": "Open Seed #1 — Available",
-        "teamB": "Open Seed #8 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF2",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 2",
-        "court": "Court 2",
-        "teamA": "Open Seed #4 — Available",
-        "teamB": "Open Seed #5 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF3",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 3",
-        "court": "Court 3",
-        "teamA": "Open Seed #2 — Available",
-        "teamB": "Open Seed #7 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF4",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 4",
-        "court": "Court 4",
-        "teamA": "Open Seed #3 — Available",
-        "teamB": "Open Seed #6 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF1",
-        "stage": "Semifinals",
-        "label": "Semifinal 1",
-        "court": "Court 1",
-        "teamA": "Winner QF1",
-        "teamB": "Winner QF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF2",
-        "stage": "Semifinals",
-        "label": "Semifinal 2",
-        "court": "Court 2",
-        "teamA": "Winner QF3",
-        "teamB": "Winner QF4",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "FIN",
-        "stage": "Championship Final",
-        "label": "Gold Medal Final",
-        "court": "Court 1",
-        "teamA": "Winner SF1",
-        "teamB": "Winner SF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      }
-    ]
-  },
-  {
-    "id": "trn-albay-double-elim",
-    "title": "Albay Double-Elimination Knockout Classic",
-    "format": "USA Pickleball Double Elimination Bracket",
-    "formatKey": "DOUBLE_ELIM",
-    "division": "Intermediate (3.5) & Advanced (4.0+)",
-    "category": "Men's Doubles & Mixed Doubles",
-    "date": "2026-12-03",
-    "time": "08:00 AM – 04:00 PM",
-    "courts": "All 4 Courts (Courts 1 – 4)",
-    "designatedCourts": [
-      "Court 1",
-      "Court 2",
-      "Court 3",
-      "Court 4"
-    ],
-    "entryFee": 600,
-    "prizePool": "₱15,000 Cash + Official Championship Medals",
-    "maxTeams": 24,
-    "registeredCount": 0,
-    "registrations": [],
-    "approved": true,
-    "published": false,
-    "showCourtsOnSite": true,
-    "scoringTarget": 15,
-    "status": "OPEN FOR REGISTRATION",
-    "description": "Full USA Pickleball Championship Bracket across Courts 1 – 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.",
-    "players": [
-      "Open Seed #1 — Available",
-      "Open Seed #8 — Available",
-      "Open Seed #4 — Available",
-      "Open Seed #5 — Available",
-      "Open Seed #2 — Available",
-      "Open Seed #7 — Available",
-      "Open Seed #3 — Available",
-      "Open Seed #6 — Available"
-    ],
-    "bracket": [
-      {
-        "id": "QF1",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 1",
-        "court": "Court 1",
-        "teamA": "Open Seed #1 — Available",
-        "teamB": "Open Seed #8 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF2",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 2",
-        "court": "Court 2",
-        "teamA": "Open Seed #4 — Available",
-        "teamB": "Open Seed #5 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF3",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 3",
-        "court": "Court 3",
-        "teamA": "Open Seed #2 — Available",
-        "teamB": "Open Seed #7 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "QF4",
-        "stage": "Quarterfinals",
-        "label": "Quarterfinal 4",
-        "court": "Court 4",
-        "teamA": "Open Seed #3 — Available",
-        "teamB": "Open Seed #6 — Available",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF1",
-        "stage": "Semifinals",
-        "label": "Semifinal 1",
-        "court": "Court 1",
-        "teamA": "Winner QF1",
-        "teamB": "Winner QF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "SF2",
-        "stage": "Semifinals",
-        "label": "Semifinal 2",
-        "court": "Court 2",
-        "teamA": "Winner QF3",
-        "teamB": "Winner QF4",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      },
-      {
-        "id": "FIN",
-        "stage": "Championship Final",
-        "label": "Gold Medal Final",
-        "court": "Court 1",
-        "teamA": "Winner SF1",
-        "teamB": "Winner SF2",
-        "scoreA": 0,
-        "scoreB": 0,
-        "serverSide": "A",
-        "serverNum": 2,
-        "toA": 2,
-        "toB": 2,
-        "status": "PENDING",
-        "winner": null
-      }
-    ]
-  }
-];
 
     function adminBuildBracketForPlayers(players, courts) {
       const p = (Array.isArray(players) && players.length >= 8) ? players : [...ADMIN_OPEN_SEED_LABELS];
       const c = (Array.isArray(courts) && courts.length > 0) ? courts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      const getMatchStatus = (teamA, teamB, isFirst) => {
-        const openA = adminIsOpenSeedSlot(teamA);
-        const openB = adminIsOpenSeedSlot(teamB);
-        if (!openA && !openB) return isFirst ? 'LIVE' : 'READY';
-        return 'PENDING';
-      };
       return [
-        { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: c[0 % c.length], teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[0], p[1], true), winner: null },
-        { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: c[1 % c.length], teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[2], p[3], false), winner: null },
-        { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: c[2 % c.length], teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[4], p[5], false), winner: null },
-        { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: c[3 % c.length], teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: getMatchStatus(p[6], p[7], false), winner: null },
+        { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: c[0 % c.length], teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
+        { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: c[1 % c.length], teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
+        { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: c[2 % c.length], teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
+        { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: c[3 % c.length], teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
         { id: 'SF1', stage: 'Semifinals', label: 'Semifinal 1', court: c[0 % c.length], teamA: 'Winner QF1', teamB: 'Winner QF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
         { id: 'SF2', stage: 'Semifinals', label: 'Semifinal 2', court: c[1 % c.length], teamA: 'Winner QF3', teamB: 'Winner QF4', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
         { id: 'FIN', stage: 'Championship Final', label: 'Gold Medal Final', court: c[0 % c.length], teamA: 'Winner SF1', teamB: 'Winner SF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null }
       ];
     }
 
-    let adminActiveBracketTrnId = 'trn-bicol-dupr-open';
+    const DEFAULT_ADMIN_TOURNAMENTS = [
+      {
+        "id": "trn-pf-singles-cup",
+        "title": "P&F Rally Ground Singles Cup",
+        "tournamentType": "Single",
+        "format": "Single",
+        "formatKey": "SINGLE",
+        "division": "Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)",
+        "category": "1v1 Singles Competition",
+        "date": "2026-11-21",
+        "time": "08:00 AM – 05:00 PM",
+        "countdownTarget": "2026-11-21T08:00:00",
+        "courts": "Courts 1 – 2",
+        "designatedCourts": ["Court 1", "Court 2"],
+        "entryFee": 500,
+        "prizePool": "1st Place: ₱10,000 + Trophy • 2nd Place: ₱5,000 + Medals",
+        "maxTeams": 24,
+        "registeredCount": 0,
+        "registrations": [],
+        "approved": true,
+        "published": true,
+        "showCourtsOnSite": true,
+        "scoringTarget": 11,
+        "status": "OPEN FOR REGISTRATION",
+        "description": "Official 1v1 Singles Pickleball Tournament at P&F Rally Ground. Guaranteed pool play matches followed by championship medal rounds.",
+        "players": [...ADMIN_OPEN_SEED_LABELS],
+        "bracket": adminBuildBracketForPlayers(ADMIN_OPEN_SEED_LABELS, ["Court 1", "Court 2"])
+      },
+      {
+        "id": "trn-pf-doubles-cup",
+        "title": "P&F Rally Ground Doubles Cup",
+        "tournamentType": "Double",
+        "format": "Double",
+        "formatKey": "DOUBLE",
+        "division": "Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)",
+        "category": "2v2 Doubles Competition",
+        "date": "2026-11-28",
+        "time": "08:00 AM – 05:00 PM",
+        "countdownTarget": "2026-11-28T08:00:00",
+        "courts": "All 4 Courts (Courts 1 – 4)",
+        "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"],
+        "entryFee": 850,
+        "prizePool": "1st Place: ₱20,000 + Trophies • 2nd Place: ₱10,000 + Medals",
+        "maxTeams": 24,
+        "registeredCount": 0,
+        "registrations": [],
+        "approved": true,
+        "published": true,
+        "showCourtsOnSite": true,
+        "scoringTarget": 11,
+        "status": "OPEN FOR REGISTRATION",
+        "description": "Official 2v2 Doubles Pickleball Tournament at P&F Rally Ground. Register with your partner for pool play and championship playoffs across Courts 1 – 4.",
+        "players": [...ADMIN_OPEN_SEED_LABELS],
+        "bracket": adminBuildBracketForPlayers(ADMIN_OPEN_SEED_LABELS, ["Court 1", "Court 2", "Court 3", "Court 4"])
+      }
+    ];
+
+    let adminActiveBracketTrnId = 'trn-pf-singles-cup';
     let adminActiveBracketMatchId = 'QF1';
+    let adminCustomerFilterType = 'ALL';
+    let adminCustomerFilterStatus = 'ALL';
+
+    function adminNormalizeTournamentType(t) {
+      const raw = String((t && (t.tournamentType || t.formatKey || t.format || t.category || '')) || '').toUpperCase();
+      if (raw.includes('SINGLE') || raw === 'SOLO' || raw === '1V1') return 'Single';
+      if (raw.includes('DOUBLE') || raw.includes('PAIR') || raw.includes('2V2')) return 'Double';
+      if (t && String(t.id || '').includes('single')) return 'Single';
+      return 'Double';
+    }
 
     function getAdminTournamentsList() {
       if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
-      if (!Array.isArray(currentSiteConfig.tournaments) || currentSiteConfig.tournaments.length === 0) {
-        currentSiteConfig.tournaments = JSON.parse(JSON.stringify(DEFAULT_ADMIN_TOURNAMENTS));
+      const rawList = Array.isArray(currentSiteConfig.tournaments) ? currentSiteConfig.tournaments : [];
+      const isLegacyFour = rawList.length > 2 || rawList.some(t => t && ['ROUND_ROBIN', 'KING_COURT', 'MLP_TEAM', 'DOUBLE_ELIM'].includes(String(t.formatKey || '')));
+
+      if (rawList.length === 0 || isLegacyFour) {
+        const singleRegs = [];
+        const doubleRegs = [];
+        rawList.forEach(item => {
+          if (!item || !Array.isArray(item.registrations)) return;
+          item.registrations.forEach(r => {
+            if (!r) return;
+            const rType = String(r.tournamentType || '').toLowerCase();
+            if (rType.includes('single') || (!r.partner || /^solo/i.test(String(r.partner)))) {
+              singleRegs.push({ ...r, tournamentType: 'Single' });
+            } else {
+              doubleRegs.push({ ...r, tournamentType: 'Double' });
+            }
+          });
+        });
+        currentSiteConfig.tournaments = DEFAULT_ADMIN_TOURNAMENTS.map(defT => {
+          const isSingle = defT.tournamentType === 'Single';
+          const regs = isSingle ? singleRegs : doubleRegs;
+          const copy = JSON.parse(JSON.stringify(defT));
+          copy.registrations = regs;
+          copy.registeredCount = adminCountRealTournamentTeams(copy);
+          return copy;
+        });
+        return currentSiteConfig.tournaments;
       }
-      currentSiteConfig.tournaments = currentSiteConfig.tournaments.map((t, idx) => {
+
+      currentSiteConfig.tournaments = rawList.slice(0, 2).map((t, idx) => {
         const defT = DEFAULT_ADMIN_TOURNAMENTS.find(d => d.id === t.id) || DEFAULT_ADMIN_TOURNAMENTS[idx % DEFAULT_ADMIN_TOURNAMENTS.length];
-        const players = (Array.isArray(t.players) && t.players.length >= 8) ? t.players : [...ADMIN_OPEN_SEED_LABELS];
-        const dc = (Array.isArray(t.designatedCourts) && t.designatedCourts.length > 0) ? t.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-        const bracket = (Array.isArray(t.bracket) && t.bracket.length === 7) ? t.bracket : adminBuildBracketForPlayers(players, dc);
+        const tType = adminNormalizeTournamentType(t || defT);
         const registrations = Array.isArray(t.registrations) ? t.registrations : [];
-        const realCount = adminCountRealTournamentTeams({ players, registrations });
-        return Object.assign({}, defT, t, {
-          players,
-          bracket,
+        const merged = Object.assign({}, defT, t, {
+          tournamentType: tType,
+          format: tType,
+          formatKey: tType.toUpperCase(),
           registrations,
-          registeredCount: realCount,
           approved: t.approved !== false
         });
+        merged.registeredCount = adminCountRealTournamentTeams(merged);
+        if (!merged.countdownTarget) {
+          merged.countdownTarget = `${merged.date || '2026-11-21'}T08:00:00`;
+        }
+        return merged;
       });
       return currentSiteConfig.tournaments;
     }
@@ -8125,12 +7350,61 @@ function clearFieldError(fieldId) {
       if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
       currentSiteConfig.updatedAt = Date.now();
       renderAdminTournamentsManager(true);
-      renderAdminNativeBracketWorkspace();
       broadcastSiteConfigLive(currentSiteConfig);
       await postSiteConfigToEndpoints(currentSiteConfig);
       if (toastMsg && typeof showPosHubToast === 'function') {
         showPosHubToast(toastMsg);
       }
+    }
+
+    function renderAdminNativeBracketWorkspace() {
+      // Simplified portal: bracket workspace is no longer needed
+    }
+
+    function adminComputeCountdownParts(targetIso, fallbackDate) {
+      let targetMs = targetIso ? Date.parse(targetIso) : NaN;
+      if (isNaN(targetMs) && fallbackDate) targetMs = Date.parse(fallbackDate + 'T08:00:00');
+      if (isNaN(targetMs)) targetMs = Date.now() + 7 * 86400000;
+      const diff = Math.max(0, targetMs - Date.now());
+      return {
+        days: String(Math.floor(diff / 86400000)).padStart(2, '0'),
+        hours: String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0'),
+        mins: String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0'),
+        secs: String(Math.floor((diff % 60000) / 1000)).padStart(2, '0'),
+        isPast: diff <= 0
+      };
+    }
+
+    function adminTickCountdownDisplays() {
+      document.querySelectorAll('[data-adm-countdown-target]').forEach(el => {
+        const iso = el.getAttribute('data-adm-countdown-target') || '';
+        const dt = el.getAttribute('data-adm-countdown-date') || '';
+        const p = adminComputeCountdownParts(iso, dt);
+        const dEl = el.querySelector('[data-adm-cd="days"]');
+        const hEl = el.querySelector('[data-adm-cd="hours"]');
+        const mEl = el.querySelector('[data-adm-cd="mins"]');
+        const sEl = el.querySelector('[data-adm-cd="secs"]');
+        if (dEl) dEl.textContent = p.days;
+        if (hEl) hEl.textContent = p.hours;
+        if (mEl) mEl.textContent = p.mins;
+        if (sEl) sEl.textContent = p.secs;
+      });
+    }
+    if (!window.__admTrnCountdownInterval) {
+      window.__admTrnCountdownInterval = setInterval(adminTickCountdownDisplays, 1000);
+    }
+
+    function getActiveAdminBracketTournament() {
+      const list = getAdminTournamentsList();
+      return list.find(t => t.id === adminActiveBracketTrnId) || list[0];
+    }
+
+    function adminSelectActiveBracketTournament(trnId) {
+      const list = getAdminTournamentsList();
+      const found = list.find(t => t.id === trnId) || list[0];
+      if (!found) return;
+      adminActiveBracketTrnId = found.id;
+      renderAdminTournamentsManager(true);
     }
 
     function renderAdminTournamentsManager(forceRender = false) {
@@ -8140,1374 +7414,648 @@ function clearFieldError(fieldId) {
       if (!forceRender && document.activeElement && grid.contains(document.activeElement) && /^(INPUT|SELECT|TEXTAREA)$/i.test(document.activeElement.tagName)) {
         return;
       }
+
       const list = getAdminTournamentsList();
       if (!adminActiveBracketTrnId || !list.some(t => t.id === adminActiveBracketTrnId)) {
-        adminActiveBracketTrnId = list[0] ? list[0].id : 'trn-bicol-dupr-open';
+        adminActiveBracketTrnId = list[0] ? list[0].id : 'trn-pf-singles-cup';
       }
+      const activeTrn = getActiveAdminBracketTournament();
       const isMasterOn = currentSiteConfig && currentSiteConfig.tournamentsPublishedOnHome !== false;
-      const rawPubCount = list.filter(t => t.published !== false).length;
-      const pubCount = isMasterOn ? rawPubCount : 0;
+      const pubCount = isMasterOn ? list.filter(t => t.published !== false).length : 0;
 
       const masterBtn = document.getElementById('btn-toggle-home-tournaments-master');
       if (masterBtn) {
         if (isMasterOn && pubCount > 0) {
           masterBtn.className = 'pf-trn-btn-emerald px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition';
-          masterBtn.innerHTML = '✅ Homepage Section: ON (Click to Turn OFF)';
+          masterBtn.innerHTML = '✅ Homepage Section: ON';
         } else {
           masterBtn.className = 'pf-trn-btn-danger px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition';
-          masterBtn.innerHTML = '🚫 Homepage Section: OFF (Click to Turn ON)';
+          masterBtn.innerHTML = '🚫 Homepage Section: OFF';
         }
       }
 
       if (visBar) {
-        const offButtonHtml = `
-          <button type="button" onclick="adminSetPublishedTournamentCount(0)" class="${(!isMasterOn || pubCount === 0) ? 'pf-trn-btn-danger' : 'pf-trn-btn-secondary'} px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">
-            ${(!isMasterOn || pubCount === 0) ? '✓ ' : ''}🚫 Turn OFF (0 Events)
-          </button>
-        `;
-        const countButtonsHtml = offButtonHtml + [1, 2, 3, 4].map(cnt => {
-          const isCurrentCnt = isMasterOn && pubCount === cnt;
-          const lbl = cnt === 1 ? '1 Event (Default)' : (cnt === 4 ? 'All 4 Events' : `${cnt} Events`);
-          return `
-            <button type="button" onclick="adminSetPublishedTournamentCount(${cnt})" class="${isCurrentCnt ? 'pf-trn-btn-primary' : 'pf-trn-btn-secondary'} px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">
-              ${isCurrentCnt ? '✓ ' : ''}Show ${lbl}
-            </button>
-          `;
-        }).join('');
-
-        const individualEventPillsHtml = list.map((t, i) => {
-          const isPub = isMasterOn && t.published !== false;
-          const shortTitle = t.title.length > 28 ? t.title.slice(0, 28) + '…' : t.title;
-          return `
-            <button type="button" onclick="adminToggleSingleTournamentPublished('${pfEscapeHtml(t.id)}')" class="${isPub ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-3 py-2 rounded-xl text-left font-mono text-[11px] transition flex items-center justify-between gap-2">
-              <span class="truncate font-extrabold">${isPub ? '🟢' : '⚪'} #${i + 1} ${pfEscapeHtml(shortTitle)}</span>
-              <span class="px-2 py-0.5 rounded bg-black/15 text-[9px] uppercase flex-shrink-0">${isPub ? 'SHOWN' : 'HIDDEN'}</span>
-            </button>
-          `;
-        }).join('');
-
         visBar.innerHTML = `
-          <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <span class="cal-cat-pill px-2.5 py-0.5 rounded-full ${pubCount > 0 ? 'bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7]' : 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]'} font-mono text-[10px] font-black uppercase">🎛️ WEBSITE EVENT DISPLAY SELECTOR</span>
-                <span class="font-mono text-xs font-extrabold text-slate-900">Currently Showing: <span class="${pubCount > 0 ? 'text-[#15803D]' : 'text-rose-700'}">${pubCount > 0 ? `${pubCount} of ${list.length} Event${pubCount === 1 ? '' : 's'} on Public Website` : 'OFF (Hidden on Public Website)'}</span></span>
+                <span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-black uppercase">2 TOURNAMENT TYPES ONLY: SINGLE &amp; DOUBLE</span>
+                <span class="font-mono text-xs font-extrabold text-slate-900">Select a Tournament Type below to adjust its Timer, Event Details, Pricing &amp; Customer Bookings:</span>
               </div>
-              <p class="text-[11px] text-slate-600 mt-0.5">Click <b>🚫 Turn OFF (0 Events)</b> or the top-right <b>Homepage Section: ON/OFF</b> button to hide the Tournament section on the website — or choose <b>Show 1, 2, 3, or All 4 Events</b>.</p>
             </div>
-            <div class="flex flex-wrap items-center gap-1.5">
-              ${countButtonsHtml}
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <span class="text-[10px] font-mono font-extrabold uppercase text-slate-500 block">Or Click Specific Events Below to Toggle Any Combination On/Off:</span>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-              ${individualEventPillsHtml}
+            <div class="flex flex-wrap items-center gap-2">
+              ${list.map(t => {
+                const tType = adminNormalizeTournamentType(t);
+                const isSelected = t.id === activeTrn.id;
+                const isPub = isMasterOn && t.published !== false;
+                const activeRegs = adminCountRealTournamentTeams(t);
+                const maxSlots = Math.max(2, Number(t.maxTeams || 24));
+                const availSlots = Math.max(0, maxSlots - activeRegs);
+                return `
+                  <button type="button" onclick="adminSelectActiveBracketTournament('${pfEscapeHtml(t.id)}')" class="${isSelected ? 'pf-trn-btn-primary ring-2 ring-emerald-500' : 'pf-trn-btn-secondary'} px-4 py-2.5 rounded-xl font-mono text-xs uppercase transition flex items-center gap-2">
+                    <span>${tType === 'Single' ? '🏓 SINGLE:' : '👥 DOUBLE:'} ${pfEscapeHtml(t.title)}</span>
+                    <span class="px-2 py-0.5 rounded bg-black/20 text-[10px]">${availSlots}/${maxSlots} Slots Left</span>
+                    <span class="px-2 py-0.5 rounded ${isPub ? 'bg-emerald-500/30' : 'bg-rose-500/30'} text-[9px]">${isPub ? 'LIVE' : 'HIDDEN'}</span>
+                  </button>
+                `;
+              }).join('')}
             </div>
           </div>
         `;
       }
 
-      grid.innerHTML = list.map((t, idx) => {
-        const fee = Number(t.entryFee || 0);
-        const players = Array.isArray(t.players) ? t.players : [...ADMIN_OPEN_SEED_LABELS];
-        const filledSeeds = adminCountFilledBracketSeeds(players);
-        const regCount = adminCountRealTournamentTeams(t);
-        const maxCount = Math.max(8, Number(t.maxTeams || 24));
-        const isSelectedForBracket = t.id === adminActiveBracketTrnId;
-        const isPub = t.published !== false;
-        const showCourts = t.showCourtsOnSite !== false;
-        const dcList = Array.isArray(t.designatedCourts) && t.designatedCourts.length
-          ? t.designatedCourts
-          : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
+      const t = activeTrn;
+      const tType = adminNormalizeTournamentType(t);
+      const isPub = t.published !== false;
+      const fee = Number(t.entryFee || 0);
+      const maxSlots = Math.max(2, Number(t.maxTeams || 24));
+      const takenSlots = adminCountRealTournamentTeams(t);
+      const availSlots = Math.max(0, maxSlots - takenSlots);
+      const cdTarget = (t.countdownTarget || `${t.date || '2026-11-21'}T08:00`).slice(0, 16);
+      const cd = adminComputeCountdownParts(cdTarget, t.date);
 
-        const courtCountPresets = [1, 2, 3, 4].map(cCnt => {
-          const isMatchCnt = showCourts && dcList.length === cCnt;
-          return `
-            <button type="button" onclick="adminSetDesignatedCourtCount('${pfEscapeHtml(t.id)}', ${cCnt})" class="${isMatchCnt ? 'pf-trn-btn-royal' : 'pf-trn-btn-secondary'} px-2 py-0.5 rounded-md font-mono text-[9px] uppercase transition">
-              ${cCnt === 4 ? 'All 4' : cCnt + (cCnt === 1 ? ' Court' : ' Courts')}
-            </button>
-          `;
-        }).join('');
+      // Gather all customer registrations across both Single and Double (or filtered)
+      const allCustomerEntries = [];
+      list.forEach(trnItem => {
+        const itemType = adminNormalizeTournamentType(trnItem);
+        const regs = Array.isArray(trnItem.registrations) ? trnItem.registrations : [];
+        regs.forEach(r => {
+          if (!r || typeof r !== 'object') return;
+          allCustomerEntries.push({
+            ...r,
+            _trnId: trnItem.id,
+            _trnTitle: trnItem.title,
+            _trnType: r.tournamentType || itemType,
+            _entryFee: Number(r.entryFee || trnItem.entryFee || 0)
+          });
+        });
+      });
 
-        const courtTogglePills = ['Court 1', 'Court 2', 'Court 3', 'Court 4'].map(cName => {
-          const isOn = dcList.includes(cName);
-          return `
-            <button type="button" onclick="adminToggleTournamentDesignatedCourt('${pfEscapeHtml(t.id)}', '${cName}')" class="${isOn ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-2.5 py-1 rounded-lg font-mono text-[10px] uppercase transition">
-              ${isOn ? '✓ ' : '+ '}${cName}
-            </button>
-          `;
-        }).join('');
+      const countAccepted = allCustomerEntries.filter(r => ['ACCEPTED', 'CONFIRMED', 'APPROVED'].includes(String(r.status || '').toUpperCase())).length;
+      const countPending = allCustomerEntries.filter(r => String(r.status || 'PENDING').toUpperCase() === 'PENDING').length;
+      const countHold = allCustomerEntries.filter(r => ['WAITLISTED', 'ON_HOLD', 'HOLD'].includes(String(r.status || '').toUpperCase())).length;
+      const countDeclined = allCustomerEntries.filter(r => ['DECLINED', 'CANCELLED', 'REJECTED'].includes(String(r.status || '').toUpperCase())).length;
 
-        const realPreviewList = players.filter(p => !adminIsOpenSeedSlot(p));
+      const filteredCustomers = allCustomerEntries.filter(r => {
+        if (adminCustomerFilterType !== 'ALL' && String(r._trnType).toUpperCase() !== adminCustomerFilterType) return false;
+        const st = String(r.status || 'PENDING').toUpperCase();
+        if (adminCustomerFilterStatus === 'ACCEPTED') return ['ACCEPTED', 'CONFIRMED', 'APPROVED'].includes(st);
+        if (adminCustomerFilterStatus === 'PENDING') return st === 'PENDING';
+        if (adminCustomerFilterStatus === 'WAITLISTED') return ['WAITLISTED', 'ON_HOLD', 'HOLD'].includes(st);
+        if (adminCustomerFilterStatus === 'DECLINED') return ['DECLINED', 'CANCELLED', 'REJECTED'].includes(st);
+        return true;
+      });
 
-        return `
-        <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 ${isSelectedForBracket ? 'border-[#8B5CF6] ring-2 ring-[#8B5CF6]/20' : (isPub ? 'border-slate-200' : 'border-dashed border-slate-300 opacity-75')} flex flex-col justify-between space-y-4 transition shadow-xs">
-          <div class="space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="flex flex-wrap items-center gap-1.5">
-                <span class="px-2 py-0.5 rounded-md bg-[#0F291E] text-white font-mono text-[10px] font-black" style="background:#0F291E !important;color:#A3E635 !important;">EVENT #${idx + 1}</span>
-                <span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-mono text-[10px] font-extrabold uppercase">${pfEscapeHtml(t.format || 'Tournament')}</span>
-                <button type="button" onclick="adminToggleSingleTournamentPublished('${pfEscapeHtml(t.id)}')" class="${isPub ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-2.5 py-0.5 rounded-full font-mono text-[10px] uppercase transition" title="Toggle whether this tournament is displayed on the public website">
-                  ${isPub ? '🟢 Shown on Website' : '⚪ Hidden on Website'}
-                </button>
-              </div>
-              <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#0F291E] text-white font-mono text-xs font-black shadow-2xs" style="background:#0F291E !important;color:#FFFFFF !important;">${fee > 0 ? '₱' + fee.toLocaleString() : 'FREE'}</span>
-            </div>
-
-            <div>
-              <h4 class="text-base font-black text-slate-900 uppercase leading-snug">${pfEscapeHtml(t.title)}</h4>
-              <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-600 font-mono mt-1">
-                <span>📅 ${pfEscapeHtml(t.date)}</span>
-                <span>⏰ ${pfEscapeHtml(t.time)}</span>
-                <span class="text-emerald-800 font-bold">🏆 ${pfEscapeHtml(t.prizePool)}</span>
-              </div>
-            </div>
-
-            <!-- OPTIONAL DESIGNATED COURTS CONTROLLER -->
-            <div class="p-3 rounded-xl bg-white border border-slate-200 space-y-2.5">
+      grid.innerHTML = `
+        <!-- SECTION 1: COUNTDOWN TIMER ADJUSTMENT + TOURNAMENT TITLE & EVENT DETAILS EDITOR -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+          <!-- Left 5 Cols: Live Countdown Timer Adjustment Card -->
+          <div class="xl:col-span-5 rounded-3xl bg-[#0A2218] text-white p-5 sm:p-6 border-2 border-[#15803D] shadow-lg flex flex-col justify-between space-y-5" style="background:#0A2218 !important;color:#FFFFFF !important;">
+            <div class="space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] font-mono font-extrabold uppercase text-[#0369A1]">🏟️ Designated Courts (${dcList.length} of 4)</span>
-                  <button type="button" onclick="adminToggleShowCourtsOnSite('${pfEscapeHtml(t.id)}')" class="${showCourts ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary'} px-2 py-0.5 rounded-md font-mono text-[9px] uppercase transition">
-                    ${showCourts ? '👁️ Court Badge: Shown' : '🙈 Court Badge: Hidden'}
+                <span class="px-3 py-1 rounded-full bg-[#15803D] text-white font-mono text-[10px] font-black uppercase tracking-wider" style="background:#15803D !important;color:#A3E635 !important;">
+                  ⏳ 1. ADJUSTMENT OF THE COUNTDOWN TIMER
+                </span>
+                <span class="px-2.5 py-0.5 rounded-full bg-white/10 font-mono text-[10px] font-bold uppercase" style="color:#A7F3D0 !important;">
+                  ${tType} Event Timer
+                </span>
+              </div>
+              <h3 class="text-lg sm:text-xl font-black uppercase tracking-tight" style="color:#FFFFFF !important;">
+                ${pfEscapeHtml(t.title)}
+              </h3>
+              <p class="text-xs leading-relaxed" style="color:#CBD5E1 !important;">
+                Adjust the target date &amp; time for the upcoming event countdown timer shown on the public homepage.
+              </p>
+
+              <!-- Live Ticking Countdown Preview -->
+              <div class="p-4 rounded-2xl bg-[#05130D] border border-[#15803D] space-y-2" data-adm-countdown-target="${pfEscapeHtml(cdTarget)}" data-adm-countdown-date="${pfEscapeHtml(t.date || '')}" style="background:#05130D !important;">
+                <div class="flex items-center justify-between text-[10px] font-mono font-bold uppercase tracking-widest" style="color:#A3E635 !important;">
+                  <span>LIVE HOMEPAGE COUNTDOWN PREVIEW</span>
+                  <span>${cd.isPast ? 'EVENT STARTED' : 'TICKING LIVE'}</span>
+                </div>
+                <div class="grid grid-cols-4 gap-2 text-center">
+                  <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
+                    <div data-adm-cd="days" class="font-mono text-2xl font-black" style="color:#FFFFFF !important;">${cd.days}</div>
+                    <span class="block text-[9px] font-mono uppercase mt-0.5" style="color:#94A3B8 !important;">Days</span>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
+                    <div data-adm-cd="hours" class="font-mono text-2xl font-black" style="color:#FFFFFF !important;">${cd.hours}</div>
+                    <span class="block text-[9px] font-mono uppercase mt-0.5" style="color:#94A3B8 !important;">Hours</span>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
+                    <div data-adm-cd="mins" class="font-mono text-2xl font-black" style="color:#FFFFFF !important;">${cd.mins}</div>
+                    <span class="block text-[9px] font-mono uppercase mt-0.5" style="color:#94A3B8 !important;">Minutes</span>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
+                    <div data-adm-cd="secs" class="font-mono text-2xl font-black" style="color:#A3E635 !important;">${cd.secs}</div>
+                    <span class="block text-[9px] font-mono uppercase mt-0.5" style="color:#94A3B8 !important;">Seconds</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Date & Time Picker for Countdown Target -->
+              <div class="space-y-2 pt-1">
+                <label class="block text-[10px] font-mono font-extrabold uppercase tracking-wider" style="color:#A7F3D0 !important;">
+                  Set Target Countdown Date &amp; Start Time:
+                </label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <input type="datetime-local" id="adm-trn-countdown-input" value="${pfEscapeHtml(cdTarget)}" class="flex-1 bg-white text-slate-900 border-2 border-emerald-400 rounded-xl px-3.5 py-2.5 font-mono text-xs font-black" style="background:#FFFFFF !important;color:#0F172A !important;">
+                  <button type="button" onclick="adminSaveTournamentCountdownTimer('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-volt px-4 py-2.5 rounded-xl font-mono text-xs font-black uppercase whitespace-nowrap">
+                    ⏱️ Update Timer
                   </button>
                 </div>
-                <div class="flex flex-wrap items-center gap-1">
-                  ${courtCountPresets}
-                </div>
               </div>
-              <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                <div class="flex flex-wrap items-center gap-1.5">
-                  ${courtTogglePills}
+
+              <!-- Quick Timer Adjustment Presets -->
+              <div class="space-y-1.5">
+                <span class="block text-[10px] font-mono font-bold uppercase" style="color:#94A3B8 !important;">Quick Timer Adjustment Presets:</span>
+                <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+                  <button type="button" onclick="adminQuickShiftCountdownTimer('${pfEscapeHtml(t.id)}', 1)" class="py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 font-mono text-[10px] font-bold text-white">+1 Day</button>
+                  <button type="button" onclick="adminQuickShiftCountdownTimer('${pfEscapeHtml(t.id)}', 3)" class="py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 font-mono text-[10px] font-bold text-white">+3 Days</button>
+                  <button type="button" onclick="adminQuickShiftCountdownTimer('${pfEscapeHtml(t.id)}', 7)" class="py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 font-mono text-[10px] font-bold text-white">+7 Days</button>
+                  <button type="button" onclick="adminQuickShiftCountdownTimer('${pfEscapeHtml(t.id)}', 14)" class="py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 font-mono text-[10px] font-bold text-white">+14 Days</button>
+                  <button type="button" onclick="adminQuickShiftCountdownTimer('${pfEscapeHtml(t.id)}', 30)" class="py-1.5 px-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 font-mono text-[10px] font-bold text-white">+30 Days</button>
                 </div>
-                <button type="button" onclick="adminPostTournamentToCalendar('${pfEscapeHtml(t.id)}')" class="px-3 py-1.5 rounded-xl bg-[#FEF9C3] hover:bg-[#FEF08A] text-[#854D0E] border border-[#FACC15] font-mono text-[10px] font-black uppercase tracking-wider transition shadow-2xs" title="Requires Admin Access Key: Blocks designated courts on the tournament date with the 🏆 Tournament calendar filler">
-                  📅 Put on Calendar (Admin Key)
-                </button>
               </div>
             </div>
 
-            <!-- INLINE QUICK EDIT FOR TOURNAMENT PRICE (₱) & PRIZE POOL -->
-            <div class="p-3 rounded-xl bg-white border border-slate-200 grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
-              <div class="sm:col-span-4">
-                <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-600 mb-1">Entry Price (₱)</label>
-                <input type="number" id="quick-fee-${pfEscapeHtml(t.id)}" value="${fee}" min="0" step="50" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono font-black text-slate-900">
-              </div>
-              <div class="sm:col-span-5">
-                <label class="block text-[9px] font-mono font-extrabold uppercase text-slate-600 mb-1">Prize Pool / Perks</label>
-                <input type="text" id="quick-prize-${pfEscapeHtml(t.id)}" value="${pfEscapeHtml(t.prizePool || '')}" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-900">
-              </div>
-              <div class="sm:col-span-3">
-                <button type="button" onclick="adminQuickSaveTournamentPricing('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-emerald w-full py-1.5 px-2.5 rounded-lg font-mono text-[10px] uppercase tracking-wider transition">
-                  💾 Save Price
-                </button>
-              </div>
-            </div>
-
-            <!-- REAL REGISTERED PLAYERS PREVIEW (0 FILLERS BY DEFAULT) -->
-            <div class="p-3 rounded-xl bg-white border border-slate-200 space-y-2">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-[10px] font-mono font-extrabold uppercase text-[#5B21B6]">👥 Real Registered Teams: ${regCount} / ${maxCount} (${filledSeeds}/8 Bracket Seeds Filled)</span>
-                <div class="flex items-center gap-1.5">
-                  <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="px-2 py-0.5 rounded bg-[#EDE9FE] text-[#5B21B6] font-mono text-[10px] font-extrabold hover:underline">+ Add / Edit Players</button>
-                  ${regCount > 0 ? `<button type="button" onclick="adminClearTournamentPlayersToZero('${pfEscapeHtml(t.id)}')" class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-mono text-[9px] font-bold">Clear to 0</button>` : ''}
+            <!-- Live Slot Availability Summary Box -->
+            <div class="p-4 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-between gap-3">
+              <div>
+                <span class="text-[10px] font-mono uppercase font-bold block" style="color:#A7F3D0 !important;">PUBLIC SLOTS AVAILABLE (${tType.toUpperCase()})</span>
+                <div class="text-xl font-mono font-black" style="color:#FFFFFF !important;">
+                  ${availSlots} Available <span class="text-xs font-normal" style="color:#CBD5E1 !important;">(${takenSlots} / ${maxSlots} Taken)</span>
                 </div>
               </div>
-              ${realPreviewList.length === 0 ? `
-                <div class="p-2 rounded-lg bg-emerald-50/70 border border-dashed border-emerald-300 text-[11px] text-emerald-900 font-semibold">
-                  🟢 <b>0 Teams Joined Yet (No Fake Filler Data)</b> — Website honestly displays <b>0 / ${maxCount} Teams</b> &amp; <b>8 Open Bracket Seeds</b> until real community players register or you add them.
-                </div>
-              ` : `
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-800 font-bold">
-                  ${realPreviewList.slice(0, 4).map(p => `<div class="truncate">✓ ${pfEscapeHtml(p)}</div>`).join('')}
-                </div>
-                ${realPreviewList.length > 4 ? `<div class="text-[10px] font-mono text-slate-500">+ ${realPreviewList.length - 4} more real teams in bracket</div>` : ''}
-              `}
+              <button type="button" onclick="adminToggleSingleTournamentPublished('${pfEscapeHtml(t.id)}')" class="${isPub ? 'pf-trn-btn-emerald' : 'pf-trn-btn-danger'} px-3 py-2 rounded-xl font-mono text-[10px] font-black uppercase">
+                ${isPub ? '🟢 Shown on Site' : '⚪ Hidden on Site'}
+              </button>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
-            <span class="px-2.5 py-1 rounded-full bg-white border border-slate-300 text-[10px] font-mono text-slate-800 font-bold">Real Entries: ${regCount}/${maxCount} • ${8 - filledSeeds} Open Seeds</span>
-            <div class="flex flex-wrap items-center gap-1.5">
-              <button type="button" onclick="adminSelectActiveBracketTournament('${pfEscapeHtml(t.id)}', true)" class="pf-trn-btn-violet px-3 py-1.5 rounded-lg uppercase text-[10px] transition">🏆 Bracket &amp; Scorekeeper</button>
-              <button type="button" onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-royal px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">👥 Roster (${regCount})</button>
-              <button type="button" onclick="adminOpenTournamentEditorModal('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-secondary px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">✏️ Edit</button>
-              <button type="button" onclick="adminDeleteTournament('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-danger px-2.5 py-1.5 rounded-lg uppercase text-[10px] transition">🗑️ Delete</button>
+          <!-- Right 7 Cols: Editor for Tournament Title, Type, Pricing, Prizes, Slots & Event Details -->
+          <div class="xl:col-span-7 rounded-3xl bg-slate-50 text-slate-900 p-5 sm:p-6 border-2 border-slate-200 shadow-md flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                <div>
+                  <span class="cal-cat-pill px-2.5 py-0.5 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-mono text-[10px] font-black uppercase">
+                    ✏️ 2. EDITOR FOR TOURNAMENT TITLE, PRICING, SLOTS &amp; EVENT DETAILS
+                  </span>
+                  <h3 class="text-base sm:text-lg font-black uppercase text-slate-900 mt-1">
+                    Edit ${tType} Tournament Details
+                  </h3>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-[#0F291E] text-white font-mono text-xs font-black" style="background:#0F291E !important;color:#A3E635 !important;">
+                  ${tType === 'Single' ? '🏓 SINGLE' : '👥 DOUBLE'}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+                <div class="sm:col-span-8">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Title of the Tournament *</label>
+                  <input type="text" id="adm-edit-trn-title" value="${pfEscapeHtml(t.title)}" class="w-full bg-white border-2 border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-black focus:outline-none focus:border-emerald-600">
+                </div>
+                <div class="sm:col-span-4">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Tournament Type (2 Only)</label>
+                  <select id="adm-edit-trn-type" class="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2.5 text-slate-900 font-black">
+                    <option value="Single" ${tType === 'Single' ? 'selected' : ''}>🏓 Single (1v1)</option>
+                    <option value="Double" ${tType === 'Double' ? 'selected' : ''}>👥 Double (2v2)</option>
+                  </select>
+                </div>
+
+                <div class="sm:col-span-4">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Entry Pricing (₱) *</label>
+                  <input type="number" id="adm-edit-trn-fee" value="${fee}" min="0" step="50" class="w-full bg-emerald-50 border-2 border-emerald-500 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-black">
+                </div>
+                <div class="sm:col-span-4">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Total Slots Capacity *</label>
+                  <input type="number" id="adm-edit-trn-slots" value="${maxSlots}" min="2" max="256" class="w-full bg-white border-2 border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-black">
+                </div>
+                <div class="sm:col-span-4">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Event Date (YYYY-MM-DD)</label>
+                  <input type="date" id="adm-edit-trn-date" value="${pfEscapeHtml(t.date || '2026-11-21')}" class="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono font-bold">
+                </div>
+
+                <div class="sm:col-span-12">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Prizes / Prize Pool *</label>
+                  <input type="text" id="adm-edit-trn-prize" value="${pfEscapeHtml(t.prizePool || '')}" placeholder="e.g. 1st Place: ₱10,000 + Trophy • 2nd Place: ₱5,000 + Medals" class="w-full bg-amber-50/70 border-2 border-amber-300 rounded-xl px-3.5 py-2 text-slate-900 font-bold">
+                </div>
+
+                <div class="sm:col-span-6">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Event Time Schedule</label>
+                  <input type="text" id="adm-edit-trn-time" value="${pfEscapeHtml(t.time || '08:00 AM – 05:00 PM')}" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
+                </div>
+                <div class="sm:col-span-6">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Divisions / Skill Levels</label>
+                  <input type="text" id="adm-edit-trn-division" value="${pfEscapeHtml(t.division || 'Novice • Intermediate • Open')}" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-bold">
+                </div>
+
+                <div class="sm:col-span-12">
+                  <label class="block text-[10px] font-mono font-extrabold uppercase text-slate-700 mb-1">Event Details &amp; Description (Shown on Homepage)</label>
+                  <textarea id="adm-edit-trn-desc" rows="3" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-medium">${pfEscapeHtml(t.description || '')}</textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+              <span class="text-[11px] font-mono font-bold text-slate-600">
+                🟢 Remaining Slots on Homepage: <b>${availSlots} of ${maxSlots}</b>
+              </span>
+              <button type="button" onclick="adminSaveTournamentDetailsInline('${pfEscapeHtml(t.id)}')" class="pf-trn-btn-emerald px-6 py-3 rounded-xl font-mono text-xs font-black uppercase tracking-wider shadow-md transition">
+                💾 Save Title, Event Details, Pricing &amp; Timer →
+              </button>
             </div>
           </div>
         </div>
+
+        <!-- SECTION 2: FULL DETAILS OF THE CUSTOMER & BOOKING STATUS MANAGER (ACCEPTED / PENDING / HOLD / DECLINED) -->
+        <div class="rounded-3xl bg-white text-slate-900 border-2 border-slate-200 p-5 sm:p-6 shadow-md space-y-5">
+          <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-mono text-[10px] font-black uppercase">
+                  👥 3. FULL DETAILS OF REGISTERED CUSTOMERS (PRIVATE ADMIN TABLE)
+                </span>
+                <span class="cal-cat-pill px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-mono text-[10px] font-black uppercase">
+                  ✅ ACCEPT • ⏳ PENDING • ⏸️ HOLD / WAITLIST • ❌ DECLINE
+                </span>
+              </div>
+              <h3 class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1.5">
+                Registered Tournament Customers &amp; Booking Status Controls
+              </h3>
+              <p class="text-xs text-slate-600">
+                Customer names are hidden on the public website for privacy. Review full customer contact &amp; payment details below and mark bookings as <b>Accepted</b>, <b>Pending</b>, <b>On Hold / Waitlist</b>, or <b>Declined</b>.
+              </p>
+            </div>
+
+            <!-- Summary Status KPI Pills -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="adminSetCustomerStatusFilter('ALL')" class="px-3 py-1.5 rounded-xl font-mono text-xs font-black border ${adminCustomerFilterStatus === 'ALL' ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-800 border-slate-300'}">
+                All (${allCustomerEntries.length})
+              </button>
+              <button type="button" onclick="adminSetCustomerStatusFilter('ACCEPTED')" class="px-3 py-1.5 rounded-xl font-mono text-xs font-black border ${adminCustomerFilterStatus === 'ACCEPTED' ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-emerald-50 text-emerald-900 border-emerald-300'}">
+                ✅ Accepted (${countAccepted})
+              </button>
+              <button type="button" onclick="adminSetCustomerStatusFilter('PENDING')" class="px-3 py-1.5 rounded-xl font-mono text-xs font-black border ${adminCustomerFilterStatus === 'PENDING' ? 'bg-amber-600 text-white border-amber-600' : 'bg-amber-50 text-amber-900 border-amber-300'}">
+                ⏳ Pending (${countPending})
+              </button>
+              <button type="button" onclick="adminSetCustomerStatusFilter('WAITLISTED')" class="px-3 py-1.5 rounded-xl font-mono text-xs font-black border ${adminCustomerFilterStatus === 'WAITLISTED' ? 'bg-violet-700 text-white border-violet-700' : 'bg-violet-50 text-violet-900 border-violet-300'}">
+                ⏸️ On Hold / Waitlist (${countHold})
+              </button>
+              <button type="button" onclick="adminSetCustomerStatusFilter('DECLINED')" class="px-3 py-1.5 rounded-xl font-mono text-xs font-black border ${adminCustomerFilterStatus === 'DECLINED' ? 'bg-rose-700 text-white border-rose-700' : 'bg-rose-50 text-rose-900 border-rose-300'}">
+                ❌ Declined (${countDeclined})
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter by Tournament Type + Manual Walk-In Customer Registration Bar -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="font-mono text-[10px] font-black uppercase text-emerald-900">+ Add Walk-In / Manual Customer Registration:</span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-mono font-bold uppercase text-slate-500">Filter Type:</span>
+                <button type="button" onclick="adminSetCustomerTypeFilter('ALL')" class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-black ${adminCustomerFilterType === 'ALL' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-300'}">All Types</button>
+                <button type="button" onclick="adminSetCustomerTypeFilter('SINGLE')" class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-black ${adminCustomerFilterType === 'SINGLE' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-300'}">🏓 Single</button>
+                <button type="button" onclick="adminSetCustomerTypeFilter('DOUBLE')" class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-black ${adminCustomerFilterType === 'DOUBLE' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-300'}">👥 Double</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+              <div class="sm:col-span-2">
+                <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Type</label>
+                <select id="adm-quick-add-type" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 font-bold text-slate-900">
+                  <option value="Single" ${tType === 'Single' ? 'selected' : ''}>🏓 Single</option>
+                  <option value="Double" ${tType === 'Double' ? 'selected' : ''}>👥 Double</option>
+                </select>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Customer Full Name *</label>
+                <input type="text" id="adm-quick-add-p1" placeholder="Full Name" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Partner (If Double)</label>
+                <input type="text" id="adm-quick-add-p2" placeholder="Partner Name" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Phone Number *</label>
+                <input type="text" id="adm-quick-add-phone" placeholder="0917..." class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-mono text-slate-900">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Payment Method</label>
+                <select id="adm-quick-add-pay" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 font-bold text-slate-900">
+                  <option value="Manual (Cash/Venue)">Manual / Cash</option>
+                  <option value="GCash">GCash</option>
+                  <option value="Maya">Maya</option>
+                  <option value="Bank (BDO)">Bank (BDO)</option>
+                </select>
+              </div>
+              <div class="sm:col-span-2">
+                <button type="button" onclick="adminQuickAddRealTeamToTournament()" class="pf-trn-btn-emerald w-full py-2 px-3 rounded-lg font-mono text-[10px] font-black uppercase">
+                  + Add Customer
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Registrations Table -->
+          ${filteredCustomers.length === 0 ? `
+            <div class="p-8 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-center space-y-1">
+              <div class="text-sm font-black text-slate-800">No Customer Registrations Found</div>
+              <p class="text-xs text-slate-500">When customers register via the homepage popup form (or you add them above), their full private details and booking status controls will appear here.</p>
+            </div>
+          ` : `
+            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-[#0F291E] text-white uppercase font-mono text-[10px]" style="background:#0F291E !important;color:#FFFFFF !important;">
+                    <th class="p-3">Ref ID &amp; Time</th>
+                    <th class="p-3">Tournament &amp; Type</th>
+                    <th class="p-3">Customer Full Details</th>
+                    <th class="p-3">Contact &amp; Division</th>
+                    <th class="p-3">Payment &amp; Ref #</th>
+                    <th class="p-3">Booking Status</th>
+                    <th class="p-3 text-right">Admin Actions (Accept / Pending / Other)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                  ${filteredCustomers.map(r => {
+                    const regId = r.id || r.bookingRef || '';
+                    const st = String(r.status || 'PENDING').toUpperCase();
+                    const isAccepted = ['ACCEPTED', 'CONFIRMED', 'APPROVED'].includes(st);
+                    const isHold = ['WAITLISTED', 'ON_HOLD', 'HOLD'].includes(st);
+                    const isDeclined = ['DECLINED', 'CANCELLED', 'REJECTED'].includes(st);
+
+                    let badgeHtml = `<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-mono text-[10px] font-black uppercase">⏳ PENDING</span>`;
+                    if (isAccepted) {
+                      badgeHtml = `<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono text-[10px] font-black uppercase">✅ ACCEPTED</span>`;
+                    } else if (isHold) {
+                      badgeHtml = `<span class="px-2.5 py-1 rounded-full bg-violet-100 text-violet-900 border border-violet-300 font-mono text-[10px] font-black uppercase">⏸️ ON HOLD / WAITLIST</span>`;
+                    } else if (isDeclined) {
+                      badgeHtml = `<span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-900 border border-rose-300 font-mono text-[10px] font-black uppercase">❌ DECLINED</span>`;
+                    }
+
+                    const isSingleRow = String(r._trnType || '').toLowerCase().includes('single');
+                    return `
+                      <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 align-top font-mono">
+                          <div class="font-black text-slate-900">${pfEscapeHtml(regId)}</div>
+                          <div class="text-[10px] text-slate-500">${pfEscapeHtml(r.registeredAt || 'Just now')}</div>
+                        </td>
+                        <td class="p-3 align-top">
+                          <span class="inline-block px-2 py-0.5 rounded font-mono text-[10px] font-black uppercase ${isSingleRow ? 'bg-sky-100 text-sky-900' : 'bg-lime-100 text-emerald-950'}">
+                            ${isSingleRow ? '🏓 SINGLE' : '👥 DOUBLE'}
+                          </span>
+                          <div class="font-bold text-slate-800 mt-1">${pfEscapeHtml(r._trnTitle)}</div>
+                        </td>
+                        <td class="p-3 align-top">
+                          <div class="font-black text-slate-900 text-sm">${pfEscapeHtml(r.player1 || r.teamName)}</div>
+                          ${!isSingleRow ? `<div class="text-[11px] text-slate-600 font-semibold">👥 Partner: <b>${pfEscapeHtml(r.partner || 'TBD')}</b></div>` : `<div class="text-[10px] font-mono text-slate-500">1v1 Solo Entry</div>`}
+                          ${r.notes ? `<div class="text-[11px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded mt-1">📝 ${pfEscapeHtml(r.notes)}</div>` : ''}
+                        </td>
+                        <td class="p-3 align-top">
+                          <div class="font-mono font-bold text-slate-900">📞 ${pfEscapeHtml(r.phone || 'N/A')}</div>
+                          ${r.email ? `<div class="text-[11px] text-slate-600">✉️ ${pfEscapeHtml(r.email)}</div>` : ''}
+                          <div class="text-[10px] font-mono font-bold text-emerald-800 mt-0.5">🏅 ${pfEscapeHtml(r.division || 'Open')}</div>
+                        </td>
+                        <td class="p-3 align-top font-mono">
+                          <div class="font-black text-slate-900">₱${Number(r._entryFee || 0).toLocaleString()}</div>
+                          <div class="text-[11px] font-bold text-blue-800">${pfEscapeHtml(r.paymentMethod || 'GCash')}</div>
+                          <div class="text-[10px] text-slate-500">Ref: ${pfEscapeHtml(r.paymentRef || 'N/A')}</div>
+                        </td>
+                        <td class="p-3 align-top">
+                          ${badgeHtml}
+                        </td>
+                        <td class="p-3 align-top text-right">
+                          <div class="flex flex-wrap items-center justify-end gap-1">
+                            <button type="button" onclick="adminUpdateTournamentRegistrationStatus('${pfEscapeHtml(r._trnId)}', '${pfEscapeHtml(regId)}', 'ACCEPTED')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-[10px] font-black uppercase transition" style="color:#FFFFFF !important;">
+                              ✓ Accept
+                            </button>
+                            <button type="button" onclick="adminUpdateTournamentRegistrationStatus('${pfEscapeHtml(r._trnId)}', '${pfEscapeHtml(regId)}', 'PENDING')" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-mono text-[10px] font-black uppercase transition" style="color:#FFFFFF !important;">
+                              ⏳ Pending
+                            </button>
+                            <button type="button" onclick="adminUpdateTournamentRegistrationStatus('${pfEscapeHtml(r._trnId)}', '${pfEscapeHtml(regId)}', 'WAITLISTED')" class="px-2.5 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-mono text-[10px] font-black uppercase transition" style="color:#FFFFFF !important;">
+                              ⏸️ Hold
+                            </button>
+                            <button type="button" onclick="adminUpdateTournamentRegistrationStatus('${pfEscapeHtml(r._trnId)}', '${pfEscapeHtml(regId)}', 'DECLINED')" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-mono text-[10px] font-black uppercase transition" style="color:#FFFFFF !important;">
+                              ✕ Decline
+                            </button>
+                            <button type="button" onclick="adminRemoveSingleRegistration('${pfEscapeHtml(regId)}', '${pfEscapeHtml(r._trnId)}')" class="px-2 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-mono text-[10px] font-bold uppercase transition" title="Delete Entry">
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          `}
+        </div>
       `;
-      }).join('');
-      renderAdminNativeBracketWorkspace();
+    }
+
+    function adminSetCustomerTypeFilter(typeKey) {
+      adminCustomerFilterType = typeKey || 'ALL';
+      renderAdminTournamentsManager(true);
+    }
+
+    function adminSetCustomerStatusFilter(statusKey) {
+      adminCustomerFilterStatus = statusKey || 'ALL';
+      renderAdminTournamentsManager(true);
+    }
+
+    async function adminSaveTournamentCountdownTimer(trnId) {
+      const list = getAdminTournamentsList();
+      const target = list.find(t => t.id === trnId) || getActiveAdminBracketTournament();
+      if (!target) return;
+      const inp = document.getElementById('adm-trn-countdown-input');
+      const val = (inp?.value || '').trim();
+      if (!val) {
+        alert('Please pick a valid date & time for the countdown timer.');
+        return;
+      }
+      target.countdownTarget = val.length === 16 ? (val + ':00') : val;
+      if (val.slice(0, 10)) {
+        target.date = val.slice(0, 10);
+      }
+      await saveAndSyncAdminTournaments(`⏱️ Updated live countdown timer for "${target.title}"!`);
+    }
+
+    async function adminQuickShiftCountdownTimer(trnId, addDays) {
+      const list = getAdminTournamentsList();
+      const target = list.find(t => t.id === trnId) || getActiveAdminBracketTournament();
+      if (!target) return;
+      const baseMs = Date.now() + (Number(addDays || 1) * 86400000);
+      const dt = new Date(baseMs);
+      const yyyy = dt.getFullYear();
+      const mm = String(dt.getMonth() + 1).padStart(2, '0');
+      const dd = String(dt.getDate()).padStart(2, '0');
+      target.date = `${yyyy}-${mm}-${dd}`;
+      target.countdownTarget = `${yyyy}-${mm}-${dd}T08:00:00`;
+      await saveAndSyncAdminTournaments(`⏱️ Timer set to +${addDays} day(s) (${target.date} 08:00 AM) for "${target.title}"!`);
+    }
+
+    async function adminSaveTournamentDetailsInline(trnId) {
+      const list = getAdminTournamentsList();
+      const target = list.find(t => t.id === trnId) || getActiveAdminBracketTournament();
+      if (!target) return;
+
+      const titleVal = (document.getElementById('adm-edit-trn-title')?.value || '').trim();
+      const typeVal = (document.getElementById('adm-edit-trn-type')?.value || 'Single').trim();
+      const feeVal = Math.max(0, Number(document.getElementById('adm-edit-trn-fee')?.value || 0));
+      const slotsVal = Math.max(2, Number(document.getElementById('adm-edit-trn-slots')?.value || 24));
+      const dateVal = (document.getElementById('adm-edit-trn-date')?.value || target.date || '2026-11-21').trim();
+      const prizeVal = (document.getElementById('adm-edit-trn-prize')?.value || '').trim();
+      const timeVal = (document.getElementById('adm-edit-trn-time')?.value || '').trim();
+      const divVal = (document.getElementById('adm-edit-trn-division')?.value || '').trim();
+      const descVal = (document.getElementById('adm-edit-trn-desc')?.value || '').trim();
+      const cdVal = (document.getElementById('adm-trn-countdown-input')?.value || '').trim();
+
+      if (!titleVal) {
+        alert('Please enter the Title of the Tournament.');
+        return;
+      }
+
+      target.title = titleVal;
+      target.tournamentType = typeVal;
+      target.format = typeVal;
+      target.formatKey = typeVal.toUpperCase();
+      target.entryFee = feeVal;
+      target.maxTeams = slotsVal;
+      target.date = dateVal;
+      target.prizePool = prizeVal || 'Cash Prizes + Official Trophies';
+      target.time = timeVal || '08:00 AM – 05:00 PM';
+      target.division = divVal || 'All Skill Levels';
+      target.description = descVal;
+      if (cdVal) {
+        target.countdownTarget = cdVal.length === 16 ? (cdVal + ':00') : cdVal;
+      } else {
+        target.countdownTarget = `${dateVal}T08:00:00`;
+      }
+      target.registeredCount = adminCountRealTournamentTeams(target);
+
+      await saveAndSyncAdminTournaments(`💾 Saved "${target.title}" (${target.tournamentType} • ₱${target.entryFee.toLocaleString()} • ${target.maxTeams} Slots)!`);
     }
 
     async function adminToggleSingleTournamentPublished(trnId) {
       const list = getAdminTournamentsList();
       const target = list.find(t => t.id === trnId);
       if (!target) return;
-      const wasMasterOff = currentSiteConfig && currentSiteConfig.tournamentsPublishedOnHome === false;
-      if (wasMasterOff) {
-        currentSiteConfig.tournamentsPublishedOnHome = true;
-        list.forEach(t => { t.published = (t.id === trnId); });
-      } else {
-        target.published = target.published === false ? true : false;
-      }
+      target.published = target.published === false ? true : false;
       const pubNow = list.filter(t => t.published !== false).length;
       if (currentSiteConfig) {
         currentSiteConfig.tournamentsPublishedOnHome = pubNow > 0;
       }
-      await saveAndSyncAdminTournaments(pubNow > 0
-        ? `${target.published ? '🟢 Shown' : '⚪ Hidden'}: "${target.title}" (${pubNow} of ${list.length} events shown on website)`
-        : `🚫 All Tournament Events Hidden — Homepage Tournament Section Turned OFF!`);
+      await saveAndSyncAdminTournaments(`${target.published ? '🟢 Shown' : '⚪ Hidden'}: "${target.title}" on Public Website`);
     }
 
-    async function adminSetPublishedTournamentCount(count) {
+    async function adminUpdateTournamentRegistrationStatus(trnId, regId, newStatus) {
       const list = getAdminTournamentsList();
-      if (!list.length) return;
-      const rawNum = Number(count);
-      if (rawNum === 0) {
-        list.forEach(t => { t.published = false; });
-        if (currentSiteConfig) currentSiteConfig.tournamentsPublishedOnHome = false;
-        await saveAndSyncAdminTournaments('🚫 Homepage Tournament Section Turned OFF (Hidden on Public Website)!');
-        return;
-      }
-      const n = Math.max(1, Math.min(list.length, rawNum || 1));
-      list.forEach((t, idx) => {
-        t.published = (idx < n);
-      });
-      if (currentSiteConfig) currentSiteConfig.tournamentsPublishedOnHome = true;
-      await saveAndSyncAdminTournaments(`🎛️ Website now showing ${n} of ${list.length} tournament${n === 1 ? '' : 's'}!`);
-    }
+      const targetTrn = list.find(t => t.id === trnId) || list.find(t => Array.isArray(t.registrations) && t.registrations.some(r => (r.id || r.bookingRef) === regId));
+      if (!targetTrn || !Array.isArray(targetTrn.registrations)) return;
 
-    async function adminToggleShowCourtsOnSite(trnId) {
-      const list = getAdminTournamentsList();
-      const target = list.find(t => t.id === trnId);
-      if (!target) return;
-      target.showCourtsOnSite = target.showCourtsOnSite === false ? true : false;
-      await saveAndSyncAdminTournaments(`${target.showCourtsOnSite ? '👁️ Showing' : '🙈 Hiding'} designated court badges on website for "${target.title}"`);
-    }
+      const reg = targetTrn.registrations.find(r => r && (r.id === regId || r.bookingRef === regId));
+      if (!reg) return;
 
-    async function adminSetDesignatedCourtCount(trnId, courtCount) {
-      const list = getAdminTournamentsList();
-      const target = list.find(t => t.id === trnId);
-      if (!target) return;
-      const allCourts = ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      const n = Math.max(1, Math.min(4, Number(courtCount) || 4));
-      const dc = allCourts.slice(0, n);
-      target.designatedCourts = dc;
-      target.showCourtsOnSite = true;
-      target.courts = dc.length === 4 ? 'All 4 Courts (Courts 1 – 4)' : ('Designated: ' + dc.join(', '));
-      if (Array.isArray(target.bracket)) {
-        target.bracket.forEach((m, idx) => {
-          m.court = dc[idx % dc.length];
-        });
-      }
-      await saveAndSyncAdminTournaments(`🏟️ Assigned ${dc.join(', ')} (${n} court${n === 1 ? '' : 's'}) to "${target.title}"!`);
-    }
+      reg.status = newStatus;
+      targetTrn.registeredCount = adminCountRealTournamentTeams(targetTrn);
 
-    async function adminToggleTournamentDesignatedCourt(trnId, courtName) {
-      const list = getAdminTournamentsList();
-      const target = list.find(t => t.id === trnId);
-      if (!target) return;
-      let dc = Array.isArray(target.designatedCourts) && target.designatedCourts.length
-        ? [...target.designatedCourts]
-        : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      if (dc.includes(courtName)) {
-        if (dc.length <= 1) {
-          alert('At least 1 court must be designated for a tournament (or click "Court Badge: Shown/Hidden" if you want to hide court badges on the website).');
-          return;
+      // Sync corresponding booking status in bookings list if present
+      const mappedBookingStatus = newStatus === 'ACCEPTED' ? 'CONFIRMED' : (newStatus === 'DECLINED' ? 'CANCELLED' : 'PENDING');
+      if (Array.isArray(bookings)) {
+        const bMatch = bookings.find(b => b && String(b.ref) === String(regId));
+        if (bMatch) {
+          bMatch.status = mappedBookingStatus;
+          try { saveAdminState(true); } catch (e) {}
         }
-        dc = dc.filter(c => c !== courtName);
-      } else {
-        dc.push(courtName);
-        dc.sort();
       }
-      target.designatedCourts = dc;
-      target.courts = dc.length === 4 ? 'All 4 Courts (Courts 1 – 4)' : ('Designated: ' + dc.join(', '));
-      if (Array.isArray(target.bracket)) {
-        target.bracket.forEach((m, idx) => {
-          m.court = dc[idx % dc.length];
-        });
-      }
-      await saveAndSyncAdminTournaments(`🏟️ Designated ${dc.join(', ')} for "${target.title}" (Bracket matches updated)!`);
-    }
-
-    async function adminQuickSaveTournamentPricing(trnId) {
-      const list = getAdminTournamentsList();
-      const target = list.find(t => t.id === trnId);
-      if (!target) return;
-      const feeInp = document.getElementById('quick-fee-' + trnId);
-      const prizeInp = document.getElementById('quick-prize-' + trnId);
-      if (feeInp) target.entryFee = Math.max(0, Number(feeInp.value) || 0);
-      if (prizeInp && prizeInp.value.trim()) target.prizePool = prizeInp.value.trim();
-      await saveAndSyncAdminTournaments(`💰 Updated pricing for "${target.title}" (₱${target.entryFee.toLocaleString()})!`);
-    }
-
-    function getActiveAdminBracketTournament() {
-      const list = getAdminTournamentsList();
-      return list.find(t => t.id === adminActiveBracketTrnId) || list[0];
-    }
-
-    function adminSelectActiveBracketTournament(trnId, scrollToWorkspace) {
-      const list = getAdminTournamentsList();
-      const found = list.find(t => t.id === trnId) || list[0];
-      if (!found) return;
-      adminActiveBracketTrnId = found.id;
-      adminActiveBracketMatchId = 'QF1';
-      renderAdminTournamentsManager(true);
-      renderAdminNativeBracketWorkspace();
-      if (scrollToWorkspace) {
-        const ws = document.getElementById('admin-native-bracket-workspace');
-        if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-
-    function adminLaunchTournamentInScorekeeper(trnId) {
-      switchTab('tournament');
-      adminSelectActiveBracketTournament(trnId, true);
-    }
-
-    function pfBuildSymmetricalBracketTreeHtml(trn, activeMatchId, isAdminInteractive, logoPath, phaseFilter) {
-      const mode = phaseFilter || 'ALL';
-      const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : [];
-      const getM = (id, fallbackLabel, fallbackCourt) => matches.find(m => m.id === id) || {
-        id, label: fallbackLabel, court: fallbackCourt, teamA: 'Open Seed — Available', teamB: 'Open Seed — Available', scoreA: 0, scoreB: 0, status: 'PENDING', winner: null
-      };
-
-      const qf1 = getM('QF1', 'Quarterfinal 1', 'Court 1');
-      const qf2 = getM('QF2', 'Quarterfinal 2', 'Court 2');
-      const qf3 = getM('QF3', 'Quarterfinal 3', 'Court 3');
-      const qf4 = getM('QF4', 'Quarterfinal 4', 'Court 4');
-      const sf1 = getM('SF1', 'Semifinal 1', 'Court 1');
-      const sf2 = getM('SF2', 'Semifinal 2', 'Court 2');
-      const fin = getM('FIN', 'Gold Medal Final', 'Court 1');
-
-      const champName = fin.winner ? (fin.winner === 'A' ? fin.teamA : fin.teamB) : null;
-
-      const renderSlot = (teamName, score, isWin, isAwaiting, dir) => {
-        const isOpenSlot = adminIsOpenSeedSlot(teamName);
-        const cls = [
-          'pf-sym-slot',
-          dir === 'right' ? 'dir-right' : 'dir-left',
-          isWin ? 'is-winner' : '',
-          (isAwaiting || isOpenSlot) ? 'is-awaiting' : ''
-        ].filter(Boolean).join(' ');
-
-        return `
-          <div class="${cls}" title="${pfEscapeHtml(teamName || 'TBD')}">
-            <div class="pf-sym-score-box">${Number(score || 0)}</div>
-            <div class="pf-sym-banner-bar" style="${isOpenSlot ? 'border-style:dashed !important;border-color:#64748B !important;' : ''}">
-              <span class="truncate" style="${isOpenSlot ? 'color:#CBD5E1 !important;font-style:italic;' : ''}">${isWin ? '🏆 ' : (isOpenSlot ? '🟢 ' : '')}${pfEscapeHtml(teamName || 'TBD')}</span>
-              <span class="pf-sym-diamond"></span>
-            </div>
-          </div>
-        `;
-      };
-
-      const renderMatchNode = (m, dir, stageTag) => {
-        const isAct = isAdminInteractive && m.id === activeMatchId;
-        const isDone = m.status === 'COMPLETED';
-        const waitA = String(m.teamA || '').startsWith('Winner ');
-        const waitB = String(m.teamB || '').startsWith('Winner ');
-        const bothOpen = adminIsOpenSeedSlot(m.teamA) && adminIsOpenSeedSlot(m.teamB);
-        const anyOpen = adminIsOpenSeedSlot(m.teamA) || adminIsOpenSeedSlot(m.teamB);
-        const clickAttr = isAdminInteractive
-          ? `onclick="adminSelectBracketMatch('${m.id}', true)"`
-          : '';
-
-        let statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#064E3B] border border-[#34D399] font-mono text-[9px] font-extrabold uppercase" style="background:#064E3B !important;color:#A7F3D0 !important;">🟢 Ready</span>`;
-        if (isDone) {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#0C4A6E] border border-[#38BDF8] font-mono text-[9px] font-extrabold uppercase" style="background:#0C4A6E !important;color:#BAE6FD !important;">✓ Final</span>`;
-        } else if (bothOpen) {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#64748B] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#BEF264 !important;">🟢 2 Open Slots</span>`;
-        } else if (anyOpen) {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#38BDF8] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#BAE6FD !important;">🟢 1 Open Slot</span>`;
-        } else if (isAct || m.status === 'LIVE') {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#A3E635] font-mono text-[9px] font-black uppercase shadow-xs" style="background:#A3E635 !important;color:#05140D !important;">🟣 On Court</span>`;
-        } else if (m.status === 'PENDING') {
-          statusPill = `<span class="px-2.5 py-0.5 rounded-full bg-[#1E293B] border border-[#475569] font-mono text-[9px] font-bold uppercase" style="background:#1E293B !important;color:#E2E8F0 !important;">⏳ Awaiting</span>`;
-        }
-
-        return `
-          <div ${clickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${isAct ? 'is-active-match' : ''} ${isDone ? 'is-completed-match' : ''} space-y-2.5">
-            <div class="flex items-center justify-between gap-2 px-0.5">
-              <span class="font-mono text-[10px] font-black uppercase tracking-wider" style="color:#BEF264 !important;">${pfEscapeHtml(stageTag)} &bull; ${pfEscapeHtml(m.court || 'Court 1')}</span>
-              ${statusPill}
-            </div>
-            <div class="space-y-2.5">
-              ${renderSlot(m.teamA, m.scoreA, m.winner === 'A', waitA, dir)}
-              ${renderSlot(m.teamB, m.scoreB, m.winner === 'B', waitB, dir)}
-            </div>
-          </div>
-        `;
-      };
-
-      const centerCrestHtml = `
-        <div class="pf-center-crest-wrap">
-          <div class="pf-center-court-crest">
-            <div class="pf-center-court-crest-inner">
-              <img src="${logoPath}" alt="P&amp;F Rally Ground Official Crest">
-            </div>
-          </div>
-          <div class="px-3.5 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest shadow-md whitespace-nowrap" style="background:#A3E635 !important;color:#04120B !important;">
-            P&amp;F RALLY GROUND
-          </div>
-        </div>
-      `;
-
-      if (mode === 'QF') {
-        return `
-          <div class="pf-phase-slide-panel space-y-5 py-2">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; LEFT BRACKET (QF1 &amp; QF2)</span>
-                </div>
-                ${renderMatchNode(qf1, 'left', 'QUARTERFINAL 1 (QF1)')}
-                ${renderMatchNode(qf2, 'left', 'QUARTERFINAL 2 (QF2)')}
-              </div>
-              <div class="lg:col-span-2 flex flex-col items-center justify-center py-3">
-                ${centerCrestHtml}
-              </div>
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; RIGHT BRACKET (QF3 &amp; QF4)</span>
-                </div>
-                ${renderMatchNode(qf3, 'right', 'QUARTERFINAL 3 (QF3)')}
-                ${renderMatchNode(qf4, 'right', 'QUARTERFINAL 4 (QF4)')}
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      if (mode === 'SF') {
-        return `
-          <div class="pf-phase-slide-panel space-y-5 max-w-6xl mx-auto py-3">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1 (${pfEscapeHtml(sf1.court || 'Court 1')})</span>
-                </div>
-                ${renderMatchNode(sf1, 'left', 'SEMIFINAL 1 (WINNERS QF1 vs QF2)')}
-              </div>
-              <div class="lg:col-span-2 flex flex-col items-center justify-center py-3">
-                ${centerCrestHtml}
-              </div>
-              <div class="lg:col-span-5 space-y-4">
-                <div class="text-center mb-1">
-                  <span class="inline-block px-4 py-1.5 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-xs font-black uppercase tracking-widest" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2 (${pfEscapeHtml(sf2.court || 'Court 2')})</span>
-                </div>
-                ${renderMatchNode(sf2, 'right', 'SEMIFINAL 2 (WINNERS QF3 vs QF4)')}
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      const finIsAct = isAdminInteractive && fin.id === activeMatchId;
-      const finClickAttr = isAdminInteractive ? `onclick="adminSelectBracketMatch('FIN', true)"` : '';
-      const finWaitA = String(fin.teamA || '').startsWith('Winner ');
-      const finWaitB = String(fin.teamB || '').startsWith('Winner ');
-
-      const grandFinalCardHtml = `
-        <div class="max-w-3xl mx-auto pt-3">
-          <div ${finClickAttr} class="pf-sym-match-card ${isAdminInteractive ? 'cursor-pointer' : ''} ${finIsAct ? 'is-active-match' : ''} ${fin.status === 'COMPLETED' ? 'is-completed-match' : ''} p-5 sm:p-6 border-2 border-[#A3E635] shadow-2xl">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <span class="px-3.5 py-1 rounded-full bg-[#A3E635] font-mono text-[10px] font-black uppercase tracking-widest" style="background:#A3E635 !important;color:#04120B !important;">
-                🏆 GRAND CHAMPIONSHIP FINAL &bull; ${pfEscapeHtml(fin.court || 'Court 1')}
-              </span>
-              <span class="font-mono text-[10px] font-extrabold uppercase" style="color:#A7F3D0 !important;">
-                ${fin.status === 'COMPLETED' ? '👑 CHAMPIONSHIP DECIDED' : (finIsAct ? '🟣 LIVE ON COURT — SCORING BELOW' : (isAdminInteractive ? 'CLICK TO SCORE FINAL MATCH' : 'GOLD MEDAL CHAMPIONSHIP'))}
-              </span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-center">
-              <div class="md:col-span-5">
-                ${renderSlot(fin.teamA, fin.scoreA, fin.winner === 'A', finWaitA, 'left')}
-              </div>
-              <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
-                <span class="px-3 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[10px] font-black" style="background:#04120B !important;color:#BEF264 !important;">VS</span>
-              </div>
-              <div class="md:col-span-5">
-                ${renderSlot(fin.teamB, fin.scoreB, fin.winner === 'B', finWaitB, 'right')}
-              </div>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
-              <div class="text-lg sm:text-xl font-black uppercase tracking-[0.22em]" style="color:#FFFFFF !important;">FINAL</div>
-              ${champName
-                ? `<div class="px-4 py-1.5 rounded-full bg-[#A3E635] font-mono text-xs font-black uppercase shadow-lg" style="background:#A3E635 !important;color:#04120B !important;">👑 TOURNAMENT CHAMPION: ${pfEscapeHtml(champName)}</div>`
-                : `<div class="text-xs font-mono" style="color:#E2E8F0 !important;">Winners of Semifinal 1 (1/2) &amp; Semifinal 2 (1/2) clash for the Gold Medal</div>`
-              }
-            </div>
-          </div>
-        </div>
-      `;
-
-      if (mode === 'FIN') {
-        return `
-          <div class="pf-phase-slide-panel space-y-5 py-2">
-            <div class="flex justify-center">${centerCrestHtml}</div>
-            ${grandFinalCardHtml}
-          </div>
-        `;
-      }
-
-      return `
-        <div class="pf-phase-slide-panel space-y-7">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-            <div class="lg:col-span-3 space-y-4">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS A &amp; B</span>
-              </div>
-              <div class="space-y-4">
-                ${renderMatchNode(qf1, 'left', 'QF1')}
-                ${renderMatchNode(qf2, 'left', 'QF2')}
-              </div>
-            </div>
-
-            <div class="lg:col-span-2 space-y-4 relative">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 1</span>
-              </div>
-              ${renderMatchNode(sf1, 'left', 'SF1')}
-            </div>
-
-            <div class="lg:col-span-2 py-3 flex flex-col items-center justify-center">
-              ${centerCrestHtml}
-              <div class="hidden lg:flex flex-col items-center pt-2">
-                <div class="flex items-center">
-                  <span class="w-6 h-0.5 bg-[#A3E635]"></span>
-                  <span class="w-2.5 h-2.5 rotate-45 bg-[#A3E635] border border-slate-950"></span>
-                  <span class="w-6 h-0.5 bg-[#A3E635]"></span>
-                </div>
-                <div class="w-0.5 h-8 bg-gradient-to-b from-[#A3E635] to-[#38BDF8]"></div>
-                <span class="w-2.5 h-2.5 rotate-45 bg-[#38BDF8] border border-slate-950"></span>
-              </div>
-            </div>
-
-            <div class="lg:col-span-2 space-y-4 relative">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#A3E635] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/2 &bull; SEMIFINAL 2</span>
-              </div>
-              ${renderMatchNode(sf2, 'right', 'SF2')}
-            </div>
-
-            <div class="lg:col-span-3 space-y-4">
-              <div class="text-center mb-1">
-                <span class="inline-block px-3.5 py-1 rounded-full bg-[#04120B] border border-[#38BDF8] font-mono text-[11px] font-black uppercase tracking-widest shadow-xs" style="background:#04120B !important;color:#FFFFFF !important;">1/4 &bull; QUARTERFINALS C &amp; D</span>
-              </div>
-              <div class="space-y-4">
-                ${renderMatchNode(qf3, 'right', 'QF3')}
-                ${renderMatchNode(qf4, 'right', 'QF4')}
-              </div>
-            </div>
-          </div>
-
-          ${grandFinalCardHtml}
-        </div>
-      `;
-    }
-
-    let adminMatchStopwatchInterval = null;
-    let adminMatchStopwatchSeconds = 0;
-    let adminBracketPhaseIndex = 0;
-    const ADMIN_BRACKET_PHASES = [
-      { key: 'ALL', num: '🏆', label: 'Full Bracket' },
-      { key: 'QF',  num: '①', label: 'Quarterfinals (4)' },
-      { key: 'SF',  num: '②', label: 'Semifinals (2)' },
-      { key: 'FIN', num: '③', label: 'Grand Final (1)' }
-    ];
-    function adminSelectBracketPhase(idx) {
-      adminBracketPhaseIndex = ((idx % ADMIN_BRACKET_PHASES.length) + ADMIN_BRACKET_PHASES.length) % ADMIN_BRACKET_PHASES.length;
-      renderAdminNativeBracketWorkspace();
-    }
-    function adminStepBracketPhase(delta) {
-      adminSelectBracketPhase(adminBracketPhaseIndex + delta);
-    }
-
-    function formatAdminStopwatch(sec) {
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
-      return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    }
-
-    function adminToggleMatchStopwatch() {
-      const btn = document.getElementById('adm-sk-timer-btn');
-      if (adminMatchStopwatchInterval) {
-        clearInterval(adminMatchStopwatchInterval);
-        adminMatchStopwatchInterval = null;
-        if (btn) btn.textContent = '▶ Resume';
-      } else {
-        adminMatchStopwatchInterval = setInterval(() => {
-          adminMatchStopwatchSeconds++;
-          const disp = document.getElementById('adm-sk-timer-display');
-          if (disp) disp.textContent = formatAdminStopwatch(adminMatchStopwatchSeconds);
-        }, 1000);
-        if (btn) btn.textContent = '⏸ Pause';
-      }
-    }
-
-    function adminResetMatchStopwatch() {
-      if (adminMatchStopwatchInterval) {
-        clearInterval(adminMatchStopwatchInterval);
-        adminMatchStopwatchInterval = null;
-      }
-      adminMatchStopwatchSeconds = 0;
-      const disp = document.getElementById('adm-sk-timer-display');
-      if (disp) disp.textContent = '00:00';
-      const btn = document.getElementById('adm-sk-timer-btn');
-      if (btn) btn.textContent = '▶ Start';
-    }
-
-    function adminSpeakOfficialScoreCall() {
-      const trn = getActiveAdminBracketTournament();
-      const m = (trn && trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      const srvSide = m.serverSide || 'A';
-      const srvNum = m.serverNum || 2;
-      const srvScore = srvSide === 'A' ? (m.scoreA || 0) : (m.scoreB || 0);
-      const rcvScore = srvSide === 'A' ? (m.scoreB || 0) : (m.scoreA || 0);
-      const srvTeam = srvSide === 'A' ? m.teamA : m.teamB;
-      const phrase = `Score is ${srvScore}, ${rcvScore}, Server ${srvNum}. Serving: ${srvTeam}.`;
-      const logEl = document.getElementById('adm-sk-last-action');
-      if (logEl) logEl.textContent = `🔊 Called: "${srvScore} - ${rcvScore} - ${srvNum}"`;
       try {
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(phrase);
-          u.rate = 0.98;
-          window.speechSynthesis.speak(u);
-        }
+        await fetch('/api/bookings/status', {
+          method: 'POST',
+          headers: getAdminAuthHeaders(),
+          body: JSON.stringify({ ref: regId, status: mappedBookingStatus })
+        });
       } catch (e) {}
-    }
 
-    function renderAdminNativeBracketWorkspace() {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-
-      const selEl = document.getElementById('adm-brk-trn-select');
-      if (selEl) {
-        selEl.innerHTML = getAdminTournamentsList().map(t => `<option value="${pfEscapeHtml(t.id)}" ${t.id === trn.id ? 'selected' : ''}>${pfEscapeHtml(t.title)} (${adminCountRealTournamentTeams(t)}/${t.maxTeams || 24} Joined)</option>`).join('');
-      }
-      const targetPts = Number(trn.scoringTarget || 11);
-      const targetEl = document.getElementById('adm-brk-target-select');
-      if (targetEl) targetEl.value = String(targetPts);
-      const targetPill = document.getElementById('adm-sk-target-pill');
-      if (targetPill) targetPill.textContent = `Game to ${targetPts} Pts (Win by 2)`;
-
-      const fmtPill = document.getElementById('adm-brk-format-pill');
-      if (fmtPill) fmtPill.textContent = trn.format || 'Official Tournament';
-      const arenaSubFmt = document.getElementById('adm-arena-sub-format');
-      if (arenaSubFmt) arenaSubFmt.textContent = (trn.format || 'OFFICIAL FORMAT').toUpperCase();
-      const feePill = document.getElementById('adm-brk-fee-pill');
-      const realCnt = adminCountRealTournamentTeams(trn);
-      if (feePill) feePill.textContent = `Entry: ₱${Number(trn.entryFee || 0).toLocaleString()} • ${realCnt}/${trn.maxTeams || 24} Teams Joined`;
-      const titleEl = document.getElementById('adm-brk-title');
-      if (titleEl) titleEl.textContent = trn.title;
-      const arenaBannerTitle = document.getElementById('adm-arena-banner-title');
-      if (arenaBannerTitle) arenaBannerTitle.textContent = trn.title;
-      const metaEl = document.getElementById('adm-brk-meta');
-      if (metaEl) metaEl.textContent = `${trn.date} • ${trn.time} • ${trn.division} • ${trn.courts || 'Courts 1 – 4'}`;
-
-      const playersStrip = document.getElementById('adm-brk-players-strip');
-      if (playersStrip) {
-        playersStrip.innerHTML = (trn.players || []).map((pName, idx) => {
-          const isOpen = adminIsOpenSeedSlot(pName);
-          const seedNum = ADMIN_SEED_SLOT_NUMBERS[idx] || (idx + 1);
-          return `
-            <div onclick="adminOpenTournamentPlayersModal('${pfEscapeHtml(trn.id)}')" class="cursor-pointer p-2.5 rounded-xl ${isOpen ? 'bg-slate-50 border border-dashed border-slate-300 text-slate-500' : 'bg-white border-2 border-[#15803D] text-slate-900'} hover:border-[#8B5CF6] flex items-center gap-2 shadow-2xs transition">
-              <span class="w-6 h-6 rounded-lg ${isOpen ? 'bg-slate-200 text-slate-700' : 'bg-[#0F291E] text-white'} font-mono text-[10px] font-extrabold flex items-center justify-center flex-shrink-0" style="${isOpen ? '' : 'background:#0F291E !important;color:#FFFFFF !important;'}">#${seedNum}</span>
-              <span class="font-bold truncate">${pfEscapeHtml(pName)}</span>
-            </div>
-          `;
-        }).join('');
-      }
-
-      const stagesGrid = document.getElementById('adm-brk-stages-grid');
-      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      const matches = Array.isArray(trn.bracket) && trn.bracket.length >= 7 ? trn.bracket : adminBuildBracketForPlayers(trn.players, dc);
-      trn.bracket = matches;
-      const doneCount = matches.filter(m => m.status === 'COMPLETED').length;
-      const progPill = document.getElementById('adm-brk-progress-pill');
-      if (progPill) progPill.textContent = `${doneCount} / ${matches.length} Matches Completed`;
-
-      if (stagesGrid) {
-        const curPh = ADMIN_BRACKET_PHASES[adminBracketPhaseIndex] || ADMIN_BRACKET_PHASES[0];
-        const phBar = `<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 bg-[#04120B]/85 p-3 rounded-2xl border border-[#A3E635]/40 mb-5"><div class="flex flex-wrap items-center gap-1.5">${ADMIN_BRACKET_PHASES.map((ph, i) => `<button type="button" onclick="adminSelectBracketPhase(${i})" class="${i === adminBracketPhaseIndex ? 'pf-trn-btn-volt' : 'pf-trn-btn-arena-ghost'} px-3 py-1.5 rounded-xl font-mono text-xs transition flex items-center gap-1.5"><span class="text-[10px] font-black opacity-80">${ph.num}</span><span>${ph.label}</span></button>`).join('')}</div><div class="flex items-center gap-1.5"><button type="button" onclick="adminStepBracketPhase(-1)" class="pf-trn-btn-arena-ghost px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">← Prev</button><button type="button" onclick="adminStepBracketPhase(1)" class="pf-trn-btn-volt px-3 py-1.5 rounded-xl font-mono text-xs uppercase transition">Next →</button></div></div>`;
-        stagesGrid.innerHTML = phBar + pfBuildSymmetricalBracketTreeHtml(trn, adminActiveBracketMatchId, true, '../assets/logo.png', curPh.key);
-      }
-
-      const quickPills = document.getElementById('adm-sk-quick-match-pills');
-      if (quickPills) {
-        quickPills.innerHTML = matches.map(m => {
-          const isAct = m.id === adminActiveBracketMatchId;
-          const isDone = m.status === 'COMPLETED';
-          const btnCls = isAct ? 'pf-trn-btn-primary' : (isDone ? 'pf-trn-btn-emerald' : 'pf-trn-btn-secondary');
-          return `
-            <button type="button" onclick="adminSelectBracketMatch('${m.id}', false)" class="${btnCls} px-3 py-1.5 rounded-xl font-mono text-[10px] uppercase transition">
-              ${m.id === 'FIN' ? '🏆 FINAL' : m.id}${isDone ? ' ✓' : ''}
-            </button>
-          `;
-        }).join('');
-      }
-
-      const activeM = matches.find(m => m.id === adminActiveBracketMatchId) || matches[0];
-      if (activeM) {
-        if (typeof activeM.timeoutsA !== 'number') activeM.timeoutsA = 2;
-        if (typeof activeM.timeoutsB !== 'number') activeM.timeoutsB = 2;
-
-        const lbl = document.getElementById('adm-sk-match-label');
-        if (lbl) lbl.textContent = `${activeM.label} (${activeM.id}) • ${activeM.court || 'Court 1'}`;
-        const crt = document.getElementById('adm-sk-court-select');
-        if (crt) crt.value = activeM.court || 'Court 1';
-        const tA = document.getElementById('adm-sk-team-a');
-        if (tA) tA.textContent = activeM.teamA;
-        const tB = document.getElementById('adm-sk-team-b');
-        if (tB) tB.textContent = activeM.teamB;
-        const sA = document.getElementById('adm-sk-score-a');
-        if (sA) sA.textContent = String(activeM.scoreA || 0);
-        const sB = document.getElementById('adm-sk-score-b');
-        if (sB) sB.textContent = String(activeM.scoreB || 0);
-
-        const toA = document.getElementById('adm-sk-timeouts-a');
-        if (toA) toA.textContent = `⏱️ Time-Outs Left: ${activeM.timeoutsA}`;
-        const toB = document.getElementById('adm-sk-timeouts-b');
-        if (toB) toB.textContent = `⏱️ Time-Outs Left: ${activeM.timeoutsB}`;
-
-        const srvSide = activeM.serverSide || 'A';
-        const srvNum = activeM.serverNum || 2;
-        const srvScore = srvSide === 'A' ? (activeM.scoreA || 0) : (activeM.scoreB || 0);
-        const rcvScore = srvSide === 'A' ? (activeM.scoreB || 0) : (activeM.scoreA || 0);
-        const callEl = document.getElementById('adm-sk-callout');
-        if (callEl) callEl.textContent = `${srvScore} - ${rcvScore} - ${srvNum}`;
-        const infoEl = document.getElementById('adm-sk-serving-info');
-        if (infoEl) infoEl.textContent = `Serving: ${srvSide === 'A' ? activeM.teamA : activeM.teamB} • Server #${srvNum}`;
-
-        const bA = document.getElementById('adm-sk-badge-a');
-        const bB = document.getElementById('adm-sk-badge-b');
-        if (bA && bB) {
-          if (srvSide === 'A') {
-            bA.textContent = `🎾 SERVING #${srvNum}`;
-            bA.setAttribute('style', 'background:#0F291E !important;color:#FFFFFF !important;');
-            bB.textContent = 'RECEIVING';
-            bB.setAttribute('style', 'background:#E2E8F0 !important;color:#1E293B !important;');
-          } else {
-            bB.textContent = `🎾 SERVING #${srvNum}`;
-            bB.setAttribute('style', 'background:#0F291E !important;color:#FFFFFF !important;');
-            bA.textContent = 'RECEIVING';
-            bA.setAttribute('style', 'background:#E2E8F0 !important;color:#1E293B !important;');
-          }
-        }
-
-        const ptAlert = document.getElementById('adm-sk-point-alert');
-        if (ptAlert) {
-          const scA = Number(activeM.scoreA || 0);
-          const scB = Number(activeM.scoreB || 0);
-          const nearWinA = scA >= targetPts - 1 && scA >= scB + 1;
-          const nearWinB = scB >= targetPts - 1 && scB >= scA + 1;
-          if (nearWinA || nearWinB) {
-            ptAlert.classList.remove('hidden');
-            ptAlert.textContent = activeM.id === 'FIN' ? '🔥 CHAMPIONSHIP POINT' : '🔥 GAME POINT';
-          } else {
-            ptAlert.classList.add('hidden');
-          }
-        }
-      }
-    }
-
-    function adminSelectBracketMatch(matchId, scrollPortal) {
-      adminActiveBracketMatchId = matchId;
-      renderAdminNativeBracketWorkspace();
-      const logEl = document.getElementById('adm-sk-last-action');
-      if (logEl) logEl.textContent = `Selected ${matchId} for live scoring`;
-      if (scrollPortal) {
-        const portal = document.getElementById('admin-pro-scoring-portal');
-        if (portal) portal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }
-
-    async function adminChangeBracketScoringTarget(val) {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      trn.scoringTarget = Number(val) || 11;
-      await saveAndSyncAdminTournaments(`Updated scoring target to ${trn.scoringTarget} pts`);
-    }
-
-    async function adminChangeActiveMatchCourt(newCourt) {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      const m = (trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      m.court = newCourt;
-      await saveAndSyncAdminTournaments(`Assigned ${m.label} to ${newCourt}`);
-    }
-
-    async function adminAdjustBracketScore(side, delta) {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      const m = (trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      if (side === 'A') {
-        m.scoreA = Math.max(0, Number(m.scoreA || 0) + delta);
-        if (delta > 0) m.serverSide = 'A';
-      } else {
-        m.scoreB = Math.max(0, Number(m.scoreB || 0) + delta);
-        if (delta > 0) m.serverSide = 'B';
-      }
-      if (m.status === 'PENDING' || m.status === 'READY') m.status = 'LIVE';
-      const logEl = document.getElementById('adm-sk-last-action');
-      if (logEl) {
-        const teamName = side === 'A' ? m.teamA : m.teamB;
-        logEl.textContent = `${delta > 0 ? '+1 Pt' : '-1 Pt'} ${teamName} (${m.scoreA}-${m.scoreB})`;
-      }
-      await saveAndSyncAdminTournaments();
-    }
-
-    async function adminUseBracketTimeout(side) {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      const m = (trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      if (typeof m.timeoutsA !== 'number') m.timeoutsA = 2;
-      if (typeof m.timeoutsB !== 'number') m.timeoutsB = 2;
-      if (side === 'A') {
-        if (m.timeoutsA <= 0) { alert('Side A has no time-outs remaining in this game.'); return; }
-        m.timeoutsA--;
-      } else {
-        if (m.timeoutsB <= 0) { alert('Side B has no time-outs remaining in this game.'); return; }
-        m.timeoutsB--;
-      }
-      const logEl = document.getElementById('adm-sk-last-action');
-      if (logEl) logEl.textContent = `⏱️ 60s Time-Out called by Side ${side}`;
-      await saveAndSyncAdminTournaments(`⏱️ 60s Time-Out called by Side ${side}`);
-    }
-
-    async function adminSwapMatchSides() {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      const m = (trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      const tmpTeam = m.teamA; m.teamA = m.teamB; m.teamB = tmpTeam;
-      const tmpScore = m.scoreA; m.scoreA = m.scoreB; m.scoreB = tmpScore;
-      const tmpTo = m.timeoutsA; m.timeoutsA = m.timeoutsB; m.timeoutsB = tmpTo;
-      m.serverSide = m.serverSide === 'A' ? 'B' : 'A';
-      const logEl = document.getElementById('adm-sk-last-action');
-      if (logEl) logEl.textContent = `⇄ Swapped court ends (${m.teamA} ↔ ${m.teamB})`;
-      await saveAndSyncAdminTournaments();
-    }
-
-    async function adminRotateBracketServer() {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      const m = (trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      if (m.serverNum === 1) m.serverNum = 2;
-      else {
-        m.serverSide = m.serverSide === 'A' ? 'B' : 'A';
-        m.serverNum = 1;
-      }
-      const logEl = document.getElementById('adm-sk-last-action');
-      if (logEl) logEl.textContent = `⇄ Side Out / Server rotated to Side ${m.serverSide} #${m.serverNum}`;
-      await saveAndSyncAdminTournaments();
-    }
-
-    function adminConfirmResetSingleMatch() {
-      const trn = getActiveAdminBracketTournament();
-      const m = (trn && trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      openDeleteConfirmModal({
-        title: `Reset ${m.label} Score to 0 – 0?`,
-        itemName: `${m.teamA} vs ${m.teamB}`,
-        extraInfo: 'This will reset the current match score back to 0 – 0 – 2 and restore 2 time-outs per side.',
-        onConfirm: async () => {
-          m.scoreA = 0;
-          m.scoreB = 0;
-          m.timeoutsA = 2;
-          m.timeoutsB = 2;
-          m.serverSide = 'A';
-          m.serverNum = 2;
-          m.winner = null;
-          m.status = 'LIVE';
-          adminResetMatchStopwatch();
-          await saveAndSyncAdminTournaments(`↺ Reset ${m.label} score to 0 – 0`);
-        }
-      });
-    }
-
-    function adminConfirmDeclareMatchWinner() {
-      const trn = getActiveAdminBracketTournament();
-      const m = (trn && trn.bracket || []).find(x => x.id === adminActiveBracketMatchId);
-      if (!m) return;
-      if (Number(m.scoreA || 0) === Number(m.scoreB || 0)) {
-        alert('Score is tied! A winning pair/team must lead by at least 1–2 points.');
-        return;
-      }
-      const winSide = Number(m.scoreA || 0) > Number(m.scoreB || 0) ? 'A' : 'B';
-      const winTeam = winSide === 'A' ? m.teamA : m.teamB;
-      openDeleteConfirmModal({
-        title: `Confirm Match Winner: ${winTeam}?`,
-        itemName: `${m.label} (${m.scoreA} – ${m.scoreB})`,
-        extraInfo: `${winTeam} will be marked as winner and automatically advance in the ${trn.title} Championship Bracket.`,
-        onConfirm: async () => {
-          m.winner = winSide;
-          m.status = 'COMPLETED';
-          const findM = (id) => (trn.bracket || []).find(x => x.id === id);
-          if (m.id === 'QF1') { const s = findM('SF1'); if (s) { s.teamA = winTeam; if (!s.teamB.startsWith('Winner')) s.status = 'READY'; } }
-          else if (m.id === 'QF2') { const s = findM('SF1'); if (s) { s.teamB = winTeam; if (!s.teamA.startsWith('Winner')) s.status = 'READY'; } }
-          else if (m.id === 'QF3') { const s = findM('SF2'); if (s) { s.teamA = winTeam; if (!s.teamB.startsWith('Winner')) s.status = 'READY'; } }
-          else if (m.id === 'QF4') { const s = findM('SF2'); if (s) { s.teamB = winTeam; if (!s.teamA.startsWith('Winner')) s.status = 'READY'; } }
-          else if (m.id === 'SF1') { const f = findM('FIN'); if (f) { f.teamA = winTeam; if (!f.teamB.startsWith('Winner')) f.status = 'READY'; } }
-          else if (m.id === 'SF2') { const f = findM('FIN'); if (f) { f.teamB = winTeam; if (!f.teamA.startsWith('Winner')) f.status = 'READY'; } }
-          const nextM = (trn.bracket || []).find(x => x.status !== 'COMPLETED');
-          if (nextM) adminActiveBracketMatchId = nextM.id;
-          await saveAndSyncAdminTournaments(`🏆 ${winTeam} wins ${m.label} and advances!`);
-        }
-      });
-    }
-
-    function adminConfirmShuffleActiveBracket() {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      openDeleteConfirmModal({
-        title: `Shuffle All 8 Seeds in ${trn.title}?`,
-        itemName: trn.title,
-        extraInfo: 'This will randomly re-seed all 8 bracket slots across Quarterfinals 1–4 and reset match scores to 0 – 0.',
-        onConfirm: async () => {
-          const shuffled = [...(trn.players || [])];
-          for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-          }
-          trn.players = shuffled;
-          const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-          trn.bracket = adminBuildBracketForPlayers(shuffled, dc);
-          adminActiveBracketMatchId = 'QF1';
-          await saveAndSyncAdminTournaments(`🔀 Shuffled 8 seeds for "${trn.title}"!`);
-        }
-      });
-    }
-
-    function adminConfirmResetActiveBracket() {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      openDeleteConfirmModal({
-        title: `Reset Entire Bracket for ${trn.title}?`,
-        itemName: trn.title,
-        extraInfo: 'All Quarterfinal, Semifinal, and Final match scores will be reset to 0 – 0 while keeping your current bracket seed slots.',
-        onConfirm: async () => {
-          const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-          trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
-          adminActiveBracketMatchId = 'QF1';
-          await saveAndSyncAdminTournaments(`↺ Reset bracket scores for "${trn.title}"!`);
-        }
-      });
-    }
-
-    async function adminClearTournamentPlayersToZero(trnId) {
-      const list = getAdminTournamentsList();
-      const trn = trnId ? list.find(t => t.id === trnId) : getActiveAdminBracketTournament();
-      if (!trn) return;
-      trn.players = [...ADMIN_OPEN_SEED_LABELS];
-      trn.registrations = [];
-      trn.registeredCount = 0;
-      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
-      const modal = document.getElementById('admin-trn-players-modal');
-      if (modal && !modal.classList.contains('hidden')) {
-        adminOpenTournamentPlayersModal(trn.id);
-      }
-      await saveAndSyncAdminTournaments(`🧹 Cleared "${trn.title}" to 0 players (All 8 seeds are now Open)!`);
-    }
-
-    async function adminLoadDemoTournamentPlayers(trnId) {
-      const list = getAdminTournamentsList();
-      const trn = trnId ? list.find(t => t.id === trnId) : getActiveAdminBracketTournament();
-      if (!trn) return;
-      trn.players = [...DEMO_SAMPLE_TOURNAMENT_PLAYERS];
-      trn.registeredCount = 8;
-      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
-      const modal = document.getElementById('admin-trn-players-modal');
-      if (modal && !modal.classList.contains('hidden')) {
-        adminOpenTournamentPlayersModal(trn.id);
-      }
-      await saveAndSyncAdminTournaments(`🧪 Loaded 8 demo test pairs into "${trn.title}" (Click "Clear All to 0" anytime to reset)!`);
+      await saveAndSyncAdminTournaments(`✅ Marked ${reg.player1 || reg.teamName} (${regId}) as ${newStatus}!`);
     }
 
     async function adminQuickAddRealTeamToTournament() {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
+      const typeSel = (document.getElementById('adm-quick-add-type')?.value || 'Single').trim();
       const p1 = (document.getElementById('adm-quick-add-p1')?.value || '').trim();
       const p2 = (document.getElementById('adm-quick-add-p2')?.value || '').trim();
       const ph = (document.getElementById('adm-quick-add-phone')?.value || '').trim();
-      const dv = (document.getElementById('adm-quick-add-div')?.value || 'Intermediate 3.5').trim();
+      const pay = (document.getElementById('adm-quick-add-pay')?.value || 'Manual (Cash/Venue)').trim();
+
       if (!p1) {
-        alert('Please enter Player 1 / Team Name.');
+        alert('Please enter Customer Full Name.');
         return;
       }
-      const pairLabel = p2 ? `${p1} & ${p2}` : p1;
-      if (!Array.isArray(trn.players) || trn.players.length < 8) trn.players = [...ADMIN_OPEN_SEED_LABELS];
+
+      const list = getAdminTournamentsList();
+      const trn = list.find(t => adminNormalizeTournamentType(t) === typeSel) || getActiveAdminBracketTournament();
+      if (!trn) return;
+
+      const isSingle = typeSel === 'Single';
+      const pairLabel = (!isSingle && p2) ? `${p1} & ${p2}` : p1;
+      const regRef = 'PF-TRN-' + Math.floor(100000 + Math.random() * 900000);
       if (!Array.isArray(trn.registrations)) trn.registrations = [];
 
-      const openIdx = trn.players.findIndex(p => adminIsOpenSeedSlot(p));
-      const seedNum = openIdx >= 0 ? (ADMIN_SEED_SLOT_NUMBERS[openIdx] || (openIdx + 1)) : (trn.registrations.length + 1);
-      const bracketLabel = `Seed #${seedNum} • ${pairLabel} (${dv})`;
-      if (openIdx >= 0) {
-        trn.players[openIdx] = bracketLabel;
-        const slotInp = document.getElementById('adm-trn-player-inp-' + openIdx);
-        if (slotInp) slotInp.value = bracketLabel;
-      }
-      trn.registrations.push({
-        id: 'ADM-ENT-' + Date.now().toString().slice(-5),
+      trn.registrations.unshift({
+        id: regRef,
+        bookingRef: regRef,
+        tournamentId: trn.id,
+        tournamentTitle: trn.title,
+        tournamentType: typeSel,
         teamName: pairLabel,
         player1: p1,
-        partner: p2 || 'N/A',
+        partner: isSingle ? 'Solo (Single)' : (p2 || 'Partner TBD'),
         phone: ph || 'Walk-In / Desk',
-        division: dv,
-        paymentMethod: 'Desk / Verified',
-        paymentRef: 'ADMIN-VERIFIED',
-        status: 'CONFIRMED',
-        seedNumber: seedNum,
-        registeredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        email: '',
+        division: 'Intermediate (3.5)',
+        entryFee: Number(trn.entryFee || 0),
+        paymentMethod: pay,
+        paymentRef: 'ADMIN-ENTRY',
+        status: 'ACCEPTED',
+        registeredAt: new Date().toLocaleString([], { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })
       });
       trn.registeredCount = adminCountRealTournamentTeams(trn);
-      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
 
-      document.getElementById('adm-quick-add-p1').value = '';
-      document.getElementById('adm-quick-add-p2').value = '';
-      document.getElementById('adm-quick-add-phone').value = '';
+      ['adm-quick-add-p1', 'adm-quick-add-p2', 'adm-quick-add-phone'].forEach(k => {
+        const el = document.getElementById(k);
+        if (el) el.value = '';
+      });
 
-      adminOpenTournamentPlayersModal(trn.id);
-      await saveAndSyncAdminTournaments(`✅ Added "${pairLabel}" as Seed #${seedNum} (${trn.registeredCount}/${trn.maxTeams || 24} Teams)!`);
+      await saveAndSyncAdminTournaments(`✅ Added customer "${pairLabel}" (${typeSel}) as ACCEPTED!`);
     }
 
-    async function adminRemoveSingleRegistration(regId) {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn || !Array.isArray(trn.registrations)) return;
-      const targetReg = trn.registrations.find(r => r.id === regId);
-      trn.registrations = trn.registrations.filter(r => r.id !== regId);
-      if (targetReg && Array.isArray(trn.players)) {
-        trn.players = trn.players.map((p, idx) => {
-          if (p.includes(targetReg.teamName)) return ADMIN_OPEN_SEED_LABELS[idx] || `Open Seed #${idx + 1} — Available`;
-          return p;
-        });
-      }
-      trn.registeredCount = adminCountRealTournamentTeams(trn);
-      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      trn.bracket = adminBuildBracketForPlayers(trn.players, dc);
-      adminOpenTournamentPlayersModal(trn.id);
-      await saveAndSyncAdminTournaments(`🗑️ Removed entrant from "${trn.title}"`);
-    }
-
-    function adminOpenTournamentPlayersModal(trnId) {
-      if (trnId) adminActiveBracketTrnId = trnId;
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      let modal = document.getElementById('admin-trn-players-modal');
-      if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'admin-trn-players-modal';
-        modal.className = 'fixed inset-0 z-[96] hidden flex items-center justify-center p-4';
-        modal.innerHTML = `
-          <div onclick="document.getElementById('admin-trn-players-modal').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-          <div class="relative z-10 w-full max-w-3xl rounded-3xl bg-white text-slate-900 border-2 border-slate-300 p-6 shadow-2xl space-y-4 max-h-[92dvh] overflow-y-auto">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
-              <div>
-                <span class="text-[10px] font-mono font-black uppercase text-[#5B21B6] block">👥 OFFICIAL COMMUNITY ROSTER &amp; 8 BRACKET SEEDS MANAGER</span>
-                <h4 id="adm-trn-players-heading" class="text-base sm:text-lg font-black uppercase text-slate-900">Manage Tournament Players</h4>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <button type="button" onclick="adminClearTournamentPlayersToZero()" class="pf-trn-btn-danger px-3 py-1.5 rounded-xl font-mono text-[10px] uppercase">🧹 Clear All to 0 Players</button>
-                <button type="button" onclick="adminLoadDemoTournamentPlayers()" class="pf-trn-btn-secondary px-3 py-1.5 rounded-xl font-mono text-[10px] uppercase">🧪 Load 8 Demo Pairs (Test)</button>
-                <button type="button" onclick="document.getElementById('admin-trn-players-modal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs">✕</button>
-              </div>
-            </div>
-
-            <!-- Quick Add Real Walk-In / Verified Entrant Form -->
-            <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2.5 text-xs">
-              <div class="font-mono text-[10px] font-black uppercase text-emerald-900">+ Add Real Registered Player / Doubles Pair (Auto-Assigns Next Open Seed):</div>
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
-                <div class="sm:col-span-3">
-                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Player 1 Name *</label>
-                  <input type="text" id="adm-quick-add-p1" placeholder="e.g. Juan Dela Cruz" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
-                </div>
-                <div class="sm:col-span-3">
-                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Partner / Squad</label>
-                  <input type="text" id="adm-quick-add-p2" placeholder="e.g. Carlo Reyes" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
-                </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Phone</label>
-                  <input type="text" id="adm-quick-add-phone" placeholder="0917..." class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-mono text-slate-900">
-                </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[9px] font-mono font-bold uppercase text-slate-600 mb-0.5">Division</label>
-                  <input type="text" id="adm-quick-add-div" value="Intermediate 3.5" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-900">
-                </div>
-                <div class="sm:col-span-2">
-                  <button type="button" onclick="adminQuickAddRealTeamToTournament()" class="pf-trn-btn-emerald w-full py-1.5 px-2.5 rounded-lg font-mono text-[10px] uppercase">+ Add Team</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Live Community Entrants Log -->
-            <div id="adm-trn-real-registrations-box" class="space-y-2 text-xs"></div>
-
-            <!-- 8 Bracket Seed Slots -->
-            <div>
-              <div class="text-[10px] font-mono font-extrabold uppercase text-slate-600 mb-2">8 Championship Bracket Seed Slots (Leave as "Open Seed #X — Available" for unfilled slots):</div>
-              <div id="adm-trn-players-inputs" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs"></div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
-              <button type="button" onclick="document.getElementById('admin-trn-players-modal').classList.add('hidden')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold uppercase text-xs">Cancel</button>
-              <button type="button" onclick="adminSaveTournamentPlayersFromModal()" class="px-5 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black uppercase text-xs shadow-md" style="color:#FFFFFF !important;">💾 Save Roster &amp; Update Bracket</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-      const realCnt = adminCountRealTournamentTeams(trn);
-      document.getElementById('adm-trn-players-heading').textContent = `${trn.title} (${realCnt} / ${trn.maxTeams || 24} Real Teams Joined)`;
-
-      const regBox = document.getElementById('adm-trn-real-registrations-box');
-      const regs = Array.isArray(trn.registrations) ? trn.registrations : [];
-      if (regBox) {
-        if (regs.length === 0) {
-          regBox.innerHTML = `<div class="p-3 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-600 text-xs font-semibold">🟢 <b>0 Online Registrations Yet</b> — When players register on the website (or you add them above), their full name, partner, mobile number, division, and GCash/Maya reference number appear here automatically.</div>`;
-        } else {
-          regBox.innerHTML = `
-            <div class="font-mono text-[10px] font-black uppercase text-[#0F291E]">📋 Verified Community Entrants (${regs.length}):</div>
-            <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-              ${regs.map((r, i) => `
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
-                  <div>
-                    <span class="font-black text-slate-900">#${i + 1} ${pfEscapeHtml(r.teamName)}</span>
-                    <span class="text-[11px] font-mono text-slate-600 ml-2">📞 ${pfEscapeHtml(r.phone)} • ${pfEscapeHtml(r.division)} • ${pfEscapeHtml(r.paymentMethod)} (Ref: ${pfEscapeHtml(r.paymentRef)})</span>
-                  </div>
-                  <button type="button" onclick="adminRemoveSingleRegistration('${pfEscapeHtml(r.id)}')" class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-mono text-[10px] font-bold">✕ Remove</button>
-                </div>
-              `).join('')}
-            </div>
-          `;
+    async function adminRemoveSingleRegistration(regId, trnId) {
+      const list = getAdminTournamentsList();
+      list.forEach(t => {
+        if (!trnId || t.id === trnId) {
+          if (Array.isArray(t.registrations)) {
+            t.registrations = t.registrations.filter(r => r && r.id !== regId && r.bookingRef !== regId);
+            t.registeredCount = adminCountRealTournamentTeams(t);
+          }
         }
-      }
-
-      const inputsWrap = document.getElementById('adm-trn-players-inputs');
-      const players = Array.isArray(trn.players) && trn.players.length >= 8 ? trn.players : [...ADMIN_OPEN_SEED_LABELS];
-      inputsWrap.innerHTML = players.slice(0, 8).map((pName, idx) => {
-        const seedNum = ADMIN_SEED_SLOT_NUMBERS[idx] || (idx + 1);
-        return `
-          <div>
-            <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Seed #${seedNum} Slot (QF${Math.floor(idx / 2) + 1})</label>
-            <input type="text" id="adm-trn-player-inp-${idx}" value="${pfEscapeHtml(pName)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-bold focus:outline-none focus:border-emerald-600">
-          </div>
-        `;
-      }).join('');
-      modal.classList.remove('hidden');
-    }
-
-    async function adminSaveTournamentPlayersFromModal() {
-      const trn = getActiveAdminBracketTournament();
-      if (!trn) return;
-      const updatedPlayers = [];
-      for (let i = 0; i < 8; i++) {
-        const inp = document.getElementById('adm-trn-player-inp-' + i);
-        const seedNum = ADMIN_SEED_SLOT_NUMBERS[i] || (i + 1);
-        const val = inp && inp.value.trim() ? inp.value.trim() : `Open Seed #${seedNum} — Available`;
-        updatedPlayers.push(val);
-      }
-      trn.players = updatedPlayers;
-      trn.registeredCount = adminCountRealTournamentTeams(trn);
-      const dc = Array.isArray(trn.designatedCourts) && trn.designatedCourts.length ? trn.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      trn.bracket = adminBuildBracketForPlayers(updatedPlayers, dc);
-      const modal = document.getElementById('admin-trn-players-modal');
-      if (modal) modal.classList.add('hidden');
-      await saveAndSyncAdminTournaments(`👥 Saved roster (${trn.registeredCount} real teams) & updated bracket for "${trn.title}"!`);
+      });
+      await saveAndSyncAdminTournaments(`🗑️ Removed registration ${regId}`);
     }
 
     function adminResetDefaultTournaments() {
       openDeleteConfirmModal({
-        title: 'Restore Default Tournament Lineup (0 Fake Players • Show 1 Event)?',
-        itemName: 'Official Club Tournament Lineup (Clean 0-Player Start)',
-        extraInfo: 'This restores the 4 official Pickleball tournaments with 0 fake filler players (all 8 bracket seeds Open & Available) and shows Event #1 by default.',
+        title: 'Restore Default Single & Double Tournaments?',
+        itemName: '2 Official Tournament Types (Single & Double)',
+        extraInfo: 'This restores the default Single and Double tournaments with 24 available slots each.',
         onConfirm: async () => {
           if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
           currentSiteConfig.tournaments = JSON.parse(JSON.stringify(DEFAULT_ADMIN_TOURNAMENTS));
           currentSiteConfig.tournamentsPublishedOnHome = true;
           adminActiveBracketTrnId = currentSiteConfig.tournaments[0].id;
-          adminActiveBracketMatchId = 'QF1';
-          await saveAndSyncAdminTournaments('🏆 Restored clean tournament lineup (0 fake players, all seeds open)!');
+          await saveAndSyncAdminTournaments('🏆 Restored default Single & Double tournaments!');
         }
       });
-    }
-
-    function adminDeleteTournament(trnId) {
-      const list = getAdminTournamentsList();
-      const target = list.find(t => t.id === trnId);
-      openDeleteConfirmModal({
-        title: 'Delete Official Tournament?',
-        itemName: target ? target.title : `Tournament #${trnId}`,
-        extraInfo: target ? `Format: ${target.format} • Date: ${target.date} • Entry Fee: ₱${target.entryFee}` : 'This tournament will be removed from the schedule.',
-        onConfirm: async () => {
-          if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
-          currentSiteConfig.tournaments = getAdminTournamentsList().filter(t => t.id !== trnId);
-          await saveAndSyncAdminTournaments('🗑️ Removed tournament and synced live to website.');
-        }
-      });
-    }
-
-    function adminOpenTournamentEditorModal(editId) {
-      const list = getAdminTournamentsList();
-      const existing = editId ? list.find(t => t.id === editId) : null;
-      let modal = document.getElementById('admin-tournament-editor-modal');
-      if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'admin-tournament-editor-modal';
-        modal.className = 'fixed inset-0 z-[95] hidden flex items-center justify-center p-4';
-        modal.innerHTML = `
-          <div onclick="document.getElementById('admin-tournament-editor-modal').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-          <div class="relative z-10 w-full max-w-lg rounded-2xl bg-white text-slate-900 border-2 border-slate-300 p-6 shadow-2xl space-y-4 max-h-[90dvh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div>
-                <span class="text-[10px] font-mono font-black uppercase text-emerald-700 block">🏆 OFFICIAL PICKLEBALL TOURNAMENT &amp; PRICING EDITOR</span>
-                <h4 id="adm-trn-modal-heading" class="text-base sm:text-lg font-black uppercase text-slate-900">Add / Edit Tournament</h4>
-              </div>
-              <button type="button" onclick="document.getElementById('admin-tournament-editor-modal').classList.add('hidden')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs">✕</button>
-            </div>
-            <input type="hidden" id="adm-trn-edit-id" value="">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div class="sm:col-span-2">
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Tournament Title *</label>
-                <input type="text" id="adm-trn-title" placeholder="e.g. Bicol Open DUPR Pickleball Cup" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-emerald-600">
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Tournament Format *</label>
-                <select id="adm-trn-format" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-emerald-600">
-                  <option value="Round Robin + Medal Playoffs">Round Robin + Medal Playoffs (Pool Play + Single-Elimination)</option>
-                  <option value="Ladder Split Rotation (Individual Points)">King &amp; Queen of the Court (Ladder Split Rotation)</option>
-                  <option value="MLP 4-Player Co-Ed Squad Format (Rally Scoring)">MLP 4-Player Co-Ed Squad Format (Rally Scoring + Dreambreaker)</option>
-                  <option value="USA Pickleball Double Elimination Bracket">USA Pickleball Double Elimination Bracket</option>
-                  <option value="Single-Elimination Championship Knockout">Single-Elimination Championship Knockout</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Entry Fee / Price (₱) *</label>
-                <input type="number" id="adm-trn-fee" min="0" step="50" class="w-full bg-emerald-50 border-2 border-emerald-500 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-black">
-              </div>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Max Teams / Players</label>
-                <input type="number" id="adm-trn-max" min="2" max="128" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-black">
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Prize Pool &amp; Awards *</label>
-                <input type="text" id="adm-trn-prize" placeholder="₱25,000 + Trophies & Official DUPR Submission" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-bold">
-              </div>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Division / Skill Level</label>
-                <input type="text" id="adm-trn-division" placeholder="e.g. Men's, Women's & Mixed Doubles" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-semibold">
-              </div>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Assigned Courts</label>
-                <input type="text" id="adm-trn-courts" placeholder="All 4 Courts (Courts 1 – 4)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-semibold">
-              </div>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Date (YYYY-MM-DD)</label>
-                <input type="date" id="adm-trn-date" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
-              </div>
-              <div>
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Time Window</label>
-                <input type="text" id="adm-trn-time" placeholder="08:00 AM – 05:00 PM" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block text-[10px] font-mono uppercase text-slate-600 font-bold mb-1">Rules &amp; Format Description</label>
-                <textarea id="adm-trn-desc" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-medium"></textarea>
-              </div>
-            </div>
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
-              <button type="button" onclick="document.getElementById('admin-tournament-editor-modal').classList.add('hidden')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold uppercase text-xs">Cancel</button>
-              <button type="button" onclick="adminSaveTournamentFromModal()" class="px-5 py-2.5 rounded-xl bg-[#15803D] hover:bg-[#166534] text-white font-black uppercase text-xs shadow-md" style="color:#FFFFFF !important;">💾 Save &amp; Publish Tournament</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-      document.getElementById('adm-trn-modal-heading').textContent = existing ? `Edit Tournament: ${existing.title}` : 'Add New Official Pickleball Tournament';
-      document.getElementById('adm-trn-edit-id').value = existing ? existing.id : '';
-      document.getElementById('adm-trn-title').value = existing ? existing.title : 'Bicol Pickleball Open Showdown';
-      const fmtSel = document.getElementById('adm-trn-format');
-      if (fmtSel) {
-        const curFmt = existing ? existing.format : 'Round Robin + Medal Playoffs';
-        if (!Array.from(fmtSel.options).some(o => o.value === curFmt)) {
-          const opt = document.createElement('option');
-          opt.value = curFmt;
-          opt.textContent = curFmt;
-          fmtSel.appendChild(opt);
-        }
-        fmtSel.value = curFmt;
-      }
-      document.getElementById('adm-trn-division').value = existing ? (existing.division || 'Open Doubles & Mixed Divisions') : 'Open Doubles & Mixed Divisions';
-      document.getElementById('adm-trn-courts').value = existing ? (existing.courts || 'All 4 Courts (Courts 1 – 4)') : 'All 4 Courts (Courts 1 – 4)';
-      document.getElementById('adm-trn-date').value = existing ? existing.date : '2026-11-25';
-      document.getElementById('adm-trn-time').value = existing ? existing.time : '08:00 AM – 05:00 PM';
-      document.getElementById('adm-trn-fee').value = existing ? String(existing.entryFee ?? 500) : '500';
-      document.getElementById('adm-trn-max').value = existing ? String(existing.maxTeams || 24) : '24';
-      document.getElementById('adm-trn-prize').value = existing ? existing.prizePool : '₱20,000 Cash + Trophies';
-      document.getElementById('adm-trn-desc').value = existing ? (existing.description || '') : 'USA Pickleball official rules across Courts 1 – 4.';
-      modal.classList.remove('hidden');
-    }
-
-    async function adminSaveTournamentFromModal() {
-      const editId = (document.getElementById('adm-trn-edit-id')?.value || '').trim();
-      const title = (document.getElementById('adm-trn-title')?.value || '').trim();
-      if (!title) {
-        alert('Please enter a Tournament Title.');
-        return;
-      }
-      const list = getAdminTournamentsList();
-      const existing = editId ? list.find(t => t.id === editId) : null;
-      const defaultPlayers = existing && Array.isArray(existing.players) ? existing.players : [...ADMIN_OPEN_SEED_LABELS];
-      const dc = existing && Array.isArray(existing.designatedCourts) ? existing.designatedCourts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-      const defaultBracket = existing && Array.isArray(existing.bracket) ? existing.bracket : adminBuildBracketForPlayers(defaultPlayers, dc);
-      const registrations = existing && Array.isArray(existing.registrations) ? existing.registrations : [];
-      const updatedItem = {
-        id: existing ? existing.id : ('trn-' + Date.now()),
-        title: title,
-        format: (document.getElementById('adm-trn-format')?.value || 'Round Robin + Medal Playoffs').trim(),
-        division: (document.getElementById('adm-trn-division')?.value || 'Open Doubles & Mixed Divisions').trim(),
-        courts: (document.getElementById('adm-trn-courts')?.value || 'All 4 Courts (Courts 1 – 4)').trim(),
-        designatedCourts: dc,
-        showCourtsOnSite: existing ? (existing.showCourtsOnSite !== false) : true,
-        published: existing ? (existing.published !== false) : true,
-        date: (document.getElementById('adm-trn-date')?.value || '2026-11-25').trim(),
-        time: (document.getElementById('adm-trn-time')?.value || '08:00 AM – 05:00 PM').trim(),
-        entryFee: Math.max(0, Number(document.getElementById('adm-trn-fee')?.value) || 0),
-        maxTeams: Math.max(2, Number(document.getElementById('adm-trn-max')?.value) || 24),
-        prizePool: (document.getElementById('adm-trn-prize')?.value || '₱20,000 Cash + Trophies').trim(),
-        registrations: registrations,
-        registeredCount: adminCountRealTournamentTeams({ players: defaultPlayers, registrations }),
-        approved: existing ? Boolean(existing.approved !== false) : true,
-        scoringTarget: existing ? Number(existing.scoringTarget || 11) : 11,
-        players: defaultPlayers,
-        bracket: defaultBracket,
-        status: 'OPEN FOR REGISTRATION',
-        description: (document.getElementById('adm-trn-desc')?.value || '').trim()
-      };
-      const modal = document.getElementById('admin-tournament-editor-modal');
-      if (modal) modal.classList.add('hidden');
-
-      const nextList = [...list];
-      const idx = nextList.findIndex(t => t.id === updatedItem.id);
-      if (idx >= 0) nextList[idx] = updatedItem;
-      else nextList.unshift(updatedItem);
-
-      if (!currentSiteConfig) currentSiteConfig = { ...DEFAULT_SITE_CONFIG };
-      currentSiteConfig.tournaments = nextList;
-      adminActiveBracketTrnId = updatedItem.id;
-      await saveAndSyncAdminTournaments(`🏆 Saved tournament "${updatedItem.title}" (₱${updatedItem.entryFee.toLocaleString()})!`);
     }
 
 async function adminSetOpenPlayWindowForDate() {
