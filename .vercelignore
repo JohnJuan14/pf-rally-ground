@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.zip
+*.pdf
+scratch/
+server.py
+sync_server_v2.py
+.git/

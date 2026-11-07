@@ -189,6 +189,8 @@ def append_security_log(db, event_type, detail, ip="127.0.0.1"):
 
 
 _MEMORY_DB = None
+_MEMORY_DB_UPDATED_AT = 0
+_LAST_SB_CHECK_TS = 0.0
 
 def Number_or_zero(v):
     try:
@@ -297,11 +299,31 @@ def _get_supabase_credentials():
 
 
 def _supabase_get_db():
+    global _MEMORY_DB, _MEMORY_DB_UPDATED_AT, _LAST_SB_CHECK_TS
     sb_url, sb_key = _get_supabase_credentials()
     if not sb_url or not sb_key:
         return None
+    now_s = time.time()
+    if isinstance(_MEMORY_DB, dict) and (now_s - _LAST_SB_CHECK_TS) < 2.5:
+        return _MEMORY_DB
     try:
         import urllib.request
+        if isinstance(_MEMORY_DB, dict) and _MEMORY_DB_UPDATED_AT > 0:
+            chk_req = urllib.request.Request(
+                f"{sb_url}/rest/v1/pf_cloud_state?id=eq.pf_rally_ground_db&select=updated_at",
+                headers={
+                    "apikey": sb_key,
+                    "Authorization": f"Bearer {sb_key}",
+                    "Accept": "application/json",
+                }
+            )
+            with urllib.request.urlopen(chk_req, timeout=2.5) as chk_resp:
+                chk_rows = json.loads(chk_resp.read().decode("utf-8"))
+                if isinstance(chk_rows, list) and len(chk_rows) > 0 and isinstance(chk_rows[0], dict):
+                    remote_ts = int(chk_rows[0].get("updated_at") or 0)
+                    _LAST_SB_CHECK_TS = now_s
+                    if remote_ts > 0 and remote_ts == _MEMORY_DB_UPDATED_AT:
+                        return _MEMORY_DB
         req = urllib.request.Request(
             f"{sb_url}/rest/v1/pf_cloud_state?id=eq.pf_rally_ground_db&select=data,updated_at",
             headers={
@@ -314,6 +336,8 @@ def _supabase_get_db():
             rows = json.loads(resp.read().decode("utf-8"))
             if isinstance(rows, list) and len(rows) > 0 and isinstance(rows[0], dict):
                 raw_data = rows[0].get("data")
+                _MEMORY_DB_UPDATED_AT = int(rows[0].get("updated_at") or 0)
+                _LAST_SB_CHECK_TS = now_s
                 if isinstance(raw_data, dict) and len(raw_data) > 0:
                     return raw_data
     except Exception:

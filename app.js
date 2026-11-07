@@ -237,6 +237,7 @@ const courtNames = {
 // ================= REAL-TIME SERVER SYNC =================
 
 async function syncStateFromServer(forceFull = false) {
+  if (!forceFull && typeof document !== "undefined" && document.hidden) return sharedServerState;
   const sinceParam = (!forceFull && window.__pfLastServerVersion) ? `&since=${encodeURIComponent(window.__pfLastServerVersion)}` : '';
   const endpoints = pfGetApiEndpoints(`/api/state?lite=1${sinceParam}`);
   for (const url of endpoints) {
