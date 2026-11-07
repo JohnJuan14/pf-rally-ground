@@ -1815,8 +1815,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             current_sc = _scrub_corrupted_utf8(current_sc)
             db["siteConfig"] = current_sc
             save_db(db)
-            db["sales"] = db.get("salesLedger", [])
-            self._send_json({"ok": True, "siteConfig": current_sc, "state": db})
+            self._send_json({"ok": True, "siteConfig": current_sc})
             return
 
         elif parsed.path == "/api/payment-config":
