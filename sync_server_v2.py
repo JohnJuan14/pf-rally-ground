@@ -297,9 +297,11 @@ def _scrub_corrupted_utf8(obj):
 def load_db():
     with db_lock:
         if not os.path.exists(DB_FILE):
+            sb_initial = _supabase_get_db()
+            initial_db = _scrub_corrupted_utf8(sb_initial) if isinstance(sb_initial, dict) and len(sb_initial) > 0 else DEFAULT_DB
             with open(DB_FILE, "w", encoding="utf-8") as f:
-                json.dump(DEFAULT_DB, f, indent=2)
-            return json.loads(json.dumps(DEFAULT_DB))
+                json.dump(initial_db, f, indent=2)
+            return json.loads(json.dumps(initial_db))
         try:
             with open(DB_FILE, "r", encoding="utf-8") as f:
                 data = _scrub_corrupted_utf8(json.load(f))
