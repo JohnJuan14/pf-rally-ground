@@ -6410,17 +6410,7 @@ function pfCountRealTournamentTeams(t) {
 window.pfCountRealTournamentTeams = pfCountRealTournamentTeams;
 
 function pfBuildDefaultBracketForPlayers(players, courts) {
-  const p = (Array.isArray(players) && players.length >= 8) ? players : [...PF_OPEN_SEED_LABELS];
-  const c = (Array.isArray(courts) && courts.length > 0) ? courts : ['Court 1', 'Court 2', 'Court 3', 'Court 4'];
-  return [
-    { id: 'QF1', stage: 'Quarterfinals', label: 'Quarterfinal 1', court: c[0 % c.length], teamA: p[0], teamB: p[1], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-    { id: 'QF2', stage: 'Quarterfinals', label: 'Quarterfinal 2', court: c[1 % c.length], teamA: p[2], teamB: p[3], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-    { id: 'QF3', stage: 'Quarterfinals', label: 'Quarterfinal 3', court: c[2 % c.length], teamA: p[4], teamB: p[5], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-    { id: 'QF4', stage: 'Quarterfinals', label: 'Quarterfinal 4', court: c[3 % c.length], teamA: p[6], teamB: p[7], scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-    { id: 'SF1', stage: 'Semifinals', label: 'Semifinal 1', court: c[0 % c.length], teamA: 'Winner QF1', teamB: 'Winner QF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-    { id: 'SF2', stage: 'Semifinals', label: 'Semifinal 2', court: c[1 % c.length], teamA: 'Winner QF3', teamB: 'Winner QF4', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null },
-    { id: 'FIN', stage: 'Championship Final', label: 'Gold Medal Final', court: c[0 % c.length], teamA: 'Winner SF1', teamB: 'Winner SF2', scoreA: 0, scoreB: 0, serverSide: 'A', serverNum: 2, toA: 2, toB: 2, status: 'PENDING', winner: null }
-  ];
+  return [];
 }
 
 function pfGetDefaultTournaments() {
@@ -6431,15 +6421,17 @@ function pfGetDefaultTournaments() {
       "tournamentType": "Single",
       "format": "Single",
       "formatKey": "SINGLE",
-      "division": "Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)",
-      "category": "1v1 Singles Competition",
+      "division": "Novice • Intermediate • Open",
+      "category": "Singles",
       "date": "2026-11-21",
-      "time": "08:00 AM – 05:00 PM",
+      "time": "8:00 AM – 5:00 PM",
       "countdownTarget": "2026-11-21T08:00:00",
-      "courts": "Courts 1 – 2",
-      "designatedCourts": ["Court 1", "Court 2"],
+      "courts": "Courts 1 – 4",
+      "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"],
+      "posterUrl": "assets/court-1.jpg",
+      "showPoster": true,
       "entryFee": 500,
-      "prizePool": "1st Place: ₱10,000 + Trophy • 2nd Place: ₱5,000 + Medals",
+      "prizePool": "₱10,000 + Trophies",
       "maxTeams": 24,
       "registeredCount": 0,
       "registrations": [],
@@ -6447,10 +6439,10 @@ function pfGetDefaultTournaments() {
       "published": true,
       "showCourtsOnSite": true,
       "scoringTarget": 11,
-      "status": "OPEN FOR REGISTRATION",
-      "description": "Official 1v1 Singles Pickleball Tournament at P&F Rally Ground. Guaranteed pool play matches followed by championship medal rounds.",
-      "players": [...PF_OPEN_SEED_LABELS],
-      "bracket": pfBuildDefaultBracketForPlayers(PF_OPEN_SEED_LABELS, ["Court 1", "Court 2"])
+      "status": "OPEN",
+      "description": "Official 1v1 Singles Pickleball Tournament at P&F Rally Ground. Pool play followed by knockout finals.",
+      "players": [],
+      "bracket": []
     },
     {
       "id": "trn-pf-doubles-cup",
@@ -6458,26 +6450,28 @@ function pfGetDefaultTournaments() {
       "tournamentType": "Double",
       "format": "Double",
       "formatKey": "DOUBLE",
-      "division": "Novice (2.5–3.0) • Intermediate (3.5) • Open (4.0+)",
-      "category": "2v2 Doubles Competition",
+      "division": "Novice • Intermediate • Open",
+      "category": "Doubles",
       "date": "2026-11-28",
-      "time": "08:00 AM – 05:00 PM",
+      "time": "8:00 AM – 5:00 PM",
       "countdownTarget": "2026-11-28T08:00:00",
-      "courts": "All 4 Courts (Courts 1 – 4)",
+      "courts": "Courts 1 – 4",
       "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"],
+      "posterUrl": "assets/court-2.jpg",
+      "showPoster": true,
       "entryFee": 850,
-      "prizePool": "1st Place: ₱20,000 + Trophies • 2nd Place: ₱10,000 + Medals",
+      "prizePool": "₱20,000 + Trophies",
       "maxTeams": 24,
       "registeredCount": 0,
       "registrations": [],
       "approved": true,
-      "published": true,
+      "published": false,
       "showCourtsOnSite": true,
       "scoringTarget": 11,
-      "status": "OPEN FOR REGISTRATION",
-      "description": "Official 2v2 Doubles Pickleball Tournament at P&F Rally Ground. Register with your partner for pool play and championship playoffs across Courts 1 – 4.",
-      "players": [...PF_OPEN_SEED_LABELS],
-      "bracket": pfBuildDefaultBracketForPlayers(PF_OPEN_SEED_LABELS, ["Court 1", "Court 2", "Court 3", "Court 4"])
+      "status": "OPEN",
+      "description": "Official 2v2 Doubles Pickleball Tournament at P&F Rally Ground. Register with your partner for pool play and finals.",
+      "players": [],
+      "bracket": []
     }
   ];
 }
@@ -6498,40 +6492,9 @@ function pfGetTournamentsList() {
   const defaults = pfGetDefaultTournaments();
   const rawList = Array.isArray(cfg.tournaments) ? cfg.tournaments : [];
 
-  // Check if rawList is the old 4-format legacy list (or empty) and normalize to the 2 official types: Single & Double
   const isLegacyFour = rawList.length > 2 || rawList.some(t => t && ['ROUND_ROBIN', 'KING_COURT', 'MLP_TEAM', 'DOUBLE_ELIM'].includes(String(t.formatKey || '')));
   if (rawList.length === 0 || isLegacyFour) {
-    // Collect any existing registrations from legacy items so zero customer data is lost
-    const singleRegs = [];
-    const doubleRegs = [];
-    rawList.forEach(item => {
-      if (!item || !Array.isArray(item.registrations)) return;
-      item.registrations.forEach(r => {
-        if (!r) return;
-        const rType = String(r.tournamentType || '').toLowerCase();
-        if (rType.includes('single') || (!r.partner || /^solo/i.test(String(r.partner)))) {
-          singleRegs.push({ ...r, tournamentType: 'Single' });
-        } else {
-          doubleRegs.push({ ...r, tournamentType: 'Double' });
-        }
-      });
-    });
-    return defaults.map(defItem => {
-      const isSingle = defItem.tournamentType === 'Single';
-      const matchingLegacy = rawList.find(x => x && x.id === defItem.id);
-      const merged = Object.assign({}, defItem, matchingLegacy || {});
-      merged.tournamentType = isSingle ? 'Single' : 'Double';
-      merged.format = isSingle ? 'Single' : 'Double';
-      merged.formatKey = isSingle ? 'SINGLE' : 'DOUBLE';
-      if (!Array.isArray(merged.registrations) || merged.registrations.length === 0) {
-        merged.registrations = isSingle ? singleRegs : doubleRegs;
-      }
-      merged.registeredCount = pfCountRealTournamentTeams(merged);
-      if (!merged.countdownTarget) {
-        merged.countdownTarget = `${merged.date || '2026-11-21'}T08:00:00`;
-      }
-      return merged;
-    });
+    return defaults.map(defItem => Object.assign({}, defItem));
   }
 
   return rawList.slice(0, 2).map((t, idx) => {
@@ -6548,19 +6511,18 @@ function pfGetTournamentsList() {
     if (!merged.countdownTarget) {
       merged.countdownTarget = `${merged.date || '2026-11-21'}T08:00:00`;
     }
+    if (merged.posterUrl === undefined) {
+      merged.posterUrl = defMatch.posterUrl || 'assets/court-1.jpg';
+    }
+    if (merged.showPoster === undefined) {
+      merged.showPoster = true;
+    }
     return merged;
   });
 }
 
 function pfSetTournamentFilter(filterKey) {
   activePublicTournamentFilter = String(filterKey || 'ALL').toUpperCase();
-  document.querySelectorAll('.pf-trn-filter-btn').forEach(btn => {
-    const f = String(btn.getAttribute('data-filter') || '').toUpperCase();
-    const isAct = f === activePublicTournamentFilter;
-    btn.className = isAct
-      ? 'pf-trn-filter-btn px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#0D1F18] text-white shadow-sm transition'
-      : 'pf-trn-filter-btn px-3.5 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider bg-[#F6F5F0] text-[#52605A] hover:text-[#0D1F18] border border-[#E2E0D8] transition';
-  });
   pfRenderPublicTournaments();
 }
 
@@ -6583,16 +6545,6 @@ function pfRenderLiveSpectatorBracketBanner() {
     banner.classList.add('hidden');
     banner.innerHTML = '';
   }
-}
-
-function pfFormatDesignatedCourtsLabel(t) {
-  if (!t) return 'Courts 1 – 4';
-  const dc = Array.isArray(t.designatedCourts) && t.designatedCourts.length ? t.designatedCourts : null;
-  if (dc) {
-    if (dc.length >= 4) return 'All 4 Courts (Courts 1 – 4)';
-    return dc.join(' • ');
-  }
-  return t.courts || 'Courts 1 – 4';
 }
 
 function pfComputeCountdownParts(targetIso, fallbackDateStr) {
@@ -6641,6 +6593,28 @@ if (!window.__pfTournamentCountdownInterval) {
   window.__pfTournamentCountdownInterval = setInterval(pfUpdateAllTournamentCountdowns, 1000);
 }
 
+function pfOpenTournamentPosterLightbox(srcUrl, titleText) {
+  if (!srcUrl) return;
+  let lb = document.getElementById('pf-trn-poster-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'pf-trn-poster-lightbox';
+    lb.className = 'fixed inset-0 z-[70] hidden flex items-center justify-center p-4';
+    lb.innerHTML = `
+      <div onclick="document.getElementById('pf-trn-poster-lightbox').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div class="relative z-10 max-w-3xl w-full max-h-[90dvh] flex flex-col items-center">
+        <img id="pf-trn-lb-img" src="" alt="Tournament Graphic" class="max-h-[84dvh] w-auto max-w-full object-contain rounded-2xl shadow-2xl">
+        <button type="button" onclick="document.getElementById('pf-trn-poster-lightbox').classList.add('hidden')" class="mt-3 px-4 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-medium transition">Close</button>
+      </div>
+    `;
+    document.body.appendChild(lb);
+  }
+  const imgEl = document.getElementById('pf-trn-lb-img');
+  if (imgEl) imgEl.src = srcUrl;
+  lb.classList.remove('hidden');
+}
+window.pfOpenTournamentPosterLightbox = pfOpenTournamentPosterLightbox;
+
 function pfRenderPublicTournaments() {
   try { pfRenderLiveSpectatorBracketBanner(); } catch (e) {}
   const sec = document.getElementById('tournaments');
@@ -6649,256 +6623,140 @@ function pfRenderPublicTournaments() {
 
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   const masterPublished = cfg.tournamentsPublishedOnHome !== false;
-  const allList = pfGetTournamentsList().filter(t => t && t.approved !== false && t.published !== false);
+  const fullList = pfGetTournamentsList();
 
-  const filtersWrap = document.getElementById('public-tournament-filters-wrap');
-  const isPublishedWithEvents = Boolean(masterPublished && allList.length > 0);
-
-  if (sec) sec.classList.remove('hidden');
-  if (filtersWrap) {
-    if (isPublishedWithEvents) {
-      filtersWrap.classList.remove('hidden');
-      filtersWrap.classList.add('flex');
-    } else {
-      filtersWrap.classList.add('hidden');
-      filtersWrap.classList.remove('flex');
+  // Admin chooses which tournament is held: Single or Double
+  const activeHeldType = String(cfg.activeTournamentType || '').toLowerCase();
+  let publishedList = fullList.filter(t => t && t.approved !== false && t.published !== false);
+  if (activeHeldType === 'single' || activeHeldType === 'double') {
+    const exactMatch = fullList.find(t => pfNormalizeTournamentTypeLabel(t).toLowerCase() === activeHeldType);
+    if (exactMatch && masterPublished) {
+      publishedList = [exactMatch];
     }
+  } else if (publishedList.length > 1) {
+    publishedList = [publishedList[0]];
   }
 
+  const isPublishedWithEvents = Boolean(masterPublished && publishedList.length > 0);
+  if (sec) sec.classList.remove('hidden');
+
   if (!isPublishedWithEvents) {
+    grid.className = 'w-full';
     grid.innerHTML = `
-      <div class="col-span-full rounded-2xl border border-dashed border-[#D5D3CC] bg-[#EFECE6]/60 px-6 py-14 sm:py-16 text-center">
-        <div class="w-11 h-11 rounded-xl bg-[#E2E0D8] text-[#475569] flex items-center justify-center mx-auto mb-4">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 21h8m-4-4v4m-5-9a5 5 0 01-4-5V5h4m10 7a5 5 0 004-5V5h-4M7 5h10v5a5 5 0 01-10 0V5z"/></svg>
-        </div>
-        <h3 class="text-lg sm:text-xl font-bold text-[#0D1F18]">No tournaments on the calendar yet</h3>
-        <p class="text-xs sm:text-sm text-[#52605A] max-w-md mx-auto mt-2 leading-relaxed">
-          Nothing is scheduled right now. New tournaments are posted here as soon as registration opens — check back, or ask us at the desk what's coming up.
-        </p>
+      <div class="max-w-2xl mx-auto rounded-2xl border border-[#E6E4DD] bg-white/70 px-6 py-14 text-center">
+        <h3 class="text-base font-semibold text-[#0D1F18]">No upcoming tournament scheduled</h3>
+        <p class="text-xs text-[#64748B] mt-1">New events will be posted here once registration opens.</p>
       </div>
     `;
     return;
   }
 
-  const filteredList = allList.filter(t => {
-    if (!activePublicTournamentFilter || activePublicTournamentFilter === 'ALL') return true;
-    const tType = pfNormalizeTournamentTypeLabel(t).toUpperCase();
-    return tType.includes(activePublicTournamentFilter) || activePublicTournamentFilter.includes(tType);
-  });
+  const t = publishedList[0];
+  const tType = pfNormalizeTournamentTypeLabel(t);
+  const isSingle = tType === 'Single';
+  const fee = Number(t.entryFee || 0);
+  const maxSlots = Math.max(2, Number(t.maxTeams || 24));
+  const takenSlots = Math.min(maxSlots, pfCountRealTournamentTeams(t));
+  const availableSlots = Math.max(0, maxSlots - takenSlots);
+  const pctFilled = maxSlots > 0 ? Math.min(100, Math.round((takenSlots / maxSlots) * 100)) : 0;
+  const cdTarget = t.countdownTarget || `${t.date || '2026-11-21'}T08:00:00`;
+  const cd = pfComputeCountdownParts(cdTarget, t.date);
+  const posterUrl = String(t.posterUrl || '').trim();
+  const hasPoster = t.showPoster !== false && posterUrl.length > 0;
 
-  const displayList = filteredList.length > 0 ? filteredList : allList;
-  grid.className = displayList.length === 1
-    ? 'grid grid-cols-1 max-w-3xl mx-auto gap-6'
-    : 'grid grid-cols-1 lg:grid-cols-2 gap-6';
+  grid.className = 'w-full';
+  grid.innerHTML = `
+    <div class="max-w-5xl mx-auto rounded-3xl bg-white border border-[#E6E4DD] shadow-[0_16px_40px_-12px_rgba(13,31,24,0.06)] overflow-hidden grid grid-cols-1 ${hasPoster ? 'md:grid-cols-12' : 'max-w-2xl'}">
+      ${hasPoster ? `
+        <div class="md:col-span-5 bg-[#F6F5F0] relative overflow-hidden cursor-pointer group min-h-[260px] md:min-h-full" onclick="pfOpenTournamentPosterLightbox('${pfEscapeHtml(posterUrl)}', '${pfEscapeHtml(t.title)}')">
+          <img src="${pfEscapeHtml(posterUrl)}" alt="${pfEscapeHtml(t.title)}" onerror="this.onerror=null;this.src='assets/court-1.jpg';" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500">
+        </div>
+      ` : ''}
 
-  grid.innerHTML = displayList.map((t) => {
-    const tType = pfNormalizeTournamentTypeLabel(t);
-    const isSingle = tType === 'Single';
-    const fee = Number(t.entryFee || 0);
-    const maxSlots = Math.max(2, Number(t.maxTeams || 24));
-    const takenSlots = Math.min(maxSlots, pfCountRealTournamentTeams(t));
-    const availableSlots = Math.max(0, maxSlots - takenSlots);
-    const pctFilled = maxSlots > 0 ? Math.min(100, Math.round((takenSlots / maxSlots) * 100)) : 0;
-    const cdTarget = t.countdownTarget || `${t.date || '2026-11-21'}T08:00:00`;
-    const cd = pfComputeCountdownParts(cdTarget, t.date);
-    const courtsLabel = pfFormatDesignatedCourtsLabel(t);
-    const unitLabel = isSingle ? 'Per Player (1v1 Single)' : 'Per Pair (2v2 Double)';
-
-    return `
-      <div class="rounded-3xl bg-white border-2 border-[#D5D3CC] shadow-xl overflow-hidden flex flex-col justify-between transition hover:border-[#15803D]">
-        <!-- Top Dark Emerald Tournament Header + Countdown Timer -->
-        <div class="p-6 sm:p-7 bg-[#0A2218] text-white space-y-5" style="background:#0A2218 !important;color:#FFFFFF !important;">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="px-3 py-1 rounded-full font-mono text-xs font-black uppercase tracking-wider shadow-sm" style="background:${isSingle ? '#38BDF8' : '#A3E635'} !important;color:#051810 !important;">
-                ${isSingle ? '🏓 TOURNAMENT TYPE: SINGLE' : '👥 TOURNAMENT TYPE: DOUBLE'}
-              </span>
-              <span class="px-2.5 py-1 rounded-full bg-white/10 border border-white/20 font-mono text-[10px] font-bold uppercase tracking-wider" style="color:#D1FAE5 !important;">
-                🔒 Private Registration
-              </span>
-            </div>
-            <span class="px-3 py-1 rounded-full bg-[#15803D] border border-[#4ADE80] font-mono text-[11px] font-black uppercase" style="background:#15803D !important;color:#FFFFFF !important;">
-              ${availableSlots > 0 ? '🟢 OPEN' : '🔴 FULL'}
+      <div class="${hasPoster ? 'md:col-span-7' : ''} p-7 sm:p-10 flex flex-col justify-between space-y-7 bg-white text-[#0D1F18]">
+        <div class="space-y-6">
+          <!-- Minimalist Top Meta -->
+          <div class="flex items-center justify-between gap-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F3EE] text-[#0D1F18] text-xs font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#15803D]"></span>
+              <span>${isSingle ? 'Single Tournament' : 'Double Tournament'}</span>
             </span>
+            <span class="text-xs text-[#64748B] font-medium">${pfEscapeHtml(t.date || 'Upcoming')} &bull; ${pfEscapeHtml(t.time || '8:00 AM')}</span>
           </div>
 
-          <div>
-            <h3 class="text-2xl sm:text-3xl font-black uppercase tracking-tight leading-tight" style="color:#FFFFFF !important;">
+          <!-- Clean Title & Short Description -->
+          <div class="space-y-2">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0D1F18]">
               ${pfEscapeHtml(t.title)}
             </h3>
-            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono mt-2" style="color:#A7F3D0 !important;">
-              <span>📅 ${pfEscapeHtml(t.date || 'TBA')}</span>
-              <span>⏰ ${pfEscapeHtml(t.time || '08:00 AM – 05:00 PM')}</span>
-              ${t.showCourtsOnSite !== false ? `<span>🏟️ ${pfEscapeHtml(courtsLabel)}</span>` : ''}
-            </div>
-            ${t.description ? `<p class="text-xs sm:text-sm mt-2.5 leading-relaxed" style="color:#E2E8F0 !important;">${pfEscapeHtml(t.description)}</p>` : ''}
+            ${t.description ? `<p class="text-sm text-[#52605A] leading-relaxed">${pfEscapeHtml(t.description)}</p>` : ''}
           </div>
 
-          <!-- Live Upcoming Event Countdown Timer -->
-          <div class="p-4 rounded-2xl bg-[#05130D] border border-[#15803D] space-y-2.5" data-pf-countdown-target="${pfEscapeHtml(cdTarget)}" data-pf-countdown-date="${pfEscapeHtml(t.date || '')}" style="background:#05130D !important;">
-            <div class="flex items-center justify-between text-[10px] font-mono font-extrabold uppercase tracking-widest" style="color:#A3E635 !important;">
-              <span>⏳ UPCOMING EVENT COUNTDOWN</span>
-              <span>${cd.isLiveOrPast ? 'EVENT IN PROGRESS' : 'LIVE TIMER'}</span>
+          <!-- Clean Minimalist Countdown -->
+          <div class="pt-1" data-pf-countdown-target="${pfEscapeHtml(cdTarget)}" data-pf-countdown-date="${pfEscapeHtml(t.date || '')}">
+            <span class="block text-[10px] font-mono uppercase tracking-[0.18em] text-[#64748B] mb-2">Event Starts In</span>
+            <div class="inline-flex items-baseline gap-4 sm:gap-6 px-5 py-3 rounded-2xl bg-[#F8F7F3] border border-[#ECEAE4]">
+              <div class="text-center">
+                <span data-cd="days" class="font-mono text-2xl sm:text-3xl font-semibold text-[#0D1F18]">${cd.days}</span>
+                <span class="block text-[10px] text-[#64748B] mt-0.5">Days</span>
+              </div>
+              <span class="text-lg text-[#CBD5E1] font-light">:</span>
+              <div class="text-center">
+                <span data-cd="hours" class="font-mono text-2xl sm:text-3xl font-semibold text-[#0D1F18]">${cd.hours}</span>
+                <span class="block text-[10px] text-[#64748B] mt-0.5">Hrs</span>
+              </div>
+              <span class="text-lg text-[#CBD5E1] font-light">:</span>
+              <div class="text-center">
+                <span data-cd="mins" class="font-mono text-2xl sm:text-3xl font-semibold text-[#0D1F18]">${cd.mins}</span>
+                <span class="block text-[10px] text-[#64748B] mt-0.5">Min</span>
+              </div>
+              <span class="text-lg text-[#CBD5E1] font-light">:</span>
+              <div class="text-center">
+                <span data-cd="secs" class="font-mono text-2xl sm:text-3xl font-semibold text-[#15803D]">${cd.secs}</span>
+                <span class="block text-[10px] text-[#64748B] mt-0.5">Sec</span>
+              </div>
             </div>
-            <div class="grid grid-cols-4 gap-2 text-center">
-              <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
-                <div data-cd="days" class="font-mono text-2xl sm:text-3xl font-black" style="color:#FFFFFF !important;">${cd.days}</div>
-                <span class="block text-[9px] font-mono uppercase tracking-widest mt-0.5" style="color:#94A3B8 !important;">Days</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
-                <div data-cd="hours" class="font-mono text-2xl sm:text-3xl font-black" style="color:#FFFFFF !important;">${cd.hours}</div>
-                <span class="block text-[9px] font-mono uppercase tracking-widest mt-0.5" style="color:#94A3B8 !important;">Hours</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
-                <div data-cd="mins" class="font-mono text-2xl sm:text-3xl font-black" style="color:#FFFFFF !important;">${cd.mins}</div>
-                <span class="block text-[9px] font-mono uppercase tracking-widest mt-0.5" style="color:#94A3B8 !important;">Minutes</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-[#0F291E] border border-white/15">
-                <div data-cd="secs" class="font-mono text-2xl sm:text-3xl font-black" style="color:#A3E635 !important;">${cd.secs}</div>
-                <span class="block text-[9px] font-mono uppercase tracking-widest mt-0.5" style="color:#94A3B8 !important;">Seconds</span>
-              </div>
+          </div>
+
+          <!-- Minimalist 3-Column Specs: Slots, Fee, Prizes -->
+          <div class="grid grid-cols-3 gap-4 py-4 border-y border-[#ECEAE4]">
+            <div>
+              <span class="block text-[11px] text-[#64748B]">Slots Available</span>
+              <strong class="text-base sm:text-lg font-semibold text-[#0D1F18] mt-0.5 block">${availableSlots} <span class="text-xs font-normal text-[#64748B]">/ ${maxSlots}</span></strong>
+            </div>
+            <div class="border-l border-[#ECEAE4] pl-4">
+              <span class="block text-[11px] text-[#64748B]">Entry Fee</span>
+              <strong class="text-base sm:text-lg font-semibold text-[#0D1F18] mt-0.5 block">${fee > 0 ? '₱' + fee.toLocaleString() : 'Free'}</strong>
+            </div>
+            <div class="border-l border-[#ECEAE4] pl-4">
+              <span class="block text-[11px] text-[#64748B]">Prize Pool</span>
+              <strong class="text-sm sm:text-base font-semibold text-[#0D1F18] mt-0.5 block leading-snug">${pfEscapeHtml(t.prizePool || 'Trophies')}</strong>
             </div>
           </div>
         </div>
 
-        <!-- Body: Slots Available + Pricing & Prizes + Register Now CTA -->
-        <div class="p-6 sm:p-7 space-y-5 flex-1 flex flex-col justify-between bg-white text-[#0D1F18]">
-          <div class="space-y-4">
-            <!-- Number of Slots Available (Privacy Safe: No Customer Names Shown) -->
-            <div class="p-4 rounded-2xl bg-[#F0FDF4] border-2 border-[#86EFAC] space-y-2.5">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#166534] block">NUMBER OF SLOTS AVAILABLE</span>
-                  <div class="text-2xl sm:text-3xl font-black font-mono text-[#065F46] mt-0.5">
-                    ${availableSlots} <span class="text-sm sm:text-base font-bold text-[#15803D]">of ${maxSlots} Slots Available</span>
-                  </div>
-                </div>
-                <span class="px-3 py-1.5 rounded-xl bg-[#065F46] text-white font-mono text-xs font-black uppercase" style="background:#065F46 !important;color:#FFFFFF !important;">
-                  ${takenSlots} Registered • ${availableSlots} Left
-                </span>
-              </div>
-              <div class="w-full h-2.5 rounded-full bg-[#DCFCE7] overflow-hidden border border-[#86EFAC]">
-                <div class="h-full bg-[#15803D] transition-all duration-300" style="width:${pctFilled}%;"></div>
-              </div>
-              <p class="text-[11px] text-[#166534] font-medium">
-                🔒 <b>Customer Privacy Guaranteed:</b> Registered participant names are never displayed publicly on the website.
-              </p>
+        <!-- Clean Button Row -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+          <div class="w-full sm:w-44 space-y-1.5">
+            <div class="w-full h-1.5 rounded-full bg-[#ECEAE4] overflow-hidden">
+              <div class="h-full bg-[#15803D] rounded-full transition-all duration-300" style="width:${pctFilled}%;"></div>
             </div>
-
-            <!-- Pricing & Prizes Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div class="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#475569] block">💰 REGISTRATION PRICING</span>
-                <div class="text-2xl sm:text-3xl font-mono font-black text-[#0F172A] mt-1">
-                  ${fee > 0 ? '₱' + fee.toLocaleString() : 'FREE'}
-                </div>
-                <span class="text-[11px] font-semibold text-[#15803D] block mt-0.5">${pfEscapeHtml(unitLabel)}</span>
-              </div>
-              <div class="p-4 rounded-2xl bg-[#FEFCE8] border border-[#FDE047]">
-                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#854D0E] block">🏆 TOURNAMENT PRIZES</span>
-                <div class="text-sm sm:text-base font-black text-[#713F12] mt-1 leading-snug">
-                  ${pfEscapeHtml(t.prizePool || 'Cash Prizes + Official Club Trophies')}
-                </div>
-                <span class="text-[11px] font-medium text-[#854D0E] block mt-0.5">Divisions: ${pfEscapeHtml(t.division || 'All Skill Levels')}</span>
-              </div>
-            </div>
-
-            <!-- Accepted Payment Channels Strip -->
-            <div class="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[11px] font-mono font-bold text-[#334155]">
-              <span>💳 PAYMENT OPTIONS IN POPUP:</span>
-              <div class="flex flex-wrap items-center gap-1.5">
-                <span class="px-2 py-0.5 rounded bg-[#DBEAFE] text-[#1E40AF]">GCash</span>
-                <span class="px-2 py-0.5 rounded bg-[#D1FAE5] text-[#065F46]">Maya</span>
-                <span class="px-2 py-0.5 rounded bg-[#FEF3C7] text-[#92400E]">Manual / Cash</span>
-                <span class="px-2 py-0.5 rounded bg-[#EDE9FE] text-[#5B21B6]">Bank (BDO)</span>
-              </div>
-            </div>
+            <span class="block text-[11px] text-[#64748B]">${availableSlots} slots remaining</span>
           </div>
 
-          <!-- Register Now CTA Button (Opens Registration Form Popup) -->
-          <div class="pt-2">
-            <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" ${availableSlots <= 0 ? 'disabled' : ''} class="w-full py-4 px-6 rounded-2xl font-black uppercase text-sm sm:text-base tracking-wider shadow-lg transition transform active:scale-[0.99] flex items-center justify-center gap-2" style="background:${availableSlots > 0 ? '#0F291E' : '#94A3B8'} !important;color:#A3E635 !important;border:2px solid #15803D !important;">
-              <span>${availableSlots > 0 ? `📝 REGISTER NOW (${tType.toUpperCase()}) — OPEN REGISTRATION FORM` : '🚫 SLOTS FULL'}</span>
-              <span>→</span>
-            </button>
-          </div>
+          <button type="button" onclick="pfRegisterForTournament('${pfEscapeHtml(t.id)}')" ${availableSlots <= 0 ? 'disabled' : ''} class="w-full sm:w-auto px-8 py-3.5 rounded-xl font-medium text-sm transition shadow-xs cursor-pointer" style="background-color:${availableSlots > 0 ? '#0D1F18' : '#94A3B8'} !important;color:#FFFFFF !important;">
+            ${availableSlots > 0 ? 'Register Now' : 'Registration Full'}
+          </button>
         </div>
       </div>
-    `;
-  }).join('');
+    </div>
+  `;
 }
 window.renderPublicTournaments = pfRenderPublicTournaments;
 
-function pfSwitchTournamentPayMethod(methodKey) {
-  const m = methodKey || 'GCash';
-  const hiddenInp = document.getElementById('trn-reg-pay-method');
-  if (hiddenInp) hiddenInp.value = m;
-  ['GCash', 'Maya', 'Manual', 'Bank'].forEach(k => {
-    const btn = document.getElementById('trn-pay-btn-' + k);
-    if (btn) {
-      btn.className = (k === m)
-        ? 'pf-trn-btn-primary py-2.5 px-3 rounded-xl font-mono text-xs font-black uppercase transition shadow-sm'
-        : 'pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs font-bold uppercase transition';
-    }
-  });
-  const qrWrap = document.getElementById('trn-reg-qr-box');
-  const manualWrap = document.getElementById('trn-reg-manual-box');
-  const refWrap = document.getElementById('trn-reg-ref-wrap');
-  const qrImg = document.getElementById('trn-reg-qr-img');
-  const qrAcc = document.getElementById('trn-reg-qr-acc');
-  const qrMerch = document.getElementById('trn-reg-qr-merchant');
-  const qrCfg = (typeof pfGetPaymentConfig === 'function') ? pfGetPaymentConfig() : {};
-
-  if (m === 'Manual') {
-    if (qrWrap) qrWrap.classList.add('hidden');
-    if (refWrap) refWrap.classList.add('hidden');
-    if (manualWrap) manualWrap.classList.remove('hidden');
-  } else {
-    if (qrWrap) qrWrap.classList.remove('hidden');
-    if (refWrap) refWrap.classList.remove('hidden');
-    if (manualWrap) manualWrap.classList.add('hidden');
-    const feeTxt = document.getElementById('trn-reg-fee-display')?.textContent || '500';
-    const feeVal = Number(String(feeTxt).replace(/[^0-9.]/g, '') || 500);
-    if (typeof pfSetExactQrAmount === 'function') {
-      try { pfSetExactQrAmount(feeVal); } catch (e) {}
-    }
-    const chKey = m === 'Bank' ? 'bdo' : m.toLowerCase();
-    const resolvedQrSrc = (typeof pfGetOfficialQrUrl === 'function')
-      ? pfGetOfficialQrUrl(chKey)
-      : (m === 'GCash' ? (qrCfg.gcashQrUrl || 'assets/qr-gcash.png') : (m === 'Maya' ? (qrCfg.mayaQrUrl || 'assets/qr-maya.png') : (qrCfg.bankQrUrl || 'assets/qr-bdo.png')));
-    if (qrImg) {
-      qrImg.src = resolvedQrSrc;
-      qrImg.onerror = function() {
-        this.onerror = null;
-        this.src = m === 'GCash' ? 'assets/qr-gcash.png' : (m === 'Maya' ? 'assets/qr-maya.png' : 'assets/qr-bdo.png');
-      };
-    }
-    const accNo = m === 'GCash'
-      ? (qrCfg.gcashNumber || '0999 883 2346')
-      : (m === 'Maya' ? (qrCfg.mayaNumber || '0999 883 2346') : (qrCfg.bdoNumber || '0064-7017-8678'));
-    const merchName = m === 'GCash'
-      ? (qrCfg.gcashName || 'KA******E L.')
-      : (m === 'Maya' ? (qrCfg.mayaName || 'KATHERINE LIM') : (qrCfg.bdoName || 'BDO Unibank • P&F Rally Ground'));
-    const labelName = m === 'Bank' ? 'Bank Transfer (BDO)' : m;
-    if (qrAcc) qrAcc.textContent = `${labelName} Account / No.: ${accNo}`;
-    if (qrMerch) qrMerch.textContent = `Account Name: ${merchName}`;
-  }
-}
-window.pfSwitchTournamentPayMethod = pfSwitchTournamentPayMethod;
-
-function pfSwitchPopupTournamentType(typeLabel) {
-  const list = pfGetTournamentsList();
-  const targetType = String(typeLabel || 'Single').toLowerCase().includes('single') ? 'Single' : 'Double';
-  const matchedTrn = list.find(t => pfNormalizeTournamentTypeLabel(t) === targetType) || list[0];
-  if (matchedTrn) {
-    pfPopulateTournamentRegModal(matchedTrn, targetType);
-  }
-}
-window.pfSwitchPopupTournamentType = pfSwitchPopupTournamentType;
-
-function pfPopulateTournamentRegModal(trn, forcedType) {
+function pfPopulateTournamentRegModal(trn) {
   if (!trn) return;
-  const tType = forcedType || pfNormalizeTournamentTypeLabel(trn);
+  const tType = pfNormalizeTournamentTypeLabel(trn);
   const isSingle = tType === 'Single';
   const maxSlots = Math.max(2, Number(trn.maxTeams || 24));
   const takenSlots = Math.min(maxSlots, pfCountRealTournamentTeams(trn));
@@ -6913,23 +6771,11 @@ function pfPopulateTournamentRegModal(trn, forcedType) {
   const titleEl = document.getElementById('trn-reg-modal-title');
   const metaEl = document.getElementById('trn-reg-modal-meta');
   const feeEl = document.getElementById('trn-reg-fee-display');
-  const prizeEl = document.getElementById('trn-reg-prize-display');
-  const slotsBanner = document.getElementById('trn-reg-seed-banner');
   const partnerWrap = document.getElementById('trn-reg-partner-wrap');
 
   if (titleEl) titleEl.textContent = trn.title;
-  if (metaEl) metaEl.textContent = `Tournament Type: ${tType} • 📅 ${trn.date || 'TBA'} (${trn.time || '08:00 AM – 05:00 PM'})`;
-  if (feeEl) feeEl.textContent = `₱${fee.toLocaleString()}.00`;
-  if (prizeEl) prizeEl.textContent = trn.prizePool || 'Cash Prizes + Official Trophies';
-
-  ['Single', 'Double'].forEach(k => {
-    const btn = document.getElementById('trn-type-btn-' + k);
-    if (btn) {
-      btn.className = (k === tType)
-        ? 'pf-trn-btn-primary py-2.5 px-4 rounded-xl font-mono text-xs font-black uppercase transition shadow-sm'
-        : 'pf-trn-btn-secondary py-2.5 px-4 rounded-xl font-mono text-xs font-bold uppercase transition';
-    }
-  });
+  if (metaEl) metaEl.textContent = `${isSingle ? 'Single' : 'Double'} • ${availSlots} Slots Available`;
+  if (feeEl) feeEl.textContent = fee > 0 ? `₱${fee.toLocaleString()}` : 'Free';
 
   if (partnerWrap) {
     if (isSingle) {
@@ -6938,18 +6784,6 @@ function pfPopulateTournamentRegModal(trn, forcedType) {
       partnerWrap.classList.remove('hidden');
     }
   }
-
-  if (slotsBanner) {
-    slotsBanner.innerHTML = `
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <span>🟢 <b>Slots Available:</b> ${availSlots} of ${maxSlots} Slots Open (${tType} Division)</span>
-        <span class="px-2 py-0.5 rounded bg-emerald-800 text-white font-mono text-[10px]" style="background:#065F46 !important;color:#FFFFFF !important;">🔒 Customer Name Kept Private</span>
-      </div>
-    `;
-  }
-
-  const currentMethod = document.getElementById('trn-reg-pay-method')?.value || 'GCash';
-  pfSwitchTournamentPayMethod(currentMethod);
 }
 
 function pfRegisterForTournament(tournamentId) {
@@ -6958,138 +6792,66 @@ function pfRegisterForTournament(tournamentId) {
   if (!trn) return;
 
   let modal = document.getElementById('pf-tournament-reg-modal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'pf-tournament-reg-modal';
-    modal.className = 'fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4';
-    modal.innerHTML = `
-      <div onclick="pfCloseTournamentRegModal()" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
-      <div class="relative z-10 w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-3xl bg-white text-slate-900 border-2 border-[#15803D] p-5 sm:p-7 shadow-2xl space-y-4 touch-scroll">
-        <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
-          <div class="flex items-center gap-3">
-            <div class="pf-rect-logo-badge" style="width:46px;height:56px;"><img src="assets/logo.png" alt="P&amp;F Logo"></div>
-            <div>
-              <span class="px-2.5 py-0.5 rounded bg-[#0F291E] text-[#A3E635] font-mono text-[10px] font-black uppercase" style="background:#0F291E !important;color:#A3E635 !important;">🏆 OFFICIAL TOURNAMENT REGISTRATION FORM</span>
-              <h3 id="trn-reg-modal-title" class="text-lg sm:text-xl font-black uppercase text-slate-900 mt-1">Tournament Registration</h3>
-              <p id="trn-reg-modal-meta" class="text-xs font-mono text-emerald-700 font-bold"></p>
-            </div>
-          </div>
-          <button type="button" onclick="pfCloseTournamentRegModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white font-black text-xs">✕</button>
+  if (modal) {
+    modal.remove();
+  }
+  modal = document.createElement('div');
+  modal.id = 'pf-tournament-reg-modal';
+  modal.className = 'fixed inset-0 z-50 hidden flex items-center justify-center p-4';
+  modal.innerHTML = `
+    <div onclick="pfCloseTournamentRegModal()" class="absolute inset-0 bg-black/60 backdrop-blur-xs"></div>
+    <div class="relative z-10 w-full max-w-md rounded-3xl bg-white text-[#0D1F18] border border-[#E6E4DD] p-6 sm:p-8 shadow-2xl space-y-5">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p id="trn-reg-modal-meta" class="text-xs font-medium text-[#15803D]"></p>
+          <h3 id="trn-reg-modal-title" class="text-xl font-bold text-[#0D1F18] mt-0.5">Tournament Registration</h3>
+        </div>
+        <button type="button" onclick="pfCloseTournamentRegModal()" class="w-8 h-8 rounded-full bg-[#F6F5F0] hover:bg-[#E6E4DD] text-[#0D1F18] text-xs flex items-center justify-center transition">✕</button>
+      </div>
+
+      <input type="hidden" id="trn-reg-id" value="">
+      <input type="hidden" id="trn-reg-type-input" value="Single">
+
+      <div class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-xs font-medium text-[#334155] mb-1">Full Name</label>
+          <input type="text" id="trn-reg-name" placeholder="Your full name" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
         </div>
 
-        <input type="hidden" id="trn-reg-id" value="">
-        <input type="hidden" id="trn-reg-type-input" value="Single">
-        <input type="hidden" id="trn-reg-pay-method" value="GCash">
-
-        <!-- 1. Select Tournament Type: Single or Double -->
-        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-          <div>
-            <span class="text-[10px] font-mono font-black uppercase text-slate-600 block">1. Tournament Type (2 Options Only)</span>
-            <span class="text-xs font-bold text-slate-900">Choose Single (1v1) or Double (2v2):</span>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" id="trn-type-btn-Single" onclick="pfSwitchPopupTournamentType('Single')" class="pf-trn-btn-primary py-2.5 px-4 rounded-xl font-mono text-xs font-black uppercase transition">🏓 Single</button>
-            <button type="button" id="trn-type-btn-Double" onclick="pfSwitchPopupTournamentType('Double')" class="pf-trn-btn-secondary py-2.5 px-4 rounded-xl font-mono text-xs font-bold uppercase transition">👥 Double</button>
-          </div>
+        <div id="trn-reg-partner-wrap" class="hidden">
+          <label class="block text-xs font-medium text-[#334155] mb-1">Partner Name (Doubles)</label>
+          <input type="text" id="trn-reg-partner" placeholder="Partner's full name" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
         </div>
 
-        <!-- Slots & Prizes Summary Banner -->
-        <div id="trn-reg-seed-banner" class="p-3 rounded-2xl bg-[#F0FDF4] border border-[#86EFAC] text-xs font-bold text-[#065F46]"></div>
-        <div class="p-3 rounded-2xl bg-[#FEFCE8] border border-[#FDE047] text-xs flex flex-wrap items-center justify-between gap-2">
-          <span class="font-mono text-[10px] font-black uppercase text-[#854D0E]">🏆 Prizes:</span>
-          <strong id="trn-reg-prize-display" class="text-[#713F12] font-black"></strong>
+        <div>
+          <label class="block text-xs font-medium text-[#334155] mb-1">Mobile Number</label>
+          <input type="tel" id="trn-reg-phone" placeholder="0917 123 4567" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
         </div>
 
-        <!-- 2. Customer Full Details -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div>
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Player Full Name *</label>
-            <input type="text" id="trn-reg-name" placeholder="Enter your full name" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold">
-          </div>
-          <div>
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Mobile Number (11 Digits) *</label>
-            <input type="tel" id="trn-reg-phone" placeholder="0917 123 4567" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-mono font-bold">
-          </div>
-          <div id="trn-reg-partner-wrap" class="hidden">
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Doubles Partner Full Name *</label>
-            <input type="text" id="trn-reg-partner" placeholder="Partner's full name" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-semibold">
-          </div>
-          <div>
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Email Address (Optional)</label>
-            <input type="email" id="trn-reg-email" placeholder="you@email.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium">
-          </div>
-          <div>
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Skill Division *</label>
-            <select id="trn-reg-division" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold">
-              <option value="Novice (2.5–3.0)">Novice / Beginner (2.5–3.0)</option>
-              <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
-              <option value="Open (4.0+)">Advanced / Open (4.0+)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Notes / Request (Optional)</label>
-            <input type="text" id="trn-reg-notes" placeholder="e.g. Shirt size, schedule note" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium">
-          </div>
-        </div>
-
-        <!-- 3. Payment Method: GCash / Maya / Manual / Bank -->
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
-          <div class="space-y-2">
-            <span class="font-mono text-[10px] font-black uppercase text-slate-700 block">3. Select Payment Method (GCash / Maya / Manual / Bank):</span>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <button type="button" id="trn-pay-btn-GCash" onclick="pfSwitchTournamentPayMethod('GCash')" class="pf-trn-btn-primary py-2.5 px-3 rounded-xl font-mono text-xs font-black uppercase transition">GCash</button>
-              <button type="button" id="trn-pay-btn-Maya" onclick="pfSwitchTournamentPayMethod('Maya')" class="pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs font-bold uppercase transition">Maya</button>
-              <button type="button" id="trn-pay-btn-Manual" onclick="pfSwitchTournamentPayMethod('Manual')" class="pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs font-bold uppercase transition">Manual / Cash</button>
-              <button type="button" id="trn-pay-btn-Bank" onclick="pfSwitchTournamentPayMethod('Bank')" class="pf-trn-btn-secondary py-2.5 px-3 rounded-xl font-mono text-xs font-bold uppercase transition">Bank (BDO)</button>
-            </div>
-          </div>
-
-          <div id="trn-reg-qr-box" class="flex flex-col sm:flex-row items-center gap-4 p-3.5 rounded-2xl bg-white border-2 border-emerald-600/30 shadow-xs">
-            <div class="relative group cursor-pointer flex-shrink-0" onclick="if(window.pfOpenQrZoomModal){const im=document.getElementById('trn-reg-qr-img');pfOpenQrZoomModal(im?im.src:'assets/qr-gcash.png', document.getElementById('trn-reg-qr-acc')?.textContent||'Official Tournament QR');}">
-              <img id="trn-reg-qr-img" src="assets/qr-gcash.png" alt="Official Payment QR" class="w-36 h-36 sm:w-40 sm:h-40 object-contain rounded-xl border-2 border-slate-200 bg-white p-1.5 shadow-sm">
-              <span class="mt-1 block text-center text-[9px] font-mono font-extrabold uppercase text-emerald-700">🔍 Tap QR to Enlarge</span>
-            </div>
-            <div class="space-y-1.5 text-center sm:text-left flex-1">
-              <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-mono text-[9px] font-black uppercase">OFFICIAL TOURNAMENT PAYMENT</span>
-              <div id="trn-reg-qr-merchant" class="font-sans text-xs font-black uppercase text-[#0F291E]">Account Name: P&amp;F RALLY GROUND</div>
-              <div id="trn-reg-qr-acc" class="font-mono text-xs sm:text-sm font-black text-emerald-800">GCash Account / Mobile: 0999 883 2346</div>
-              <p class="text-[11px] text-slate-600 leading-relaxed">Scan the QR or transfer to the account above, then enter your Reference Number below. Or choose <b>Manual / Cash</b> to pay at the club desk.</p>
-            </div>
-          </div>
-
-          <div id="trn-reg-manual-box" class="hidden p-3.5 rounded-2xl bg-[#FEFCE8] border border-[#FDE047] text-[#713F12] text-xs font-semibold">
-            💵 <b>Manual / Cash Registration Selected:</b> Your registration will be submitted with status <b>PENDING</b>. Settle your entry fee at the P&amp;F Rally Ground front desk or directly with the Club Admin to confirm your slot.
-          </div>
-
-          <div id="trn-reg-ref-wrap">
-            <label class="block text-[10px] font-mono font-bold uppercase text-slate-700 mb-1">Payment Reference No. (GCash / Maya / Bank Ref #) *</label>
-            <input type="text" id="trn-reg-ref" placeholder="Enter your transaction reference number" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono font-bold">
-          </div>
-        </div>
-
-        <!-- Privacy Assurance Checkbox -->
-        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs">
-          <label class="flex items-start gap-2.5 cursor-pointer">
-            <input type="checkbox" id="trn-consent-all" checked class="mt-0.5 w-4 h-4 rounded accent-[#0F291E]">
-            <span class="text-slate-600 text-[11px] leading-snug">🔒 <b>Privacy Protected:</b> I confirm my registration details are accurate. Customer names are <b>never flashed publicly</b> on the website and are visible only to the Club Admin.</span>
-          </label>
-        </div>
-
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-[#0F291E] text-white" style="background:#0F291E !important;color:#FFFFFF !important;">
-          <div>
-            <span class="text-[10px] font-mono uppercase block" style="color:#A7F3D0 !important;">Tournament Entry Fee</span>
-            <b id="trn-reg-fee-display" class="text-2xl font-mono font-black" style="color:#A3E635 !important;">₱500.00</b>
-          </div>
-          <button type="button" onclick="pfProceedTournamentToPayment()" class="pf-trn-btn-volt w-full sm:w-auto px-6 py-3.5 rounded-xl font-black uppercase text-xs tracking-wider transition shadow-lg">
-            ✅ Submit Tournament Registration →
-          </button>
+        <div>
+          <label class="block text-xs font-medium text-[#334155] mb-1">Skill Level</label>
+          <select id="trn-reg-division" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+            <option value="Novice (2.5–3.0)">Beginner / Novice (2.5–3.0)</option>
+            <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
+            <option value="Open (4.0+)">Advanced / Open (4.0+)</option>
+          </select>
         </div>
       </div>
-    `;
-    document.body.appendChild(modal);
-  }
 
-  pfPopulateTournamentRegModal(trn, pfNormalizeTournamentTypeLabel(trn));
+      <div class="pt-3 border-t border-[#ECEAE4] flex items-center justify-between gap-4">
+        <div>
+          <span class="text-[11px] text-[#64748B] block">Entry Fee</span>
+          <strong id="trn-reg-fee-display" class="text-lg font-semibold text-[#0D1F18]">₱500</strong>
+        </div>
+        <button type="button" onclick="pfProceedTournamentToPayment()" class="px-7 py-3 rounded-xl font-medium text-sm transition cursor-pointer" style="background-color:#0D1F18 !important;color:#FFFFFF !important;">
+          Register Now
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  pfPopulateTournamentRegModal(trn);
   modal.classList.remove('hidden');
 }
 
@@ -7112,12 +6874,7 @@ async function pfProceedTournamentToPayment() {
   const phone = (document.getElementById('trn-reg-phone')?.value || '').trim();
   const partnerRaw = (document.getElementById('trn-reg-partner')?.value || '').trim();
   const partner = isSingle ? 'Solo (Single)' : (partnerRaw || 'Partner TBD');
-  const email = (document.getElementById('trn-reg-email')?.value || '').trim();
   const division = (document.getElementById('trn-reg-division')?.value || 'Intermediate (3.5)').trim();
-  const notes = (document.getElementById('trn-reg-notes')?.value || '').trim();
-  const payMethod = (document.getElementById('trn-reg-pay-method')?.value || 'GCash').trim();
-  const payRef = (document.getElementById('trn-reg-ref')?.value || '').trim();
-  const consent = document.getElementById('trn-consent-all')?.checked;
 
   if (!name || name.length < 2) {
     alert('Please enter your Full Name.');
@@ -7125,22 +6882,13 @@ async function pfProceedTournamentToPayment() {
     return;
   }
   if (phone.replace(/[^0-9]/g, '').length < 10) {
-    alert('Please enter a valid 11-digit mobile number.');
+    alert('Please enter a valid mobile number.');
     document.getElementById('trn-reg-phone')?.focus();
     return;
   }
   if (!isSingle && (!partnerRaw || partnerRaw.length < 2)) {
-    alert('Please enter your Doubles Partner Full Name (or switch Tournament Type to Single).');
+    alert('Please enter your Partner Name.');
     document.getElementById('trn-reg-partner')?.focus();
-    return;
-  }
-  if (payMethod !== 'Manual' && payRef.replace(/[^A-Za-z0-9]/g, '').length < 4) {
-    alert('Please enter your GCash / Maya / Bank Reference Number, or select "Manual / Cash".');
-    document.getElementById('trn-reg-ref')?.focus();
-    return;
-  }
-  if (!consent) {
-    alert('Please confirm the registration checkbox.');
     return;
   }
 
@@ -7152,8 +6900,6 @@ async function pfProceedTournamentToPayment() {
   }
 
   const unifiedBookingRef = 'PF-TRN-' + Math.floor(100000 + Math.random() * 900000);
-  const formattedPayMethod = payMethod === 'Manual' ? 'Manual (Cash/Venue)' : (payMethod === 'Bank' ? 'Bank (BDO)' : payMethod);
-  const formattedPayRef = payMethod === 'Manual' ? 'MANUAL-PENDING' : payRef;
 
   const regEntry = {
     id: unifiedBookingRef,
@@ -7165,12 +6911,8 @@ async function pfProceedTournamentToPayment() {
     player1: name,
     partner: partner,
     phone: phone,
-    email: email,
     division: division,
-    notes: notes,
     entryFee: fee,
-    paymentMethod: formattedPayMethod,
-    paymentRef: formattedPayRef,
     status: 'PENDING',
     registeredAt: new Date().toLocaleString([], { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })
   };
@@ -7190,7 +6932,7 @@ async function pfProceedTournamentToPayment() {
     guestNamesList: pairLabel,
     phone: phone,
     customerPhone: phone,
-    email: email || 'tournament@pfrally.ph',
+    email: 'tournament@pfrally.ph',
     courtName: `Tournament (${selectedType}) • ${trn.title}`,
     court: `Tournament (${selectedType}) • ${trn.title}`,
     date: trn.date,
@@ -7199,16 +6941,15 @@ async function pfProceedTournamentToPayment() {
     players: isSingle ? 1 : 2,
     total: fee,
     courtCost: fee,
-    paymentMethod: formattedPayMethod,
-    paymentMode: formattedPayMethod,
-    transactionRef: formattedPayRef,
-    paymentRef: formattedPayRef,
+    paymentMethod: 'Tournament Entry',
+    paymentMode: 'Tournament Entry',
+    transactionRef: unifiedBookingRef,
+    paymentRef: unifiedBookingRef,
     status: 'PENDING',
     isTournament: true,
     tournamentId: trn.id,
     tournamentType: selectedType,
-    notes: notes,
-    items: [`🏆 ${trn.title} (${selectedType}) — ${pairLabel} (${division})`],
+    items: [`${trn.title} (${selectedType}) — ${pairLabel}`],
     createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
   };
   window.pfLastOpenPlayBookingRecord = bookingRecord;
@@ -7221,10 +6962,6 @@ async function pfProceedTournamentToPayment() {
       localStorage.setItem(k, JSON.stringify(filtered));
     } catch (e) {}
   });
-  try {
-    localStorage.setItem('latest_booking', JSON.stringify(bookingRecord));
-    localStorage.setItem('booking_' + unifiedBookingRef, JSON.stringify(bookingRecord));
-  } catch (e) {}
 
   const trnRegEndpoints = pfGetApiEndpoints('/api/tournament-register');
   for (const url of trnRegEndpoints) {
@@ -7241,12 +6978,8 @@ async function pfProceedTournamentToPayment() {
           partner: partner,
           teamName: pairLabel,
           phone: phone,
-          email: email,
           division: division,
-          notes: notes,
-          entryFee: fee,
-          paymentMethod: formattedPayMethod,
-          paymentRef: formattedPayRef
+          entryFee: fee
         })
       });
       if (r.ok) break;
@@ -7265,7 +6998,7 @@ async function pfProceedTournamentToPayment() {
     } catch (e) {}
   }
 
-  ['trn-reg-name', 'trn-reg-phone', 'trn-reg-partner', 'trn-reg-email', 'trn-reg-notes', 'trn-reg-ref'].forEach(idKey => {
+  ['trn-reg-name', 'trn-reg-phone', 'trn-reg-partner'].forEach(idKey => {
     const el = document.getElementById(idKey);
     if (el) el.value = '';
   });
