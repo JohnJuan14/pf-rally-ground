@@ -15,10 +15,17 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timezone, timedelta
 
-SCRATCH_DIR = r"C:\Users\Acer\.gemini\antigravity\scratch"
-PUBLIC_DIR = os.path.join(SCRATCH_DIR, "pf-rally-ground-v2")
-ADMIN_DIR = os.path.join(SCRATCH_DIR, "pf-rally-ground-v2", "admin")
-DB_FILE = os.path.join(SCRATCH_DIR, "pf_shared_db.json")
+_DEFAULT_WIN_SCRATCH = r"C:\Users\Acer\.gemini\antigravity\scratch"
+if os.path.exists(_DEFAULT_WIN_SCRATCH):
+    SCRATCH_DIR = _DEFAULT_WIN_SCRATCH
+    PUBLIC_DIR = os.path.join(SCRATCH_DIR, "pf-rally-ground-v2")
+    ADMIN_DIR = os.path.join(PUBLIC_DIR, "admin")
+    DB_FILE = os.path.join(SCRATCH_DIR, "pf_shared_db.json")
+else:
+    PUBLIC_DIR = os.path.dirname(os.path.abspath(__file__))
+    SCRATCH_DIR = PUBLIC_DIR
+    ADMIN_DIR = os.path.join(PUBLIC_DIR, "admin")
+    DB_FILE = os.path.join(PUBLIC_DIR, "pf_shared_db.json")
 
 db_lock = threading.Lock()
 
