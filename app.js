@@ -6424,8 +6424,12 @@ function pfGetDefaultTournaments() {
       "division": "Novice • Intermediate • Open",
       "category": "Singles",
       "date": "2026-11-21",
-      "time": "8:00 AM – 5:00 PM",
-      "countdownTarget": "2026-11-21T08:00:00",
+      "startTime": "08:00 AM",
+      "endTime": "05:00 PM",
+      "time": "08:00 AM – 05:00 PM",
+      "timerStart": "2026-11-14T08:00:00",
+      "timerEnd": "2026-11-21T17:00:00",
+      "countdownTarget": "2026-11-21T17:00:00",
       "courts": "Courts 1 – 4",
       "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"],
       "posterUrl": "assets/court-1.jpg",
@@ -6453,8 +6457,12 @@ function pfGetDefaultTournaments() {
       "division": "Novice • Intermediate • Open",
       "category": "Doubles",
       "date": "2026-11-28",
-      "time": "8:00 AM – 5:00 PM",
-      "countdownTarget": "2026-11-28T08:00:00",
+      "startTime": "08:00 AM",
+      "endTime": "05:00 PM",
+      "time": "08:00 AM – 05:00 PM",
+      "timerStart": "2026-11-21T08:00:00",
+      "timerEnd": "2026-11-28T17:00:00",
+      "countdownTarget": "2026-11-28T17:00:00",
       "courts": "Courts 1 – 4",
       "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"],
       "posterUrl": "assets/court-2.jpg",
@@ -6487,6 +6495,33 @@ function pfNormalizeTournamentTypeLabel(t) {
   return 'Double';
 }
 
+function pfFormatIsoShortDateTime(isoStr) {
+  if (!isoStr) return '';
+  const ms = Date.parse(isoStr);
+  if (isNaN(ms)) return String(isoStr);
+  const d = new Date(ms);
+  return d.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
+function pfFormatTournamentTimerWindow(t) {
+  if (!t) return '08:00 AM – 05:00 PM';
+  const startClock = String(t.startTime || '').trim();
+  const endClock = String(t.endTime || '').trim();
+  if (startClock && endClock) {
+    return `${startClock} – ${endClock}`;
+  }
+  if (t.time && String(t.time).trim()) {
+    return String(t.time).trim();
+  }
+  return '08:00 AM – 05:00 PM';
+}
+
 function pfGetTournamentsList() {
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   const defaults = pfGetDefaultTournaments();
@@ -6508,9 +6543,19 @@ function pfGetTournamentsList() {
       registrations
     });
     merged.registeredCount = pfCountRealTournamentTeams(merged);
-    if (!merged.countdownTarget) {
-      merged.countdownTarget = `${merged.date || '2026-11-21'}T08:00:00`;
+    if (!merged.startTime) merged.startTime = defMatch.startTime || '08:00 AM';
+    if (!merged.endTime) merged.endTime = defMatch.endTime || '05:00 PM';
+    merged.time = pfFormatTournamentTimerWindow(merged);
+    if (!merged.timerStart) {
+      merged.timerStart = defMatch.timerStart || `${merged.date || '2026-11-14'}T08:00:00`;
     }
+    if (!merged.timerEnd && merged.countdownTarget) {
+      merged.timerEnd = merged.countdownTarget;
+    }
+    if (!merged.timerEnd) {
+      merged.timerEnd = `${merged.date || '2026-11-21'}T17:00:00`;
+    }
+    merged.countdownTarget = merged.timerEnd;
     if (merged.posterUrl === undefined) {
       merged.posterUrl = defMatch.posterUrl || 'assets/court-1.jpg';
     }
@@ -6547,18 +6592,27 @@ function pfRenderLiveSpectatorBracketBanner() {
   }
 }
 
-function pfComputeCountdownParts(targetIso, fallbackDateStr) {
-  let targetMs = NaN;
-  if (targetIso) {
-    targetMs = Date.parse(targetIso);
+function pfComputeCountdownParts(targetIso, fallbackDateStr, startIso) {
+  const now = Date.now();
+  const startMs = startIso ? Date.parse(startIso) : NaN;
+  let endMs = targetIso ? Date.parse(targetIso) : NaN;
+  if (isNaN(endMs) && fallbackDateStr) {
+    endMs = Date.parse(fallbackDateStr + 'T17:00:00');
   }
-  if (isNaN(targetMs) && fallbackDateStr) {
-    targetMs = Date.parse(fallbackDateStr + 'T08:00:00');
+  if (isNaN(endMs)) {
+    endMs = now + 7 * 86400000;
   }
-  if (isNaN(targetMs)) {
-    targetMs = Date.now() + 7 * 86400000;
+
+  let activeTargetMs = endMs;
+  let phaseLabel = 'Tournament Timer Ends In';
+  if (!isNaN(startMs) && now < startMs) {
+    activeTargetMs = startMs;
+    phaseLabel = 'Registration / Timer Starts In';
+  } else if (now >= endMs) {
+    phaseLabel = 'Tournament Window Completed';
   }
-  const diff = Math.max(0, targetMs - Date.now());
+
+  const diff = Math.max(0, activeTargetMs - now);
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff % 86400000) / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
@@ -6568,6 +6622,7 @@ function pfComputeCountdownParts(targetIso, fallbackDateStr) {
     hours: String(hours).padStart(2, '0'),
     mins: String(mins).padStart(2, '0'),
     secs: String(secs).padStart(2, '0'),
+    phaseLabel,
     isLiveOrPast: diff <= 0
   };
 }
@@ -6576,16 +6631,19 @@ window.pfComputeCountdownParts = pfComputeCountdownParts;
 function pfUpdateAllTournamentCountdowns() {
   document.querySelectorAll('[data-pf-countdown-target]').forEach(el => {
     const targetIso = el.getAttribute('data-pf-countdown-target') || '';
+    const startIso = el.getAttribute('data-pf-countdown-start') || '';
     const fallbackDate = el.getAttribute('data-pf-countdown-date') || '';
-    const parts = pfComputeCountdownParts(targetIso, fallbackDate);
+    const parts = pfComputeCountdownParts(targetIso, fallbackDate, startIso);
     const dEl = el.querySelector('[data-cd="days"]');
     const hEl = el.querySelector('[data-cd="hours"]');
     const mEl = el.querySelector('[data-cd="mins"]');
     const sEl = el.querySelector('[data-cd="secs"]');
+    const lblEl = el.querySelector('[data-cd="phase-label"]');
     if (dEl) dEl.textContent = parts.days;
     if (hEl) hEl.textContent = parts.hours;
     if (mEl) mEl.textContent = parts.mins;
     if (sEl) sEl.textContent = parts.secs;
+    if (lblEl) lblEl.textContent = parts.phaseLabel;
   });
 }
 
@@ -6659,8 +6717,12 @@ function pfRenderPublicTournaments() {
   const takenSlots = Math.min(maxSlots, pfCountRealTournamentTeams(t));
   const availableSlots = Math.max(0, maxSlots - takenSlots);
   const pctFilled = maxSlots > 0 ? Math.min(100, Math.round((takenSlots / maxSlots) * 100)) : 0;
-  const cdTarget = t.countdownTarget || `${t.date || '2026-11-21'}T08:00:00`;
-  const cd = pfComputeCountdownParts(cdTarget, t.date);
+  const cdStart = t.timerStart || `${t.date || '2026-11-14'}T08:00:00`;
+  const cdTarget = t.timerEnd || t.countdownTarget || `${t.date || '2026-11-21'}T17:00:00`;
+  const cd = pfComputeCountdownParts(cdTarget, t.date, cdStart);
+  const playHoursStr = pfFormatTournamentTimerWindow(t);
+  const timerStartDisplay = pfFormatIsoShortDateTime(cdStart);
+  const timerEndDisplay = pfFormatIsoShortDateTime(cdTarget);
   const posterUrl = String(t.posterUrl || '').trim();
   const hasPoster = t.showPoster !== false && posterUrl.length > 0;
 
@@ -6673,28 +6735,33 @@ function pfRenderPublicTournaments() {
         </div>
       ` : ''}
 
-      <div class="${hasPoster ? 'md:col-span-7' : ''} p-7 sm:p-10 flex flex-col justify-between space-y-7 bg-white text-[#0D1F18]">
-        <div class="space-y-6">
+      <div class="${hasPoster ? 'md:col-span-7' : ''} p-7 sm:p-10 flex flex-col justify-between space-y-6 bg-white text-[#0D1F18]">
+        <div class="space-y-5">
           <!-- Minimalist Top Meta -->
-          <div class="flex items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-3">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F3EE] text-[#0D1F18] text-xs font-medium">
               <span class="w-1.5 h-1.5 rounded-full bg-[#15803D]"></span>
               <span>${isSingle ? 'Single Tournament' : 'Double Tournament'}</span>
             </span>
-            <span class="text-xs text-[#64748B] font-medium">${pfEscapeHtml(t.date || 'Upcoming')} &bull; ${pfEscapeHtml(t.time || '8:00 AM')}</span>
+            <span class="text-xs text-[#64748B] font-medium">${pfEscapeHtml(t.date || 'Upcoming')} &bull; ${pfEscapeHtml(playHoursStr)}</span>
           </div>
 
           <!-- Clean Title & Short Description -->
-          <div class="space-y-2">
+          <div class="space-y-1.5">
             <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#0D1F18]">
               ${pfEscapeHtml(t.title)}
             </h3>
             ${t.description ? `<p class="text-sm text-[#52605A] leading-relaxed">${pfEscapeHtml(t.description)}</p>` : ''}
           </div>
 
-          <!-- Clean Minimalist Countdown -->
-          <div class="pt-1" data-pf-countdown-target="${pfEscapeHtml(cdTarget)}" data-pf-countdown-date="${pfEscapeHtml(t.date || '')}">
-            <span class="block text-[10px] font-mono uppercase tracking-[0.18em] text-[#64748B] mb-2">Event Starts In</span>
+          <!-- Clean Minimalist Countdown (Start Time to End Time) -->
+          <div class="pt-1 space-y-2" data-pf-countdown-target="${pfEscapeHtml(cdTarget)}" data-pf-countdown-start="${pfEscapeHtml(cdStart)}" data-pf-countdown-date="${pfEscapeHtml(t.date || '')}">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span data-cd="phase-label" class="text-[10px] font-mono uppercase tracking-[0.18em] text-[#64748B]">${pfEscapeHtml(cd.phaseLabel)}</span>
+              <span class="text-[11px] font-mono text-[#475569] bg-[#F8F7F3] px-2.5 py-0.5 rounded-md border border-[#ECEAE4]">
+                ${pfEscapeHtml(timerStartDisplay)} &rarr; ${pfEscapeHtml(timerEndDisplay)}
+              </span>
+            </div>
             <div class="inline-flex items-baseline gap-4 sm:gap-6 px-5 py-3 rounded-2xl bg-[#F8F7F3] border border-[#ECEAE4]">
               <div class="text-center">
                 <span data-cd="days" class="font-mono text-2xl sm:text-3xl font-semibold text-[#0D1F18]">${cd.days}</span>
@@ -6754,6 +6821,123 @@ function pfRenderPublicTournaments() {
 }
 window.renderPublicTournaments = pfRenderPublicTournaments;
 
+window.pfTournamentUploadedReceiptDataUrl = '';
+
+function pfSwitchTournamentPayMethod(mode) {
+  const normalized = String(mode || 'GCash').trim();
+  const modeInp = document.getElementById('trn-reg-pay-mode');
+  if (modeInp) modeInp.value = normalized;
+
+  ['GCash', 'Maya', 'BDO', 'Manual'].forEach(m => {
+    const btn = document.getElementById('trn-pay-tab-' + m);
+    if (!btn) return;
+    if (m.toLowerCase() === normalized.toLowerCase()) {
+      btn.className = 'py-2 px-3 rounded-xl text-xs font-semibold transition border cursor-pointer';
+      btn.setAttribute('style', 'background-color:#0D1F18 !important;color:#FFFFFF !important;border-color:#0D1F18 !important;');
+    } else {
+      btn.className = 'py-2 px-3 rounded-xl text-xs font-medium bg-white text-[#334155] border border-[#E2E0D8] hover:border-[#0D1F18] transition cursor-pointer';
+      btn.removeAttribute('style');
+    }
+  });
+
+  const qrPanel = document.getElementById('trn-reg-qr-panel');
+  const manualPanel = document.getElementById('trn-reg-manual-panel');
+  const refInput = document.getElementById('trn-reg-ref');
+  const proofSection = document.getElementById('trn-reg-proof-section');
+
+  if (normalized.toLowerCase() === 'manual') {
+    if (qrPanel) qrPanel.classList.add('hidden');
+    if (manualPanel) manualPanel.classList.remove('hidden');
+    if (proofSection) proofSection.classList.add('hidden');
+    if (refInput) refInput.value = 'MANUAL-BOOKING';
+    return;
+  }
+
+  if (qrPanel) qrPanel.classList.remove('hidden');
+  if (manualPanel) manualPanel.classList.add('hidden');
+  if (proofSection) proofSection.classList.remove('hidden');
+  if (refInput && refInput.value === 'MANUAL-BOOKING') {
+    refInput.value = '';
+  }
+
+  const payCfg = (typeof pfGetPaymentConfig === 'function') ? pfGetPaymentConfig() : {
+    accountName: 'P&F RALLY GROUND PICKLEBALL CLUB',
+    gcashNumber: '0999 883 2346',
+    mayaNumber: '0999 883 2346',
+    bdoNumber: '0999 883 2346'
+  };
+
+  const chKey = normalized.toLowerCase() === 'maya' ? 'maya' : (normalized.toLowerCase() === 'bdo' ? 'bdo' : 'gcash');
+  const qrSrc = (typeof pfGetOfficialQrUrl === 'function')
+    ? pfGetOfficialQrUrl(chKey, 'qr')
+    : `assets/qr-${chKey}.png`;
+  const acctNum = chKey === 'maya' ? payCfg.mayaNumber : (chKey === 'bdo' ? payCfg.bdoNumber : payCfg.gcashNumber);
+  const chTitle = chKey === 'maya' ? 'Maya Official QR' : (chKey === 'bdo' ? 'BDO / Bank Transfer QR' : 'GCash Official QR');
+
+  const qrImg = document.getElementById('trn-reg-qr-img');
+  const qrLabel = document.getElementById('trn-reg-qr-label');
+  const acctNameEl = document.getElementById('trn-reg-acct-name');
+  const acctNumEl = document.getElementById('trn-reg-acct-num');
+  const zoomBtn = document.getElementById('trn-reg-qr-zoom-btn');
+  const dlBtn = document.getElementById('trn-reg-qr-dl-btn');
+
+  if (qrImg) qrImg.src = qrSrc;
+  if (qrLabel) qrLabel.textContent = chTitle;
+  if (acctNameEl) acctNameEl.textContent = payCfg.accountName || 'P&F RALLY GROUND PICKLEBALL CLUB';
+  if (acctNumEl) acctNumEl.textContent = acctNum || '0999 883 2346';
+  if (zoomBtn) zoomBtn.setAttribute('onclick', `pfOpenQrStandeeLightbox('${chKey}')`);
+  if (dlBtn) dlBtn.setAttribute('onclick', `pfDownloadOfficialQr('${chKey}')`);
+}
+window.pfSwitchTournamentPayMethod = pfSwitchTournamentPayMethod;
+
+function pfHandleTournamentReceiptUpload(ev) {
+  const file = ev?.target?.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(loadEv) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxDim = 900;
+      let w = img.width;
+      let h = img.height;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) {
+          h = Math.round((h * maxDim) / w);
+          w = maxDim;
+        } else {
+          w = Math.round((w * maxDim) / h);
+          h = maxDim;
+        }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      window.pfTournamentUploadedReceiptDataUrl = dataUrl;
+      const previewWrap = document.getElementById('trn-reg-receipt-preview-wrap');
+      const previewImg = document.getElementById('trn-reg-receipt-preview-img');
+      const statusText = document.getElementById('trn-reg-receipt-filename');
+      if (previewImg) previewImg.src = dataUrl;
+      if (statusText) statusText.textContent = file.name || 'Receipt attached';
+      if (previewWrap) previewWrap.classList.remove('hidden');
+    };
+    img.src = loadEv.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+window.pfHandleTournamentReceiptUpload = pfHandleTournamentReceiptUpload;
+
+function pfClearTournamentReceiptUpload() {
+  window.pfTournamentUploadedReceiptDataUrl = '';
+  const fileInp = document.getElementById('trn-reg-receipt-file');
+  const previewWrap = document.getElementById('trn-reg-receipt-preview-wrap');
+  if (fileInp) fileInp.value = '';
+  if (previewWrap) previewWrap.classList.add('hidden');
+}
+window.pfClearTournamentReceiptUpload = pfClearTournamentReceiptUpload;
+
 function pfPopulateTournamentRegModal(trn) {
   if (!trn) return;
   const tType = pfNormalizeTournamentTypeLabel(trn);
@@ -6762,6 +6946,7 @@ function pfPopulateTournamentRegModal(trn) {
   const takenSlots = Math.min(maxSlots, pfCountRealTournamentTeams(trn));
   const availSlots = Math.max(0, maxSlots - takenSlots);
   const fee = Number(trn.entryFee || 0);
+  const playHoursStr = pfFormatTournamentTimerWindow(trn);
 
   const idInp = document.getElementById('trn-reg-id');
   const typeInp = document.getElementById('trn-reg-type-input');
@@ -6771,11 +6956,13 @@ function pfPopulateTournamentRegModal(trn) {
   const titleEl = document.getElementById('trn-reg-modal-title');
   const metaEl = document.getElementById('trn-reg-modal-meta');
   const feeEl = document.getElementById('trn-reg-fee-display');
+  const qrAmtEl = document.getElementById('trn-reg-qr-amount');
   const partnerWrap = document.getElementById('trn-reg-partner-wrap');
 
   if (titleEl) titleEl.textContent = trn.title;
-  if (metaEl) metaEl.textContent = `${isSingle ? 'Single' : 'Double'} • ${availSlots} Slots Available`;
+  if (metaEl) metaEl.textContent = `${isSingle ? 'Single Tournament' : 'Double Tournament'} • ${trn.date || 'Upcoming'} (${playHoursStr}) • ${availSlots} Slots Left`;
   if (feeEl) feeEl.textContent = fee > 0 ? `₱${fee.toLocaleString()}` : 'Free';
+  if (qrAmtEl) qrAmtEl.textContent = fee > 0 ? `₱${fee.toLocaleString()}` : 'Free';
 
   if (partnerWrap) {
     if (isSingle) {
@@ -6784,6 +6971,9 @@ function pfPopulateTournamentRegModal(trn) {
       partnerWrap.classList.remove('hidden');
     }
   }
+
+  window.pfTournamentUploadedReceiptDataUrl = '';
+  pfSwitchTournamentPayMethod('GCash');
 }
 
 function pfRegisterForTournament(tournamentId) {
@@ -6797,54 +6987,157 @@ function pfRegisterForTournament(tournamentId) {
   }
   modal = document.createElement('div');
   modal.id = 'pf-tournament-reg-modal';
-  modal.className = 'fixed inset-0 z-50 hidden flex items-center justify-center p-4';
+  modal.className = 'fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-5 overflow-y-auto';
   modal.innerHTML = `
-    <div onclick="pfCloseTournamentRegModal()" class="absolute inset-0 bg-black/60 backdrop-blur-xs"></div>
-    <div class="relative z-10 w-full max-w-md rounded-3xl bg-white text-[#0D1F18] border border-[#E6E4DD] p-6 sm:p-8 shadow-2xl space-y-5">
-      <div class="flex items-start justify-between gap-3">
+    <div onclick="pfCloseTournamentRegModal()" class="fixed inset-0 bg-black/65 backdrop-blur-xs"></div>
+    <div class="relative z-10 w-full max-w-3xl rounded-3xl bg-white text-[#0D1F18] border border-[#E6E4DD] p-5 sm:p-8 shadow-2xl my-auto max-h-[92dvh] overflow-y-auto space-y-6">
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-4 border-b border-[#ECEAE4] pb-4">
         <div>
           <p id="trn-reg-modal-meta" class="text-xs font-medium text-[#15803D]"></p>
-          <h3 id="trn-reg-modal-title" class="text-xl font-bold text-[#0D1F18] mt-0.5">Tournament Registration</h3>
+          <h3 id="trn-reg-modal-title" class="text-xl sm:text-2xl font-bold text-[#0D1F18] mt-0.5">Tournament Registration Portal</h3>
         </div>
-        <button type="button" onclick="pfCloseTournamentRegModal()" class="w-8 h-8 rounded-full bg-[#F6F5F0] hover:bg-[#E6E4DD] text-[#0D1F18] text-xs flex items-center justify-center transition">✕</button>
+        <button type="button" onclick="pfCloseTournamentRegModal()" class="w-8 h-8 rounded-full bg-[#F6F5F0] hover:bg-[#E6E4DD] text-[#0D1F18] text-xs flex items-center justify-center transition cursor-pointer">✕</button>
       </div>
 
       <input type="hidden" id="trn-reg-id" value="">
       <input type="hidden" id="trn-reg-type-input" value="Single">
+      <input type="hidden" id="trn-reg-pay-mode" value="GCash">
 
-      <div class="space-y-3.5 text-xs">
-        <div>
-          <label class="block text-xs font-medium text-[#334155] mb-1">Full Name</label>
-          <input type="text" id="trn-reg-name" placeholder="Your full name" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        <!-- Left Column: Player Details & Policies (7 Cols) -->
+        <div class="md:col-span-7 space-y-5">
+          <div class="space-y-3.5">
+            <h4 class="text-xs font-mono uppercase tracking-wider text-[#64748B]">1. Player &amp; Entry Details</h4>
+
+            <div>
+              <label class="block text-xs font-medium text-[#334155] mb-1">Full Name <span class="text-rose-600">*</span></label>
+              <input type="text" id="trn-reg-name" placeholder="Enter your full name" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+            </div>
+
+            <div id="trn-reg-partner-wrap" class="hidden">
+              <label class="block text-xs font-medium text-[#334155] mb-1">Partner Full Name (Doubles) <span class="text-rose-600">*</span></label>
+              <input type="text" id="trn-reg-partner" placeholder="Enter partner's full name" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-[#334155] mb-1">Mobile Number <span class="text-rose-600">*</span></label>
+                <input type="tel" id="trn-reg-phone" placeholder="0917 123 4567" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#334155] mb-1">Email (Optional)</label>
+                <input type="email" id="trn-reg-email" placeholder="you@email.com" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-[#334155] mb-1">Skill Level</label>
+              <select id="trn-reg-division" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+                <option value="Novice (2.5–3.0)">Beginner / Novice (2.5–3.0)</option>
+                <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
+                <option value="Open (4.0+)">Advanced / Open (4.0+)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Facility Policies & Consent -->
+          <div class="p-4 rounded-2xl bg-[#F8F7F3] border border-[#ECEAE4] space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-[#0D1F18]">Policies &amp; Player Consent</span>
+              <span class="text-[11px] text-[#64748B]">Required</span>
+            </div>
+            <label class="flex items-start gap-2.5 text-xs text-[#334155] cursor-pointer">
+              <input type="checkbox" id="trn-policy-waiver" checked class="mt-0.5 w-4 h-4 rounded accent-[#0D1F18]">
+              <span>I agree to the <button type="button" onclick="if(typeof pfOpenPolicyModal==='function') pfOpenPolicyModal('waiver', event)" class="underline font-medium text-[#0D1F18]">Facility Liability Waiver &amp; Court Conduct Rules</button>.</span>
+            </label>
+            <label class="flex items-start gap-2.5 text-xs text-[#334155] cursor-pointer">
+              <input type="checkbox" id="trn-policy-cancellation" checked class="mt-0.5 w-4 h-4 rounded accent-[#0D1F18]">
+              <span>I understand the <button type="button" onclick="if(typeof pfOpenPolicyModal==='function') pfOpenPolicyModal('cancellation', event)" class="underline font-medium text-[#0D1F18]">Tournament Schedule &amp; Rescheduling Policy</button>.</span>
+            </label>
+            <label class="flex items-start gap-2.5 text-xs text-[#334155] cursor-pointer">
+              <input type="checkbox" id="trn-policy-nonrefundable" checked class="mt-0.5 w-4 h-4 rounded accent-[#0D1F18]">
+              <span>I confirm my payment reference or manual front-desk settlement is accurate.</span>
+            </label>
+          </div>
         </div>
 
-        <div id="trn-reg-partner-wrap" class="hidden">
-          <label class="block text-xs font-medium text-[#334155] mb-1">Partner Name (Doubles)</label>
-          <input type="text" id="trn-reg-partner" placeholder="Partner's full name" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
-        </div>
+        <!-- Right Column: Payment Portal, QR Code, Reference & Receipt Upload (5 Cols) -->
+        <div class="md:col-span-5 space-y-4">
+          <div class="space-y-2">
+            <h4 class="text-xs font-mono uppercase tracking-wider text-[#64748B]">2. Payment Portal</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 gap-1.5">
+              <button type="button" id="trn-pay-tab-GCash" onclick="pfSwitchTournamentPayMethod('GCash')" class="py-2 px-3 rounded-xl text-xs font-semibold transition border cursor-pointer" style="background-color:#0D1F18 !important;color:#FFFFFF !important;border-color:#0D1F18 !important;">GCash</button>
+              <button type="button" id="trn-pay-tab-Maya" onclick="pfSwitchTournamentPayMethod('Maya')" class="py-2 px-3 rounded-xl text-xs font-medium bg-white text-[#334155] border border-[#E2E0D8] hover:border-[#0D1F18] transition cursor-pointer">Maya</button>
+              <button type="button" id="trn-pay-tab-BDO" onclick="pfSwitchTournamentPayMethod('BDO')" class="py-2 px-3 rounded-xl text-xs font-medium bg-white text-[#334155] border border-[#E2E0D8] hover:border-[#0D1F18] transition cursor-pointer">BDO / Bank</button>
+              <button type="button" id="trn-pay-tab-Manual" onclick="pfSwitchTournamentPayMethod('Manual')" class="py-2 px-3 rounded-xl text-xs font-medium bg-white text-[#334155] border border-[#E2E0D8] hover:border-[#0D1F18] transition cursor-pointer">Manual</button>
+            </div>
+          </div>
 
-        <div>
-          <label class="block text-xs font-medium text-[#334155] mb-1">Mobile Number</label>
-          <input type="tel" id="trn-reg-phone" placeholder="0917 123 4567" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
-        </div>
+          <!-- QR Code Display Box -->
+          <div id="trn-reg-qr-panel" class="p-4 rounded-2xl bg-[#F8F7F3] border border-[#ECEAE4] space-y-3 text-center">
+            <div class="flex items-center justify-between text-xs">
+              <span id="trn-reg-qr-label" class="font-semibold text-[#0D1F18]">GCash Official QR</span>
+              <strong id="trn-reg-qr-amount" class="text-sm font-bold text-[#15803D]">₱500</strong>
+            </div>
 
-        <div>
-          <label class="block text-xs font-medium text-[#334155] mb-1">Skill Level</label>
-          <select id="trn-reg-division" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2.5 text-sm text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
-            <option value="Novice (2.5–3.0)">Beginner / Novice (2.5–3.0)</option>
-            <option value="Intermediate (3.5)" selected>Intermediate (3.5)</option>
-            <option value="Open (4.0+)">Advanced / Open (4.0+)</option>
-          </select>
+            <div class="w-40 h-40 mx-auto rounded-2xl bg-white p-2 border border-[#E2E0D8] flex items-center justify-center overflow-hidden">
+              <img id="trn-reg-qr-img" src="assets/qr-gcash.png" alt="Payment QR" class="w-full h-full object-contain">
+            </div>
+
+            <div class="flex items-center justify-center gap-2">
+              <button type="button" id="trn-reg-qr-zoom-btn" onclick="pfOpenQrStandeeLightbox('gcash')" class="px-3 py-1 rounded-lg bg-white border border-[#E2E0D8] text-[11px] font-medium text-[#0D1F18] hover:bg-[#F4F3EE] transition cursor-pointer">Zoom QR</button>
+              <button type="button" id="trn-reg-qr-dl-btn" onclick="pfDownloadOfficialQr('gcash')" class="px-3 py-1 rounded-lg bg-white border border-[#E2E0D8] text-[11px] font-medium text-[#0D1F18] hover:bg-[#F4F3EE] transition cursor-pointer">Save QR</button>
+            </div>
+
+            <div class="pt-2 border-t border-[#ECEAE4] text-left space-y-1 text-[11px]">
+              <div class="text-[#64748B]">Account: <strong id="trn-reg-acct-name" class="text-[#0D1F18]">P&amp;F RALLY GROUND PICKLEBALL CLUB</strong></div>
+              <div class="flex items-center justify-between">
+                <span class="text-[#64748B]">Number: <strong id="trn-reg-acct-num" class="font-mono text-[#0D1F18]">0999 883 2346</strong></span>
+                <button type="button" onclick="if(typeof copyPaymentAccount==='function') copyPaymentAccount(document.getElementById('trn-reg-acct-num')?.textContent || '09998832346', this)" class="text-[10px] font-semibold underline text-[#15803D] cursor-pointer">Copy</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual Booking Box -->
+          <div id="trn-reg-manual-panel" class="hidden p-4 rounded-2xl bg-[#F8F7F3] border border-[#ECEAE4] space-y-2 text-xs text-[#334155]">
+            <div class="font-semibold text-[#0D1F18]">Manual Front-Desk / Venue Booking</div>
+            <p class="leading-relaxed text-[11px] text-[#52605A]">Your tournament slot will be submitted as <b>Pending Verification</b>. Please settle your entry fee at the P&amp;F Rally Ground front desk to confirm your slot.</p>
+          </div>
+
+          <!-- Reference & Upload Proof Section -->
+          <div id="trn-reg-proof-section" class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-[#334155] mb-1">Reference No. (Last 6+ digits) <span class="text-rose-600">*</span></label>
+              <input type="text" id="trn-reg-ref" placeholder="e.g. 901827364" class="w-full bg-[#F8F7F3] border border-[#E2E0D8] rounded-xl px-3.5 py-2 text-xs font-mono text-[#0D1F18] focus:outline-none focus:border-[#0D1F18]">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-[#334155] mb-1">Upload Payment Receipt Screenshot</label>
+              <label class="w-full py-2.5 px-3.5 rounded-xl bg-[#F8F7F3] hover:bg-[#F0EFE9] border border-dashed border-[#CBD5E1] text-xs font-medium text-[#0D1F18] flex items-center justify-center gap-2 cursor-pointer transition">
+                <span>Upload Receipt Image</span>
+                <input type="file" id="trn-reg-receipt-file" accept="image/*" class="hidden" onchange="pfHandleTournamentReceiptUpload(event)">
+              </label>
+              <div id="trn-reg-receipt-preview-wrap" class="hidden mt-2 p-2 rounded-xl bg-[#F8F7F3] border border-[#ECEAE4] flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <img id="trn-reg-receipt-preview-img" src="" alt="Receipt Preview" class="w-10 h-10 rounded-lg object-cover border border-[#E2E0D8]">
+                  <span id="trn-reg-receipt-filename" class="text-[11px] text-[#334155] truncate">Receipt attached</span>
+                </div>
+                <button type="button" onclick="pfClearTournamentReceiptUpload()" class="text-[11px] text-rose-600 font-medium px-2 py-1">Remove</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-[#ECEAE4] flex items-center justify-between gap-4">
+      <!-- Footer Submit Bar -->
+      <div class="pt-4 border-t border-[#ECEAE4] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span class="text-[11px] text-[#64748B] block">Entry Fee</span>
-          <strong id="trn-reg-fee-display" class="text-lg font-semibold text-[#0D1F18]">₱500</strong>
+          <span class="text-[11px] text-[#64748B] block">Total Tournament Entry Fee</span>
+          <strong id="trn-reg-fee-display" class="text-xl font-bold text-[#0D1F18]">₱500</strong>
         </div>
-        <button type="button" onclick="pfProceedTournamentToPayment()" class="px-7 py-3 rounded-xl font-medium text-sm transition cursor-pointer" style="background-color:#0D1F18 !important;color:#FFFFFF !important;">
-          Register Now
+        <button type="button" onclick="pfProceedTournamentToPayment()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm transition cursor-pointer" style="background-color:#0D1F18 !important;color:#FFFFFF !important;">
+          Submit Registration &amp; Generate Pass
         </button>
       </div>
     </div>
@@ -6863,6 +7156,7 @@ function pfCloseTournamentRegModal() {
 async function pfProceedTournamentToPayment() {
   const id = document.getElementById('trn-reg-id')?.value;
   const selectedType = (document.getElementById('trn-reg-type-input')?.value || 'Single').trim();
+  const payMode = (document.getElementById('trn-reg-pay-mode')?.value || 'GCash').trim();
   const cfg = (typeof getSiteConfig === 'function') ? getSiteConfig() : (window.PF_SITE_CONFIG || {});
   const list = pfGetTournamentsList();
   const trnIdx = list.findIndex(t => String(t.id) === String(id));
@@ -6872,9 +7166,14 @@ async function pfProceedTournamentToPayment() {
   const isSingle = selectedType === 'Single';
   const name = (document.getElementById('trn-reg-name')?.value || '').trim();
   const phone = (document.getElementById('trn-reg-phone')?.value || '').trim();
+  const email = (document.getElementById('trn-reg-email')?.value || '').trim();
   const partnerRaw = (document.getElementById('trn-reg-partner')?.value || '').trim();
   const partner = isSingle ? 'Solo (Single)' : (partnerRaw || 'Partner TBD');
   const division = (document.getElementById('trn-reg-division')?.value || 'Intermediate (3.5)').trim();
+  const rawRef = (document.getElementById('trn-reg-ref')?.value || '').trim();
+  const isManual = payMode.toLowerCase() === 'manual';
+  const paymentRef = isManual ? 'MANUAL-BOOKING' : rawRef;
+  const receiptDataUrl = isManual ? '' : (window.pfTournamentUploadedReceiptDataUrl || '');
 
   if (!name || name.length < 2) {
     alert('Please enter your Full Name.');
@@ -6889,6 +7188,20 @@ async function pfProceedTournamentToPayment() {
   if (!isSingle && (!partnerRaw || partnerRaw.length < 2)) {
     alert('Please enter your Partner Name.');
     document.getElementById('trn-reg-partner')?.focus();
+    return;
+  }
+
+  const wChk = document.getElementById('trn-policy-waiver');
+  const cChk = document.getElementById('trn-policy-cancellation');
+  const nChk = document.getElementById('trn-policy-nonrefundable');
+  if ((wChk && !wChk.checked) || (cChk && !cChk.checked) || (nChk && !nChk.checked)) {
+    alert('Please review and check the Policies & Player Consent boxes before submitting.');
+    return;
+  }
+
+  if (!isManual && (!paymentRef || paymentRef.length < 4)) {
+    alert(`Please enter your ${payMode} Reference Number (or switch to Manual if paying at the front desk).`);
+    document.getElementById('trn-reg-ref')?.focus();
     return;
   }
 
@@ -6911,8 +7224,12 @@ async function pfProceedTournamentToPayment() {
     player1: name,
     partner: partner,
     phone: phone,
+    email: email || 'tournament@pfrally.ph',
     division: division,
     entryFee: fee,
+    paymentMethod: payMode,
+    paymentRef: paymentRef,
+    receiptDataUrl: receiptDataUrl,
     status: 'PENDING',
     registeredAt: new Date().toLocaleString([], { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })
   };
@@ -6925,6 +7242,7 @@ async function pfProceedTournamentToPayment() {
   window.PF_SITE_CONFIG = cfg;
   try { localStorage.setItem('pf_site_config', JSON.stringify(cfg)); } catch (e) {}
 
+  const playHoursStr = pfFormatTournamentTimerWindow(trn);
   const bookingRecord = {
     ref: unifiedBookingRef,
     name: pairLabel,
@@ -6932,19 +7250,20 @@ async function pfProceedTournamentToPayment() {
     guestNamesList: pairLabel,
     phone: phone,
     customerPhone: phone,
-    email: 'tournament@pfrally.ph',
+    email: email || 'tournament@pfrally.ph',
     courtName: `Tournament (${selectedType}) • ${trn.title}`,
     court: `Tournament (${selectedType}) • ${trn.title}`,
     date: trn.date,
-    time: trn.time,
-    slots: [trn.time],
+    time: playHoursStr,
+    slots: [playHoursStr],
     players: isSingle ? 1 : 2,
     total: fee,
     courtCost: fee,
-    paymentMethod: 'Tournament Entry',
-    paymentMode: 'Tournament Entry',
-    transactionRef: unifiedBookingRef,
-    paymentRef: unifiedBookingRef,
+    paymentMethod: payMode,
+    paymentMode: payMode,
+    transactionRef: paymentRef,
+    paymentRef: paymentRef,
+    receiptDataUrl: receiptDataUrl,
     status: 'PENDING',
     isTournament: true,
     tournamentId: trn.id,
@@ -6978,8 +7297,12 @@ async function pfProceedTournamentToPayment() {
           partner: partner,
           teamName: pairLabel,
           phone: phone,
+          email: email,
           division: division,
-          entryFee: fee
+          entryFee: fee,
+          paymentMethod: payMode,
+          paymentRef: paymentRef,
+          receiptDataUrl: receiptDataUrl
         })
       });
       if (r.ok) break;
@@ -6998,10 +7321,11 @@ async function pfProceedTournamentToPayment() {
     } catch (e) {}
   }
 
-  ['trn-reg-name', 'trn-reg-phone', 'trn-reg-partner'].forEach(idKey => {
+  ['trn-reg-name', 'trn-reg-phone', 'trn-reg-email', 'trn-reg-partner', 'trn-reg-ref'].forEach(idKey => {
     const el = document.getElementById(idKey);
     if (el) el.value = '';
   });
+  pfClearTournamentReceiptUpload();
 
   pfCloseTournamentRegModal();
   pfRenderPublicTournaments();

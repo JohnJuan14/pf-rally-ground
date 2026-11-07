@@ -1801,6 +1801,18 @@ html[data-adm-theme="dark"] td div.bg-\[\#DBEAFE\] {
 
         <p id="se-save-feedback" class="hidden p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950 text-xs font-black text-center shadow-md"></p>
 
+        <!-- ================= QUICK TOURNAMENT ACCESS BAR ================= -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+          <div class="space-y-0.5">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-700 font-semibold block">Tournament Control Center</span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900">Single / Double Selector, Timer (Start Time &rarr; End Time), Poster &amp; Customer Registrations</h3>
+            <p class="text-xs text-slate-500">Adjust the tournament timer window, edit event details, view uploaded payment receipts, and accept or decline bookings.</p>
+          </div>
+          <button type="button" onclick="switchTab('tournament')" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-700 text-white text-xs font-semibold transition shrink-0 cursor-pointer" style="background:#0F172A !important;color:#FFFFFF !important;">
+            Open Tournament Editor &rarr;
+          </button>
+        </div>
+
         <!-- ================= PANEL 1: HERO SECTION PICTURES, COURT PHOTOS & LIVE UPDATE BANNER (WHITE CARD) ================= -->
         <div id="se-panel-hero" class="p-5 sm:p-7 rounded-3xl bg-white border-2 border-slate-200 space-y-6 shadow-lg">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-4">
@@ -7204,8 +7216,12 @@ function clearFieldError(fieldId) {
         "division": "Novice • Intermediate • Open",
         "category": "Singles",
         "date": "2026-11-21",
-        "time": "8:00 AM – 5:00 PM",
-        "countdownTarget": "2026-11-21T08:00:00",
+        "startTime": "08:00 AM",
+        "endTime": "05:00 PM",
+        "time": "08:00 AM – 05:00 PM",
+        "timerStart": "2026-11-14T08:00:00",
+        "timerEnd": "2026-11-21T17:00:00",
+        "countdownTarget": "2026-11-21T17:00:00",
         "courts": "Courts 1 – 4",
         "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"],
         "posterUrl": "assets/court-1.jpg",
@@ -7233,8 +7249,12 @@ function clearFieldError(fieldId) {
         "division": "Novice • Intermediate • Open",
         "category": "Doubles",
         "date": "2026-11-28",
-        "time": "8:00 AM – 5:00 PM",
-        "countdownTarget": "2026-11-28T08:00:00",
+        "startTime": "08:00 AM",
+        "endTime": "05:00 PM",
+        "time": "08:00 AM – 05:00 PM",
+        "timerStart": "2026-11-21T08:00:00",
+        "timerEnd": "2026-11-28T17:00:00",
+        "countdownTarget": "2026-11-28T17:00:00",
         "courts": "Courts 1 – 4",
         "designatedCourts": ["Court 1", "Court 2", "Court 3", "Court 4"],
         "posterUrl": "assets/court-2.jpg",
@@ -7288,9 +7308,19 @@ function clearFieldError(fieldId) {
           approved: t.approved !== false
         });
         merged.registeredCount = adminCountRealTournamentTeams(merged);
-        if (!merged.countdownTarget) {
-          merged.countdownTarget = `${merged.date || '2026-11-21'}T08:00:00`;
+        if (!merged.startTime) merged.startTime = defT.startTime || '08:00 AM';
+        if (!merged.endTime) merged.endTime = defT.endTime || '05:00 PM';
+        merged.time = `${merged.startTime} – ${merged.endTime}`;
+        if (!merged.timerStart) {
+          merged.timerStart = defT.timerStart || `${merged.date || '2026-11-14'}T08:00:00`;
         }
+        if (!merged.timerEnd && merged.countdownTarget) {
+          merged.timerEnd = merged.countdownTarget;
+        }
+        if (!merged.timerEnd) {
+          merged.timerEnd = `${merged.date || '2026-11-21'}T17:00:00`;
+        }
+        merged.countdownTarget = merged.timerEnd;
         if (merged.posterUrl === undefined) {
           merged.posterUrl = defT.posterUrl || 'assets/court-1.jpg';
         }
@@ -7315,32 +7345,48 @@ function clearFieldError(fieldId) {
 
     function renderAdminNativeBracketWorkspace() {}
 
-    function adminComputeCountdownParts(targetIso, fallbackDate) {
-      let targetMs = targetIso ? Date.parse(targetIso) : NaN;
-      if (isNaN(targetMs) && fallbackDate) targetMs = Date.parse(fallbackDate + 'T08:00:00');
-      if (isNaN(targetMs)) targetMs = Date.now() + 7 * 86400000;
-      const diff = Math.max(0, targetMs - Date.now());
+    function adminComputeCountdownParts(targetIso, fallbackDate, startIso) {
+      const now = Date.now();
+      const startMs = startIso ? Date.parse(startIso) : NaN;
+      let endMs = targetIso ? Date.parse(targetIso) : NaN;
+      if (isNaN(endMs) && fallbackDate) endMs = Date.parse(fallbackDate + 'T17:00:00');
+      if (isNaN(endMs)) endMs = now + 7 * 86400000;
+
+      let activeMs = endMs;
+      let phase = 'Ends In';
+      if (!isNaN(startMs) && now < startMs) {
+        activeMs = startMs;
+        phase = 'Starts In';
+      } else if (now >= endMs) {
+        phase = 'Ended';
+      }
+
+      const diff = Math.max(0, activeMs - now);
       return {
         days: String(Math.floor(diff / 86400000)).padStart(2, '0'),
         hours: String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0'),
         mins: String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0'),
-        secs: String(Math.floor((diff % 60000) / 1000)).padStart(2, '0')
+        secs: String(Math.floor((diff % 60000) / 1000)).padStart(2, '0'),
+        phase
       };
     }
 
     function adminTickCountdownDisplays() {
       document.querySelectorAll('[data-adm-countdown-target]').forEach(el => {
         const iso = el.getAttribute('data-adm-countdown-target') || '';
+        const startIso = el.getAttribute('data-adm-countdown-start') || '';
         const dt = el.getAttribute('data-adm-countdown-date') || '';
-        const p = adminComputeCountdownParts(iso, dt);
+        const p = adminComputeCountdownParts(iso, dt, startIso);
         const dEl = el.querySelector('[data-adm-cd="days"]');
         const hEl = el.querySelector('[data-adm-cd="hours"]');
         const mEl = el.querySelector('[data-adm-cd="mins"]');
         const sEl = el.querySelector('[data-adm-cd="secs"]');
+        const phEl = el.querySelector('[data-adm-cd="phase"]');
         if (dEl) dEl.textContent = p.days;
         if (hEl) hEl.textContent = p.hours;
         if (mEl) mEl.textContent = p.mins;
         if (sEl) sEl.textContent = p.secs;
+        if (phEl) phEl.textContent = p.phase + ':';
       });
     }
     if (!window.__admTrnCountdownInterval) {
@@ -7415,6 +7461,57 @@ function clearFieldError(fieldId) {
       await saveAndSyncAdminTournaments(target.showPoster ? 'Tournament graphic enabled on homepage' : 'Tournament graphic hidden on homepage');
     }
 
+    function adminQuickPresetTimerWindow(daysFromNow) {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const fmtLocal = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      const startD = new Date(now.getTime());
+      const endD = new Date(now.getTime() + Number(daysFromNow || 3) * 86400000);
+      endD.setHours(17, 0, 0, 0);
+
+      const sInp = document.getElementById('adm-trn-timer-start');
+      const eInp = document.getElementById('adm-trn-timer-end');
+      const dtInp = document.getElementById('adm-edit-trn-date');
+      if (sInp) sInp.value = fmtLocal(startD);
+      if (eInp) eInp.value = fmtLocal(endD);
+      if (dtInp) dtInp.value = `${endD.getFullYear()}-${pad(endD.getMonth() + 1)}-${pad(endD.getDate())}`;
+    }
+
+    function adminViewTournamentReceiptModal(regId, trnId) {
+      const list = getAdminTournamentsList();
+      let found = null;
+      list.forEach(t => {
+        if (trnId && t.id !== trnId) return;
+        const m = (t.registrations || []).find(r => r && (r.id === regId || r.bookingRef === regId));
+        if (m) found = m;
+      });
+      if (!found || !found.receiptDataUrl) {
+        alert('No receipt image was uploaded for this booking.');
+        return;
+      }
+      let modal = document.getElementById('adm-trn-receipt-modal');
+      if (modal) modal.remove();
+      modal = document.createElement('div');
+      modal.id = 'adm-trn-receipt-modal';
+      modal.className = 'fixed inset-0 z-[90] flex items-center justify-center p-4';
+      modal.innerHTML = `
+        <div onclick="document.getElementById('adm-trn-receipt-modal').remove()" class="fixed inset-0 bg-black/75 backdrop-blur-xs"></div>
+        <div class="relative z-10 max-w-lg w-full rounded-2xl bg-white p-5 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h4 class="text-sm font-bold text-slate-900">Payment Receipt • ${pfEscapeHtml(found.player1 || found.teamName)}</h4>
+              <p class="text-xs text-slate-500">${pfEscapeHtml(found.paymentMethod || 'GCash')} • Ref: ${pfEscapeHtml(found.paymentRef || regId)}</p>
+            </div>
+            <button type="button" onclick="document.getElementById('adm-trn-receipt-modal').remove()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 text-xs">✕</button>
+          </div>
+          <div class="max-h-[70dvh] overflow-auto rounded-xl bg-slate-50 p-2 border border-slate-200 flex items-center justify-center">
+            <img src="${found.receiptDataUrl}" alt="Uploaded Receipt" class="max-h-[65dvh] w-auto object-contain rounded-lg">
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
     function renderAdminTournamentsManager(forceRender = false) {
       const grid = document.getElementById('admin-tournaments-manager-grid');
       const visBar = document.getElementById('admin-tournament-visibility-bar');
@@ -7464,10 +7561,13 @@ function clearFieldError(fieldId) {
       const maxSlots = Math.max(2, Number(t.maxTeams || 24));
       const takenSlots = adminCountRealTournamentTeams(t);
       const availSlots = Math.max(0, maxSlots - takenSlots);
-      const cdTarget = (t.countdownTarget || `${t.date || '2026-11-21'}T08:00`).slice(0, 16);
-      const cd = adminComputeCountdownParts(cdTarget, t.date);
+      const cdStart = (t.timerStart || `${t.date || '2026-11-14'}T08:00`).slice(0, 16);
+      const cdTarget = (t.timerEnd || t.countdownTarget || `${t.date || '2026-11-21'}T17:00`).slice(0, 16);
+      const cd = adminComputeCountdownParts(cdTarget, t.date, cdStart);
       const posterSrc = t.posterUrl || 'assets/court-1.jpg';
       const showPoster = t.showPoster !== false;
+      const startTimeStr = t.startTime || '08:00 AM';
+      const endTimeStr = t.endTime || '05:00 PM';
 
       // Gather registrations for the table
       const allCustomerEntries = [];
@@ -7521,16 +7621,38 @@ function clearFieldError(fieldId) {
             </div>
           </div>
 
-          <!-- Right 8 Cols: Event Details & Countdown Timer -->
+          <!-- Right 8 Cols: Event Details & Countdown Timer (Start Time to End Time) -->
           <div class="lg:col-span-8 rounded-2xl bg-slate-50 border border-slate-200 p-5 sm:p-6 space-y-5">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
               <div>
-                <h3 class="text-sm font-bold text-slate-900">Event Details &amp; Countdown Timer (${tType})</h3>
+                <h3 class="text-sm font-bold text-slate-900">Event Details &amp; Timer Adjustment (${tType})</h3>
                 <p class="text-[11px] text-slate-500">Available Slots: <b>${availSlots} of ${maxSlots}</b> remaining</p>
               </div>
-              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 font-mono text-xs text-slate-800" data-adm-countdown-target="${pfEscapeHtml(cdTarget)}" data-adm-countdown-date="${pfEscapeHtml(t.date || '')}">
-                <span class="text-[10px] uppercase text-slate-400">Timer:</span>
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 font-mono text-xs text-slate-800" data-adm-countdown-target="${pfEscapeHtml(cdTarget)}" data-adm-countdown-start="${pfEscapeHtml(cdStart)}" data-adm-countdown-date="${pfEscapeHtml(t.date || '')}">
+                <span data-adm-cd="phase" class="text-[10px] uppercase text-slate-500">${pfEscapeHtml(cd.phase)}:</span>
                 <strong><span data-adm-cd="days">${cd.days}</span>d : <span data-adm-cd="hours">${cd.hours}</span>h : <span data-adm-cd="mins">${cd.mins}</span>m : <span data-adm-cd="secs">${cd.secs}</span>s</strong>
+              </div>
+            </div>
+
+            <!-- Timer Start Time to End Time Adjustment Box -->
+            <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs font-semibold text-slate-900">Countdown Timer Window (Start Time &rarr; End Time)</span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" onclick="adminQuickPresetTimerWindow(1)" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium">+1 Day</button>
+                  <button type="button" onclick="adminQuickPresetTimerWindow(3)" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium">+3 Days</button>
+                  <button type="button" onclick="adminQuickPresetTimerWindow(7)" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium">+7 Days</button>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Timer Start Date &amp; Time</label>
+                  <input type="datetime-local" id="adm-trn-timer-start" value="${pfEscapeHtml(cdStart)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono text-slate-900">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Timer End Date &amp; Time</label>
+                  <input type="datetime-local" id="adm-trn-timer-end" value="${pfEscapeHtml(cdTarget)}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono text-slate-900">
+                </div>
               </div>
             </div>
 
@@ -7556,21 +7678,21 @@ function clearFieldError(fieldId) {
                 <input type="number" id="adm-edit-trn-slots" value="${maxSlots}" min="2" max="256" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900">
               </div>
               <div class="sm:col-span-4">
-                <label class="block text-xs font-medium text-slate-700 mb-1">Countdown Target</label>
-                <input type="datetime-local" id="adm-trn-countdown-input" value="${pfEscapeHtml(cdTarget)}" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono text-slate-900">
-              </div>
-
-              <div class="sm:col-span-6">
                 <label class="block text-xs font-medium text-slate-700 mb-1">Prizes</label>
                 <input type="text" id="adm-edit-trn-prize" value="${pfEscapeHtml(t.prizePool || '')}" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-900">
               </div>
-              <div class="sm:col-span-3">
+
+              <div class="sm:col-span-4">
                 <label class="block text-xs font-medium text-slate-700 mb-1">Event Date</label>
                 <input type="date" id="adm-edit-trn-date" value="${pfEscapeHtml(t.date || '2026-11-21')}" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono text-slate-900">
               </div>
-              <div class="sm:col-span-3">
-                <label class="block text-xs font-medium text-slate-700 mb-1">Event Time</label>
-                <input type="text" id="adm-edit-trn-time" value="${pfEscapeHtml(t.time || '8:00 AM – 5:00 PM')}" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900">
+              <div class="sm:col-span-4">
+                <label class="block text-xs font-medium text-slate-700 mb-1">Event Start Time</label>
+                <input type="text" id="adm-edit-trn-start-time" value="${pfEscapeHtml(startTimeStr)}" placeholder="08:00 AM" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900">
+              </div>
+              <div class="sm:col-span-4">
+                <label class="block text-xs font-medium text-slate-700 mb-1">Event End Time</label>
+                <input type="text" id="adm-edit-trn-end-time" value="${pfEscapeHtml(endTimeStr)}" placeholder="05:00 PM" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900">
               </div>
 
               <div class="sm:col-span-12">
@@ -7580,7 +7702,7 @@ function clearFieldError(fieldId) {
             </div>
 
             <div class="flex items-center justify-end pt-2 border-t border-slate-200">
-              <button type="button" onclick="adminSaveTournamentDetailsInline('${pfEscapeHtml(t.id)}')" class="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-700 text-white text-xs font-semibold transition" style="background:#0F172A !important;color:#FFFFFF !important;">
+              <button type="button" onclick="adminSaveTournamentDetailsInline('${pfEscapeHtml(t.id)}')" class="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-700 text-white text-xs font-semibold transition cursor-pointer" style="background:#0F172A !important;color:#FFFFFF !important;">
                 Save Event Details &amp; Timer
               </button>
             </div>
@@ -7592,7 +7714,7 @@ function clearFieldError(fieldId) {
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
             <div>
               <h3 class="text-base font-bold text-slate-900">Customer Registrations (${allCustomerEntries.length})</h3>
-              <p class="text-xs text-slate-500">Full customer details (kept private from public site). Update booking status to Accepted, Pending, or Declined.</p>
+              <p class="text-xs text-slate-500">Full customer details, payment references, and uploaded receipts (kept private from public site).</p>
             </div>
             <div class="flex flex-wrap items-center gap-1.5">
               ${['ALL', 'ACCEPTED', 'PENDING', 'DECLINED'].map(stKey => `
@@ -7637,6 +7759,7 @@ function clearFieldError(fieldId) {
                     <th class="p-3">Customer Details</th>
                     <th class="p-3">Contact &amp; Skill</th>
                     <th class="p-3">Type</th>
+                    <th class="p-3">Payment &amp; Proof</th>
                     <th class="p-3">Booking Status</th>
                     <th class="p-3 text-right">Actions</th>
                   </tr>
@@ -7648,6 +7771,7 @@ function clearFieldError(fieldId) {
                     const isAccepted = ['ACCEPTED', 'CONFIRMED', 'APPROVED'].includes(st);
                     const isDeclined = ['DECLINED', 'CANCELLED', 'REJECTED'].includes(st);
                     const isSingleRow = String(r._trnType || '').toLowerCase().includes('single');
+                    const hasReceipt = Boolean(r.receiptDataUrl && String(r.receiptDataUrl).length > 20);
 
                     let statusPill = `<span class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-medium">Pending</span>`;
                     if (isAccepted) {
@@ -7672,6 +7796,11 @@ function clearFieldError(fieldId) {
                         </td>
                         <td class="p-3">
                           <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium text-[11px]">${isSingleRow ? 'Single' : 'Double'}</span>
+                        </td>
+                        <td class="p-3">
+                          <div class="font-semibold text-slate-900">${pfEscapeHtml(r.paymentMethod || 'Manual')}</div>
+                          <div class="font-mono text-[11px] text-slate-500">Ref: ${pfEscapeHtml(r.paymentRef || 'N/A')}</div>
+                          ${hasReceipt ? `<button type="button" onclick="adminViewTournamentReceiptModal('${pfEscapeHtml(regId)}', '${pfEscapeHtml(r._trnId)}')" class="mt-1 px-2 py-0.5 rounded bg-slate-900 text-white text-[10px] font-medium cursor-pointer" style="background:#0F172A !important;color:#FFFFFF !important;">View Receipt</button>` : ''}
                         </td>
                         <td class="p-3">${statusPill}</td>
                         <td class="p-3 text-right">
@@ -7709,9 +7838,11 @@ function clearFieldError(fieldId) {
       const slotsVal = Math.max(2, Number(document.getElementById('adm-edit-trn-slots')?.value || 24));
       const dateVal = (document.getElementById('adm-edit-trn-date')?.value || target.date || '2026-11-21').trim();
       const prizeVal = (document.getElementById('adm-edit-trn-prize')?.value || '').trim();
-      const timeVal = (document.getElementById('adm-edit-trn-time')?.value || '').trim();
+      const startTVal = (document.getElementById('adm-edit-trn-start-time')?.value || '08:00 AM').trim();
+      const endTVal = (document.getElementById('adm-edit-trn-end-time')?.value || '05:00 PM').trim();
       const descVal = (document.getElementById('adm-edit-trn-desc')?.value || '').trim();
-      const cdVal = (document.getElementById('adm-trn-countdown-input')?.value || '').trim();
+      const timerStartVal = (document.getElementById('adm-trn-timer-start')?.value || '').trim();
+      const timerEndVal = (document.getElementById('adm-trn-timer-end')?.value || '').trim();
       const posterVal = (document.getElementById('adm-edit-trn-poster')?.value || '').trim();
 
       if (!titleVal) {
@@ -7727,17 +7858,26 @@ function clearFieldError(fieldId) {
       target.maxTeams = slotsVal;
       target.date = dateVal;
       target.prizePool = prizeVal || 'Trophies & Cash Prizes';
-      target.time = timeVal || '8:00 AM – 5:00 PM';
+      target.startTime = startTVal;
+      target.endTime = endTVal;
+      target.time = `${startTVal} – ${endTVal}`;
       target.description = descVal;
       if (posterVal) target.posterUrl = posterVal;
-      if (cdVal) {
-        target.countdownTarget = cdVal.length === 16 ? (cdVal + ':00') : cdVal;
+
+      if (timerStartVal) {
+        target.timerStart = timerStartVal.length === 16 ? (timerStartVal + ':00') : timerStartVal;
       } else {
-        target.countdownTarget = `${dateVal}T08:00:00`;
+        target.timerStart = `${dateVal}T08:00:00`;
       }
+      if (timerEndVal) {
+        target.timerEnd = timerEndVal.length === 16 ? (timerEndVal + ':00') : timerEndVal;
+      } else {
+        target.timerEnd = `${dateVal}T17:00:00`;
+      }
+      target.countdownTarget = target.timerEnd;
       target.registeredCount = adminCountRealTournamentTeams(target);
 
-      await saveAndSyncAdminTournaments(`Saved "${target.title}"!`);
+      await saveAndSyncAdminTournaments(`Saved "${target.title}" (${target.startTime} – ${target.endTime})!`);
     }
 
     async function adminUpdateTournamentRegistrationStatus(trnId, regId, newStatus) {
@@ -7800,6 +7940,8 @@ function clearFieldError(fieldId) {
         phone: ph || 'Walk-In',
         division: 'Intermediate (3.5)',
         entryFee: Number(trn.entryFee || 0),
+        paymentMethod: 'Manual',
+        paymentRef: 'WALK-IN',
         status: 'ACCEPTED',
         registeredAt: new Date().toLocaleString([], { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })
       });

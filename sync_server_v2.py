@@ -1581,6 +1581,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                         "bookingRef": booking_ref,
                         "paymentMethod": pay_mode,
                         "paymentRef": pay_ref,
+                    "receiptDataUrl": receipt_url,
                         "paidAmount": fee_per_player,
                         "status": "BOOKED",
                         "joinedAt": now_time_str
@@ -1672,6 +1673,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             notes = sanitize_str(body.get("notes") or "", 200)
             pay_mode = sanitize_str(body.get("paymentMethod") or "GCash", 50)
             pay_ref = sanitize_str(body.get("paymentRef") or body.get("transactionRef") or "TRN-ENTRY", 60)
+            receipt_url = str(body.get("receiptDataUrl") or "")[:650000]
             booking_ref = sanitize_str(body.get("bookingRef") or body.get("ref") or ("PF-TRN-" + str(int(time.time() * 1000))[-6:]), 30)
 
             if not p1 or len(p1) < 2:
@@ -1708,6 +1710,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     "entryFee": int(target_t.get("entryFee") or 500),
                     "paymentMethod": pay_mode,
                     "paymentRef": pay_ref,
+                    "receiptDataUrl": receipt_url,
                     "status": "PENDING",
                     "registeredAt": get_pht_now().strftime("%Y-%m-%d %I:%M %p")
                 })
