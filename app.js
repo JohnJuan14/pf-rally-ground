@@ -3555,6 +3555,7 @@ function pfResolveCourtSlot(dateYMD, courtNum, slotStr, liveBlocks, liveBookings
   for (let i = blocksArr.length - 1; i >= 0; i--) {
     const bl = blocksArr[i];
     if (!bl || !bl.court) continue;
+    if (String(bl.id || '').startsWith('blk-trn-') && String(bl.hours || '').trim().toUpperCase() === 'ALL') continue;
     const blCourt = String(bl.court).trim();
     const isSpecificCourt = blCourt.includes(courtZero) || blCourt.includes(courtPlain) || blCourt === String(cNum);
     const isAllCourts = blCourt.toUpperCase() === 'ALL' || blCourt.toLowerCase().includes('all');

@@ -72,30 +72,6 @@
       "hours": "06:00 PM",
       "reason": "Open Play (3:00 PM \u2013 6:00 PM)",
       "statusType": "OPEN_PLAY"
-    },
-    {
-      "id": "blk-trn-trn-bicol-dupr-open-c1-1793980106545",
-      "date": "2026-11-21",
-      "court": "Court 01",
-      "hours": "ALL",
-      "reason": "\ud83c\udfc6 Bicol Open DUPR Pickleball Cup (08:00 AM \u2013 05:00 PM)",
-      "statusType": "TOURNAMENT"
-    },
-    {
-      "id": "blk-trn-trn-bicol-dupr-open-c3-179398011",
-      "date": "2026-11-21",
-      "court": "Court 03",
-      "hours": "ALL",
-      "reason": "\ud83c\udfc6 Bicol Open DUPR Pickleball Cup (08:00 AM \u2013 05:00 PM)",
-      "statusType": "TOURNAMENT"
-    },
-    {
-      "id": "blk-trn-trn-bicol-dupr-open-c4-179398011",
-      "date": "2026-11-21",
-      "court": "Court 04",
-      "hours": "ALL",
-      "reason": "\ud83c\udfc6 Bicol Open DUPR Pickleball Cup (08:00 AM \u2013 05:00 PM)",
-      "statusType": "TOURNAMENT"
     }
   ],
   "bookings": [
@@ -168,7 +144,7 @@
       "totalCapitalInvested": 240
     }
   ],
-  "updatedAt": 1794113267602,
+  "updatedAt": 1794115210863,
   "categories": [
     "Refreshment",
     "Pro Shop"
@@ -1515,7 +1491,7 @@
     "standeeUrl": "assets/qr-gcash.png?v=20261029v10",
     "gcashNumber": "0999 883 2346"
   },
-  "blocksUpdatedAt": 1793980117301,
+  "blocksUpdatedAt": 1794115210863,
   "bookingsUpdatedAt": 1794113267602,
   "deletedBookingRefs": [
     "PF-E2E-9991",
