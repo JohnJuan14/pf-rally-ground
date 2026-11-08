@@ -4782,7 +4782,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261107v38"></script>
+<script src="app.js?v=20261107v39"></script>
   <script>
     // ================= AUTHENTIC DATE-RAIL CALENDAR, SCHEDULE TIMELINE & DRAWER ENGINE =================
     let currentScheduleFilter = 'ALL';
@@ -6290,7 +6290,7 @@ button.pf-trn-btn-danger:hover,
         transactionRef: refVal,
         receiptDataUrl: (typeof uploadedReceiptDataUrl !== 'undefined' && uploadedReceiptDataUrl) ? uploadedReceiptDataUrl : '',
         items: orderItems,
-        createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
+        createdAt: (typeof window.pfGetPhilippineDateTimeString === 'function' ? window.pfGetPhilippineDateTimeString() : new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Manila' }).slice(0, 16))
       };
 
       let syncedToServer = false;

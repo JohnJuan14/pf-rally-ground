@@ -198,7 +198,7 @@ def append_security_log(db, event_type, detail, ip="127.0.0.1"):
     if "securityLog" not in db or not isinstance(db["securityLog"], list):
         db["securityLog"] = []
     db["securityLog"].insert(0, {
-        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "time": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S"),
         "event": event_type,
         "detail": detail,
         "ip": ip
@@ -897,7 +897,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 "total": total_val,
                 "status": status_val,
                 "items": items if items else [f"{court_val} ({display_time})"],
-                "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
+                "createdAt": sanitize_str(body.get("createdAt") or datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M"), 40)
             }
             is_reschedule_req = bool(body.get("isReschedule"))
             target_cnum = normalize_court_num(new_booking["court"])
@@ -970,7 +970,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     new_booking["status"] = "CONFIRMED"
                 if existing_bk.get("receiptDataUrl") and not new_booking.get("receiptDataUrl"):
                     new_booking["receiptDataUrl"] = existing_bk["receiptDataUrl"]
-                new_booking["rescheduledAt"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+                new_booking["rescheduledAt"] = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
 
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != new_booking["ref"]]
             # Prevent rapid double-click duplicate booking for same court + time + transactionRef
@@ -1031,7 +1031,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                                 "price": float(new_booking["total"] or 150),
                                 "status": op_status,
                                 "accepted": (op_status == "Accepted"),
-                                "joinedAt": datetime.now().isoformat()
+                                "joinedAt": datetime.now(timezone(timedelta(hours=8))).isoformat()
                             })
                         sc["updatedAt"] = int(time.time() * 1000)
                 elif is_tournament_booking:
@@ -1065,7 +1065,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                                     "paymentRef": new_booking["transactionRef"],
                                     "receiptDataUrl": new_booking.get("receiptDataUrl", ""),
                                     "status": trn_reg_status,
-                                    "registeredAt": datetime.now().strftime("%b %d, %Y, %I:%M %p")
+                                    "registeredAt": datetime.now(timezone(timedelta(hours=8))).strftime("%b %d, %Y, %I:%M %p")
                                 })
                             target_trn["registeredCount"] = sum(1 for r in target_trn["registrations"] if isinstance(r, dict) and str(r.get("status") or "ACCEPTED").upper() not in ("DECLINED", "CANCELLED"))
                             sc["updatedAt"] = int(time.time() * 1000)
@@ -1082,7 +1082,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     "amount": new_booking["total"],
                     "cost": round(bk_cost, 2),
                     "profit": round(float(new_booking["total"]) - bk_cost, 2),
-                    "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                    "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
                 })
 
             if existing_bk:
@@ -1540,7 +1540,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     "img": item.get("img", ""),
                     "pinned": bool(item.get("pinned", False)),
                     "author": sanitize_str(item.get("author", "P&F Rally Ground Admin"), 60),
-                    "createdAt": sanitize_str(item.get("createdAt") or datetime.now().strftime("%b %d, %Y • %I:%M %p"), 50)
+                    "createdAt": sanitize_str(item.get("createdAt") or datetime.now(timezone(timedelta(hours=8))).strftime("%b %d, %Y • %I:%M %p"), 50)
                 }
                 db["announcements"].insert(0, new_ann)
             elif action == "toggle_pin":
@@ -1704,7 +1704,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                                 "category": "Wholesale Restock / Capital",
                                 "title": f"Restocked {boxes_added:g}x {x.get('wholesaleUnit', 'Box')} of {x.get('name')} (+{added_pcs} pcs)",
                                 "amount": round(boxes_added * cost_per_box, 2),
-                                "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                                "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
                             })
                         break
             elif action == "update_stock":
@@ -1838,7 +1838,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 "cost": final_cost,
                 "profit": round(amt - final_cost, 2),
                 "items": items if isinstance(items, list) else [],
-                "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
             }
             db["salesLedger"] = [s for s in db.get("salesLedger", []) if str(s.get("ref", "")).strip().upper() != sale_ref.upper()]
             db["salesLedger"].insert(0, sale)
@@ -1858,7 +1858,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     "category": sanitize_str(exp.get("category", "Wholesale Restock / Capital"), 60) or "Wholesale Restock / Capital",
                     "title": sanitize_str(exp.get("title", "Club Expense"), 160) or "Club Expense",
                     "amount": max(0.0, round(float(exp.get("amount", 0) or 0), 2)),
-                    "date": sanitize_str(exp.get("date") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
+                    "date": sanitize_str(exp.get("date") or datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M"), 40)
                 }
                 db["expenses"].insert(0, new_exp)
             elif action == "delete":

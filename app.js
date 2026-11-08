@@ -1303,7 +1303,7 @@ async function finalizeBookingRecord(details) {
     items: [...cartItems],
     transactionRef: details.transactionRef || 'N/A',
     receiptDataUrl: uploadedReceiptDataUrl || '',
-    createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
+    createdAt: pfGetPhilippineDateTimeString()
   };
 
   // Push to Shared Backend & LocalStorage so Admin Portal receives it immediately!
@@ -3181,18 +3181,28 @@ document.addEventListener('visibilitychange', () => {
 
 // ================= EXPIRED DATE & TIME SLOT VALIDATION ENGINE (PHILIPPINE TIME UTC+8) =================
 function pfGetPhilippineNow() {
+  try {
+    const phtStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' });
+    const d = new Date(phtStr);
+    if (!isNaN(d.getTime())) return d;
+  } catch (e) {}
   const now = new Date();
-  // If running on a UTC server/container (offset 0), shift to UTC+8; otherwise respect the user's local PC wall-clock time
-  if (now.getTimezoneOffset() === 0) {
-    return new Date(now.getTime() + (8 * 3600000));
-  }
-  return now;
+  const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+  return new Date(utcMs + (8 * 3600000));
 }
+window.pfGetPhilippineNow = pfGetPhilippineNow;
 
 function pfGetPhilippineTodayYMD() {
   const now = pfGetPhilippineNow();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 }
+window.pfGetPhilippineTodayYMD = pfGetPhilippineTodayYMD;
+
+function pfGetPhilippineDateTimeString() {
+  const now = pfGetPhilippineNow();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+}
+window.pfGetPhilippineDateTimeString = pfGetPhilippineDateTimeString;
 
 function pfParseSlotHour24(slotStr) {
   if (!slotStr) return -1;
@@ -4528,7 +4538,7 @@ async function pfSubmitBookingReschedule() {
     court: cleanCourtLabel,
     time: newTimeSchedule,
     isReschedule: true,
-    rescheduledAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
+    rescheduledAt: pfGetPhilippineDateTimeString()
   });
 
   if (Array.isArray(updatedBooking.items) && updatedBooking.items.length > 0) {
@@ -5477,7 +5487,7 @@ async function pfShuffleOpenPlay24Players(sessionIdInput) {
   }
   const openArr = Array.from({ length: 24 - realCount }, (_, i) => i + realCount);
   const nextOrder = [...realArr, ...openArr];
-  const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const nowStr = new Date().toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   window.PF_OPEN_PLAY_STATE.shuffledOrderBySession[session.id] = nextOrder;
   window.PF_OPEN_PLAY_STATE.lastShuffleTimeBySession[session.id] = nowStr;
@@ -6607,7 +6617,7 @@ function pfSubmitJoinOpenPlayForm(event, sessionId) {
             isOpenPlay: true,
             bookingType: 'OPEN_PLAY',
             items: [`${numPlayers}× Open Play Slot(s) — ${courtsLabel} (₱${totalFeeVal})`],
-            createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
+            createdAt: pfGetPhilippineDateTimeString()
         };
         try {
             const allB = JSON.parse(localStorage.getItem('pf_all_bookings') || '[]');
@@ -7995,7 +8005,7 @@ async function pfProceedTournamentToPayment() {
     tournamentId: trn.id,
     tournamentType: selectedType,
     items: [`${trn.title} (${selectedType}) — ${pairLabel}`],
-    createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
+    createdAt: pfGetPhilippineDateTimeString()
   };
   window.pfLastOpenPlayBookingRecord = bookingRecord;
 
@@ -8504,7 +8514,7 @@ async function pfSubmitStandaloneGearOrder() {
   const itemsDesc = chosen.map(g => `${Number(pfGearOrderQuantities[g.key] || 1)}× ${g.name} (₱${g.price * Number(pfGearOrderQuantities[g.key] || 1)})`).join(', ');
   const gearRef = 'PF-GEAR-' + Math.floor(100000 + Math.random() * 900000);
   const todayYMD = (typeof pfGetPhilippineTodayYMD === 'function') ? pfGetPhilippineTodayYMD() : new Date().toISOString().slice(0, 10);
-  const nowStr = todayYMD + ' ' + new Date().toTimeString().slice(0, 5);
+  const nowStr = todayYMD + ' ' + pfGetPhilippineDateTimeString().slice(11, 16);
 
   const methodLabel = pfGearOrderPayMethod === 'Cash'
     ? 'MANUAL PAYMENT'
@@ -9057,7 +9067,7 @@ async function pfSubmitLiveInventoryOrder() {
   const itemsDesc = chosen.map(i => `${Number(pfInvOrderQuantities[i.id] || 1)}× ${i.name} (₱${i.price * Number(pfInvOrderQuantities[i.id] || 1)})`).join(', ');
   const invRef = 'PF-INV-' + Math.floor(100000 + Math.random() * 900000);
   const todayYMD = (typeof pfGetPhilippineTodayYMD === 'function') ? pfGetPhilippineTodayYMD() : new Date().toISOString().slice(0, 10);
-  const nowStr = todayYMD + ' ' + new Date().toTimeString().slice(0, 5);
+  const nowStr = todayYMD + ' ' + pfGetPhilippineDateTimeString().slice(11, 16);
 
   const methodLabel = pfInvOrderPayMethod === 'Cash'
     ? 'Cash'

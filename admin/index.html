@@ -6398,7 +6398,7 @@ function clearFieldError(fieldId) {
       if (!b || !newDate) return;
 
       const isOp = isBookingOpenPlayRecord(b);
-      const nowReschedStamp = getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5);
+      const nowReschedStamp = getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })();
 
       if (isOp) {
         const todayYmd = getAdminLocalTodayYMD();
@@ -6651,7 +6651,7 @@ function clearFieldError(fieldId) {
             amount: amt,
             cost: cost,
             profit: amt - cost,
-            date: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
+            date: getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
           });
         }
         appendLocalSecurityAuditLog('BOOKING_CONFIRMED', `Booking ${ref} marked CONFIRMED by Admin`);
@@ -7203,7 +7203,7 @@ function clearFieldError(fieldId) {
         return;
       }
 
-      const nowStamp = getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5);
+      const nowStamp = getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })();
 
       if (mode === 'OPEN_PLAY') {
         const opSel = document.getElementById('modal-open-play-session');
@@ -7529,10 +7529,16 @@ function clearFieldError(fieldId) {
     let currentEditingSlot = { courtNum: 1, timeStr: '06:00 PM', dateYMD: '' };
 
     function getAdminPhilippineNow() {
+      try {
+        const phtStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' });
+        const d = new Date(phtStr);
+        if (!isNaN(d.getTime())) return d;
+      } catch (e) {}
       const now = new Date();
-      if (now.getTimezoneOffset() === 0) return new Date(now.getTime() + (8 * 3600000));
-      return now;
+      const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+      return new Date(utcMs + (8 * 3600000));
     }
+    window.getAdminPhilippineNow = getAdminPhilippineNow;
 
     function getAdminLocalTodayYMD() {
       const now = getAdminPhilippineNow();
@@ -9566,7 +9572,7 @@ function clearFieldError(fieldId) {
           status: mappedBookingStatus,
           isTournament: true,
           tournamentId: targetTrn.id,
-          createdAt: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
+          createdAt: getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
         };
         bookings.unshift(bMatch);
       }
@@ -9586,7 +9592,7 @@ function clearFieldError(fieldId) {
             amount: feeAmt,
             cost: 0,
             profit: feeAmt,
-            date: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
+            date: getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
           };
           salesLedger.unshift(newSale);
           try {
@@ -9669,7 +9675,7 @@ function clearFieldError(fieldId) {
         isTournament: true,
         tournamentId: trn.id,
         bookingType: 'TOURNAMENT',
-        createdAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
+        createdAt: (() => { const _n = getAdminPhilippineNow(); return getAdminLocalTodayYMD() + ' ' + String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
       };
       if (Array.isArray(bookings) && !bookings.some(b => b && b.ref === regRef)) {
         bookings.unshift(newBkRecord);
@@ -11203,7 +11209,7 @@ async function adminSetOpenPlayWindowForDate() {
         };
 
         // Optimistically deduct stock & record sale locally right away
-        const nowStr = getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5);
+        const nowStr = getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })();
         const localSaleEntry = Object.assign({ date: nowStr }, salePayload);
         posOrder.forEach(cartItem => {
           const targetProd = posCatalog.find(p => p.id === cartItem.id);
@@ -12106,7 +12112,7 @@ How many boxes/packs are you adding to stock?
         category: cat,
         title: title,
         amount: amount,
-        date: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
+        date: getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
       };
       clubExpenses.unshift(newExp);
       if (titleEl) titleEl.value = '';
@@ -12563,7 +12569,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
           category: 'Tournament Winner Prize',
           title: `🏆 Winner Cash Prize Payout — ${trn.title}`,
           amount: prizeAmt,
-          date: getAdminLocalTodayYMD() + ' ' + new Date().toTimeString().slice(0, 5)
+          date: getAdminLocalTodayYMD() + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
         };
         clubExpenses.unshift(prizeExp);
         try {
@@ -17945,7 +17951,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                     amount: isNaN(price) ? 150 : price,
                     cost: 0,
                     profit: isNaN(price) ? 150 : price,
-                    date: todayYMD + ' ' + new Date().toTimeString().slice(0, 5)
+                    date: todayYMD + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
                 });
             }
 
@@ -18042,7 +18048,7 @@ Enter the capital/product cost (₱) to deduct:`, String(Number(currentCost || 0
                         amount: amt,
                         cost: 0,
                         profit: amt,
-                        date: todayYMD + ' ' + new Date().toTimeString().slice(0, 5)
+                        date: todayYMD + ' ' + (() => { const _n = getAdminPhilippineNow(); return String(_n.getHours()).padStart(2, '0') + ':' + String(_n.getMinutes()).padStart(2, '0'); })()
                     });
                 }
             } else if (newStatus === 'Declined' && typeof salesLedger !== 'undefined' && Array.isArray(salesLedger)) {

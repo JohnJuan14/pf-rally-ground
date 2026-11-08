@@ -178,7 +178,7 @@ def sanitize_str(val, max_len=250):
 def append_security_log(db, event_type, detail, ip="127.0.0.1"):
     if "securityLog" not in db or not isinstance(db["securityLog"], list):
         db["securityLog"] = list(DEFAULT_SECURITY_LOG)
-    now_str = get_pht_now().strftime("%Y-%m-%d %H:%M:%S") if "get_pht_now" in globals() else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now_str = get_pht_now().strftime("%Y-%m-%d %H:%M:%S") if "get_pht_now" in globals() else datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
     db["securityLog"].insert(0, {
         "time": now_str,
         "event": event_type,
@@ -726,7 +726,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                     "img": item.get("img", ""),
                     "pinned": bool(item.get("pinned", False)),
                     "author": sanitize_str(item.get("author", "P&F Rally Ground Admin"), 60),
-                    "createdAt": sanitize_str(item.get("createdAt") or datetime.now().strftime("%b %d, %Y • %I:%M %p"), 50)
+                    "createdAt": sanitize_str(item.get("createdAt") or datetime.now(timezone(timedelta(hours=8))).strftime("%b %d, %Y • %I:%M %p"), 50)
                 }
                 db["announcements"] = [a for a in db["announcements"] if a.get("id") != new_ann["id"]]
                 db["announcements"].insert(0, new_ann)
@@ -823,7 +823,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 "total": total_val,
                 "status": status_val,
                 "items": items if items else [f"{court_val} ({display_time})"],
-                "createdAt": sanitize_str(body.get("createdAt") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
+                "createdAt": sanitize_str(body.get("createdAt") or datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M"), 40)
             }
             # Deduplicate identical rapid double-click booking submissions
             dup_existing = next((
@@ -912,7 +912,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                     new_booking["status"] = "CONFIRMED"
                 if existing_bk.get("receiptDataUrl") and not new_booking.get("receiptDataUrl"):
                     new_booking["receiptDataUrl"] = existing_bk["receiptDataUrl"]
-                new_booking["rescheduledAt"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+                new_booking["rescheduledAt"] = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
 
             db["bookings"] = [b for b in db["bookings"] if b.get("ref") != new_booking["ref"]]
             db["bookings"].insert(0, new_booking)
@@ -929,7 +929,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                     "amount": new_booking["total"],
                     "cost": round(bk_cost, 2),
                     "profit": round(float(new_booking["total"]) - bk_cost, 2),
-                    "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                    "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
                 })
 
             if existing_bk:
@@ -1344,7 +1344,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                                 "category": "Wholesale Restock / Capital",
                                 "title": f"Restocked {boxes_added:g}x {x.get('wholesaleUnit', 'Box')} of {x.get('name')} (+{added_pcs} pcs)",
                                 "amount": round(boxes_added * cost_per_box, 2),
-                                "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                                "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
                             })
                         break
             elif action == "update_stock":
@@ -1446,7 +1446,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 "cost": final_cost,
                 "profit": round(amt - final_cost, 2),
                 "items": items if isinstance(items, list) else [],
-                "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+                "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
             }
             db["salesLedger"].insert(0, sale)
             append_security_log(db, "POS_SALE_RECORDED", f"POS sale {sale['ref']}: {sale['desc']} (PHP {amt})", client_ip)
@@ -1466,7 +1466,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                     "category": sanitize_str(exp.get("category", "Wholesale Restock / Capital"), 60) or "Wholesale Restock / Capital",
                     "title": sanitize_str(exp.get("title", "Club Expense"), 160) or "Club Expense",
                     "amount": max(0.0, round(float(exp.get("amount", 0) or 0), 2)),
-                    "date": sanitize_str(exp.get("date") or datetime.now().strftime("%Y-%m-%d %H:%M"), 40)
+                    "date": sanitize_str(exp.get("date") or datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M"), 40)
                 }
                 db["expenses"].insert(0, new_exp)
                 append_security_log(db, "EXPENSE_RECORDED", f"Added expense: {new_exp['title']} (PHP {new_exp['amount']})", client_ip)
