@@ -60,7 +60,7 @@ DEFAULT_ANNOUNCEMENTS = [
 
 DEFAULT_TOURNAMENTS = [{'id': 'trn-pf-singles-cup', 'title': 'P&F Rally Ground Singles Cup', 'tournamentType': 'Single', 'format': 'Single', 'formatKey': 'SINGLE', 'division': 'Novice • Intermediate • Open', 'category': 'Singles', 'date': '2026-11-21', 'time': '8:00 AM – 5:00 PM', 'countdownTarget': '2026-11-21T08:00:00', 'courts': 'Courts 1 – 4', 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'posterUrl': 'assets/court-1.jpg', 'showPoster': True, 'showCourtsOnSite': True, 'published': True, 'entryFee': 500, 'prizePool': '₱10,000 + Trophies', 'maxTeams': 24, 'registeredCount': 0, 'registrations': [], 'approved': True, 'scoringTarget': 11, 'status': 'OPEN', 'description': 'Official 1v1 Singles Pickleball Tournament at P&F Rally Ground. Pool play followed by knockout finals.', 'players': [], 'bracket': []}, {'id': 'trn-pf-doubles-cup', 'title': 'P&F Rally Ground Doubles Cup', 'tournamentType': 'Double', 'format': 'Double', 'formatKey': 'DOUBLE', 'division': 'Novice • Intermediate • Open', 'category': 'Doubles', 'date': '2026-11-28', 'time': '8:00 AM – 5:00 PM', 'countdownTarget': '2026-11-28T08:00:00', 'courts': 'Courts 1 – 4', 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'posterUrl': 'assets/court-2.jpg', 'showPoster': True, 'showCourtsOnSite': True, 'published': False, 'entryFee': 850, 'prizePool': '₱20,000 + Trophies', 'maxTeams': 24, 'registeredCount': 0, 'registrations': [], 'approved': True, 'scoringTarget': 11, 'status': 'OPEN', 'description': 'Official 2v2 Doubles Pickleball Tournament at P&F Rally Ground. Register with your partner for pool play and finals.', 'players': [], 'bracket': []}]
 
-DEFAULT_OPEN_PLAY_SESSIONS = [{'id': 'op-afternoon-social', 'title': 'Tue – Thu Open Play (Drop In. Rally On.)', 'schedule': 'Tuesday – Thursday • 04:00 PM – 08:00 PM', 'skillLevel': 'All Skill Levels (Drop In • Rally On)', 'rotationRule': '4-Player Doubles Pods • Shuffle Players Every Round', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': True, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}, {'id': 'op-evening-nightlights', 'title': 'Fri – Sat Night Open Play (Drop In. Rally On.)', 'schedule': 'Friday – Saturday • 06:00 PM – 10:00 PM', 'skillLevel': 'All Skill Levels (Drop In • Rally On)', 'rotationRule': '4-Player Doubles Pods • Shuffle Players Every Round', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': True, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}, {'id': 'op-morning-dropin', 'title': 'Morning Community Drop-In', 'schedule': 'Daily • 07:00 AM – 10:00 AM', 'skillLevel': 'Social & Fitness Rotation (All Levels)', 'rotationRule': '4-Player Doubles Pods • Balanced Court Rotation', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2'], 'showCourtsOnSite': True, 'published': False, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}, {'id': 'op-weekend-mixer', 'title': 'Weekend Club Open Play Mixer', 'schedule': 'Sunday • 04:00 PM – 08:00 PM', 'skillLevel': 'All Community Members & Walk-Ins', 'rotationRule': '4-Player Doubles Pods • Community Shuffler', 'entryFee': 150, 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'showCourtsOnSite': True, 'published': False, 'maxPlayers': 24, 'players': [], 'shuffledOrder': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], 'lastShuffleTime': 'Ready to Shuffle'}]
+DEFAULT_OPEN_PLAY_SESSIONS = [{'id': 'op-main', 'title': 'Pickleball Fever Open Play', 'subtitle': 'Drop In. Rally On.', 'tueThuStart': '16:00', 'tueThuEnd': '20:00', 'friSatStart': '18:00', 'friSatEnd': '22:00', 'startTime': '16:00', 'endTime': '20:00', 'schedule': 'Tue–Thu: 4:00 PM – 8:00 PM • Fri–Sat: 6:00 PM – 10:00 PM', 'openPlayDate': '2026-11-07', 'lastResetDate': '2026-11-07', 'defaultDays': ['Tue', 'Wed', 'Thu', 'Fri', 'Sat'], 'entryFee': 150, 'maxSlots': 24, 'slotsAvailableOverride': None, 'posterUrl': 'assets/open-play-poster.jpg', 'designatedCourts': ['Court 1', 'Court 2', 'Court 3', 'Court 4'], 'published': True, 'players': [], 'historyPlayers': []}]
 
 DEFAULT_SECURITY_LOG = [
     {
@@ -349,9 +349,9 @@ def load_db():
             with open(DB_FILE, "r", encoding="utf-8") as f:
                 data = _scrub_corrupted_utf8(json.load(f))
             if isinstance(sb_cloud, dict) and len(sb_cloud) > 0:
-                cloud_ts = max(int(sb_cloud.get("updatedAt") or 0), int(_SB_MEM_CACHE.get("updated_at") or 0))
+                cloud_ts = int(sb_cloud.get("updatedAt") or 0)
                 local_ts = int(data.get("updatedAt") or 0)
-                if cloud_ts >= local_ts or len(sb_cloud.get("bookings") or []) > len(data.get("bookings") or []):
+                if cloud_ts > local_ts:
                     data = _scrub_corrupted_utf8(json.loads(json.dumps(sb_cloud)))
                     try:
                         with open(DB_FILE, "w", encoding="utf-8") as fw:
@@ -363,7 +363,7 @@ def load_db():
             for k in ["bookings", "deletedBookingRefs", "deletedInventoryIds", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements", "securityLog"]:
                 if k not in data or not isinstance(data[k], list):
                     data[k] = []
-            if len(data["announcements"]) == 0:
+            if "announcementsUpdatedAt" not in data and len(data["announcements"]) == 0:
                 data["announcements"] = json.loads(json.dumps(DEFAULT_ANNOUNCEMENTS))
             if len(data["securityLog"]) == 0:
                 data["securityLog"] = json.loads(json.dumps(DEFAULT_SECURITY_LOG))
@@ -391,8 +391,12 @@ def load_db():
 
 def save_db(data):
     with db_lock:
+        now_ms = int(time.time() * 1000)
         if isinstance(data, dict):
-            data["updatedAt"] = int(time.time() * 1000)
+            data["updatedAt"] = now_ms
+            _SB_MEM_CACHE["data"] = json.loads(json.dumps(data))
+            _SB_MEM_CACHE["updated_at"] = now_ms
+            _SB_MEM_CACHE["checked_at"] = time.time()
         payload = json.dumps(data, indent=2)
         tmp_file = f"{DB_FILE}.{os.getpid()}.{threading.get_ident()}.tmp"
         try:
@@ -430,7 +434,9 @@ def resolve_api_route(parsed_url):
     return parsed_url.path
 
 def get_pht_now():
-    return datetime.now(timezone(timedelta(hours=8)))
+    if os.environ.get("RENDER"):
+        return datetime.now(timezone(timedelta(hours=8)))
+    return datetime.now()
 
 ALL_18_SLOTS = [
     "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
@@ -653,6 +659,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 int(db.get("blocksUpdatedAt") or 0),
                 int(db.get("announcementsUpdatedAt") or 0),
                 int((db.get("siteConfig") or {}).get("updatedAt") or 0),
+                int((db.get("paymentConfig") or {}).get("updatedAt") or 0),
             ]
             srv_ver = f"{max(ts_vals)}-{len(db.get('bookings') or [])}-{len(db.get('blocks') or [])}-{len(db.get('announcements') or [])}-{len(db.get('inventory') or [])}-{len(db.get('salesLedger') or [])}-{len(db.get('expenses') or [])}"
             if since_ver and since_ver == srv_ver:
@@ -709,13 +716,29 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             ref = parsed.path.split("/api/booking/")[1].strip().upper()
             db = load_db()
             found = next((b for b in db["bookings"] if b.get("ref", "").upper() == ref), None)
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.end_headers()
+            if not found:
+                sale_found = next((s for s in db.get("salesLedger", []) if str(s.get("ref") or s.get("id") or "").upper() == ref), None)
+                if sale_found:
+                    items_str = ", ".join(f"{it.get('qty', 1)}x {it.get('name', 'Item')}" for it in (sale_found.get("items") or []))
+                    found = {
+                        "ref": sale_found.get("ref") or sale_found.get("id") or ref,
+                        "name": sale_found.get("customer") or sale_found.get("customerName") or "Walk-In / Club Guest",
+                        "phone": sale_found.get("phone") or "",
+                        "court": f"Live Inventory ({sale_found.get('deliveryNote') or 'Counter Pickup'})" if str(ref).startswith("PF-INV-") else "Club POS Checkout",
+                        "date": str(sale_found.get("date") or "")[:10],
+                        "time": str(sale_found.get("date") or "")[11:16] or "POS",
+                        "total": sale_found.get("total") or sale_found.get("amount") or 0,
+                        "status": sale_found.get("status") or ("CONFIRMED" if sale_found.get("paymentStatus") == "PAID" else "PENDING"),
+                        "paymentMethod": sale_found.get("paymentMethod") or sale_found.get("method") or "Cash",
+                        "payRef": sale_found.get("payRef") or sale_found.get("paymentRef") or "",
+                        "addons": items_str,
+                        "items": sale_found.get("items") or [],
+                        "bookingType": sale_found.get("source") or "POS"
+                    }
             payload = {"found": bool(found), "booking": found}
             if found:
                 payload.update(found)
-            self.wfile.write(json.dumps(payload).encode("utf-8"))
+            self._send_json(payload)
             return
         # Clean URL Routing for local host
         if parsed.path in ("/book", "/book/"):
@@ -737,6 +760,12 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             stripped = parsed.path[len("/admin"):]
             self.path = stripped + (("?" + parsed.query) if parsed.query else "")
 
+        if self.directory and os.path.basename(os.path.normpath(str(self.directory))).lower() == "admin":
+            req_clean = urllib.parse.unquote(self.path.split("?", 1)[0]).lstrip("/")
+            admin_candidate = os.path.join(str(self.directory), req_clean.replace("/", os.sep))
+            public_candidate = os.path.join(PUBLIC_DIR, req_clean.replace("/", os.sep))
+            if req_clean and not os.path.exists(admin_candidate) and os.path.exists(public_candidate):
+                self.directory = PUBLIC_DIR
 
         super().do_GET()
 
@@ -787,8 +816,61 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             if status_val.startswith("PENDING"):
                 status_val = "PENDING"
 
+            is_tournament_booking = (
+                "tournament" in str(raw_court_str).lower()
+                or any("tournament" in str(it).lower() for it in items)
+                or bool(body.get("isTournament"))
+                or str(body.get("bookingType") or "").upper() == "TOURNAMENT"
+                or str(booking_ref).upper().startswith("PF-TRN-")
+            )
+            is_open_play_booking = (
+                "open play" in str(raw_court_str).lower()
+                or any("open play" in str(it).lower() for it in items)
+                or bool(body.get("isOpenPlay"))
+                or str(body.get("bookingType") or "").upper() == "OPEN_PLAY"
+                or str(booking_ref).upper().startswith("PF-OP-")
+            )
+            is_inventory_booking = (
+                "live inventory" in str(raw_court_str).lower()
+                or bool(body.get("isLiveInventory"))
+                or str(body.get("bookingType") or "").upper() in ("LIVE_INVENTORY", "INVENTORY")
+                or str(booking_ref).upper().startswith("PF-INV-")
+            )
+            is_gear_booking = (
+                "gear rental" in str(raw_court_str).lower()
+                or bool(body.get("isGearOnly"))
+                or str(body.get("bookingType") or "").upper() in ("GEAR_ONLY", "GEAR_RENTAL")
+                or str(booking_ref).upper().startswith("PF-GEAR-")
+            )
+            if is_open_play_booking:
+                op_cfg = (db.get("siteConfig") or {}).get("openPlay") or {}
+                desig = op_cfg.get("designatedCourts")
+                if isinstance(desig, list) and len(desig) > 0:
+                    cleaned_c = sorted({int(c) for c in desig if str(c).isdigit() and 1 <= int(c) <= 4})
+                else:
+                    cleaned_c = [1, 2, 3, 4]
+                if len(cleaned_c) == 4:
+                    court_val = "Open Play (Court 1-4)"
+                elif len(cleaned_c) == 1:
+                    court_val = f"Open Play (Court {cleaned_c[0]})"
+                else:
+                    court_val = f"Open Play (Courts {', '.join(str(c) for c in cleaned_c)})"
+            parsed_players = max(1, int(parse_amount(body.get("playersCount") or body.get("players") or body.get("slots") or (1 if (is_open_play_booking or is_inventory_booking or is_gear_booking) else 2), 1 if (is_open_play_booking or is_inventory_booking or is_gear_booking) else 2)))
+
+            resolved_bk_type = (
+                "OPEN_PLAY" if is_open_play_booking
+                else ("TOURNAMENT" if is_tournament_booking
+                else ("LIVE_INVENTORY" if is_inventory_booking
+                else ("GEAR_ONLY" if is_gear_booking
+                else str(body.get("bookingType") or "COURT"))))
+            )
+
             new_booking = {
                 "ref": booking_ref,
+                "bookingType": resolved_bk_type,
+                "isOpenPlay": bool(is_open_play_booking),
+                "isTournament": bool(is_tournament_booking),
+                "isLiveInventory": bool(is_inventory_booking),
                 "name": raw_name,
                 "customerName": raw_name,
                 "phone": raw_phone,
@@ -798,7 +880,9 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 "court": court_val,
                 "date": date_val,
                 "time": display_time,
-                "players": int(parse_amount(body.get("players", 2), 2)),
+                "players": parsed_players,
+                "playersCount": parsed_players,
+                "slots": parsed_players,
                 "paymentMode": pay_mode,
                 "paymentMethod": pay_mode,
                 "transactionRef": raw_ref,
@@ -814,11 +898,9 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             target_slots = extract_covered_slots(new_booking["time"])
             now_dt = get_pht_now()
             today_ymd_str = now_dt.strftime("%Y-%m-%d")
-            is_tournament_booking = ("tournament" in str(raw_court_str).lower() or any("tournament" in str(it).lower() for it in items) or bool(body.get("isTournament")))
-            is_open_play_booking = ("open play" in str(raw_court_str).lower() or any("open play" in str(it).lower() for it in items) or bool(body.get("isOpenPlay")))
             max_adv_days = int((db.get("siteConfig") or {}).get("maxAdvanceBookingDays", 30) or 30)
             max_ymd_str = (now_dt + timedelta(days=max_adv_days)).strftime("%Y-%m-%d")
-            if re.match(r"^\d{4}-\d{2}-\d{2}$", target_ymd):
+            if re.match(r"^\d{4}-\d{2}-\d{2}$", target_ymd) and not is_inventory_booking and not is_gear_booking:
                 if target_ymd < today_ymd_str:
                     self._send_json({
                         "ok": False,
@@ -844,7 +926,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                                     "error": f"Expired Time Slot Error: {s_lbl} Today ({target_ymd}) has already passed. Please choose a future time slot."
                                 }, status=409)
                                 return
-            if target_slots and not is_tournament_booking and not is_open_play_booking:
+            if target_slots and not is_tournament_booking and not is_open_play_booking and not is_inventory_booking and not is_gear_booking:
                 for b in db.get("bookings", []):
                     if b.get("status") in ("CANCELLED", "DECLINED"):
                         continue
@@ -855,7 +937,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     if b_cnum == target_cnum and b_ymd == target_ymd and overlap:
                         conflict_slot_str = overlap[0]
                         if b.get("ref") == new_booking["ref"]:
-                            if is_reschedule_req:
+                            if is_reschedule_req and set(b_slots) == set(target_slots):
                                 self._send_json({
                                     "ok": False,
                                     "error": f"Schedule Already Booked Error: Court {target_cnum} at {conflict_slot_str} on {target_ymd} is already booked by your current reservation ({new_booking['ref']}). Please choose a different available date, court, or time slot."
@@ -873,7 +955,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
 
             existing_bk = next((b for b in db["bookings"] if b.get("ref") == new_booking["ref"]), None)
             if not existing_bk:
-                deduct_inventory_for_items(db, items)
+                if not body.get("skipInventoryDeduct"):
+                    deduct_inventory_for_items(db, items)
             else:
                 # Preserve existing status & receipt on customer reschedule
                 if existing_bk.get("status") == "CONFIRMED":
@@ -898,6 +981,87 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             db["bookings"].insert(0, new_booking)
+
+            # Sync Open Play & Tournament registrations into db["siteConfig"] so 8088 & 8089 stay 100% in sync
+            sc = db.get("siteConfig")
+            if isinstance(sc, dict):
+                if is_open_play_booking:
+                    op_sessions = sc.get("openPlaySessions")
+                    if isinstance(op_sessions, list) and len(op_sessions) > 0 and isinstance(op_sessions[0], dict):
+                        s0 = op_sessions[0]
+                        if not isinstance(s0.get("players"), list):
+                            s0["players"] = []
+                        op_status = "Accepted" if new_booking["status"] == "CONFIRMED" else ("Declined" if new_booking["status"] in ("DECLINED", "CANCELLED") else "Pending")
+                        existing_pl = next((pl for pl in s0["players"] if isinstance(pl, dict) and (str(pl.get("bookingRef") or "").upper() == new_booking["ref"].upper() or str(pl.get("refNumber") or "").upper() == new_booking["ref"].upper())), None)
+                        if existing_pl:
+                            existing_pl["name"] = new_booking["name"]
+                            existing_pl["phone"] = new_booking["phone"]
+                            existing_pl["openPlayDate"] = new_booking["date"]
+                            existing_pl["timeOfBooking"] = new_booking["time"]
+                            existing_pl["playersCount"] = new_booking["players"]
+                            existing_pl["players"] = new_booking["players"]
+                            existing_pl["slots"] = new_booking["players"]
+                            existing_pl["status"] = op_status
+                            existing_pl["accepted"] = (op_status == "Accepted")
+                            existing_pl["price"] = float(new_booking["total"] or 150)
+                            if new_booking.get("receiptDataUrl"):
+                                existing_pl["receiptDataUrl"] = new_booking["receiptDataUrl"]
+                        else:
+                            s0["players"].insert(0, {
+                                "id": f"opp-{new_booking['ref'].lower()}",
+                                "bookingRef": new_booking["ref"],
+                                "name": new_booking["name"],
+                                "phone": new_booking["phone"],
+                                "openPlayDate": new_booking["date"],
+                                "timeOfBooking": new_booking["time"],
+                                "paymentMethod": new_booking["paymentMethod"],
+                                "refNumber": new_booking["ref"],
+                                "transactionRef": new_booking["transactionRef"],
+                                "receiptDataUrl": new_booking.get("receiptDataUrl", ""),
+                                "playersCount": new_booking["players"],
+                                "players": new_booking["players"],
+                                "slots": new_booking["players"],
+                                "price": float(new_booking["total"] or 150),
+                                "status": op_status,
+                                "accepted": (op_status == "Accepted"),
+                                "joinedAt": datetime.now().isoformat()
+                            })
+                        sc["updatedAt"] = int(time.time() * 1000)
+                elif is_tournament_booking:
+                    trns = sc.get("tournaments")
+                    if isinstance(trns, list) and len(trns) > 0:
+                        target_trn_id = str(body.get("tournamentId") or "").strip()
+                        target_trn = next((t for t in trns if isinstance(t, dict) and str(t.get("id") or "") == target_trn_id), None)
+                        if not target_trn:
+                            court_lc = str(new_booking.get("court") or "").lower()
+                            target_trn = next((t for t in trns if isinstance(t, dict) and ("single" in str(t.get("type") or "").lower()) == ("single" in court_lc)), trns[0])
+                        if isinstance(target_trn, dict):
+                            if not isinstance(target_trn.get("registrations"), list):
+                                target_trn["registrations"] = []
+                            trn_reg_status = "ACCEPTED" if new_booking["status"] == "CONFIRMED" else ("DECLINED" if new_booking["status"] in ("DECLINED", "CANCELLED") else "PENDING")
+                            existing_reg = next((r for r in target_trn["registrations"] if isinstance(r, dict) and (str(r.get("bookingRef") or "").upper() == new_booking["ref"].upper() or str(r.get("id") or "").upper() == new_booking["ref"].upper())), None)
+                            if existing_reg:
+                                existing_reg["status"] = trn_reg_status
+                            else:
+                                target_trn["registrations"].insert(0, {
+                                    "id": new_booking["ref"],
+                                    "bookingRef": new_booking["ref"],
+                                    "tournamentId": target_trn.get("id", "trn-1"),
+                                    "tournamentTitle": target_trn.get("title", "Tournament"),
+                                    "tournamentType": target_trn.get("type", "Double"),
+                                    "teamName": new_booking["name"],
+                                    "player1": str(body.get("player1") or new_booking["name"]).split("&")[0].strip(),
+                                    "partner": str(body.get("partner") or (new_booking["name"].split("&")[1].strip() if "&" in new_booking["name"] else "Solo / TBD")),
+                                    "phone": new_booking["phone"],
+                                    "entryFee": float(new_booking["total"] or target_trn.get("entryFee") or 500),
+                                    "paymentMethod": new_booking["paymentMethod"],
+                                    "paymentRef": new_booking["transactionRef"],
+                                    "receiptDataUrl": new_booking.get("receiptDataUrl", ""),
+                                    "status": trn_reg_status,
+                                    "registeredAt": datetime.now().strftime("%b %d, %Y, %I:%M %p")
+                                })
+                            target_trn["registeredCount"] = sum(1 for r in target_trn["registrations"] if isinstance(r, dict) and str(r.get("status") or "ACCEPTED").upper() not in ("DECLINED", "CANCELLED"))
+                            sc["updatedAt"] = int(time.time() * 1000)
 
             if new_booking["status"] == "CONFIRMED" and not any(s.get("ref") == new_booking["ref"] for s in db.get("salesLedger", [])):
                 bk_cost = compute_and_deduct_inventory_for_items(db, items, deduct_stock=False)
@@ -1051,6 +1215,45 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     trigger_booking_gmail_notifications(db, target)
                 elif new_status in ("DECLINED", "CANCELLED"):
                     db["salesLedger"] = [s for s in db.get("salesLedger", []) if s.get("ref") != ref]
+            # Also sync status into siteConfig.openPlaySessions and siteConfig.tournaments
+            ref_up = str(ref or "").strip().upper()
+            sc = db.get("siteConfig")
+            if ref_up and isinstance(sc, dict):
+                sc_changed = False
+                if isinstance(sc.get("openPlaySessions"), list):
+                    op_mapped = "Accepted" if new_status == "CONFIRMED" else ("Declined" if new_status in ("DECLINED", "CANCELLED") else "Pending")
+                    for s_op in sc["openPlaySessions"]:
+                        if isinstance(s_op, dict) and isinstance(s_op.get("players"), list):
+                            for pl in s_op["players"]:
+                                if isinstance(pl, dict) and (
+                                    str(pl.get("bookingRef") or "").strip().upper() == ref_up
+                                    or str(pl.get("refNumber") or "").strip().upper() == ref_up
+                                    or str(pl.get("id") or "").strip().upper() == ref_up
+                                ):
+                                    pl["status"] = op_mapped
+                                    pl["accepted"] = (op_mapped == "Accepted")
+                                    sc_changed = True
+                if isinstance(sc.get("tournaments"), list):
+                    trn_mapped = "ACCEPTED" if new_status == "CONFIRMED" else ("DECLINED" if new_status in ("DECLINED", "CANCELLED") else "PENDING")
+                    for trn_obj in sc["tournaments"]:
+                        if isinstance(trn_obj, dict) and isinstance(trn_obj.get("registrations"), list):
+                            matched_any = False
+                            for reg_obj in trn_obj["registrations"]:
+                                if isinstance(reg_obj, dict) and (
+                                    str(reg_obj.get("bookingRef") or "").strip().upper() == ref_up
+                                    or str(reg_obj.get("id") or "").strip().upper() == ref_up
+                                ):
+                                    reg_obj["status"] = trn_mapped
+                                    matched_any = True
+                                    sc_changed = True
+                            if matched_any:
+                                trn_obj["registeredCount"] = sum(
+                                    1 for r in trn_obj["registrations"]
+                                    if isinstance(r, dict) and str(r.get("status") or "ACCEPTED").upper() not in ("DECLINED", "CANCELLED")
+                                )
+                if sc_changed:
+                    sc["updatedAt"] = int(time.time() * 1000)
+            db["bookingsUpdatedAt"] = int(time.time() * 1000)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
             self._send_json({"ok": True, "state": db})
@@ -1072,9 +1275,64 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             for k in ["bookings", "blocks", "salesLedger", "expenses", "inventory", "categories", "announcements"]:
                 if k in body and isinstance(body[k], list):
                     if k in ("bookings", "salesLedger"):
-                        db[k] = [b for b in body[k] if isinstance(b, dict) and str(b.get("ref", "")).strip().upper() not in del_refs]
+                        existing_items = [b for b in (db.get(k) or []) if isinstance(b, dict) and str(b.get("ref", "")).strip().upper() not in del_refs]
+                        incoming_items = [b for b in body[k] if isinstance(b, dict) and str(b.get("ref", "")).strip().upper() not in del_refs]
+                        if k == "bookings":
+                            existing_items = [
+                                b for b in existing_items
+                                if not str(b.get("ref", "")).strip().upper().startswith("PF-INV-")
+                                and str(b.get("bookingType", "")).strip().upper() != "LIVE_INVENTORY"
+                                and not bool(b.get("isLiveInventory"))
+                            ]
+                            incoming_items = [
+                                b for b in incoming_items
+                                if not str(b.get("ref", "")).strip().upper().startswith("PF-INV-")
+                                and str(b.get("bookingType", "")).strip().upper() != "LIVE_INVENTORY"
+                                and not bool(b.get("isLiveInventory"))
+                            ]
+                        merged_by_ref = {}
+                        merged_order = []
+                        for item in incoming_items + existing_items:
+                            r_key = str(item.get("ref", "")).strip().upper()
+                            if not r_key:
+                                r_key = f"__ANON_{len(merged_order)}"
+                            if r_key not in merged_by_ref:
+                                merged_by_ref[r_key] = dict(item)
+                                merged_order.append(r_key)
+                            else:
+                                cur_resched = str(merged_by_ref[r_key].get("rescheduledAt") or "")
+                                it_resched = str(item.get("rescheduledAt") or "")
+                                if it_resched and it_resched > cur_resched:
+                                    saved_receipt = merged_by_ref[r_key].get("receiptDataUrl") or item.get("receiptDataUrl") or ""
+                                    merged_by_ref[r_key] = dict(item)
+                                    if saved_receipt:
+                                        merged_by_ref[r_key]["receiptDataUrl"] = saved_receipt
+                                elif not merged_by_ref[r_key].get("receiptDataUrl") and item.get("receiptDataUrl"):
+                                    merged_by_ref[r_key]["receiptDataUrl"] = item["receiptDataUrl"]
+                                if k == "salesLedger":
+                                    cur_st = str(merged_by_ref[r_key].get("status") or merged_by_ref[r_key].get("paymentStatus") or "").upper()
+                                    it_st = str(item.get("status") or item.get("paymentStatus") or "").upper()
+                                    if cur_st == "CONFIRMED" or it_st == "CONFIRMED":
+                                        merged_by_ref[r_key]["status"] = "CONFIRMED"
+                                        merged_by_ref[r_key]["paymentStatus"] = "CONFIRMED"
+                        db[k] = [merged_by_ref[rk] for rk in merged_order]
                     elif k == "inventory":
-                        db[k] = [x for x in body[k] if isinstance(x, dict) and str(x.get("id", "")).strip() not in del_inv_ids]
+                        existing_inv = [x for x in (db.get("inventory") or []) if isinstance(x, dict) and str(x.get("id", "")).strip() not in del_inv_ids]
+                        incoming_inv = [x for x in body[k] if isinstance(x, dict) and str(x.get("id", "")).strip() not in del_inv_ids]
+                        inv_by_id = {}
+                        inv_order = []
+                        for item in incoming_inv + existing_inv:
+                            i_key = str(item.get("id", "")).strip() or f"__INV_{len(inv_order)}"
+                            if i_key not in inv_by_id:
+                                inv_by_id[i_key] = dict(item)
+                                inv_order.append(i_key)
+                            else:
+                                prev_sold = int(inv_by_id[i_key].get("soldCount", 0) or 0)
+                                cand_sold = int(item.get("soldCount", 0) or 0)
+                                if cand_sold > prev_sold:
+                                    inv_by_id[i_key]["soldCount"] = cand_sold
+                                    inv_by_id[i_key]["stock"] = min(int(inv_by_id[i_key].get("stock", 0) or 0), int(item.get("stock", 0) or 0))
+                        db[k] = [inv_by_id[ik] for ik in inv_order]
                     elif k == "announcements":
                         if len(body[k]) > 0:
                             db[k] = body[k]
@@ -1115,6 +1373,44 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             if ref_upper and ref_upper not in del_list:
                 del_list.append(ref_upper)
             db["deletedBookingRefs"] = del_list[-500:]
+            sc = db.get("siteConfig")
+            if ref_upper and isinstance(sc, dict):
+                sc_changed = False
+                if isinstance(sc.get("openPlaySessions"), list):
+                    for s_op in sc["openPlaySessions"]:
+                        if isinstance(s_op, dict):
+                            for list_key in ("players", "historyPlayers"):
+                                if isinstance(s_op.get(list_key), list):
+                                    before_len = len(s_op[list_key])
+                                    s_op[list_key] = [
+                                        pl for pl in s_op[list_key]
+                                        if not (isinstance(pl, dict) and (
+                                            str(pl.get("bookingRef") or "").strip().upper() == ref_upper
+                                            or str(pl.get("refNumber") or "").strip().upper() == ref_upper
+                                            or str(pl.get("id") or "").strip().upper() == ref_upper
+                                        ))
+                                    ]
+                                    if len(s_op[list_key]) != before_len:
+                                        sc_changed = True
+                if isinstance(sc.get("tournaments"), list):
+                    for trn_obj in sc["tournaments"]:
+                        if isinstance(trn_obj, dict) and isinstance(trn_obj.get("registrations"), list):
+                            before_len = len(trn_obj["registrations"])
+                            trn_obj["registrations"] = [
+                                r for r in trn_obj["registrations"]
+                                if not (isinstance(r, dict) and (
+                                    str(r.get("bookingRef") or "").strip().upper() == ref_upper
+                                    or str(r.get("id") or "").strip().upper() == ref_upper
+                                ))
+                            ]
+                            if len(trn_obj["registrations"]) != before_len:
+                                trn_obj["registeredCount"] = sum(
+                                    1 for r in trn_obj["registrations"]
+                                    if isinstance(r, dict) and str(r.get("status") or "ACCEPTED").upper() not in ("DECLINED", "CANCELLED")
+                                )
+                                sc_changed = True
+                if sc_changed:
+                    sc["updatedAt"] = int(time.time() * 1000)
             db["bookingsUpdatedAt"] = int(time.time() * 1000)
             db["updatedAt"] = db["bookingsUpdatedAt"]
             append_security_log(db, "BOOKING_DELETED", f"Booking {ref_upper} removed from schedule & ledger by Admin", client_ip)
@@ -1314,6 +1610,8 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
 
                 existing_idx = next((i for i, x in enumerate(db["inventory"]) if x.get("id") == item.get("id")), None)
                 prev_sold = int(db["inventory"][existing_idx].get("soldCount", 0) or 0) if existing_idx is not None else int(item.get("soldCount", 0) or 0)
+                prev_rented = int(item.get("rentedCount", db["inventory"][existing_idx].get("rentedCount", 0) if existing_idx is not None else 0) or 0)
+                prev_maint = int(item.get("maintenanceCount", db["inventory"][existing_idx].get("maintenanceCount", 0) if existing_idx is not None else 0) or 0)
 
                 new_item = {
                     "id": sanitize_str(item.get("id") or ("inv-" + str(int(datetime.now().timestamp() * 1000))), 50),
@@ -1329,12 +1627,49 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                     "price": price_val,
                     "stock": stock_val,
                     "soldCount": prev_sold,
+                    "rentedCount": max(0, prev_rented),
+                    "maintenanceCount": max(0, prev_maint),
                     "img": item.get("img", "assets/gear-balls-x40.jpg")
                 }
                 if existing_idx is not None:
                     db["inventory"][existing_idx] = new_item
                 else:
                     db["inventory"].append(new_item)
+            elif action == "rent_out":
+                iid = body.get("id")
+                qty = max(1, int(body.get("qty", 1) or 1))
+                for x in db["inventory"]:
+                    if x.get("id") == iid:
+                        cur_stock = int(x.get("stock", 0) or 0)
+                        actual = min(cur_stock, qty)
+                        if actual > 0:
+                            x["stock"] = max(0, cur_stock - actual)
+                            x["rentedCount"] = max(0, int(x.get("rentedCount", 0) or 0) + actual)
+                        break
+            elif action == "return_checkin":
+                iid = body.get("id")
+                qty = max(1, int(body.get("qty", 1) or 1))
+                for x in db["inventory"]:
+                    if x.get("id") == iid:
+                        cur_rented = int(x.get("rentedCount", 0) or 0)
+                        actual = min(cur_rented, qty) if cur_rented > 0 else qty
+                        x["rentedCount"] = max(0, cur_rented - actual)
+                        x["stock"] = max(0, int(x.get("stock", 0) or 0) + actual)
+                        break
+            elif action == "toggle_maintenance":
+                iid = body.get("id")
+                delta = int(body.get("delta", 1) or 1)
+                for x in db["inventory"]:
+                    if x.get("id") == iid:
+                        cur_stock = int(x.get("stock", 0) or 0)
+                        cur_maint = int(x.get("maintenanceCount", 0) or 0)
+                        if delta > 0 and cur_stock >= delta:
+                            x["stock"] = cur_stock - delta
+                            x["maintenanceCount"] = cur_maint + delta
+                        elif delta < 0 and cur_maint >= abs(delta):
+                            x["maintenanceCount"] = cur_maint - abs(delta)
+                            x["stock"] = cur_stock + abs(delta)
+                        break
             elif action == "restock_wholesale":
                 iid = body.get("id")
                 boxes_added = max(0.0, float(body.get("boxesAdded", 1) or 1))
@@ -1410,7 +1745,39 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             return
         elif parsed.path == "/api/sales":
             action = body.get("action", "add")
-            if action == "update_cost":
+            if action == "update_status":
+                ref_up = str(body.get("ref") or "").strip().upper()
+                new_status = sanitize_str(body.get("status", "CONFIRMED"), 30).upper()
+                target_sale = next((s for s in db.get("salesLedger", []) if str(s.get("ref", "")).strip().upper() == ref_up), None)
+                if target_sale:
+                    if new_status in ("DECLINED", "CANCELLED"):
+                        if target_sale.get("stockDeducted") is not False and isinstance(target_sale.get("items"), list):
+                            for it in target_sale["items"]:
+                                if not isinstance(it, dict):
+                                    continue
+                                qty = max(1, int(it.get("qty", 1) or 1))
+                                it_id = str(it.get("id") or "").strip()
+                                it_name = str(it.get("name") or "").strip().lower()
+                                for inv_item in db.get("inventory", []):
+                                    if (it_id and str(inv_item.get("id", "")).strip() == it_id) or (it_name and str(inv_item.get("name", "")).strip().lower() == it_name):
+                                        inv_item["stock"] = int(inv_item.get("stock", 0) or 0) + qty
+                                        inv_item["soldCount"] = max(0, int(inv_item.get("soldCount", 0) or 0) - qty)
+                                        break
+                        db["salesLedger"] = [s for s in db.get("salesLedger", []) if str(s.get("ref", "")).strip().upper() != ref_up]
+                        del_refs = [str(r).strip().upper() for r in (db.get("deletedBookingRefs") or []) if r]
+                        if ref_up and ref_up not in del_refs:
+                            del_refs.append(ref_up)
+                        db["deletedBookingRefs"] = del_refs[-500:]
+                        append_security_log(db, "INVENTORY_ORDER_CANCELLED", f"Live Inventory order {ref_up} cancelled and stock restored", client_ip)
+                    else:
+                        target_sale["status"] = new_status
+                        target_sale["paymentStatus"] = new_status
+                        append_security_log(db, "INVENTORY_PAYMENT_CONFIRMED", f"Live Inventory payment {ref_up} confirmed by Admin", client_ip)
+                save_db(db)
+                db["sales"] = db.get("salesLedger", [])
+                self._send_json({"ok": True, "state": db})
+                return
+            elif action == "update_cost":
                 ref = body.get("ref")
                 new_cost = max(0.0, round(float(body.get("cost", 0) or 0), 2))
                 for s in db["salesLedger"]:
@@ -1426,7 +1793,12 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                 return
             elif action == "delete":
                 ref = body.get("ref")
-                db["salesLedger"] = [s for s in db["salesLedger"] if s.get("ref") != ref]
+                ref_up = str(ref or "").strip().upper()
+                db["salesLedger"] = [s for s in db["salesLedger"] if str(s.get("ref", "")).strip().upper() != ref_up]
+                del_refs = [str(r).strip().upper() for r in (db.get("deletedBookingRefs") or []) if r]
+                if ref_up and ref_up not in del_refs:
+                    del_refs.append(ref_up)
+                db["deletedBookingRefs"] = del_refs[-500:]
                 save_db(db)
                 db["sales"] = db.get("salesLedger", [])
                 self._send_json({"ok": True, "state": db})
@@ -1437,17 +1809,31 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             explicit_cost = body.get("cost")
             final_cost = round(float(explicit_cost), 2) if (explicit_cost is not None and float(explicit_cost or 0) > 0) else computed_cogs
             amt = round(float(body.get("amount", 0) or 0), 2)
+            sale_ref = sanitize_str(body.get("ref", "POS-" + str(int(datetime.now().timestamp()))[-4:]), 30)
+            init_status = sanitize_str(body.get("status") or body.get("paymentStatus") or "CONFIRMED", 30).upper()
             sale = {
-                "ref": sanitize_str(body.get("ref", "POS-" + str(int(datetime.now().timestamp()))[-4:]), 30),
+                "ref": sale_ref,
                 "type": sanitize_str(body.get("type", "POS Retail"), 40),
                 "desc": sanitize_str(body.get("desc", "POS Order"), 240),
                 "method": sanitize_str(body.get("method", "Cash"), 40),
+                "paymentMethod": sanitize_str(body.get("paymentMethod") or body.get("method", "Cash"), 40),
+                "customerName": sanitize_str(body.get("customerName", ""), 80),
+                "phone": sanitize_str(body.get("phone", ""), 30),
+                "deliveryNote": sanitize_str(body.get("deliveryNote", ""), 100),
+                "paymentRef": sanitize_str(body.get("paymentRef") or body.get("transactionRef", ""), 60),
+                "transactionRef": sanitize_str(body.get("transactionRef") or body.get("paymentRef", ""), 60),
+                "source": sanitize_str(body.get("source", ""), 20),
+                "manualEntry": bool(body.get("manualEntry", False)),
+                "status": init_status,
+                "paymentStatus": init_status,
+                "stockDeducted": True,
                 "amount": amt,
                 "cost": final_cost,
                 "profit": round(amt - final_cost, 2),
                 "items": items if isinstance(items, list) else [],
                 "date": datetime.now().strftime("%Y-%m-%d %H:%M")
             }
+            db["salesLedger"] = [s for s in db.get("salesLedger", []) if str(s.get("ref", "")).strip().upper() != sale_ref.upper()]
             db["salesLedger"].insert(0, sale)
             save_db(db)
             db["sales"] = db.get("salesLedger", [])
@@ -1547,6 +1933,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             p_date = sanitize_str(body.get("date") or get_pht_now().strftime("%Y-%m-%d"), 40)
             pay_mode = sanitize_str(body.get("paymentMethod") or body.get("paymentMode") or "GCash", 50)
             pay_ref = sanitize_str(body.get("transactionRef") or body.get("paymentRef") or "OPEN-PLAY", 60)
+            receipt_url = str(body.get("receiptDataUrl") or "")[:650000]
             booking_ref = sanitize_str(body.get("ref") or ("PF-OP-" + str(int(time.time() * 1000))[-6:]), 30)
             guest_names = body.get("guestNames") if isinstance(body.get("guestNames"), list) else []
             create_booking = body.get("createBooking", True) is not False
@@ -1778,7 +2165,11 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
                         elif def_val:
                             current_sc[k] = def_val
                     else:
-                        current_sc[k] = sanitize_str(v, 800)
+                        s_val = sanitize_str(v, 800)
+                        if s_val != "":
+                            current_sc[k] = s_val
+                        elif k not in current_sc or not str(current_sc.get(k) or "").strip():
+                            current_sc[k] = sanitize_str(def_val or "", 800)
                 if "openPlayRate" in incoming:
                     current_sc["openPlayRateCustomized"] = True
                 if current_sc.get("liveBannerText") is None or str(current_sc.get("liveBannerText")).strip() == "0":

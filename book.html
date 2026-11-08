@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
@@ -654,8 +654,8 @@
 
   
     /* ==========================================================================
-       2026 ARCHITECTURAL EDITORIAL DESIGN SYSTEM (KOKONUT UI × BKLIT UI × MOTION)
-       Aesthetic: "Bicol Heritage Court Club" — Warm Alabaster + Deep Cypress Forest
+       2026 ARCHITECTURAL EDITORIAL DESIGN SYSTEM (KOKONUT UI Ã— BKLIT UI Ã— MOTION)
+       Aesthetic: "Bicol Heritage Court Club" â€” Warm Alabaster + Deep Cypress Forest
        ========================================================================== */
     :root {
       --pf-radius-card: 14px;
@@ -937,7 +937,7 @@
     }
 
     /* ==========================================================================
-       EDITORIAL WARM DAYLIGHT MODE (html[data-theme="light"] — DEFAULT)
+       EDITORIAL WARM DAYLIGHT MODE (html[data-theme="light"] â€” DEFAULT)
        Clean Alabaster Stone Canvas + Crisp Paper Cards + Deep Cypress Typography
        ========================================================================== */
     html[data-theme="light"] body {
@@ -2667,7 +2667,7 @@ button.pf-trn-btn-danger:hover,
       color: #CBD5E1 !important;
     }
 
-    /* About & Courts Dropdown Menu Items ("Club Updates", "Reserve a Court" etc.) — Never Dark-on-Dark */
+    /* About & Courts Dropdown Menu Items ("Club Updates", "Reserve a Court" etc.) â€” Never Dark-on-Dark */
     html body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
     html body header .pf-nav-dropdown-menu a.pf-nav-dropdown-item,
     html[data-theme="dark"] body header .pf-nav-dropdown-menu button.pf-nav-dropdown-item,
@@ -2916,7 +2916,436 @@ button.pf-trn-btn-danger:hover,
       font-weight: 800 !important;
     }
 
+  
+    /* === MOBILE-ONLY FULL-SCREEN POPUP FOR LIVE CLUB UPDATES (< 768px) & NON-DRAGGABLE ROOT === */
+    #announcement-floating-root {
+      touch-action: manipulation !important;
+      user-select: none;
+    }
+    #announcement-launcher-btn {
+      cursor: pointer !important;
+    }
+    @media (max-width: 767px) {
+      #live-site-update-banner {
+        cursor: pointer !important;
+      }
+      html[data-theme="dark"] #announcement-board-window > div:last-child button.pf-ann-mobile-close-btn {
+        background: #1E293B !important;
+        color: #FFFFFF !important;
+        border: 1px solid rgba(255,255,255,0.25) !important;
+      }
+      #announcement-floating-root.pf-ann-open,
+      #announcement-floating-root:has(#announcement-board-window:not(.hidden)) {
+        inset: 0 !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        z-index: 9999 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      #announcement-floating-root.pf-ann-open #announcement-launcher-btn {
+        display: none !important;
+      }
+      #announcement-board-window:not(.hidden) {
+        position: fixed !important;
+        inset: 0 !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        z-index: 9999 !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      #announcement-board-window > div:nth-child(2) {
+        padding: 14px 16px !important;
+      }
+      #announcement-board-window #public-announcement-feed {
+        flex: 1 1 auto !important;
+        max-height: none !important;
+        padding: 16px !important;
+      }
+      #announcement-board-window > div:last-child {
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) 16px !important;
+      }
+    }
+
   </style>
+
+    <!-- MASTER UI/UX ALIGNMENT, LIGHT & DARK MODE HARMONY & MOBILE POP-UP OPTIMIZATION (v30) -->
+  <style id="pf-master-ui-ux-v30">
+    /* 1. Consistent Container & Card Alignment */
+    #schedule > div,
+    #open-play > div,
+    #tournaments > div,
+    #gear-rentals-home > div,
+    #location > div {
+      max-width: 80rem !important; /* 1280px = max-w-7xl */
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    /* 2. Editorial Headline Serif Accent (Matches COURT TIMELINE Everywhere) */
+    h1 .text-brand-lime,
+    h2 .text-brand-lime,
+    h3 .text-brand-lime,
+    .pf-serif-accent {
+      font-family: 'Instrument Serif', Georgia, serif !important;
+      font-style: italic !important;
+      font-weight: 400 !important;
+      letter-spacing: 0.01em !important;
+      padding-right: 0.06em !important;
+      color: #15803D !important;
+    }
+    html[data-theme="dark"] section > div > div > div > h2 .text-brand-lime,
+    html[data-theme="dark"] #open-play-hero-section h1 .text-brand-lime,
+    html[data-theme="dark"] #location h2 .text-brand-lime {
+      color: #9BE600 !important;
+    }
+
+    /* 3. Section Headlines & Subtitles Visibility in Both Light & Dark Mode */
+    html[data-theme="dark"] #schedule,
+    html[data-theme="dark"] #open-play,
+    html[data-theme="dark"] #tournaments,
+    html[data-theme="dark"] #gear-rentals-home,
+    html[data-theme="dark"] #location {
+      background-color: #06140E !important;
+      border-top-color: rgba(163, 230, 53, 0.14) !important;
+    }
+    html[data-theme="dark"] #schedule > div > div > div > h2,
+    html[data-theme="dark"] #open-play > div > div > div > h2,
+    html[data-theme="dark"] #tournaments > div > div > div > h2,
+    html[data-theme="dark"] #gear-rentals-home > div > div > div > h2,
+    html[data-theme="dark"] #location h2 {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="dark"] body section#schedule > div > div > div > p,
+    html[data-theme="dark"] body section#open-play > div > div > div > p,
+    html[data-theme="dark"] body section#tournaments > div > div > div > p,
+    html[data-theme="dark"] body section#gear-rentals-home > div > div > div > p,
+    html[data-theme="dark"] #open-play-hero-section p {
+      color: #CBD5E1 !important;
+    }
+    html[data-theme="dark"] #schedule > div > div > div > span.text-brand-lime,
+    html[data-theme="dark"] #open-play > div > div > div > span.text-brand-lime,
+    html[data-theme="dark"] #tournaments > div > div > div > span.text-brand-lime,
+    html[data-theme="dark"] #gear-rentals-home > div > div > div > span.text-brand-lime {
+      color: #9BE600 !important;
+    }
+    html[data-theme="light"] #schedule > div > div > div > h2,
+    html[data-theme="light"] #open-play > div > div > div > h2,
+    html[data-theme="light"] #tournaments > div > div > div > h2,
+    html[data-theme="light"] #gear-rentals-home > div > div > div > h2,
+    html[data-theme="light"] #location h2 {
+      color: #0D1F18 !important;
+    }
+    html[data-theme="light"] body section#schedule > div > div > div > p,
+    html[data-theme="light"] body section#open-play > div > div > div > p,
+    html[data-theme="light"] body section#tournaments > div > div > div > p,
+    html[data-theme="light"] body section#gear-rentals-home > div > div > div > p,
+    html[data-theme="light"] #open-play-hero-section p {
+      color: #475569 !important;
+    }
+    html[data-theme="dark"] #open-play > div > div.border-b,
+    html[data-theme="dark"] #tournaments > div > div.border-b,
+    html[data-theme="dark"] #gear-rentals-home > div > div.border-b {
+      border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    /* 4. Light Mode Numbers & Badges Optimization (Step Badges 1-2-3, Inputs, Countdowns, Dark Pills) */
+    html body .pf-step-num-badge,
+    html[data-theme="light"] body .pf-step-num-badge,
+    html[data-theme="dark"] body .pf-step-num-badge,
+    html[data-theme="light"] .bg-\[\#0F3D2A\],
+    html[data-theme="light"] .bg-\[\#0F3D2A\] *,
+    html[data-theme="light"] .bg-\[\#15803D\],
+    html[data-theme="light"] .bg-\[\#15803D\] *,
+    html[data-theme="light"] .bg-black\/65,
+    html[data-theme="light"] .bg-black\/70 {
+      color: #FFFFFF !important;
+    }
+    html body .pf-step-num-badge {
+      background: linear-gradient(135deg, #15803D 0%, #0F3D2A 100%) !important;
+      border: 1px solid #22C55E !important;
+      box-shadow: 0 4px 12px -2px rgba(21, 128, 61, 0.35) !important;
+    }
+    /* Crisp Number Inputs & Steppers in Light Mode */
+    html[data-theme="light"] input[type="number"],
+    html[data-theme="light"] #player-count,
+    html[data-theme="light"] #book-player-count {
+      background-color: #FFFFFF !important;
+      color: #0D1F18 !important;
+      border: 1.5px solid #94A3B8 !important;
+      font-weight: 800 !important;
+    }
+    /* Keep card titles & countdown numbers inside white cards dark in Dark Mode too */
+    html[data-theme="dark"] #open-play-24-board-container h3,
+    html[data-theme="dark"] #open-play-24-board-container h4,
+    html[data-theme="dark"] #open-play-24-board-container h5,
+    html[data-theme="dark"] #public-tournaments-grid .bg-white h3,
+    html[data-theme="dark"] #pf-home-gear-catalog-grid .bg-white h3 {
+      color: #0D1F18 !important;
+    }
+
+    /* 5. Championship Club Button Design System (.pf-btn-club-cta & .pf-btn-header-cta) */
+    html body .pf-btn-club-cta,
+    html[data-theme="light"] body .pf-btn-club-cta,
+    html[data-theme="dark"] body .pf-btn-club-cta {
+      background: linear-gradient(135deg, #15803D 0%, #0F3D2A 100%) !important;
+      color: #FFFFFF !important;
+      border: 1px solid #22C55E !important;
+      box-shadow: 0 8px 20px -6px rgba(21, 128, 61, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+    html body .pf-btn-club-cta span,
+    html[data-theme="light"] body .pf-btn-club-cta span,
+    html[data-theme="dark"] body .pf-btn-club-cta span {
+      color: #FFFFFF !important;
+    }
+    html body .pf-btn-club-cta .pf-btn-cta-arrow,
+    html[data-theme="light"] body .pf-btn-club-cta .pf-btn-cta-arrow,
+    html[data-theme="dark"] body .pf-btn-club-cta .pf-btn-cta-arrow {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 1.35rem !important;
+      height: 1.35rem !important;
+      border-radius: 9999px !important;
+      background-color: #A3E635 !important;
+      color: #052E16 !important;
+      font-weight: 900 !important;
+      font-size: 0.75rem !important;
+      line-height: 1 !important;
+      transition: transform 0.22s ease !important;
+    }
+    html body .pf-btn-club-cta:hover {
+      background: linear-gradient(135deg, #16A34A 0%, #15803D 100%) !important;
+      transform: translateY(-1.5px) !important;
+      box-shadow: 0 12px 26px -6px rgba(21, 128, 61, 0.6) !important;
+    }
+    html body .pf-btn-club-cta:hover .pf-btn-cta-arrow {
+      transform: translateX(2px) !important;
+    }
+
+    /* Section Header CTA Button (e.g., Open Gear Payment Portal) */
+    html[data-theme="light"] body .pf-btn-header-cta {
+      background: linear-gradient(135deg, #0F3D2A 0%, #15803D 100%) !important;
+      color: #FFFFFF !important;
+      border: 1.5px solid #16A34A !important;
+      box-shadow: 0 10px 24px -6px rgba(15, 61, 42, 0.35) !important;
+    }
+    html[data-theme="light"] body .pf-btn-header-cta span {
+      color: #FFFFFF !important;
+    }
+    html[data-theme="light"] body .pf-btn-header-cta .pf-btn-cta-arrow {
+      background-color: #A3E635 !important;
+      color: #052E16 !important;
+      width: 1.4rem !important;
+      height: 1.4rem !important;
+      border-radius: 9999px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-weight: 900 !important;
+    }
+    html[data-theme="dark"] body .pf-btn-header-cta {
+      background: linear-gradient(135deg, #9BE600 0%, #84CC16 100%) !important;
+      color: #050E1D !important;
+      border: 1.5px solid #BEF264 !important;
+      box-shadow: 0 10px 28px -6px rgba(155, 230, 0, 0.45) !important;
+    }
+    html[data-theme="dark"] body .pf-btn-header-cta span {
+      color: #050E1D !important;
+    }
+    html[data-theme="dark"] body .pf-btn-header-cta .pf-btn-cta-arrow {
+      background-color: #050E1D !important;
+      color: #9BE600 !important;
+      width: 1.4rem !important;
+      height: 1.4rem !important;
+      border-radius: 9999px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-weight: 900 !important;
+    }
+    html body .pf-btn-header-cta:hover {
+      transform: translateY(-1.5px) !important;
+    }
+
+    /* 6. Fix Drawer & Gear Card Item Name Visibility in Both Modes */
+    html[data-theme="dark"] .pf-gear-qty-card span.text-slate-900,
+    html[data-theme="dark"] .pf-gear-item-name,
+    html[data-theme="dark"] .pf-drawer-sec-title {
+      color: #F8FAFC !important;
+    }
+    html[data-theme="light"] .pf-gear-qty-card span.text-slate-900,
+    html[data-theme="light"] .pf-gear-item-name,
+    html[data-theme="light"] .pf-drawer-sec-title {
+      color: #0D1F18 !important;
+    }
+    html[data-theme="light"] .pf-gear-qty-card {
+      background-color: #FFFFFF !important;
+      border-color: #D5D3CC !important;
+    }
+
+    /* 7. Light Mode High-Contrast Refinements for Modals & Cards */
+    html[data-theme="light"] #payment-modal > div.relative,
+    html[data-theme="light"] #match-pass-modal > div.relative {
+      background-color: #FFFFFF !important;
+      color: #0D1F18 !important;
+      border-color: #15803D !important;
+    }
+    html[data-theme="light"] #payment-modal label,
+    html[data-theme="light"] #payment-modal h3,
+    html[data-theme="light"] #match-pass-modal h3 {
+      color: #0D1F18 !important;
+    }
+    html[data-theme="light"] #modal-cash-section > div {
+      background-color: #F0FDF4 !important;
+      border-color: #15803D !important;
+      color: #0D1F18 !important;
+    }
+    html[data-theme="light"] #modal-cash-section p,
+    html[data-theme="light"] #modal-cash-section span.text-white {
+      color: #0D1F18 !important;
+    }
+
+        /* 8. Comprehensive Mobile Viewport Left/Right Padding, Card Inner Spacing & Pop-Up Optimization */
+    @media (max-width: 640px) {
+      /* 8a. Generous Mobile Left & Right Viewport Padding (20px = 1.25rem each side) */
+      section > div.max-w-7xl,
+      section > div.max-w-6xl,
+      section > div.max-w-5xl,
+      section > div.max-w-4xl,
+      section > div.max-w-2xl,
+      section#open-play-hero-section,
+      section.min-h-\[92vh\] > div.max-w-7xl,
+      main.max-w-7xl,
+      main.max-w-5xl,
+      main > div.max-w-7xl,
+      footer > div.max-w-7xl,
+      #pricing-main-section > div,
+      #schedule > div,
+      #open-play > div,
+      #tournaments > div,
+      #gear-rentals-home > div,
+      #location > div,
+      #courts > div {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+      }
+
+      /* 8b. Top Navigation Header Bar Breathing Room on Mobile (16px = 1rem each side) */
+      header > div.max-w-7xl,
+      #live-site-update-banner {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+
+      /* 8c. Static & Dynamic Card Inner Mobile Padding (20px = 1.25rem) */
+      #open-play-24-board-container article > div:last-child,
+      #open-play-dedicated-page-root article > div:last-child,
+      #public-tournaments-grid .pf-trn-card-body,
+      #pf-home-gear-catalog-grid > div,
+      #pricing-main-section #court-rates,
+      #pricing-main-section #gear-rentals > div.grid > div,
+      #location .rounded-3xl.bg-brand-card,
+      main section.rounded-3xl,
+      main .pf-book-summary-card,
+      #booking-empty-state,
+      #booking-result-card {
+        padding: 1.25rem !important;
+      }
+
+            #pf-trn-slider-track,
+      #pf-trn-slider-track > div {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+      /* Compact floating Club Updates launcher on mobile so it never blocks schedule/cards */
+      #announcement-launcher-btn {
+        padding: 0.45rem 0.65rem !important;
+        gap: 0.4rem !important;
+        border-radius: 9999px !important;
+      }
+      #announcement-launcher-btn > div:nth-child(2) {
+        display: none !important;
+      }
+      #announcement-floating-root {
+        bottom: 0.75rem !important;
+        left: 0.75rem !important;
+      }
+
+      /* Keep #schedule white calendar & table cards at clean 1rem (16px) so 4-court table fits 100% with zero overflow */
+      #schedule > div > div.rounded-3xl {
+        padding: 1rem !important;
+      }
+
+      /* 8d. Mobile Pop-Up, Modal & Drawer Comfortable Left/Right Padding (1.25rem = 20px) */
+      #payment-modal,
+      #pf-join-open-play-modal,
+      #pf-tournament-reg-modal,
+      #pf-standalone-gear-modal,
+      #match-pass-modal {
+        padding: 0 !important;
+        align-items: flex-end !important;
+      }
+      #payment-modal > div.relative,
+      #pf-join-open-play-modal > div.relative,
+      #pf-tournament-reg-modal > div.relative,
+      #pf-standalone-gear-modal > div.relative,
+      #match-pass-modal > div.relative {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 93dvh !important;
+        margin: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-top-left-radius: 1.5rem !important;
+        border-top-right-radius: 1.5rem !important;
+        padding: 1.25rem !important;
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+      #booking-drawer #drawer-panel > div:first-child,
+      #booking-drawer #drawer-step-1,
+      #booking-drawer #drawer-panel > div:last-child {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+      }
+      #booking-drawer #drawer-step-1 > div {
+        padding: 1.15rem !important;
+      }
+    }
+
+    /* 8e. Ultra-Small Mobile Screen (< 400px) Inline Countdown Timer Pill Fit */
+    @media (max-width: 400px) {
+      [data-pf-countdown-target] > div.inline-flex {
+        width: 100% !important;
+        max-width: 100% !important;
+        justify-content: space-between !important;
+        gap: 0.65rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+    }
+  </style>
+
 </head>
 <body class="min-h-screen flex flex-col bg-brand-black text-slate-100 antialiased selection:bg-brand-lime selection:text-brand-black">
 
@@ -2932,9 +3361,9 @@ button.pf-trn-btn-danger:hover,
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
         <div class="flex items-center gap-2 min-w-0 truncate">
           <span class="px-2 py-0.5 rounded-full bg-[#15803D] text-white font-mono text-[9px] font-bold uppercase tracking-widest flex-shrink-0">Club Advisory</span>
-          <span id="live-site-update-text" class="truncate font-semibold text-[#0D1F18]">Courts 1–4 Open Daily 6:00 AM – 12:00 MN • Day ₱400/hr • Night ₱500/hr • Open Play ₱150/player</span>
+          <span id="live-site-update-text" class="truncate font-semibold text-[#0D1F18]">Courts 1â€“4 Open Daily 6:00 AM â€“ 12:00 MN â€¢ Day â‚±400/hr â€¢ Night â‚±500/hr â€¢ Open Play â‚±150/player</span>
         </div>
-        <a href="book.html" class="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase text-[#15803D] hover:text-[#0D1F18] flex-shrink-0 underline">Reserve Slot →</a>
+        <a href="book.html" class="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase text-[#15803D] hover:text-[#0D1F18] flex-shrink-0 underline">Reserve Slot â†’</a>
       </div>
     </div>
     <div class="w-full max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-14 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3">
@@ -2963,27 +3392,27 @@ button.pf-trn-btn-danger:hover,
           <div class="pf-nav-dropdown-menu">
             <a href="index.html#schedule" id="nav-link-schedule" onclick="pfCloseAllNavDropdowns(); return window.pfNavigateToSchedule ? window.pfNavigateToSchedule(event) : true;" class="pf-nav-dropdown-item">
               <span>Live Schedule</span>
-              <span class="text-[10px] font-mono text-emerald-600 font-bold">6AM–12AM</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">6AMâ€“12AM</span>
             </a>
             <a href="open-play.html" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
               <span>Open Play</span>
-              <span class="text-[10px] font-mono text-emerald-600 font-bold">Shuffler</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">â‚±150</span>
             </a>
             <a href="index.html#tournaments" id="nav-top-link-tournaments" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
               <span>Tournaments</span>
-              <span class="text-[10px] font-mono text-emerald-600 font-bold">🏆</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">ðŸ†</span>
             </a>
             <a href="pricing.html#court-rates" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item ">
               <span>Court Rates</span>
-              <span class="text-[10px] font-mono opacity-75">₱400/hr</span>
+              <span class="text-[10px] font-mono opacity-75">â‚±400/hr</span>
             </a>
             <a href="pricing.html#gear-rentals" onclick="pfCloseAllNavDropdowns();" class="pf-nav-dropdown-item">
               <span>Gear &amp; Rentals</span>
-              <span class="text-[10px] font-mono text-emerald-600 font-bold">From ₱50</span>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">From â‚±50</span>
             </a>
             <a href="book.html" class="pf-nav-dropdown-item active">
               <span>Reserve a Court</span>
-              <span class="text-[10px] font-mono opacity-75">→</span>
+              <span class="text-[10px] font-mono opacity-75">â†’</span>
             </a>
           </div>
         </div>
@@ -3022,7 +3451,7 @@ button.pf-trn-btn-danger:hover,
         
         <!-- Client Theme Toggle (Light / Dark Mode) -->
         <button type="button" onclick="pfToggleClientTheme()" id="pf-theme-toggle-btn" class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-[#F2F0E8] hover:bg-[#E6E4DC] border border-[#D5D3CC] text-[#0D1F18] flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 flex-shrink-0" title="Switch Light / Dark Mode">
-          <span id="pf-theme-toggle-icon" class="text-sm leading-none">☀️</span>
+          <span id="pf-theme-toggle-icon" class="text-sm leading-none">â˜€ï¸</span>
           <span id="pf-theme-toggle-label" class="hidden xl:inline font-mono text-[10px] uppercase tracking-wider font-bold">Light</span>
         </button>
 
@@ -3050,7 +3479,7 @@ button.pf-trn-btn-danger:hover,
     <!-- Mobile & Tablet Clean Dropdown Navigation Drawer -->
     <div id="mobile-menu" class="hidden lg:hidden border-t-2 border-slate-200 bg-white text-[#050E1D] px-4 py-3.5 space-y-2 text-xs font-bold max-h-[calc(100dvh-5.5rem)] overflow-y-auto shadow-[0_25px_60px_rgba(0,0,0,0.65)] border-b-4 border-b-[#0E8A2D]">
       <a href="index.html" id="mob-nav-link-home" onclick="return window.pfNavigateToHome ? window.pfNavigateToHome(event) : true;" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-[#050E1D] text-[#9BE600] font-black transition">
-        <span>Home</span> <span id="mob-nav-badge-home" class="text-[#9BE600] font-mono text-[10px]">●</span>
+        <span>Home</span> <span id="mob-nav-badge-home" class="text-[#9BE600] font-mono text-[10px]">â—</span>
       </a>
 
       <!-- Mobile Dropdown 1: Courts & Play -->
@@ -3061,22 +3490,22 @@ button.pf-trn-btn-danger:hover,
         </button>
         <div class="divide-y divide-slate-100 bg-white">
           <a href="index.html#schedule" id="mob-nav-link-schedule" onclick="if(window.pfNavigateToSchedule) window.pfNavigateToSchedule(event); toggleMobileMenu();" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Live Schedule</span> <span id="mob-nav-badge-schedule" class="font-mono text-[10px] text-emerald-700">6AM–12AM</span>
+            <span>Live Schedule</span> <span id="mob-nav-badge-schedule" class="font-mono text-[10px] text-emerald-700">6AMâ€“12AM</span>
           </a>
           <a href="open-play.html" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Open Play</span> <span class="font-mono text-[10px] text-emerald-700">Shuffler →</span>
+            <span>Open Play</span> <span class="font-mono text-[10px] text-emerald-700">â‚±150 â†’</span>
           </a>
           <a href="pricing.html#court-rates" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Court Rates</span> <span class="font-mono text-[10px] text-slate-600">₱400/hr</span>
+            <span>Court Rates</span> <span class="font-mono text-[10px] text-slate-600">â‚±400/hr</span>
           </a>
           <a href="pricing.html#gear-rentals" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Gear &amp; Rentals</span> <span class="font-mono text-[10px] text-emerald-700">From ₱50</span>
+            <span>Gear &amp; Rentals</span> <span class="font-mono text-[10px] text-emerald-700">From â‚±50</span>
           </a>
           <a href="book.html" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Reserve a Court</span> <span>→</span>
+            <span>Reserve a Court</span> <span>â†’</span>
           </a>
           <a href="index.html#tournaments" id="mob-nav-link-tournaments" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Tournaments</span> <span>🏆</span>
+            <span>Tournaments</span> <span>ðŸ†</span>
           </a>
         </div>
       </div>
@@ -3089,23 +3518,23 @@ button.pf-trn-btn-danger:hover,
         </button>
         <div class="hidden divide-y divide-slate-100 bg-white">
           <a href="index.html#courts" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Our 4 Courts</span> <span>→</span>
+            <span>Our 4 Courts</span> <span>â†’</span>
           </a>
           <a href="index.html#location" onclick="toggleMobileMenu()" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Location &amp; Map</span> <span>📍</span>
+            <span>Location &amp; Map</span> <span>ðŸ“</span>
           </a>
           <button type="button" onclick="toggleMobileMenu(); toggleAnnouncementBoard();" class="w-full flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition text-left">
             <span>Club Updates</span> <span class="text-emerald-700 font-mono text-[10px]">LIVE</span>
           </button>
           <a href="#footer-contact" onclick="toggleMobileMenu(); const f=document.querySelector('footer'); if(f){event.preventDefault(); f.scrollIntoView({behavior:'smooth'});}" class="flex items-center justify-between py-2.5 px-4 hover:bg-slate-900 hover:text-white transition">
-            <span>Contact</span> <span>→</span>
+            <span>Contact</span> <span>â†’</span>
           </a>
         </div>
       </div>
 
       <a href="check-booking.html" class="flex items-center justify-between py-2.5 px-3.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-900 hover:text-white text-[#050E1D] font-black transition">
         <span>My Booking</span>
-        <span>→</span>
+        <span>â†’</span>
       </a>
     </div>
   </header>
@@ -3139,7 +3568,7 @@ button.pf-trn-btn-danger:hover,
           <span>4 premium courts</span>
         </span>
         <span class="px-3 py-1.5 rounded-xl bg-brand-lime/15 border border-brand-lime/30 text-brand-lime text-xs font-mono font-black">
-          Daytime: ₱400/hr &bull; Night: ₱500/hr
+          Daytime: â‚±400/hr &bull; Night: â‚±500/hr
         </span>
       </div>
     </div>
@@ -3161,7 +3590,7 @@ button.pf-trn-btn-danger:hover,
             <div class="flex flex-wrap items-center gap-2">
               <span id="selected-date-label" class="text-xs sm:text-sm font-bold text-slate-800 hidden sm:block font-mono bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">Today</span>
               <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs font-mono font-bold text-slate-800 cursor-pointer">
-                <span>📅</span>
+                <span>ðŸ“…</span>
                 <input type="date" id="book-native-date-picker" onchange="jumpBookToDate(this.value)" class="bg-transparent text-slate-900 font-mono text-xs focus:outline-none cursor-pointer">
               </label>
               <div class="flex items-center gap-1.5">
@@ -3190,19 +3619,19 @@ button.pf-trn-btn-danger:hover,
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="court-selector">
             <button type="button" onclick="selectCourt(1)" class="court-btn court-btn-active py-3.5 px-4 rounded-2xl border-2 border-[#15803D] bg-[#0F291E] text-white text-left transition active:scale-95 shadow-md flex items-center justify-between" data-court="1">
               <b class="text-sm sm:text-base font-black text-white block">Court 1</b>
-              <span class="text-[#6EE7B7] font-mono text-xs font-bold">→</span>
+              <span class="text-[#6EE7B7] font-mono text-xs font-bold">â†’</span>
             </button>
             <button type="button" onclick="selectCourt(2)" class="court-btn py-3.5 px-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95 flex items-center justify-between" data-court="2">
               <b class="text-sm sm:text-base font-black text-white block">Court 2</b>
-              <span class="text-slate-400 font-mono text-xs">→</span>
+              <span class="text-slate-400 font-mono text-xs">â†’</span>
             </button>
             <button type="button" onclick="selectCourt(3)" class="court-btn py-3.5 px-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95 flex items-center justify-between" data-court="3">
               <b class="text-sm sm:text-base font-black text-white block">Court 3</b>
-              <span class="text-slate-400 font-mono text-xs">→</span>
+              <span class="text-slate-400 font-mono text-xs">â†’</span>
             </button>
             <button type="button" onclick="selectCourt(4)" class="court-btn py-3.5 px-4 rounded-2xl border border-white/15 bg-brand-black/60 hover:border-brand-lime/50 text-left transition active:scale-95 flex items-center justify-between" data-court="4">
               <b class="text-sm sm:text-base font-black text-white block">Court 4</b>
-              <span class="text-slate-400 font-mono text-xs">→</span>
+              <span class="text-slate-400 font-mono text-xs">â†’</span>
             </button>
           </div>
         </section>
@@ -3227,7 +3656,7 @@ button.pf-trn-btn-danger:hover,
           <div>
             <div class="flex items-center justify-between mb-2.5">
               <span class="text-xs font-bold uppercase text-slate-300">Select Start Time</span>
-              <span class="text-xs font-mono text-brand-lime font-bold" id="slot-rate-indicator">₱400.00 / hr (Daytime)</span>
+              <span class="text-xs font-mono text-brand-lime font-bold" id="slot-rate-indicator">â‚±400.00 / hr (Daytime)</span>
             </div>
             <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="time-chips-container">
               <!-- Injected via renderTimeChips() -->
@@ -3237,12 +3666,11 @@ button.pf-trn-btn-danger:hover,
 
           <div class="pt-3.5 border-t border-slate-200/80 flex flex-wrap items-center gap-2 text-[11px] font-sans">
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] font-bold"><span class="w-2 h-2 rounded-full bg-[#10B981]"></span>Available</span>
-            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#5C2D0C] border border-[#C8BCA8] font-bold"><span class="w-2 h-2 rounded-full bg-[#78350F]"></span>Selected</span>
-            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span>Confirmed</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span>Booked</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-bold"><span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Pending</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] font-bold"><span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>Blocked</span>
             <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] font-bold"><span class="w-2 h-2 rounded-full bg-[#64748B]"></span>Private</span>
-            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>Open Play (<b data-site-price="open-play-badge">₱150</b>)</span>
+            <span class="cal-cat-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDE9FE] text-[#5B21B6] border border-[#C4B5FD] font-bold"><span class="w-2 h-2 rounded-full bg-[#8B5CF6]"></span>Open Play</span>
           </div>
         </section>
 
@@ -3251,8 +3679,8 @@ button.pf-trn-btn-danger:hover,
           <div class="flex items-center justify-between">
             <div>
               <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 4</span>
-              <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Number of players</h2>
-              <p data-site-price="players-note" class="text-xs text-slate-400 mt-0.5">Up to 6 players included free with court hire (+₱100/extra player beyond 6).</p>
+              <h2 data-site-label="book-step4-title" class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Number of players</h2>
+              <p data-site-price="players-note" class="text-xs text-slate-400 mt-0.5">Up to 6 players included free with court hire (+â‚±100/extra player beyond 6).</p>
             </div>
             <div class="flex items-center gap-3 bg-brand-black p-2 rounded-2xl border border-white/15">
               <button type="button" onclick="adjustPlayers(-1)" class="pf-stepper-btn w-8 h-8 rounded-xl bg-slate-200 hover:bg-emerald-600 text-slate-900 hover:text-white border border-slate-300 font-extrabold active:scale-95 text-base flex items-center justify-center transition">&minus;</button>
@@ -3269,15 +3697,22 @@ button.pf-trn-btn-danger:hover,
               <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Step 5 &bull; Optional Add-ons</span>
               <h2 class="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-display">Equipment rentals</h2>
             </div>
-            <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-bold text-emerald-800" id="gear-subtotal-badge">₱0.00 Total</span>
+            <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-bold text-emerald-800" id="gear-subtotal-badge">â‚±0.00 Total</span>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-[#0F291E] border border-[#15803D] flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="text-white">
+              <strong class="block text-xs font-bold text-[#A3E635]">Already have a court booked or joining Open Play?</strong>
+              <span class="text-[11px] text-slate-200">Use our standalone Equipment Payment Portal to rent paddles, balls, or the training machine without booking a court.</span>
+            </div>
+            <button type="button" onclick="if(typeof pfOpenGearOrderModal==='function') pfOpenGearOrderModal();" class="px-4 py-2 rounded-xl bg-[#A3E635] hover:bg-[#BEF264] text-[#0D1F18] font-mono font-black text-xs uppercase tracking-wider cursor-pointer flex-shrink-0 shadow-sm" style="background:#A3E635 !important;color:#0D1F18 !important;">Rent Gear Only &rarr;</button>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="equipment-grid">
-            <!-- 1. Standard Paddle (₱50.00) -->
+            <!-- 1. Standard Paddle (â‚±50.00) -->
             <div id="card-gear-standard" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
                 <span class="pf-gear-item-name text-xs font-bold text-white block">Standard paddle</span>
-                <span data-site-price="paddle-std-dec" class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
+                <span data-site-price="paddle-std-dec" class="text-xs text-brand-lime font-mono font-bold">â‚±50.00</span>
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="adjustGear('standard', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3286,11 +3721,11 @@ button.pf-trn-btn-danger:hover,
               </div>
             </div>
 
-            <!-- 2. Carbon Paddle (₱100.00) -->
+            <!-- 2. Carbon Paddle (â‚±100.00) -->
             <div id="card-gear-carbon" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
                 <span class="pf-gear-item-name text-xs font-bold text-white block">Carbon paddle</span>
-                <span data-site-price="paddle-carbon-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
+                <span data-site-price="paddle-carbon-dec" class="text-xs text-brand-lime font-mono font-bold">â‚±100.00</span>
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="adjustGear('carbon', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3299,11 +3734,11 @@ button.pf-trn-btn-danger:hover,
               </div>
             </div>
 
-            <!-- 3. Branded Carbon Paddle (₱200.00) -->
+            <!-- 3. Branded Carbon Paddle (â‚±200.00) -->
             <div id="card-gear-branded" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
                 <span class="pf-gear-item-name text-xs font-bold text-white block">Branded carbon paddle</span>
-                <span data-site-price="paddle-branded-dec" class="text-xs text-brand-lime font-mono font-bold">₱200.00</span>
+                <span data-site-price="paddle-branded-dec" class="text-xs text-brand-lime font-mono font-bold">â‚±200.00</span>
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="adjustGear('branded', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3312,11 +3747,11 @@ button.pf-trn-btn-danger:hover,
               </div>
             </div>
 
-            <!-- 4. Pickleball Ball (₱50.00) -->
+            <!-- 4. Pickleball Ball (â‚±50.00) -->
             <div id="card-gear-ball" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
                 <span class="pf-gear-item-name text-xs font-bold text-white block">Pickleball ball</span>
-                <span data-site-price="ball-single-dec" class="text-xs text-brand-lime font-mono font-bold">₱50.00</span>
+                <span data-site-price="ball-single-dec" class="text-xs text-brand-lime font-mono font-bold">â‚±50.00</span>
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="adjustGear('ball', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3325,11 +3760,11 @@ button.pf-trn-btn-danger:hover,
               </div>
             </div>
 
-            <!-- 5. Training Balls 50 pcs (₱100.00) -->
+            <!-- 5. Training Balls 50 pcs (â‚±100.00) -->
             <div id="card-gear-training" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
                 <span class="pf-gear-item-name text-xs font-bold text-white block">Training balls (50 pcs)</span>
-                <span data-site-price="balls-bucket-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00</span>
+                <span data-site-price="balls-bucket-dec" class="text-xs text-brand-lime font-mono font-bold">â‚±100.00</span>
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="adjustGear('training', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3338,11 +3773,11 @@ button.pf-trn-btn-danger:hover,
               </div>
             </div>
 
-            <!-- 6. Training Machine (₱100.00 / hour) -->
+            <!-- 6. Training Machine (â‚±100.00 / hour) -->
             <div id="card-gear-training-machine" class="p-4 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 transition flex items-center justify-between">
               <div>
                 <span class="pf-gear-item-name text-xs font-bold text-white block">Training machine (per hour)</span>
-                <span data-site-price="machine-dec" class="text-xs text-brand-lime font-mono font-bold">₱100.00 / hr</span>
+                <span data-site-price="machine-dec" class="text-xs text-brand-lime font-mono font-bold">â‚±100.00 / hr</span>
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="adjustGear('training-machine', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3367,8 +3802,8 @@ button.pf-trn-btn-danger:hover,
               <p id="book-cust-name-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
             </div>
             <div>
-              <label for="book-cust-phone" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Mobile Phone (11 Digits) *</label>
-              <input type="tel" id="book-cust-phone" required placeholder="0917 123 4567" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
+              <label for="book-cust-phone" class="block text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold mb-1.5">Mobile Phone (Optional)</label>
+              <input type="tel" id="book-cust-phone" placeholder="0917 123 4567 (Optional)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none transition">
               <p id="book-cust-phone-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
             </div>
             <div class="sm:col-span-2">
@@ -3389,7 +3824,7 @@ button.pf-trn-btn-danger:hover,
             </div>
             <div class="px-4 py-2.5 rounded-2xl bg-brand-black border border-brand-lime/40 text-right flex-shrink-0">
               <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Amount to Pay</span>
-              <span id="payment-box-total-badge" class="text-xl sm:text-2xl font-black font-mono text-brand-lime">₱400.00</span>
+              <span id="payment-box-total-badge" class="text-xl sm:text-2xl font-black font-mono text-brand-lime">â‚±400.00</span>
             </div>
           </div>
 
@@ -3402,10 +3837,11 @@ button.pf-trn-btn-danger:hover,
               </div>
 
               <!-- Payment Channel Selector -->
-              <div class="grid grid-cols-3 gap-2">
-                <button type="button" onclick="selectBookPaymentMode('gcash')" id="pay-pill-gcash" class="py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition">GCash</button>
-                <button type="button" onclick="selectBookPaymentMode('maya')" id="pay-pill-maya" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Maya</button>
-                <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition">Bank Transfer</button>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button type="button" onclick="selectBookPaymentMode('gcash')" id="pay-pill-gcash" class="py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition cursor-pointer">GCash</button>
+                <button type="button" onclick="selectBookPaymentMode('maya')" id="pay-pill-maya" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition cursor-pointer">Maya</button>
+                <button type="button" onclick="selectBookPaymentMode('bank')" id="pay-pill-bank" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition cursor-pointer">BDO / Bank</button>
+                <button type="button" onclick="selectBookPaymentMode('manual')" id="pay-pill-manual" class="py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition cursor-pointer">Manual Payment</button>
               </div>
 
               <!-- GCash Channel Card -->
@@ -3417,8 +3853,8 @@ button.pf-trn-btn-danger:hover,
                       <span class="text-[9px] font-mono font-black text-[#0057E7] block mt-1.5 uppercase">Official GCash QR Ph</span>
                     </div>
                     <div class="w-52 sm:w-full max-w-[215px] mt-2.5 grid grid-cols-2 gap-2">
-                      <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">🔍 Zoom QR</button>
-                      <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">📥 Save QR</button>
+                      <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">ðŸ” Zoom QR</button>
+                      <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">ðŸ“¥ Save QR</button>
                     </div>
                   </div>
                   <div class="sm:col-span-7 space-y-2.5 text-xs">
@@ -3437,7 +3873,7 @@ button.pf-trn-btn-danger:hover,
                     </div>
                     <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
                       <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay with GCash:</span>
-                      <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload inside the <b>GCash App (QR &rarr; Upload QR)</b>.</div>
+                      <div>1. Tap <b>ðŸ” Zoom QR</b> to scan, or tap <b>ðŸ“¥ Save QR</b> and upload inside the <b>GCash App (QR &rarr; Upload QR)</b>.</div>
                       <div>2. Or use <b>Express Send</b> to <b>0999 883 2346</b>.</div>
                     </div>
                   </div>
@@ -3453,8 +3889,8 @@ button.pf-trn-btn-danger:hover,
                       <span class="text-[9px] font-mono font-black text-emerald-800 block mt-1.5 uppercase">Official Maya QR Ph</span>
                     </div>
                     <div class="w-52 sm:w-full max-w-[215px] mt-2.5 grid grid-cols-2 gap-2">
-                      <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">🔍 Zoom QR</button>
-                      <button type="button" onclick="pfDownloadOfficialQr('maya')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">📥 Save QR</button>
+                      <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">ðŸ” Zoom QR</button>
+                      <button type="button" onclick="pfDownloadOfficialQr('maya')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">ðŸ“¥ Save QR</button>
                     </div>
                   </div>
                   <div class="sm:col-span-7 space-y-2.5 text-xs">
@@ -3473,7 +3909,7 @@ button.pf-trn-btn-danger:hover,
                     </div>
                     <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
                       <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay with Maya:</span>
-                      <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload inside the <b>Maya App</b>.</div>
+                      <div>1. Tap <b>ðŸ” Zoom QR</b> to scan, or tap <b>ðŸ“¥ Save QR</b> and upload inside the <b>Maya App</b>.</div>
                       <div>2. Or send money directly to Maya number <b>0999 883 2346</b>.</div>
                     </div>
                   </div>
@@ -3489,8 +3925,8 @@ button.pf-trn-btn-danger:hover,
                       <span class="text-[9px] font-mono font-black text-[#0072CE] block mt-1.5 uppercase">Official BDO InstaPay QR</span>
                     </div>
                     <div class="w-52 sm:w-full max-w-[215px] mt-2.5 grid grid-cols-2 gap-2">
-                      <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">🔍 Zoom QR</button>
-                      <button type="button" onclick="pfDownloadOfficialQr('bank')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">📥 Save QR</button>
+                      <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="w-full py-2 px-2.5 rounded-xl bg-brand-lime text-brand-black text-[11px] font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">ðŸ” Zoom QR</button>
+                      <button type="button" onclick="pfDownloadOfficialQr('bank')" class="w-full py-2 px-2.5 rounded-xl bg-white text-[#050E1D] border border-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1 whitespace-nowrap">ðŸ“¥ Save QR</button>
                     </div>
                   </div>
                   <div class="sm:col-span-7 space-y-2.5 text-xs">
@@ -3501,28 +3937,53 @@ button.pf-trn-btn-danger:hover,
                       </div>
                       <div class="flex items-center justify-between">
                         <span class="text-[10px] text-slate-400 uppercase font-bold">BDO Account No.</span>
-                        <b data-pay-field="bank-num" class="text-sm font-mono text-brand-lime font-black">••••••••8678</b>
+                        <b data-pay-field="bank-num" class="text-sm font-mono text-brand-lime font-black">â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢8678</b>
                       </div>
                     </div>
                     <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 leading-snug space-y-1">
                       <span class="font-black text-brand-lime uppercase text-[10px] block">How to Pay via BDO / Bank:</span>
-                      <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload in your mobile banking app (BDO, BPI, UnionBank, GCash, Maya).</div>
+                      <div>1. Tap <b>ðŸ” Zoom QR</b> to scan, or tap <b>ðŸ“¥ Save QR</b> and upload in your mobile banking app (BDO, BPI, UnionBank, GCash, Maya).</div>
                       <div>2. Enter the <b>Reference Number</b> below after paying.</div>
                     </div>
                   </div>
                 </div>
               </div>
+              <!-- Manual Payment Channel Card -->
+              <div id="book-pay-manual" class="hidden p-4 sm:p-5 rounded-2xl bg-brand-black border-2 border-brand-lime/50 space-y-3 shadow-lg">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-full bg-brand-lime text-brand-black font-mono text-[10px] font-black uppercase">Manual Payment</span>
+                    <span class="text-xs sm:text-sm font-black uppercase text-white">Pay at Front Desk / Venue Verification</span>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-200 leading-relaxed">
+                  Reserve your court slot online now and settle your payment directly at the <b>P&amp;F Rally Ground Front Desk</b> (Cash, POS, or assisted counter verification). Your booking will be submitted as <b>Pending Verification</b> with reference code <b>MANUAL-FRONT-DESK</b>.
+                </p>
+              </div>
             </div>
 
-            <!-- PART 2: PAYMENT REFERENCE NUMBER INPUT -->
-            <div id="book-ref-subbox" class="p-4 sm:p-5 rounded-2xl bg-brand-card border border-white/15 space-y-2">
+            <!-- PART 2: PAYMENT REFERENCE NUMBER & REQUIRED RECEIPT ATTACHMENT -->
+            <div id="book-ref-subbox" class="p-4 sm:p-5 rounded-2xl bg-brand-card border border-white/15 space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-1">
                 <label for="book-payment-ref" class="block text-xs font-mono font-black uppercase tracking-wider text-brand-lime">2. Payment Reference Number *</label>
                 <span class="text-[10px] font-mono text-slate-400">From your GCash / Maya / Bank receipt</span>
               </div>
               <input type="text" id="book-payment-ref" required placeholder="e.g. 1029 3847 5612" class="w-full bg-brand-black border border-white/20 focus:border-brand-lime rounded-xl px-4 py-3 text-sm text-brand-lime font-mono font-black focus:outline-none transition">
-              <p class="text-[11px] text-slate-400">Enter the 6–13 digit transaction reference number from your payment receipt.</p>
+              <p class="text-[11px] text-slate-400">Enter the 6â€“13 digit transaction reference number from your payment receipt.</p>
               <p id="book-ref-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
+
+              <div class="pt-3 border-t border-white/10">
+                <label for="book-receipt-file" id="book-receipt-label" class="block text-xs font-mono font-black uppercase tracking-wider text-brand-lime mb-1.5">Attach Payment Receipt Screenshot / Photo *</label>
+                <input type="file" id="book-receipt-file" required onchange="if(typeof handleBookReceiptUpload==='function') handleBookReceiptUpload(event)" accept="image/*,application/pdf" class="w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-brand-lime file:text-brand-black hover:file:opacity-90 cursor-pointer">
+                <p id="book-receipt-err" class="hidden text-xs text-brand-clay font-bold mt-1"></p>
+                <div id="book-receipt-preview-wrap" class="hidden mt-2.5 flex items-center gap-3 p-2.5 rounded-xl bg-brand-black border border-brand-lime/40">
+                  <img id="book-receipt-preview-img" src="" alt="Receipt Preview" class="w-12 h-12 object-cover rounded-lg border border-brand-lime/40">
+                  <div class="text-[11px] text-slate-200 leading-tight">
+                    <span class="text-brand-lime font-bold block">âœ“ Receipt Screenshot Attached</span>
+                    <span>Ready for Admin verification</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- PART 3: INTEGRATED CLUB POLICIES & GUEST CONSENT (IN THE SAME BOX!) -->
@@ -3533,7 +3994,7 @@ button.pf-trn-btn-danger:hover,
                   <p id="payment-gate-notice" class="text-[11px] text-slate-300 mt-0.5">Tick the 3 boxes below (or tap <b>Accept All</b>) before submitting your reservation.</p>
                 </div>
                 <button type="button" id="btn-accept-all-policies" onclick="acceptAllBookPolicies()" class="px-3.5 py-2 rounded-xl bg-brand-lime text-brand-black font-mono font-black text-xs uppercase tracking-wider hover:opacity-95 transition active:scale-95 shadow-sm flex items-center gap-1.5">
-                  <span>✓ Accept All 3 Policies</span>
+                  <span>âœ“ Accept All 3 Policies</span>
                 </button>
               </div>
 
@@ -3615,21 +4076,21 @@ button.pf-trn-btn-danger:hover,
           <div class="border-t border-white/10 pt-4 space-y-2.5 text-xs">
             <div class="flex items-center justify-between">
               <span class="text-slate-400" id="summary-court-row-label">Court Hire (1 hr)</span>
-              <span id="summary-court-cost" class="font-mono font-bold text-white">₱400.00</span>
+              <span id="summary-court-cost" class="font-mono font-bold text-white">â‚±400.00</span>
             </div>
             <div class="flex items-center justify-between">
               <span class="text-slate-400" id="summary-extra-players-label">Extra players (0)</span>
-              <span id="summary-extra-cost" class="font-mono font-bold text-slate-300">₱0.00</span>
+              <span id="summary-extra-cost" class="font-mono font-bold text-slate-300">â‚±0.00</span>
             </div>
             <div class="flex items-center justify-between">
               <span class="text-slate-400">Equipment Rentals</span>
-              <span id="summary-gear-cost" class="font-mono font-bold text-slate-300">₱0.00</span>
+              <span id="summary-gear-cost" class="font-mono font-bold text-slate-300">â‚±0.00</span>
             </div>
           </div>
 
           <div class="border-t-2 border-brand-lime/30 pt-4 flex items-baseline justify-between">
             <span class="text-sm font-black uppercase text-white tracking-wider">Total</span>
-            <span id="summary-grand-total" class="text-3xl font-black text-brand-lime font-mono">₱400.00</span>
+            <span id="summary-grand-total" class="text-3xl font-black text-brand-lime font-mono">â‚±400.00</span>
           </div>
 
           <button type="button" onclick="submitReservation()" id="btn-submit-booking" class="w-full py-4 rounded-2xl bg-brand-lime text-brand-black font-black uppercase text-sm tracking-wider hover:bg-brand-limeHover transition active:scale-95 shadow-lg shadow-brand-lime/25 flex items-center justify-center gap-2">
@@ -3659,7 +4120,7 @@ button.pf-trn-btn-danger:hover,
   <div id="booking-success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
     <div class="relative z-10 max-w-lg w-full bg-brand-card border border-brand-lime/40 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-4">
-      <div class="w-16 h-16 rounded-2xl bg-brand-lime/20 text-brand-lime flex items-center justify-center mx-auto text-2xl font-black border border-brand-lime/40">✓</div>
+      <div class="w-16 h-16 rounded-2xl bg-brand-lime/20 text-brand-lime flex items-center justify-center mx-auto text-2xl font-black border border-brand-lime/40">âœ“</div>
       <h3 class="text-2xl font-black uppercase text-white font-display">Booking Submitted!</h3>
       <p class="text-xs text-slate-300">Your reservation has been transmitted with payment reference.</p>
       
@@ -3667,7 +4128,7 @@ button.pf-trn-btn-danger:hover,
         <div class="flex justify-between"><span class="text-slate-400">Ref ID:</span><b id="conf-ref-id" class="text-brand-lime font-bold">PF-XXXXXX</b></div>
         <div class="flex justify-between"><span class="text-slate-400">Court:</span><span id="conf-court" class="text-white">Court 1</span></div>
         <div class="flex justify-between"><span class="text-slate-400">Date &amp; Time:</span><span id="conf-datetime" class="text-white">--</span></div>
-        <div class="flex justify-between"><span class="text-slate-400">Amount:</span><span id="conf-total" class="text-brand-lime font-bold">₱400.00</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Amount:</span><span id="conf-total" class="text-brand-lime font-bold">â‚±400.00</span></div>
       </div>
 
       <div class="flex gap-3 pt-2">
@@ -3694,14 +4155,14 @@ button.pf-trn-btn-danger:hover,
             </div>
           </div>
           <p class="text-slate-300 text-xs leading-relaxed max-w-md" style="color:#CBD5E1 !important;">
-            Velasco St., Phase 4, Do&ntilde;a Maria Subd., Tagas, Daraga, Albay 4501. Open daily 6:00 AM – 12:00 Midnight.
+            Velasco St., Phase 4, Do&ntilde;a Maria Subd., Tagas, Daraga, Albay 4501. Open daily 6:00 AM â€“ 12:00 Midnight.
           </p>
           <div class="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px]">
             <a href="tel:09998832346" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 hover:bg-white/15 px-3 py-1 text-white border border-white/15 font-bold transition" style="color:#FFFFFF !important;">
-              📞 0999 883 2346
+              ðŸ“ž 0999 883 2346
             </a>
             <a href="index.html#location" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 px-3 py-1 text-emerald-300 border border-emerald-500/30 font-bold transition">
-              📍 Google Satellite Map
+              ðŸ“ Google Satellite Map
             </a>
           </div>
         </div>
@@ -3721,7 +4182,7 @@ button.pf-trn-btn-danger:hover,
             <ul class="space-y-1.5 text-xs text-slate-300">
               <li><a href="book.html" class="hover:text-white transition block">Book Online</a></li>
               <li><a href="check-booking.html" class="hover:text-white transition block">My Booking Pass</a></li>
-              <li><a href="/admin/" onclick="return openAdminPortal(event)" class="text-emerald-400 hover:text-emerald-300 font-bold transition block">Staff Portal →</a></li>
+              <li><a href="/admin/" onclick="return openAdminPortal(event)" class="text-emerald-400 hover:text-emerald-300 font-bold transition block">Staff Portal â†’</a></li>
             </ul>
           </div>
         </div>
@@ -3729,21 +4190,21 @@ button.pf-trn-btn-danger:hover,
         <!-- Primary Action -->
         <div class="md:col-span-3 flex flex-col sm:flex-row md:flex-col gap-2.5 justify-end">
           <button type="button" onclick="openBookingDrawer()" class="w-full py-3 px-4 rounded-xl bg-[#9BE600] hover:bg-[#B4FF00] text-[#050E1D] font-extrabold text-xs uppercase tracking-wider transition shadow-md text-center" style="background:#9BE600 !important;color:#050E1D !important;">
-            Reserve a Court →
+            Reserve a Court â†’
           </button>
           <a href="check-booking.html" class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-bold text-xs transition text-center" style="color:#FFFFFF !important;">
             Check Booking Status
           </a>
                   <a href="/admin/" onclick="return openAdminPortal(event)" class="pf-footer-admin-btn w-full py-2.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider transition text-center flex items-center justify-center gap-1.5 shadow-xs">
-            <span>🔒 Admin Portal</span>
-            <span>→</span>
+            <span>ðŸ”’ Admin Portal</span>
+            <span>â†’</span>
           </a>
         </div>
       </div>
 
       <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
-        <span>© 2026 P&amp;F Rally Ground Pickleball Club • Daraga, Albay.</span>
-        <span>4 Covered Courts • Daily 6:00 AM – 12:00 MN</span>
+        <span>Â© 2026 P&amp;F Rally Ground Pickleball Club â€¢ Daraga, Albay.</span>
+        <span>4 Covered Courts â€¢ Daily 6:00 AM â€“ 12:00 MN</span>
       </div>
     </div>
   </footer>
@@ -3763,15 +4224,15 @@ button.pf-trn-btn-danger:hover,
             <div class="flex items-center gap-2">
               <h3 class="text-base sm:text-lg font-bold tracking-tight text-[#0D1F18] leading-none">Reserve a Court</h3><span class="px-2.5 py-0.5 rounded-full bg-[#D1FAE5] text-[#065F46] border border-[#6EE7B7] text-[10px] font-mono font-bold uppercase">Online Booking</span>
             </div>
-            <p class="text-[11px] text-[#52605A] mt-1 font-medium">Choose a date within 30 days &bull; Day ₱400/hr &bull; Night ₱500/hr</p>
+            <p class="text-[11px] text-[#52605A] mt-1 font-medium">Choose a date within 30 days &bull; Day â‚±400/hr &bull; Night â‚±500/hr</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
           <a href="book.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#0D1F18] hover:text-white border border-[#E2E0D8] text-[11px] font-mono font-bold transition" title="Open Full Screen Booking Portal">
             <span>Full Page</span>
-            <span>↗</span>
+            <span>â†—</span>
           </a>
-          <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#52605A] hover:text-white border border-[#E2E0D8] flex items-center justify-center text-sm font-bold transition active:scale-95" aria-label="Close reservation drawer">✕</button>
+          <button onclick="closeBookingDrawer()" class="w-9 h-9 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#52605A] hover:text-white border border-[#E2E0D8] flex items-center justify-center text-sm font-bold transition active:scale-95" aria-label="Close reservation drawer">âœ•</button>
         </div>
       </div>
 
@@ -3818,19 +4279,19 @@ button.pf-trn-btn-danger:hover,
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="drawer-court-buttons">
             <button type="button" onclick="drawerSetCourt(1)" class="drawer-court active py-3 px-3.5 rounded-2xl bg-[#0D1F18] text-white border-2 border-[#15803D] shadow-sm text-center transition flex items-center justify-between" data-court="1">
               <span class="text-xs sm:text-sm font-bold text-white block">Court 1</span>
-              <span class="text-[#A7F3D0] font-mono text-xs">→</span>
+              <span class="text-[#A7F3D0] font-mono text-xs">â†’</span>
             </button>
             <button type="button" onclick="drawerSetCourt(2)" class="drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between" data-court="2">
               <span class="text-xs sm:text-sm font-bold text-[#0D1F18] block">Court 2</span>
-              <span class="text-[#52605A] font-mono text-xs">→</span>
+              <span class="text-[#52605A] font-mono text-xs">â†’</span>
             </button>
             <button type="button" onclick="drawerSetCourt(3)" class="drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between" data-court="3">
               <span class="text-xs sm:text-sm font-bold text-[#0D1F18] block">Court 3</span>
-              <span class="text-[#52605A] font-mono text-xs">→</span>
+              <span class="text-[#52605A] font-mono text-xs">â†’</span>
             </button>
             <button type="button" onclick="drawerSetCourt(4)" class="drawer-court py-3 px-3.5 rounded-2xl bg-[#F8F7F3] text-[#0D1F18] border border-[#E2E0D8] hover:border-[#15803D] text-center transition flex items-center justify-between" data-court="4">
               <span class="text-xs sm:text-sm font-bold text-[#0D1F18] block">Court 4</span>
-              <span class="text-[#52605A] font-mono text-xs">→</span>
+              <span class="text-[#52605A] font-mono text-xs">â†’</span>
             </button>
           </div>
         </div>
@@ -3839,7 +4300,7 @@ button.pf-trn-btn-danger:hover,
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="text-xs font-black uppercase tracking-wider text-brand-lime">3. Pick Your Time</span>
-            <span class="text-[11px] font-mono text-brand-lime font-bold" id="drawer-slot-rate-indicator" data-site-price="day-night-badge">Day: ₱400/hr &bull; Night: ₱500/hr</span>
+            <span class="text-[11px] font-mono text-brand-lime font-bold" id="drawer-slot-rate-indicator" data-site-price="day-night-badge">Day: â‚±400/hr &bull; Night: â‚±500/hr</span>
           </div>
 
           <!-- Mobile-Friendly Time-of-Day Filter Pills -->
@@ -3856,19 +4317,19 @@ button.pf-trn-btn-danger:hover,
           <p id="drawer-expired-time-error" class="hidden"></p>
 
           <div class="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
-            <span>Selected Start: <b class="text-brand-lime" id="drawer-selected-slot-badge">06:00 AM</b></span>
-            <span class="text-slate-600 font-sans font-semibold">Available (Mint) • Selected (Brown) • Open Play (Purple) • Booked (Blue/Amber)</span>
+            <span>Selected Start: <b class="text-brand-lime" id="drawer-selected-slot-badge">Tap a time slot</b></span>
+            <span class="text-slate-600 font-sans font-semibold">Available (Mint) â€¢ Open Play (Purple) â€¢ Booked (Blue/Amber)</span>
           </div>
         </div>
 
         <!-- STEP 4: Number of Players -->
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-xs font-black uppercase tracking-wider text-brand-lime block">4. Number of Players</span>
-              <p data-site-price="players-note" class="text-[11px] text-slate-400 mt-0.5">Up to 6 players included free (+₱100/extra player beyond 6).</p>
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0 pr-2">
+              <span data-site-label="step4-title" class="text-xs font-black uppercase tracking-wider text-brand-lime block">4. Number of Players</span>
+              <p data-site-price="players-note" class="text-[11px] text-slate-400 mt-0.5 leading-snug">Up to 6 players included free (+â‚±100/extra player beyond 6).</p>
             </div>
-            <div class="flex items-center gap-3 bg-brand-black border border-white/15 p-1.5 rounded-2xl">
+            <div class="flex items-center gap-3 bg-brand-black border border-white/15 p-1.5 rounded-2xl flex-shrink-0">
               <button type="button" onclick="changePlayers(-1)" class="pf-stepper-btn w-8 h-8 rounded-xl bg-slate-200 hover:bg-emerald-600 text-slate-900 hover:text-white border border-slate-300 font-extrabold active:scale-95 text-base flex items-center justify-center transition">&minus;</button>
               <span id="player-count" class="font-mono font-black text-base text-brand-lime px-2">4</span>
               <button type="button" onclick="changePlayers(1)" class="pf-stepper-btn w-8 h-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold active:scale-95 text-base flex items-center justify-center transition shadow-xs">&plus;</button>
@@ -3880,18 +4341,22 @@ button.pf-trn-btn-danger:hover,
         <div class="p-4 sm:p-5 rounded-3xl bg-brand-card border border-white/10 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Optional</span>
-              <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">5. Equipment Rentals</span>
+              <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-lime block">Optional Add-Ons</span>
+              <span class="pf-drawer-sec-title text-xs sm:text-sm font-black uppercase tracking-wider text-white">5. Equipment Rentals</span>
             </div>
-            <span id="drawer-gear-subtotal-badge" class="px-2.5 py-1 rounded-full bg-brand-lime/15 border border-brand-lime/30 text-xs font-mono font-black text-brand-lime">₱0.00</span>
+            <span id="drawer-gear-subtotal-badge" class="px-2.5 py-1 rounded-full bg-brand-lime/15 border border-brand-lime/30 text-xs font-mono font-black text-brand-lime">â‚±0.00</span>
+          </div>
+          <div class="p-3 rounded-2xl bg-[#0F291E] border border-[#15803D] flex flex-wrap items-center justify-between gap-2 text-xs" style="background:#0F291E !important;">
+            <span class="text-white font-semibold text-[11px]" style="color:#FFFFFF !important;">Already booked a court &amp; just need paddles or balls?</span>
+            <button type="button" onclick="if(typeof closeBookingDrawer==='function') closeBookingDrawer(); if(typeof pfOpenGearOrderModal==='function') pfOpenGearOrderModal();" class="px-3 py-1.5 rounded-xl bg-[#A3E635] text-[#0D1F18] font-mono font-black text-[10px] uppercase tracking-wider cursor-pointer" style="background:#A3E635 !important;color:#0D1F18 !important;">Rent Gear Only â†’</button>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <!-- 1. Standard paddle -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-slate-900 block">Standard paddle</span>
-                <span data-site-price="paddle-std-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Standard paddle</span>
+                <span data-site-price="paddle-std-dec" class="text-[11px] font-mono text-brand-lime font-bold">â‚±50.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
                 <button type="button" onclick="pfChangeDrawerGear('rent-paddle-std', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3903,8 +4368,8 @@ button.pf-trn-btn-danger:hover,
             <!-- 2. Carbon paddle -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-slate-900 block">Carbon paddle</span>
-                <span data-site-price="paddle-carbon-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Carbon paddle</span>
+                <span data-site-price="paddle-carbon-dec" class="text-[11px] font-mono text-brand-lime font-bold">â‚±100.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
                 <button type="button" onclick="pfChangeDrawerGear('rent-paddle-carbon', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3916,8 +4381,8 @@ button.pf-trn-btn-danger:hover,
             <!-- 3. Branded carbon paddle -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-slate-900 block">Branded carbon paddle</span>
-                <span data-site-price="paddle-branded-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱200.00</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Branded carbon paddle</span>
+                <span data-site-price="paddle-branded-dec" class="text-[11px] font-mono text-brand-lime font-bold">â‚±200.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
                 <button type="button" onclick="pfChangeDrawerGear('rent-paddle-branded', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3929,8 +4394,8 @@ button.pf-trn-btn-danger:hover,
             <!-- 4. Pickleball ball -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-slate-900 block">Pickleball ball</span>
-                <span data-site-price="ball-single-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱50.00</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Pickleball ball</span>
+                <span data-site-price="ball-single-dec" class="text-[11px] font-mono text-brand-lime font-bold">â‚±50.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
                 <button type="button" onclick="pfChangeDrawerGear('rent-ball-single', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3942,8 +4407,8 @@ button.pf-trn-btn-danger:hover,
             <!-- 5. Training balls (50 pcs) -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-slate-900 block">Training balls (50 pcs)</span>
-                <span data-site-price="balls-bucket-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Training balls (50 pcs)</span>
+                <span data-site-price="balls-bucket-dec" class="text-[11px] font-mono text-brand-lime font-bold">â‚±100.00</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
                 <button type="button" onclick="pfChangeDrawerGear('rent-balls-bucket', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3955,8 +4420,8 @@ button.pf-trn-btn-danger:hover,
             <!-- 6. Training machine (per hour) -->
             <div class="pf-gear-qty-card flex items-center justify-between p-3 rounded-xl bg-brand-black border border-white/10 hover:border-brand-lime/40 transition">
               <div class="pr-2">
-                <span class="text-xs font-bold text-slate-900 block">Training machine (per hour)</span>
-                <span data-site-price="machine-dec" class="text-[11px] font-mono text-brand-lime font-bold">₱100.00 / hr</span>
+                <span class="pf-gear-item-name text-xs font-bold text-white block">Training machine (per hour)</span>
+                <span data-site-price="machine-dec" class="text-[11px] font-mono text-brand-lime font-bold">â‚±100.00 / hr</span>
               </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
                 <button type="button" onclick="pfChangeDrawerGear('rent-machine', -1)" class="pf-stepper-minus w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-extrabold text-sm flex items-center justify-center active:scale-95 transition">&minus;</button>
@@ -3982,8 +4447,8 @@ button.pf-trn-btn-danger:hover,
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label for="cust-phone" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Mobile Number (11 Digits) <span class="text-brand-clay">*</span></label>
-              <input type="tel" id="cust-phone" required placeholder="e.g. 0917 123 4567" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none transition">
+              <label for="cust-phone" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Mobile Number <span class="text-slate-400 font-normal">(Optional)</span></label>
+              <input type="tel" id="cust-phone" placeholder="e.g. 0917 123 4567 (Optional)" class="w-full bg-brand-black border border-white/15 focus:border-brand-lime rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none transition">
               <p id="cust-phone-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
             </div>
             <div>
@@ -4000,27 +4465,27 @@ button.pf-trn-btn-danger:hover,
             <p id="drawer-policy-gate-notice" class="text-[11px] text-slate-300 mt-1">Review and accept each item before payment options are enabled.</p>
           </div>
           <div class="space-y-2.5 text-xs text-slate-300">
-            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
-              <input type="checkbox" id="policy-waiver" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 cursor-pointer transition shadow-2xs" style="background:#FFFFFF !important;border-color:#CBD5E1 !important;">
+              <input type="checkbox" id="policy-waiver" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded border-slate-300 accent-[#15803D] flex-shrink-0">
               <span class="text-xs leading-relaxed block">
-                <b class="text-white font-bold block">I accept the facility waiver and court conduct rules.</b>
-                <span class="text-slate-300 text-[11px] block mt-0.5">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
-                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-1.5 font-bold text-brand-lime hover:text-white underline text-[11px] inline-block transition">Read waiver and court rules</button>
+                <b class="text-slate-900 font-extrabold text-[13px] block" style="color:#0F172A !important;">I accept the facility waiver and court conduct rules.</b>
+                <span class="text-slate-600 text-xs block mt-0.5" style="color:#475569 !important;">I understand the playing rules, safety responsibilities, and assumption of risk.</span>
+                <button type="button" onclick="pfOpenPolicyModal('waiver', event)" class="mt-1.5 font-extrabold text-[#15803D] hover:text-[#166534] underline text-xs inline-block transition" style="color:#15803D !important;">Read waiver and court rules</button>
               </span>
             </label>
-            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
-              <input type="checkbox" id="policy-cancellation" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 cursor-pointer transition shadow-2xs" style="background:#FFFFFF !important;border-color:#CBD5E1 !important;">
+              <input type="checkbox" id="policy-cancellation" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded border-slate-300 accent-[#15803D] flex-shrink-0">
               <span class="text-xs leading-relaxed block">
-                <b class="text-white font-bold block">I accept the cancellation and rescheduling terms.</b>
-                <span class="text-slate-300 text-[11px] block mt-0.5">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
-                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-1.5 font-bold text-brand-lime hover:text-white underline text-[11px] inline-block transition">Read booking-change policy</button>
+                <b class="text-slate-900 font-extrabold text-[13px] block" style="color:#0F172A !important;">I accept the cancellation and rescheduling terms.</b>
+                <span class="text-slate-600 text-xs block mt-0.5" style="color:#475569 !important;">Confirmed and paid reservations are final, with limited advance rescheduling.</span>
+                <button type="button" onclick="pfOpenPolicyModal('cancellation', event)" class="mt-1.5 font-extrabold text-[#15803D] hover:text-[#166534] underline text-xs inline-block transition" style="color:#15803D !important;">Read booking-change policy</button>
               </span>
             </label>
-            <label class="pf-policy-consent-card flex items-start gap-3 p-3.5 rounded-2xl bg-brand-black/70 border border-white/10 hover:border-brand-lime/40 cursor-pointer transition">
-              <input type="checkbox" id="policy-nonrefundable" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded accent-brand-lime flex-shrink-0">
+            <label class="pf-policy-consent-card flex items-start gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 cursor-pointer transition shadow-2xs" style="background:#FFFFFF !important;border-color:#CBD5E1 !important;">
+              <input type="checkbox" id="policy-nonrefundable" required onchange="if(window.pfSyncDrawerPolicyConsent)window.pfSyncDrawerPolicyConsent()" class="mt-0.5 w-4 h-4 rounded border-slate-300 accent-[#15803D] flex-shrink-0">
               <span class="text-xs leading-relaxed block">
-                <b class="text-white font-bold block">I understand that processing and convenience charges are non-refundable.</b>
-                <span class="text-slate-300 text-[11px] block mt-0.5">These service charges cannot be returned after the transaction is processed.</span>
+                <b class="text-slate-900 font-extrabold text-[13px] block" style="color:#0F172A !important;">I understand that processing and convenience charges are non-refundable.</b>
+                <span class="text-slate-600 text-xs block mt-0.5" style="color:#475569 !important;">These service charges cannot be returned after the transaction is processed.</span>
               </span>
             </label>
           </div>
@@ -4035,17 +4500,17 @@ button.pf-trn-btn-danger:hover,
             <span class="text-[10px] font-mono text-[#52605A] block uppercase" id="drawer-summary-meta">Court 1 &bull; 1 hr session</span>
             <div class="flex items-center gap-2 mt-0.5">
               <span class="text-[#0D1F18] font-bold" id="drawer-row-court-label">Court Hire</span>
-              <span class="text-[#15803D] font-mono font-bold" id="drawer-cost-court">₱400.00</span>
+              <span class="text-[#15803D] font-mono font-bold" id="drawer-cost-court">â‚±400.00</span>
             </div>
           </div>
           <div class="text-right">
             <span class="text-[10px] font-mono text-[#52605A] block uppercase">Total Amount</span>
-            <span class="text-2xl sm:text-3xl font-black text-[#15803D] font-mono" id="drawer-cost-total">₱400.00</span>
+            <span class="text-2xl sm:text-3xl font-black text-[#15803D] font-mono" id="drawer-cost-total">â‚±400.00</span>
           </div>
         </div>
 
         <button type="button" onclick="handleDrawerProceed()" class="w-full py-3.5 px-5 rounded-xl bg-[#0D1F18] hover:bg-[#15803D] text-white font-bold text-xs sm:text-sm tracking-wide transition active:scale-95 shadow-md flex items-center justify-center gap-2">
-          <span>Continue to Payment &amp; QR Verification →</span>
+          <span>Continue to Payment &amp; QR Verification â†’</span>
         </button>
       </div>
 
@@ -4065,7 +4530,7 @@ button.pf-trn-btn-danger:hover,
             <h3 class="text-base sm:text-xl font-black uppercase tracking-tight text-white" id="modal-payment-title">Scan QR Code or Send Money</h3>
           </div>
         </div>
-        <button onclick="closePaymentModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold">✕</button>
+        <button onclick="closePaymentModal()" class="w-8 h-8 rounded-xl bg-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold">âœ•</button>
       </div>
 
       <!-- Order Summary Card -->
@@ -4076,7 +4541,7 @@ button.pf-trn-btn-danger:hover,
         </div>
         <div class="flex justify-between items-center text-slate-300">
           <span>Amount Due:</span>
-          <b class="text-brand-lime text-base font-black" id="modal-summary-amount">₱400.00</b>
+          <b class="text-brand-lime text-base font-black" id="modal-summary-amount">â‚±400.00</b>
         </div>
         <div id="modal-items-summary" class="pt-1 text-xs font-sans"></div>
       </div>
@@ -4089,24 +4554,27 @@ button.pf-trn-btn-danger:hover,
           <p id="modal-cust-name-error" class="hidden text-[10px] font-bold text-brand-clay mt-1"></p>
         </div>
         <div>
-          <label for="modal-cust-phone" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Mobile Number <span class="text-brand-clay">*</span></label>
-          <input type="tel" id="modal-cust-phone" oninput="clearFieldError('modal-cust-phone')" placeholder="0917 123 4567" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-brand-lime">
+          <label for="modal-cust-phone" class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Mobile Number <span class="text-slate-400 font-normal">(Optional)</span></label>
+          <input type="tel" id="modal-cust-phone" oninput="clearFieldError('modal-cust-phone')" placeholder="0917 123 4567 (Optional)" class="w-full bg-brand-card border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-brand-lime">
           <p id="modal-cust-phone-error" class="hidden text-[10px] font-bold text-brand-clay mt-1"></p>
         </div>
       </div>
 
-      <!-- Payment Channel Switcher (GCash, Maya, Bank Transfer) -->
+      <!-- Payment Channel Switcher (GCash, Maya, Bank Transfer, Manual Payment) -->
       <div class="mb-4">
         <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1.5">Select Payment Channel *</label>
-        <div class="grid grid-cols-3 gap-2" id="modal-pay-buttons">
-          <button type="button" id="modal-pay-btn-gcash" data-modal-pay="gcash" onclick="selectPayMode('gcash')" class="py-2.5 px-2 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md flex items-center justify-center gap-1">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="modal-pay-buttons">
+          <button type="button" id="modal-pay-btn-gcash" data-modal-pay="gcash" onclick="selectPayMode('gcash')" class="py-2.5 px-2 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black text-xs font-black uppercase transition shadow-md flex items-center justify-center gap-1 cursor-pointer">
             <span>GCash</span>
           </button>
-          <button type="button" id="modal-pay-btn-maya" data-modal-pay="maya" onclick="selectPayMode('maya')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1">
+          <button type="button" id="modal-pay-btn-maya" data-modal-pay="maya" onclick="selectPayMode('maya')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1 cursor-pointer">
             <span>Maya</span>
           </button>
-          <button type="button" id="modal-pay-btn-bank" data-modal-pay="bank" onclick="selectPayMode('bank')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1">
+          <button type="button" id="modal-pay-btn-bank" data-modal-pay="bank" onclick="selectPayMode('bank')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1 cursor-pointer">
             <span>BDO / Bank</span>
+          </button>
+          <button type="button" id="modal-pay-btn-manual" data-modal-pay="manual" onclick="selectPayMode('manual')" class="py-2.5 px-2 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white hover:border-brand-lime/50 text-xs font-bold uppercase transition flex items-center justify-center gap-1 cursor-pointer">
+            <span>Manual Payment</span>
           </button>
         </div>
       </div>
@@ -4120,8 +4588,8 @@ button.pf-trn-btn-danger:hover,
               <div class="mt-1.5 text-[9px] font-mono text-[#0057E7] font-black uppercase tracking-wider">Official GCash QR Ph</div>
             </div>
             <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
-              <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
-              <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
+              <button type="button" onclick="pfOpenQrStandeeLightbox('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">ðŸ” Zoom QR</button>
+              <button type="button" onclick="pfDownloadOfficialQr('gcash')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">ðŸ“¥ Save QR</button>
             </div>
           </div>
 
@@ -4139,12 +4607,12 @@ button.pf-trn-btn-danger:hover,
               </div>
               <div class="flex justify-between items-center text-slate-400">
                 <span>Amount to Pay:</span>
-                <span class="text-brand-lime font-black text-base" id="manual-modal-amount">₱400.00</span>
+                <span class="text-brand-lime font-black text-base" id="manual-modal-amount">â‚±400.00</span>
               </div>
             </div>
             <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 font-sans space-y-1 leading-snug">
               <div class="font-black text-brand-lime uppercase text-[10px]">How to Pay with GCash:</div>
-              <div>1. Tap <b>🔍 Zoom QR</b> to scan easily, or tap <b>📥 Save QR</b> and upload it inside the <b>GCash App (QR &rarr; Upload QR)</b>.</div>
+              <div>1. Tap <b>ðŸ” Zoom QR</b> to scan easily, or tap <b>ðŸ“¥ Save QR</b> and upload it inside the <b>GCash App (QR &rarr; Upload QR)</b>.</div>
               <div>2. Or use <b>GCash Express Send</b> to <b class="text-white">0999 883 2346</b>.</div>
             </div>
           </div>
@@ -4160,8 +4628,8 @@ button.pf-trn-btn-danger:hover,
               <div class="mt-1.5 text-[9px] font-mono text-emerald-800 font-black uppercase tracking-wider">Official Maya QR Ph</div>
             </div>
             <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
-              <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
-              <button type="button" onclick="pfDownloadOfficialQr('maya')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
+              <button type="button" onclick="pfOpenQrStandeeLightbox('maya')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">ðŸ” Zoom QR</button>
+              <button type="button" onclick="pfDownloadOfficialQr('maya')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">ðŸ“¥ Save QR</button>
             </div>
           </div>
 
@@ -4179,19 +4647,19 @@ button.pf-trn-btn-danger:hover,
               </div>
               <div class="flex justify-between items-center text-slate-400">
                 <span>Amount to Pay:</span>
-                <span class="text-brand-lime font-black text-base" id="manual-modal-maya-amount">₱400.00</span>
+                <span class="text-brand-lime font-black text-base" id="manual-modal-maya-amount">â‚±400.00</span>
               </div>
             </div>
             <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 font-sans space-y-1 leading-snug">
               <div class="font-black text-brand-lime uppercase text-[10px]">How to Pay with Maya:</div>
-              <div>1. Tap <b>🔍 Zoom QR</b> to scan easily, or tap <b>📥 Save QR</b> and upload it inside the <b>Maya App</b>.</div>
+              <div>1. Tap <b>ðŸ” Zoom QR</b> to scan easily, or tap <b>ðŸ“¥ Save QR</b> and upload it inside the <b>Maya App</b>.</div>
               <div>2. Or send money directly to Maya number <b class="text-white">0999 883 2346</b>.</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 3. Bank Transfer Section (BDO InstaPay — Clean UX + Zoom QR + Save QR + Full Card Toggle) -->
+      <!-- 3. Bank Transfer Section (BDO InstaPay â€” Clean UX + Zoom QR + Save QR + Full Card Toggle) -->
       <div id="modal-bank-section" class="hidden mb-4">
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-brand-black/95 rounded-2xl p-4 border-2 border-[#0072CE]/50 shadow-lg">
           <div class="sm:col-span-5 flex flex-col items-center">
@@ -4200,8 +4668,8 @@ button.pf-trn-btn-danger:hover,
               <div class="mt-1.5 text-[9px] font-mono text-[#0072CE] font-black uppercase tracking-wider">Official BDO InstaPay QR</div>
             </div>
             <div class="w-52 sm:w-full max-w-[215px] mt-2.5 flex flex-col gap-2">
-              <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">🔍 Zoom QR</button>
-              <button type="button" onclick="pfDownloadOfficialQr('bank')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">📥 Save QR</button>
+              <button type="button" onclick="pfOpenQrStandeeLightbox('bank')" class="w-full py-2.5 px-3 rounded-xl bg-brand-lime text-brand-black text-xs font-black uppercase tracking-wider hover:opacity-95 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">ðŸ” Zoom QR</button>
+              <button type="button" onclick="pfDownloadOfficialQr('bank')" class="w-full py-2.5 px-3 rounded-xl bg-white text-[#050E1D] text-xs font-black uppercase tracking-wider hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">ðŸ“¥ Save QR</button>
             </div>
           </div>
 
@@ -4212,19 +4680,35 @@ button.pf-trn-btn-danger:hover,
               </div>
               <div class="flex justify-between items-center text-slate-400 border-b border-white/5 pb-1.5">
                 <span>BDO Account No:</span>
-                <b data-pay-field="bank-num" class="text-brand-lime font-black text-sm">••••••••8678</b>
+                <b data-pay-field="bank-num" class="text-brand-lime font-black text-sm">â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢8678</b>
               </div>
               <div class="flex justify-between items-center text-slate-400">
                 <span>Amount to Pay:</span>
-                <span class="text-brand-lime font-black text-base" id="manual-modal-bank-amount">₱400.00</span>
+                <span class="text-brand-lime font-black text-base" id="manual-modal-bank-amount">â‚±400.00</span>
               </div>
             </div>
             <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 font-sans space-y-1 leading-snug">
               <div class="font-black text-brand-lime uppercase text-[10px]">How to Pay via BDO / Bank Transfer:</div>
-              <div>1. Tap <b>🔍 Zoom QR</b> to scan, or tap <b>📥 Save QR</b> and upload it in <b>BDO Online / BDO Pay / BPI / UnionBank / GCash</b>.</div>
+              <div>1. Tap <b>ðŸ” Zoom QR</b> to scan, or tap <b>ðŸ“¥ Save QR</b> and upload it in <b>BDO Online / BDO Pay / BPI / UnionBank / GCash</b>.</div>
               <div>2. Enter the <b>Reference Number</b> from your bank receipt below.</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- 4. Manual Payment / Pay at Front Desk Section -->
+      <div id="modal-cash-section" class="hidden mb-4">
+        <div class="rounded-2xl bg-brand-black/95 p-4 sm:p-5 border-2 border-brand-lime/50 shadow-lg space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full bg-brand-lime text-brand-black font-mono text-[10px] font-black uppercase">Manual Payment</span>
+              <span class="text-xs sm:text-sm font-black uppercase text-white">Pay at Front Desk / Venue Verification</span>
+            </div>
+            <span id="manual-modal-cash-amount" class="font-mono font-black text-lg text-brand-lime">â‚±400.00</span>
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed">
+            Reserve your slot online now and settle your payment directly at the <b>P&amp;F Rally Ground Front Desk</b> (Cash, POS, or assisted counter verification). Your booking will be submitted as <b>Pending Verification</b> with reference code <b>MANUAL-FRONT-DESK</b>.
+          </p>
         </div>
       </div>
 
@@ -4233,15 +4717,16 @@ button.pf-trn-btn-danger:hover,
         <div>
           <div class="flex items-center justify-between mb-1">
             <label for="manual-ref-input" id="manual-ref-label" class="text-[11px] font-black uppercase tracking-wider text-brand-lime">Transaction Reference Number <span class="text-brand-clay">*</span></label>
-            <span class="text-[9px] font-mono text-slate-400">6–16 Digits</span>
+            <span class="text-[9px] font-mono text-slate-400">6â€“16 Digits</span>
           </div>
           <input type="text" id="manual-ref-input" required oninput="clearFieldError('manual-ref-input')" placeholder="Enter Reference Number (e.g. 9028 3746 1928)" class="w-full bg-brand-card border border-white/20 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono font-bold focus:outline-none focus:border-brand-lime">
           <p id="manual-ref-input-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
         </div>
 
         <div class="pt-2 border-t border-white/10">
-          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300 block mb-1.5">Upload Receipt Proof (Optional Screenshot / Photo)</label>
-          <input type="file" id="manual-receipt-file" onchange="handleReceiptUpload(event)" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-brand-lime file:text-brand-black hover:file:bg-brand-limeHover cursor-pointer">
+          <label id="manual-receipt-label" class="text-[11px] font-bold uppercase tracking-wider text-slate-300 block mb-1.5">Upload Receipt Proof (Required Screenshot / Photo) <span class="text-brand-clay">*</span></label>
+          <input type="file" id="manual-receipt-file" required onchange="handleReceiptUpload(event)" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-brand-lime file:text-brand-black hover:file:bg-brand-limeHover cursor-pointer">
+          <p id="manual-receipt-file-error" class="hidden text-[11px] font-bold text-brand-clay mt-1"></p>
           
           <div id="receipt-preview-wrap" class="hidden mt-2.5 flex items-center gap-3 p-2 rounded-xl bg-brand-card border border-white/10">
             <img id="receipt-preview-img" src="" alt="Receipt Preview" class="w-12 h-12 object-cover rounded-lg border border-brand-lime/40">
@@ -4260,7 +4745,7 @@ button.pf-trn-btn-danger:hover,
         </button>
         <button type="button" onclick="submitReservationFinal()" id="modal-submit-btn" class="flex-2 py-3.5 px-6 rounded-xl bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition active:scale-95 lime-glow shadow-lg flex items-center justify-center gap-2">
           <span>Confirm &amp; Settle Booking</span>
-          <span>→</span>
+          <span>â†’</span>
         </button>
       </div>
 
@@ -4290,7 +4775,7 @@ button.pf-trn-btn-danger:hover,
             <p class="text-[11px] text-[#52605A] font-medium truncate">Official news, Open Play schedules &amp; court advisories</p>
           </div>
         </div>
-        <button type="button" onclick="toggleAnnouncementBoard()" class="w-8 h-8 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#52605A] hover:text-white border border-[#E2E0D8] flex items-center justify-center text-xs font-bold transition flex-shrink-0" aria-label="Close Announcement Board">✕</button>
+        <button type="button" onclick="toggleAnnouncementBoard(false)" class="w-9 h-9 rounded-xl bg-[#F6F5F0] hover:bg-[#0D1F18] text-[#0D1F18] hover:text-white border border-[#D5D3CC] flex items-center justify-center text-sm font-black transition flex-shrink-0 shadow-sm cursor-pointer" aria-label="Close Announcement Board">âœ•</button>
       </div>
 
       <!-- Feed Stream (Warm Alabaster Surface) -->
@@ -4307,11 +4792,11 @@ button.pf-trn-btn-danger:hover,
                 <span class="text-[10px] font-mono text-[#52605A] block font-medium">Official Broadcast</span>
               </div>
             </div>
-            <span class="pf-pill px-2 py-0.5 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] text-[9px] font-mono font-bold uppercase flex-shrink-0">📌 Pinned</span>
+            <span class="pf-pill px-2 py-0.5 rounded-full bg-[#EFECE6] text-[#78350F] border border-[#D6D1C7] text-[9px] font-mono font-bold uppercase flex-shrink-0">ðŸ“Œ Pinned</span>
           </div>
           <div class="space-y-1">
             <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">Welcome to P&amp;F Rally Ground Pickleball Club!</h4>
-            <p class="text-xs text-[#334139] leading-relaxed font-normal">All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: ₱400/hr • Evening: ₱500/hr). Open Play runs Tue–Thu (4:00 PM – 8:00 PM) & Fri–Sat (6:00 PM – 10:00 PM) at ₱150/participant!</p>
+            <p class="text-xs text-[#334139] leading-relaxed font-normal">All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: â‚±400/hr â€¢ Evening: â‚±500/hr). Open Play runs Tueâ€“Thu (4:00 PM â€“ 8:00 PM) & Friâ€“Sat (6:00 PM â€“ 10:00 PM) at â‚±150/participant!</p>
           </div>
         </article>
         <article class="rounded-2xl bg-white border border-[#E2E0D8] p-3.5 sm:p-4 shadow-sm space-y-2.5 text-[#0D1F18]">
@@ -4328,8 +4813,8 @@ button.pf-trn-btn-danger:hover,
             </div>
           </div>
           <div class="space-y-1">
-            <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">Official Open Play • Tue–Thu 4–8 PM & Fri–Sat 6–10 PM (₱150/participant)</h4>
-            <p class="text-xs text-[#334139] leading-relaxed font-normal">Join our community Open Play sessions (Tue–Thu 4:00 PM – 8:00 PM & Fri–Sat 6:00 PM – 10:00 PM)! All skill levels are welcome — bring your paddle or rent pro gear at the club.</p>
+            <h4 class="text-xs sm:text-sm font-bold text-[#0D1F18] leading-snug">Official Open Play â€¢ Tueâ€“Thu 4â€“8 PM & Friâ€“Sat 6â€“10 PM (â‚±150/participant)</h4>
+            <p class="text-xs text-[#334139] leading-relaxed font-normal">Join our community Open Play sessions (Tueâ€“Thu 4:00 PM â€“ 8:00 PM & Friâ€“Sat 6:00 PM â€“ 10:00 PM)! All skill levels are welcome â€” bring your paddle or rent pro gear at the club.</p>
           </div>
         </article>
       </div>
@@ -4341,7 +4826,7 @@ button.pf-trn-btn-danger:hover,
           <span>P&amp;F Rally Ground Desk</span>
         </span>
         <button type="button" onclick="toggleAnnouncementBoard(); openBookingDrawer();" class="px-3.5 py-1.5 rounded-xl bg-[#0D1F18] hover:bg-[#15803D] text-white font-bold tracking-wide text-[11px] transition flex-shrink-0 shadow-sm">
-          Reserve a Court →
+          Reserve a Court â†’
         </button>
       </div>
     </div>
@@ -4367,7 +4852,7 @@ button.pf-trn-btn-danger:hover,
     <div class="relative z-10 max-w-2xl w-full rounded-3xl bg-white border-2 border-slate-200 p-3 sm:p-5 shadow-2xl text-center" style="background:#FFFFFF;color:#0D1F18;border-radius:16px;">
       <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-200">
         <span id="ann-lightbox-caption" class="text-xs font-black uppercase text-[#050E1D] truncate pr-2">Official Club Announcement Photo</span>
-        <button type="button" onclick="closeAnnouncementLightbox()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white text-xs font-black flex items-center justify-center flex-shrink-0">✕</button>
+        <button type="button" onclick="closeAnnouncementLightbox()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-[#050E1D] text-slate-800 hover:text-white text-xs font-black flex items-center justify-center flex-shrink-0">âœ•</button>
       </div>
       <img id="ann-lightbox-img" src="" alt="Announcement Photo" class="max-h-[75dvh] w-auto mx-auto rounded-2xl object-contain border border-slate-200">
     </div>
@@ -4377,7 +4862,7 @@ button.pf-trn-btn-danger:hover,
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
   <script src="pf-motion-ui.js?v=20261105v1"></script>
-<script src="app.js?v=20261107v16"></script>
+<script src="app.js?v=20261107v37"></script>
 
   <!-- SCRIPT: Authentic 31-Day Date-Rail & Accurate Pricing Engine -->
   <script>
@@ -4402,7 +4887,7 @@ button.pf-trn-btn-danger:hover,
     let selectedDateLabel = "";
     let selectedCourt = 1;
     let selectedDuration = 1;
-    let selectedStartSlot = "06:00 AM";
+    let selectedStartSlot = "";
     let selectedPlayerCount = 4;
     let gearQuantities = {
       "standard": 0,
@@ -4448,8 +4933,8 @@ button.pf-trn-btn-danger:hover,
       }
       selectedDateValue = daysList[0].value;
       selectedDateLabel = daysList[0].label;
-      if (typeof window.pfIsSlotExpired === "function" && window.pfIsSlotExpired(selectedDateValue, selectedStartSlot)) {
-        selectedStartSlot = window.pfGetNextUpcomingSlot(selectedDateValue, ALL_SLOTS);
+      if (selectedStartSlot && typeof window.pfIsSlotExpired === "function" && window.pfIsSlotExpired(selectedDateValue, selectedStartSlot)) {
+        selectedStartSlot = "";
       }
       const picker = document.getElementById("book-native-date-picker");
       if (picker) picker.value = selectedDateValue;
@@ -4461,7 +4946,7 @@ button.pf-trn-btn-danger:hover,
       const todayYMD = (typeof window.pfGetPhilippineTodayYMD === "function") ? window.pfGetPhilippineTodayYMD() : "";
       const maxYMD = (typeof window.pfGetPhilippineMaxBookingYMD === "function") ? window.pfGetPhilippineMaxBookingYMD() : "";
       if (maxYMD && ymd > maxYMD) {
-        alert("📅 30-Day Advance Booking Window: Reservations are open from Today (" + todayYMD + ") up to " + maxYMD + " (30 days ahead).");
+        alert("ðŸ“… 30-Day Advance Booking Window: Reservations are open from Today (" + todayYMD + ") up to " + maxYMD + " (30 days ahead).");
         ymd = maxYMD;
         const picker = document.getElementById("book-native-date-picker");
         if (picker) picker.value = ymd;
@@ -4475,7 +4960,7 @@ button.pf-trn-btn-danger:hover,
           weekday: isPast ? "Expired" : new Intl.DateTimeFormat("en-PH", { weekday: "short" }).format(dt),
           day: dt.getDate(),
           month: new Intl.DateTimeFormat("en-PH", { month: "short" }).format(dt),
-          label: (isPast ? "⏰ Expired: " : "") + new Intl.DateTimeFormat("en-PH", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(dt)
+          label: (isPast ? "â° Expired: " : "") + new Intl.DateTimeFormat("en-PH", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(dt)
         };
         daysList.unshift(found);
       }
@@ -4526,8 +5011,8 @@ button.pf-trn-btn-danger:hover,
         if (typeof pfShowExpiredSlotBanner === "function") pfShowExpiredSlotBanner("book-expired-time-error", dateVal, selectedDateLabel);
       } else {
         if (typeof pfClearExpiredSlotBanner === "function") pfClearExpiredSlotBanner("book-expired-time-error");
-        if (typeof window.pfIsSlotExpired === "function" && window.pfIsSlotExpired(dateVal, selectedStartSlot)) {
-          selectedStartSlot = window.pfGetNextUpcomingSlot(dateVal, ALL_SLOTS);
+        if (selectedStartSlot && typeof window.pfIsSlotExpired === "function" && window.pfIsSlotExpired(dateVal, selectedStartSlot)) {
+          selectedStartSlot = "";
         }
       }
 
@@ -4561,7 +5046,7 @@ button.pf-trn-btn-danger:hover,
       const isDark = mode === 'dark';
       const iconEl = document.getElementById('pf-theme-toggle-icon');
       const lblEl = document.getElementById('pf-theme-toggle-label');
-      if (iconEl) iconEl.textContent = isDark ? '🌙' : '☀️';
+      if (iconEl) iconEl.textContent = isDark ? 'ðŸŒ™' : 'â˜€ï¸';
       if (lblEl) lblEl.textContent = isDark ? 'Night Court' : 'Daylight';
       document.querySelectorAll('.pf-theme-toggle-btn').forEach(btn => {
         const sun = btn.querySelector('.pf-theme-icon-sun');
@@ -4631,11 +5116,11 @@ button.pf-trn-btn-danger:hover,
 
     // 5. Time Chips (with Open Play, Booked Red, Closed Dark)
     const BOOK_OPEN_PLAY_BY_DAY = {
-      2: { start: 16, end: 20 }, // Tuesday: 4:00 PM – 8:00 PM
-      3: { start: 16, end: 20 }, // Wednesday: 4:00 PM – 8:00 PM
-      4: { start: 16, end: 20 }, // Thursday: 4:00 PM – 8:00 PM
-      5: { start: 18, end: 22 }, // Friday: 6:00 PM – 10:00 PM
-      6: { start: 18, end: 22 }  // Saturday: 6:00 PM – 10:00 PM
+      2: { start: 16, end: 20 }, // Tuesday: 4:00 PM â€“ 8:00 PM
+      3: { start: 16, end: 20 }, // Wednesday: 4:00 PM â€“ 8:00 PM
+      4: { start: 16, end: 20 }, // Thursday: 4:00 PM â€“ 8:00 PM
+      5: { start: 18, end: 22 }, // Friday: 6:00 PM â€“ 10:00 PM
+      6: { start: 18, end: 22 }  // Saturday: 6:00 PM â€“ 10:00 PM
     };
 
     function isBookOpenPlay(dateYMD, slotStr, courtNum) {
@@ -4663,21 +5148,181 @@ button.pf-trn-btn-danger:hover,
       const allBookings = [...serverBookings, ...localBookings];
       const liveBlocks = (window.sharedServerState && window.sharedServerState.blocks) ? window.sharedServerState.blocks : [];
 
+      const opSlotsList = [];
+      const trnSlotsList = [];
+      const resolvedSlotMap = {};
       ALL_SLOTS.forEach(slot => {
-        const slotInfo = (typeof window.pfResolveCourtSlot === 'function')
+        const sInfo = (typeof window.pfResolveCourtSlot === 'function')
           ? window.pfResolveCourtSlot(selectedDateValue, selectedCourt, slot, liveBlocks, allBookings)
           : { status: isBookOpenPlay(selectedDateValue, slot) ? 'OPEN_PLAY' : 'AVAILABLE' };
+        resolvedSlotMap[slot] = sInfo;
+        const c = sInfo.category || sInfo.status || 'AVAILABLE';
+        if (sInfo.status === 'OPEN_PLAY' || c === 'OPEN_PLAY') {
+          opSlotsList.push(slot);
+        }
+        if (c === 'TOURNAMENT') {
+          trnSlotsList.push(slot);
+        }
+      });
+      let opMergedRendered = false;
+      let trnMergedRendered = false;
+
+      ALL_SLOTS.forEach(slot => {
+        const slotInfo = resolvedSlotMap[slot];
         const cat = slotInfo.category || slotInfo.status || 'AVAILABLE';
         const rate = getBookSlotRate(slot);
+
+        if (slotInfo.status === 'OPEN_PLAY' || cat === 'OPEN_PLAY') {
+          if (opMergedRendered) return;
+          opMergedRendered = true;
+          const opBookInfo = (typeof window.pfGetOpenPlaySlotBadgeForDate === 'function')
+            ? window.pfGetOpenPlaySlotBadgeForDate(selectedDateValue)
+            : { takenSlots: 0, maxSlots: 24, availableSlots: 24 };
+          const firstOp = opSlotsList[0] || slot;
+          const lastOp = opSlotsList[opSlotsList.length - 1] || slot;
+          const endHourMap = {
+            '03:00 PM': '04:00 PM', '04:00 PM': '05:00 PM', '05:00 PM': '06:00 PM',
+            '06:00 PM': '07:00 PM', '07:00 PM': '08:00 PM', '08:00 PM': '09:00 PM',
+            '09:00 PM': '10:00 PM', '10:00 PM': '11:00 PM'
+          };
+          const opRangeLabel = `${firstOp} â€“ ${endHourMap[lastOp] || lastOp}`;
+          const isOpSelected = opSlotsList.includes(selectedStartSlot);
+          const opRateVal = Number((window.PF_SITE_CONFIG && window.PF_SITE_CONFIG.openPlayRate) ?? 150);
+
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = isOpSelected
+            ? "col-span-2 sm:col-span-3 md:col-span-4 py-3 px-4 rounded-2xl bg-gradient-to-r from-[#EDE9FE] via-[#DDD6FE] to-[#C4B5FD] text-[#2E1065] border-2 border-[#6D28D9] ring-2 ring-[#7C3AED]/30 transition flex flex-col sm:flex-row items-center justify-between gap-2 text-left shadow-md cursor-pointer"
+            : "col-span-2 sm:col-span-3 md:col-span-4 py-3 px-4 rounded-2xl bg-gradient-to-r from-[#F5F3FF] via-[#EDE9FE] to-[#DDD6FE] hover:from-[#EDE9FE] hover:to-[#C4B5FD] text-[#2E1065] border-2 border-[#A78BFA] hover:border-[#7C3AED] transition flex flex-col sm:flex-row items-center justify-between gap-2 text-left shadow-xs cursor-pointer";
+          btn.innerHTML = `
+            <div class="flex flex-col">
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#5B21B6]">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#7C3AED]"></span> Open Play Session â€¢ ${(typeof window.pfGetOpenPlayDesignatedCourts === 'function' ? window.pfGetOpenPlayDesignatedCourts() : [1,2,3,4]).map(c => 'Court ' + c).join(', ')}
+              </span>
+              <span class="text-xs sm:text-sm font-black text-[#2E1065] mt-0.5">${opRangeLabel}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-xl bg-white/90 border border-[#C4B5FD] text-[11px] font-mono font-extrabold text-[#4C1D95] shadow-2xs">
+                ${opBookInfo.availableSlots} of ${opBookInfo.maxSlots} Slots Left
+              </span>
+              <span class="px-2.5 py-1 rounded-xl bg-[#5B21B6] text-white text-[11px] font-mono font-extrabold shadow-2xs" style="background-color:#5B21B6 !important;color:#FFFFFF !important;">
+                â‚±${opRateVal} / Player
+              </span>
+            </div>
+          `;
+          btn.onclick = () => {
+            if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
+            selectedStartSlot = firstOp;
+            // Always default to 1 player and â‚±150 pricing when clicking Open Play
+            selectedPlayerCount = 1;
+            window.__bookAutoSetOpPlayer = true;
+            const pcEl = document.getElementById("player-count-display");
+            if (pcEl) pcEl.textContent = "1";
+            renderTimeChips();
+            updateSummary();
+          };
+          container.appendChild(btn);
+          return;
+        }
 
         const btn = document.createElement("button");
         btn.type = "button";
         const isSelected = (slot === selectedStartSlot);
 
         if (cat === 'TOURNAMENT') {
-          btn.className = "py-2.5 px-2 rounded-xl bg-[#FEF9C3] text-[#854D0E] border border-[#FACC15] text-xs font-sans font-bold cursor-not-allowed leading-tight";
-          btn.disabled = true;
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#854D0E] font-black">🏆 Tournament</span>`;
+          if (trnMergedRendered) return;
+          trnMergedRendered = true;
+          const firstTrn = trnSlotsList[0] || slot;
+          const lastTrn = trnSlotsList[trnSlotsList.length - 1] || slot;
+          let activeTrns = (slotInfo && Array.isArray(slotInfo.tournaments) && slotInfo.tournaments.length > 0)
+            ? slotInfo.tournaments
+            : ((typeof window.pfGetScheduledTournamentsForSlot === 'function')
+                ? window.pfGetScheduledTournamentsForSlot(selectedDateValue, selectedCourt, slot)
+                : []);
+          if (!activeTrns || activeTrns.length === 0) {
+            const singleTrn = (slotInfo && slotInfo.tournament)
+              || ((typeof window.pfGetScheduledTournamentForSlot === 'function') ? window.pfGetScheduledTournamentForSlot(selectedDateValue, selectedCourt, slot) : null);
+            if (singleTrn) activeTrns = [singleTrn];
+          }
+          const isDualTrn = activeTrns.length >= 2;
+          const trnObj = activeTrns[0] || null;
+          const trnId = (trnObj && trnObj.id) ? trnObj.id : 'trn-pf-singles-cup';
+          const trnTitle = (trnObj && trnObj.title) ? trnObj.title : ((slotInfo && slotInfo.reason) ? String(slotInfo.reason).replace(/^ðŸ†\s*/, '') : 'Official Club Tournament');
+          const trnFee = Number((trnObj && trnObj.entryFee) ?? 500);
+          const maxTeams = Math.max(2, Number((trnObj && trnObj.maxTeams) || 24));
+          const takenTeams = (trnObj && typeof window.pfCountRealTournamentTeams === 'function')
+            ? window.pfCountRealTournamentTeams(trnObj)
+            : Number((trnObj && trnObj.registeredCount) || 0);
+          const availTeams = Math.max(0, maxTeams - takenTeams);
+          const trnCourtsLabel = (trnObj && Array.isArray(trnObj.designatedCourts) && trnObj.designatedCourts.length)
+            ? trnObj.designatedCourts.join(', ')
+            : 'Courts 1 â€“ 4';
+          const trnColSpanClass = trnSlotsList.length >= 6 ? "col-span-3 sm:col-span-6" : (trnSlotsList.length >= 4 ? "col-span-3 sm:col-span-4" : "col-span-3 sm:col-span-3");
+
+          if (isDualTrn) {
+            const divWrapper = document.createElement("div");
+            divWrapper.className = "col-span-3 sm:col-span-6 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#FFFBEB] via-[#FEF3C7] to-[#FDE68A] text-[#78350F] border-2 border-[#F59E0B] shadow-xs space-y-2.5";
+            divWrapper.innerHTML = `
+              <div class="flex flex-wrap items-center justify-between gap-1.5 border-b border-[#F59E0B]/30 pb-2">
+                <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono font-extrabold uppercase tracking-wider text-[#B45309]">
+                  ðŸ† Official Club Tournaments â€¢ Singles &amp; Doubles Active (${trnCourtsLabel})
+                </span>
+                <span class="px-2 py-0.5 rounded-md bg-white/90 border border-[#FCD34D] text-[10px] sm:text-[11px] font-mono font-extrabold text-[#78350F]">
+                  â° ${firstTrn} â€“ ${lastTrn}
+                </span>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                ${activeTrns.slice(0, 2).map((tItem, idx) => {
+                  const dId = tItem.id || (idx === 0 ? 'trn-pf-singles-cup' : 'trn-pf-doubles-cup');
+                  const dTypeRaw = String(tItem.tournamentType || tItem.format || (idx === 0 ? 'Single' : 'Double'));
+                  const isSingleDiv = dTypeRaw.toLowerCase().includes('single');
+                  const dTitle = tItem.title || (isSingleDiv ? 'P&F Rally Ground Singles Cup' : 'P&F Rally Ground Doubles Cup');
+                  const dFee = Number(tItem.entryFee ?? (isSingleDiv ? 500 : 850));
+                  const dMax = Math.max(2, Number(tItem.maxTeams || 24));
+                  const dTaken = (typeof window.pfCountRealTournamentTeams === 'function') ? window.pfCountRealTournamentTeams(tItem) : Number(tItem.registeredCount || 0);
+                  const dAvail = Math.max(0, dMax - dTaken);
+                  return `
+                    <div onclick="if(typeof window.pfRegisterForTournament==='function'){window.pfRegisterForTournament('${dId}');}else{window.location.href='index.html#tournaments';}" class="p-3 rounded-xl bg-white/95 hover:bg-white border border-[#F59E0B]/70 hover:border-[#B45309] transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 cursor-pointer shadow-2xs">
+                      <div>
+                        <span class="text-[10px] font-mono font-extrabold uppercase text-[#B45309] block">${isSingleDiv ? 'ðŸ¥‡ Singles (1v1)' : 'ðŸ¥ˆ Doubles (2v2)'} â€¢ ${dAvail}/${dMax} Slots Left</span>
+                        <span class="text-xs sm:text-sm font-black text-[#78350F]">${dTitle}</span>
+                      </div>
+                      <span class="px-3 py-1.5 rounded-xl bg-[#B45309] text-white text-[11px] font-mono font-extrabold whitespace-nowrap" style="background-color:#B45309 !important;color:#FFFFFF !important;">
+                        â‚±${dFee} â€¢ Register â†’
+                      </span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            `;
+            container.appendChild(divWrapper);
+            return;
+          }
+
+          btn.className = trnColSpanClass + " py-3.5 px-4 sm:px-5 rounded-2xl bg-gradient-to-r from-[#FFFBEB] via-[#FEF3C7] to-[#FDE68A] hover:from-[#FEF3C7] hover:to-[#FCD34D] text-[#78350F] border-2 border-[#F59E0B] hover:border-[#D97706] transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-left shadow-xs cursor-pointer";
+          btn.innerHTML = `
+            <div class="flex flex-col">
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#B45309]">
+                ðŸ† Official Tournament â€¢ ${trnCourtsLabel}
+              </span>
+              <span class="text-xs sm:text-sm font-black text-[#78350F] mt-0.5">${trnTitle} (${firstTrn} â€“ ${lastTrn})</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-1 rounded-xl bg-white/90 border border-[#FCD34D] text-[11px] font-mono font-extrabold text-[#92400E] shadow-2xs">
+                ${availTeams} of ${maxTeams} Slots Left
+              </span>
+              <span class="px-2.5 py-1 rounded-xl bg-[#B45309] text-white text-[11px] font-mono font-extrabold shadow-2xs" style="background-color:#B45309 !important;color:#FFFFFF !important;">
+                â‚±${trnFee} â€¢ Register â†’
+              </span>
+            </div>
+          `;
+          btn.onclick = () => {
+            if (typeof window.pfRegisterForTournament === 'function') {
+              window.pfRegisterForTournament(trnId);
+            } else {
+              window.location.href = 'index.html#tournaments';
+            }
+          };
         } else if (cat === 'PRIVATE') {
           btn.className = "py-2.5 px-2 rounded-xl bg-[#F1F5F9] text-[#334155] border border-[#CBD5E1] text-xs font-sans font-bold cursor-not-allowed leading-tight";
           btn.disabled = true;
@@ -4697,23 +5342,11 @@ button.pf-trn-btn-danger:hover,
             btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#92400E] font-black">Pending</span>`;
           } else {
             btn.className = "py-2.5 px-2 rounded-xl bg-[#DBEAFE] text-[#1E40AF] border border-[#93C5FD] text-xs font-sans font-bold cursor-not-allowed leading-tight";
-            btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#1E40AF] font-black">Confirmed</span>`;
+            btn.innerHTML = `${slot}<span class="block text-[9px] uppercase text-[#1E40AF] font-black">Booked</span>`;
           }
-        } else if (slotInfo.status === 'OPEN_PLAY' || cat === 'OPEN_PLAY') {
-          btn.className = isSelected
-            ? "py-2.5 px-2 rounded-xl bg-[#EFECE6] text-[#5C2D0C] border-2 border-[#78350F] text-xs font-mono font-black transition leading-tight shadow-md"
-            : "py-2.5 px-2 rounded-xl bg-[#EDE9FE] hover:bg-[#DDD6FE] text-[#5B21B6] border border-[#C4B5FD] text-xs font-mono font-black transition leading-tight";
-          const opRateChip = Number((window.PF_SITE_CONFIG || {}).openPlayRate ?? 150);
-          btn.innerHTML = `${slot}<span class="block text-[9px] uppercase ${isSelected ? 'text-[#5C2D0C]' : 'text-[#5B21B6]'} font-black">${isSelected ? '● Selected' : 'Open Play • ₱' + opRateChip}</span>`;
-          btn.onclick = () => {
-            if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
-            selectedStartSlot = slot;
-            renderTimeChips();
-            updateSummary();
-          };
         } else if (slotInfo.status === 'EXPIRED' || cat === 'PAST') {
           btn.className = "pf-cal-slot-past py-2.5 px-2 rounded-xl text-xs font-sans font-bold leading-tight transition";
-          btn.innerHTML = `${slot}<span class="block text-[9px] font-sans font-bold opacity-80">₱${rate}</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-sans font-bold opacity-80">â‚±${rate}</span>`;
           btn.onclick = () => {
             if (typeof pfShowExpiredSlotBanner === 'function') {
               pfShowExpiredSlotBanner('book-expired-time-error', slot, selectedDateLabel || selectedDateValue);
@@ -4721,12 +5354,18 @@ button.pf-trn-btn-danger:hover,
           };
         } else {
           btn.className = isSelected
-            ? "py-2.5 px-2 rounded-xl bg-[#EFECE6] text-[#5C2D0C] border-2 border-[#78350F] text-xs font-mono font-black transition leading-tight shadow-md"
+            ? "py-2.5 px-2 rounded-xl bg-[#A7F3D0] text-[#064E3B] border-2 border-[#059669] ring-2 ring-[#059669]/30 text-xs font-mono font-black transition leading-tight shadow-sm"
             : "py-2.5 px-2 rounded-xl bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] border border-[#6EE7B7] text-xs font-mono font-extrabold transition leading-tight";
-          btn.innerHTML = `${slot}<span class="block text-[9px] font-sans font-bold ${isSelected ? 'text-[#5C2D0C] font-black' : 'text-[#065F46]/80'}">${isSelected ? '● Selected' : '₱' + rate}</span>`;
+          btn.innerHTML = `${slot}<span class="block text-[9px] font-sans font-bold text-[#065F46]">â‚±${rate}</span>`;
           btn.onclick = () => {
             if (typeof pfClearExpiredSlotBanner === 'function') pfClearExpiredSlotBanner('book-expired-time-error');
             selectedStartSlot = slot;
+            if (window.__bookAutoSetOpPlayer) {
+              window.__bookAutoSetOpPlayer = false;
+              selectedPlayerCount = 4;
+              const pcEl = document.getElementById("player-count-display");
+              if (pcEl) pcEl.textContent = "4";
+            }
             renderTimeChips();
             updateSummary();
           };
@@ -4785,16 +5424,25 @@ button.pf-trn-btn-danger:hover,
         : isBookOpenPlay(selectedDateValue, selectedStartSlot);
       const hourlyRate = isOpenPlaySelected ? openPlayRateVal : getHourlyRate(selectedStartSlot);
       const courtCost = isOpenPlaySelected ? (openPlayRateVal * Math.max(1, selectedPlayerCount || 1)) : (hourlyRate * selectedDuration);
-      document.getElementById("summary-court-cost").textContent = `₱${courtCost.toLocaleString()}.00`;
+      document.getElementById("summary-court-cost").textContent = `â‚±${courtCost.toLocaleString()}.00`;
       document.getElementById("summary-court-row-label").textContent = isOpenPlaySelected
-        ? `Court ${selectedCourt} Open Play (${selectedPlayerCount} player${selectedPlayerCount > 1 ? 's' : ''} @ ₱${openPlayRateVal}/player)`
-        : `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`;
+        ? `Court ${selectedCourt} Open Play (${selectedPlayerCount} player${selectedPlayerCount > 1 ? 's' : ''} @ â‚±${openPlayRateVal}/player)`
+        : `Court ${selectedCourt} (${selectedDuration} hr @ â‚±${hourlyRate}/hr)`;
 
-      // Extra players (Synced with Admin Master Price Editor)
-      const extraPlayers = isOpenPlaySelected ? 0 : Math.max(0, selectedPlayerCount - Number(cfg.includedPlayers || 6));
-      const extraCost = extraPlayers * Number(cfg.extraPlayerFee || 100);
-      document.getElementById("summary-extra-players-label").textContent = `Extra players (${extraPlayers})`;
-      document.getElementById("summary-extra-cost").textContent = `₱${extraCost.toLocaleString()}.00`;
+      // Extra players (Synced with Admin Master Price Editor - Normal Court vs Open Play Per Participant)
+      const incPl = Number(cfg.includedPlayers || 6);
+      const extFee = Number(cfg.extraPlayerFee || 100);
+      if (typeof window.pfSyncPlayerStepRuleUI === 'function') {
+        window.pfSyncPlayerStepRuleUI(isOpenPlaySelected, openPlayRateVal, incPl, extFee);
+      }
+      const extraPlayers = isOpenPlaySelected ? 0 : Math.max(0, selectedPlayerCount - incPl);
+      const extraCost = extraPlayers * extFee;
+      document.getElementById("summary-extra-players-label").textContent = isOpenPlaySelected
+        ? `Open Play Pricing (Per Participant)`
+        : `Extra players (${extraPlayers})`;
+      document.getElementById("summary-extra-cost").textContent = isOpenPlaySelected
+        ? `â‚±${openPlayRateVal}/pax`
+        : `â‚±${extraCost.toLocaleString()}.00`;
 
       // Equipment cost (Training machine is per hour)
       let gearTotal = 0;
@@ -4806,14 +5454,14 @@ button.pf-trn-btn-danger:hover,
           gearTotal += qty * item.price;
         }
       });
-      document.getElementById("summary-gear-cost").textContent = `₱${gearTotal.toLocaleString()}.00`;
-      document.getElementById("gear-subtotal-badge").textContent = `₱${gearTotal.toLocaleString()}.00 Total`;
+      document.getElementById("summary-gear-cost").textContent = `â‚±${gearTotal.toLocaleString()}.00`;
+      document.getElementById("gear-subtotal-badge").textContent = `â‚±${gearTotal.toLocaleString()}.00 Total`;
 
       // Grand total
       const grandTotal = courtCost + extraCost + gearTotal;
-      document.getElementById("summary-grand-total").textContent = `₱${grandTotal.toLocaleString()}.00`;
+      document.getElementById("summary-grand-total").textContent = `â‚±${grandTotal.toLocaleString()}.00`;
       const payBoxBadge = document.getElementById("payment-box-total-badge");
-      if (payBoxBadge) payBoxBadge.textContent = `₱${grandTotal.toLocaleString()}.00`;
+      if (payBoxBadge) payBoxBadge.textContent = `â‚±${grandTotal.toLocaleString()}.00`;
 
       // Header labels
       document.getElementById("summary-date").textContent = selectedDateLabel.split(",")[0] + ", " + selectedDateLabel.split(",")[1];
@@ -4822,7 +5470,7 @@ button.pf-trn-btn-danger:hover,
       document.getElementById("summary-players").textContent = `${selectedPlayerCount} players`;
     }
 
-    // 9. Policies Consent (Integrated inside Unified Payment & Policies Box — Never dims/locks QR or Payment Tabs)
+    // 9. Policies Consent (Integrated inside Unified Payment & Policies Box â€” Never dims/locks QR or Payment Tabs)
     function acceptAllBookPolicies() {
       const ids = ["consent-waiver", "consent-cancel", "consent-charges"];
       const els = ids.map(id => document.getElementById(id)).filter(Boolean);
@@ -4861,11 +5509,11 @@ button.pf-trn-btn-danger:hover,
       const acceptAllBtn = document.getElementById("btn-accept-all-policies");
       if (allPassed) {
         if (notice) {
-          notice.innerHTML = "✅ <b>All 3 policies accepted</b> &mdash; ready to confirm &amp; submit your booking.";
+          notice.innerHTML = "âœ… <b>All 3 policies accepted</b> &mdash; ready to confirm &amp; submit your booking.";
           notice.className = "text-[11px] text-brand-lime font-bold mt-0.5";
         }
         if (acceptAllBtn) {
-          acceptAllBtn.innerHTML = "<span>✓ All 3 Accepted</span>";
+          acceptAllBtn.innerHTML = "<span>âœ“ All 3 Accepted</span>";
         }
       } else {
         if (notice) {
@@ -4873,7 +5521,7 @@ button.pf-trn-btn-danger:hover,
           notice.className = "text-[11px] text-slate-300 mt-0.5";
         }
         if (acceptAllBtn) {
-          acceptAllBtn.innerHTML = "<span>✓ Accept All 3 Policies</span>";
+          acceptAllBtn.innerHTML = "<span>âœ“ Accept All 3 Policies</span>";
         }
       }
     }
@@ -4881,17 +5529,57 @@ button.pf-trn-btn-danger:hover,
     // 10. Payment Mode Tabs
     function selectBookPaymentMode(mode) {
       activePaymentMode = mode;
-      ['gcash', 'maya', 'bank'].forEach(m => {
+      ['gcash', 'maya', 'bank', 'manual'].forEach(m => {
         const btn = document.getElementById(`pay-pill-${m}`);
         const card = document.getElementById(`book-pay-${m}`);
+        if (!btn) return;
         if (m === mode) {
-          btn.className = "py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition";
+          btn.className = "py-3 px-3 rounded-xl border-2 border-brand-lime bg-brand-lime text-brand-black font-black uppercase text-xs tracking-wider transition cursor-pointer";
           if (card) card.classList.remove("hidden");
         } else {
-          btn.className = "py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition";
+          btn.className = "py-3 px-3 rounded-xl border border-white/15 bg-brand-black text-slate-300 hover:text-white font-bold uppercase text-xs tracking-wider transition cursor-pointer";
           if (card) card.classList.add("hidden");
         }
       });
+      const refInp = document.getElementById("book-payment-ref");
+      const refLbl = document.querySelector('label[for="book-payment-ref"]');
+      const recLbl = document.getElementById("book-receipt-label");
+      if (mode === 'manual') {
+        if (refLbl) refLbl.innerHTML = '2. Manual Payment / Front Desk Note <span class="text-emerald-400">(Auto-filled)</span>';
+        if (recLbl) recLbl.innerHTML = 'Attach Payment Receipt Screenshot / Photo <span class="text-slate-400 font-normal">(Optional for Pay at Front Desk)</span>';
+        if (refInp) {
+          if (!refInp.value.trim()) refInp.value = "MANUAL-FRONT-DESK";
+          refInp.placeholder = "MANUAL-FRONT-DESK (or enter OR# / Walk-In Note)";
+        }
+      } else {
+        if (refLbl) refLbl.innerHTML = '2. Payment Reference Number *';
+        if (recLbl) recLbl.innerHTML = 'Attach Payment Receipt Screenshot / Photo *';
+        if (refInp && refInp.value === "MANUAL-FRONT-DESK") {
+          refInp.value = "";
+          refInp.placeholder = "e.g. 1029 3847 5612";
+        }
+      }
+    }
+
+    let _bookUploadedReceiptDataUrl = "";
+    function handleBookReceiptUpload(event) {
+      const file = event?.target?.files?.[0];
+      const errEl = document.getElementById("book-receipt-err");
+      if (errEl) errEl.classList.add("hidden");
+      if (!file) {
+        _bookUploadedReceiptDataUrl = "";
+        document.getElementById("book-receipt-preview-wrap")?.classList.add("hidden");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        _bookUploadedReceiptDataUrl = e.target?.result || "";
+        const img = document.getElementById("book-receipt-preview-img");
+        const wrap = document.getElementById("book-receipt-preview-wrap");
+        if (img && _bookUploadedReceiptDataUrl.startsWith("data:image")) img.src = _bookUploadedReceiptDataUrl;
+        if (wrap) wrap.classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
     }
 
     // 11. Copy Account Number
@@ -4911,9 +5599,13 @@ button.pf-trn-btn-danger:hover,
     let _isSubmittingBookReservation = false;
     async function submitReservation() {
       if (_isSubmittingBookReservation) return;
+      if (!selectedStartSlot) {
+        alert("Please tap a start time slot in Step 3 (Choose your time) first.");
+        return;
+      }
       if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(selectedDateValue, selectedStartSlot)) {
         pfShowExpiredSlotBanner('book-expired-time-error', selectedStartSlot, selectedDateLabel || selectedDateValue);
-        alert(`⚠️ Expired Time Slot: ${selectedStartSlot} on ${selectedDateLabel || selectedDateValue} has already passed. Please choose an upcoming time slot.`);
+        alert(`âš ï¸ Expired Time Slot: ${selectedStartSlot} on ${selectedDateLabel || selectedDateValue} has already passed. Please choose an upcoming time slot.`);
         return;
       }
       if (typeof pfCheckRescheduleConflict === 'function') {
@@ -4951,8 +5643,8 @@ button.pf-trn-btn-danger:hover,
         return;
       }
       const phoneDigits = phone.replace(/[^0-9]/g, '');
-      if (phoneDigits.length < 10) {
-        alert("Please enter a valid 11-digit mobile number (e.g. 0917 123 4567).");
+      if (phoneDigits.length > 0 && phoneDigits.length < 10) {
+        alert("Please enter a valid 11-digit mobile number or leave the optional phone field blank.");
         document.getElementById("book-cust-phone")?.focus();
         return;
       }
@@ -4970,7 +5662,7 @@ button.pf-trn-btn-danger:hover,
       const courtCost = isOpenPlaySelected ? (openPlayRateVal * Math.max(1, selectedPlayerCount || 1)) : (hourlyRate * selectedDuration);
       const extraCost = isOpenPlaySelected ? 0 : (Math.max(0, selectedPlayerCount - Number(cfgSubmit.includedPlayers || 6)) * Number(cfgSubmit.extraPlayerFee || 100));
       let gearTotal = 0;
-      const items = [isOpenPlaySelected ? `Court ${selectedCourt} Open Play (${selectedPlayerCount} player${selectedPlayerCount > 1 ? 's' : ''} @ ₱${openPlayRateVal}/player = ₱${courtCost})` : `Court ${selectedCourt} (${selectedDuration} hr @ ₱${hourlyRate}/hr)`];
+      const items = [isOpenPlaySelected ? `Court ${selectedCourt} Open Play (${selectedPlayerCount} player${selectedPlayerCount > 1 ? 's' : ''} @ â‚±${openPlayRateVal}/player = â‚±${courtCost})` : `Court ${selectedCourt} (${selectedDuration} hr @ â‚±${hourlyRate}/hr)`];
       if (extraCost > 0) items.push(`Extra Players (${Math.max(0, selectedPlayerCount - 6)})`);
       
       GEAR_CATALOG.forEach(g => {
@@ -4978,14 +5670,33 @@ button.pf-trn-btn-danger:hover,
         if (q > 0) {
           const cost = g.id === "training-machine" ? q * g.price * selectedDuration : q * g.price;
           gearTotal += cost;
-          items.push(`${q}× ${g.name} (₱${cost})`);
+          items.push(`${q}Ã— ${g.name} (â‚±${cost})`);
         }
       });
       const grandTotal = courtCost + extraCost + gearTotal;
-      const finalPayRef = (grandTotal === 0 && (!ref || ref.length < 4)) ? 'FREE-OPEN-PLAY' : ref;
+      let finalPayRef = ref;
+      if (activePaymentMode === 'manual' && (!finalPayRef || finalPayRef.length < 4)) {
+        finalPayRef = 'MANUAL-FRONT-DESK';
+        const refInpEl = document.getElementById("book-payment-ref");
+        if (refInpEl) refInpEl.value = finalPayRef;
+      } else if (grandTotal === 0 && (!finalPayRef || finalPayRef.length < 4)) {
+        finalPayRef = 'FREE-OPEN-PLAY';
+      }
       if (!finalPayRef || finalPayRef.length < 4) {
-        alert("Please enter a valid Payment Reference Number.");
+        alert("Please enter a valid Payment Reference Number (or select Manual Payment).");
         document.getElementById("book-payment-ref")?.focus();
+        return;
+      }
+      const bookReceiptFileEl = document.getElementById("book-receipt-file");
+      const hasBookReceipt = Boolean(_bookUploadedReceiptDataUrl) || Boolean(bookReceiptFileEl && bookReceiptFileEl.files && bookReceiptFileEl.files.length > 0);
+      if (activePaymentMode !== 'manual' && grandTotal > 0 && !hasBookReceipt) {
+        const recErr = document.getElementById("book-receipt-err");
+        if (recErr) {
+          recErr.textContent = "Please attach a screenshot or photo of your payment receipt.";
+          recErr.classList.remove("hidden");
+        }
+        alert("Please attach a screenshot or photo of your payment receipt before submitting.");
+        bookReceiptFileEl?.focus();
         return;
       }
 
@@ -5002,11 +5713,12 @@ button.pf-trn-btn-danger:hover,
         customerEmail: email || "guest@pfrally.ph",
         court: `Court ${selectedCourt}`,
         date: selectedDateValue,
-        time: `${selectedDateValue} • ${selectedStartSlot} (${selectedDuration} hr)`,
+        time: `${selectedDateValue} â€¢ ${selectedStartSlot} (${selectedDuration} hr)`,
         players: selectedPlayerCount,
-        paymentMethod: activePaymentMode.toUpperCase(),
-        paymentMode: activePaymentMode.toUpperCase(),
+        paymentMethod: activePaymentMode === "manual" ? "MANUAL PAYMENT" : activePaymentMode.toUpperCase(),
+        paymentMode: activePaymentMode === "manual" ? "MANUAL PAYMENT" : activePaymentMode.toUpperCase(),
         transactionRef: finalPayRef,
+        receiptDataUrl: _bookUploadedReceiptDataUrl || "",
         total: Number(grandTotal),
         courtCost: courtCost,
         extraCost: extraCost,
@@ -5054,11 +5766,11 @@ button.pf-trn-btn-danger:hover,
       if (serverConflictErr) {
         const errBanner = document.getElementById('book-expired-time-error');
         if (errBanner) {
-          errBanner.innerHTML = `❌ <b>${serverConflictErr}</b>`;
+          errBanner.innerHTML = `âŒ <b>${serverConflictErr}</b>`;
           errBanner.classList.remove('hidden');
           errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        alert('❌ ' + serverConflictErr);
+        alert('âŒ ' + serverConflictErr);
         return;
       }
 
@@ -5081,8 +5793,8 @@ button.pf-trn-btn-danger:hover,
       // 3. Show Success Modal
       document.getElementById("conf-ref-id").textContent = newRef;
       document.getElementById("conf-court").textContent = `Court ${selectedCourt}`;
-      document.getElementById("conf-datetime").textContent = `${selectedDateValue} • ${selectedStartSlot}`;
-      document.getElementById("conf-total").textContent = `₱${grandTotal.toLocaleString()}.00`;
+      document.getElementById("conf-datetime").textContent = `${selectedDateValue} â€¢ ${selectedStartSlot}`;
+      document.getElementById("conf-total").textContent = `â‚±${grandTotal.toLocaleString()}.00`;
       document.getElementById("booking-success-modal").classList.remove("hidden");
     }
 
@@ -5121,9 +5833,37 @@ button.pf-trn-btn-danger:hover,
         return;
       }
 
-      const name = (pendingOrderData && pendingOrderData.name) || document.getElementById('modal-cust-name')?.value.trim() || document.getElementById('cust-name')?.value.trim() || 'Valued Guest';
-      const phone = (pendingOrderData && pendingOrderData.phone) || document.getElementById('modal-cust-phone')?.value.trim() || document.getElementById('cust-phone')?.value.trim() || '09000000000';
+      const liveModalName = document.getElementById('modal-cust-name')?.value.trim() || '';
+      const liveModalPhone = document.getElementById('modal-cust-phone')?.value.trim() || '';
+      const name = liveModalName || (pendingOrderData && pendingOrderData.name) || document.getElementById('cust-name')?.value.trim() || '';
+      const phone = liveModalPhone || (pendingOrderData && pendingOrderData.phone) || document.getElementById('cust-phone')?.value.trim() || '';
       const email = (pendingOrderData && pendingOrderData.email) || document.getElementById('cust-email')?.value.trim() || '';
+
+      if (!name || name.length < 2) {
+        if (typeof showFieldError === 'function') showFieldError('modal-cust-name', 'Please enter your full name.');
+        document.getElementById('modal-cust-name')?.focus();
+        return;
+      }
+      if (phone && phone.replace(/\D/g, '').length > 0 && phone.replace(/\D/g, '').length < 10) {
+        if (typeof showFieldError === 'function') showFieldError('modal-cust-phone', 'Please enter a valid 11-digit mobile number or leave it blank.');
+        document.getElementById('modal-cust-phone')?.focus();
+        return;
+      }
+      const isManualPayModal = (typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode === 'manual') || refVal.toUpperCase().startsWith('MANUAL');
+      const modalReceiptFileEl = document.getElementById('manual-receipt-file');
+      const hasModalReceipt = Boolean(typeof uploadedReceiptDataUrl !== 'undefined' && uploadedReceiptDataUrl) || Boolean(modalReceiptFileEl && modalReceiptFileEl.files && modalReceiptFileEl.files.length > 0);
+      if (!isManualPayModal && !hasModalReceipt) {
+        const recErr = document.getElementById('manual-receipt-file-error');
+        if (recErr) {
+          recErr.textContent = 'Please attach your payment receipt screenshot or photo.';
+          recErr.classList.remove('hidden');
+        } else if (refErr) {
+          refErr.textContent = 'Please attach your payment receipt screenshot or photo.';
+          refErr.classList.remove('hidden');
+        }
+        modalReceiptFileEl?.focus();
+        return;
+      }
       const rawTotal = (pendingOrderData && pendingOrderData.total) || recalculateDrawerTotal();
       const numericTotal = Number(String(rawTotal).replace(/[^0-9.]/g, '')) || 400;
       const dateStr = (pendingOrderData && pendingOrderData.date) || (DRAWER_STATE && (DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal)) || 'Today';
@@ -5132,7 +5872,7 @@ button.pf-trn-btn-danger:hover,
       const startSlot = (DRAWER_STATE && DRAWER_STATE.selectedStartSlot) || '06:00 PM';
       const durationHrs = (DRAWER_STATE && DRAWER_STATE.selectedDuration) || 1;
       const generatedRef = 'PF-' + Math.floor(100000 + Math.random() * 900000);
-      const payMethod = (typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode) ? String(selectedPaymentMode).toUpperCase() : 'GCASH';
+      const payMethod = (typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode === 'manual') ? 'MANUAL PAYMENT' : ((typeof selectedPaymentMode !== 'undefined' && selectedPaymentMode) ? String(selectedPaymentMode).toUpperCase() : 'GCASH');
 
       _isSubmittingReservationFinal = true;
       const submitBtn = document.getElementById('modal-submit-btn');
@@ -5143,7 +5883,7 @@ button.pf-trn-btn-danger:hover,
 
       const orderItems = (pendingOrderData && Array.isArray(pendingOrderData.items) && pendingOrderData.items.length > 0)
         ? pendingOrderData.items
-        : [`Court ${courtNum} (${durationHrs} hr • ${startSlot})`];
+        : [`Court ${courtNum} (${durationHrs} hr â€¢ ${startSlot})`];
 
       const bookingPayload = {
         ref: generatedRef,
@@ -5155,7 +5895,7 @@ button.pf-trn-btn-danger:hover,
         customerEmail: email,
         court: `Court ${courtNum}`,
         date: (DRAWER_STATE && DRAWER_STATE.selectedDateVal) || dateStr,
-        time: `${dateStr} • ${startSlot} (${durationHrs} hr)`,
+        time: `${dateStr} â€¢ ${startSlot} (${durationHrs} hr)`,
         players: (DRAWER_STATE && DRAWER_STATE.players) || 2,
         paymentMethod: payMethod,
         paymentMode: payMethod,
@@ -5203,10 +5943,10 @@ button.pf-trn-btn-danger:hover,
 
       if (serverConflictErr) {
         if (refErr) {
-          refErr.textContent = '❌ ' + serverConflictErr;
+          refErr.textContent = 'âŒ ' + serverConflictErr;
           refErr.classList.remove('hidden');
         } else {
-          alert('❌ ' + serverConflictErr);
+          alert('âŒ ' + serverConflictErr);
         }
         return;
       }
@@ -5223,13 +5963,13 @@ button.pf-trn-btn-danger:hover,
 
       closePaymentModal();
 
-      alert(`✅ Reservation Submitted to Front Desk!
+      alert(`âœ… Reservation Submitted to Front Desk!
 
 Booking ID: ${finalRef}
 Payment Ref #: ${refVal}
 Court: Court ${courtNum}
-Date & Time: ${dateStr} • ${startSlot} (${durationHrs} hr)
-Total Amount: ₱${numericTotal.toFixed(2)}
+Date & Time: ${dateStr} â€¢ ${startSlot} (${durationHrs} hr)
+Total Amount: â‚±${numericTotal.toFixed(2)}
 Status: PENDING ADMIN APPROVAL
 
 Your booking is now waiting in the Admin Portal for approval!`);
@@ -5349,6 +6089,10 @@ Your booking is now waiting in the Admin Portal for approval!`);
     }
 
     function handleDrawerProceed() {
+      if (!DRAWER_STATE.selectedStartSlot) {
+        alert('Please tap a start time slot in Step 3 (Pick Your Time) first.');
+        return;
+      }
       if (typeof pfIsSlotExpired === 'function' && pfIsSlotExpired(DRAWER_STATE.selectedDateVal, DRAWER_STATE.selectedStartSlot)) {
         pfShowExpiredSlotBanner('drawer-expired-time-error', DRAWER_STATE.selectedStartSlot, DRAWER_STATE.selectedDateLabel || DRAWER_STATE.selectedDateVal);
         return;
@@ -5389,9 +6133,9 @@ Your booking is now waiting in the Admin Portal for approval!`);
         return;
       }
       const cleanPhone = (phone || '').replace(/[^0-9]/g, '');
-      if (cleanPhone.length < 10) {
+      if (cleanPhone.length > 0 && cleanPhone.length < 10) {
         if (phoneErr) {
-          phoneErr.textContent = 'Please enter a valid Philippine mobile number.';
+          phoneErr.textContent = 'Please enter a valid Philippine mobile number or leave it blank.';
           phoneErr.classList.remove('hidden');
         }
         document.getElementById('cust-phone')?.focus();
@@ -5413,6 +6157,15 @@ Your booking is now waiting in the Admin Portal for approval!`);
       if (courtNum) selectCourt(courtNum);
       if (slotTime) {
         selectedStartSlot = slotTime;
+        const isOpPre = (typeof window.pfResolveCourtSlot === 'function')
+          ? (window.pfResolveCourtSlot(selectedDateVal, selectedCourt || 1, slotTime).status === 'OPEN_PLAY')
+          : isOpenPlaySlot(selectedDateVal, slotTime);
+        if (isOpPre) {
+          selectedPlayerCount = 1;
+          window.__bookAutoSetOpPlayer = true;
+          const pcEl = document.getElementById('player-count-display');
+          if (pcEl) pcEl.textContent = '1';
+        }
         renderTimeChips();
         updateSummary();
       }
