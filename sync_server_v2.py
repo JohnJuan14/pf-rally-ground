@@ -628,6 +628,13 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, directory=None, **kwargs):
         super().__init__(*args, directory=directory, **kwargs)
 
+    def guess_type(self, path):
+        ctype = super().guess_type(path)
+        if isinstance(ctype, str) and "charset=" not in ctype.lower():
+            if ctype.startswith("text/") or ctype in ("application/javascript", "application/x-javascript", "application/json", "image/svg+xml"):
+                return f"{ctype}; charset=utf-8"
+        return ctype
+
     def end_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
