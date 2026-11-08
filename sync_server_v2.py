@@ -20,12 +20,28 @@ if os.path.exists(_DEFAULT_WIN_SCRATCH):
     SCRATCH_DIR = _DEFAULT_WIN_SCRATCH
     PUBLIC_DIR = os.path.join(SCRATCH_DIR, "pf-rally-ground-v2")
     ADMIN_DIR = os.path.join(PUBLIC_DIR, "admin")
-    DB_FILE = os.path.join(SCRATCH_DIR, "pf_shared_db.json")
+    SEED_DB_FILE = os.path.join(SCRATCH_DIR, "pf_shared_db.json")
 else:
     PUBLIC_DIR = os.path.dirname(os.path.abspath(__file__))
     SCRATCH_DIR = PUBLIC_DIR
     ADMIN_DIR = os.path.join(PUBLIC_DIR, "admin")
-    DB_FILE = os.path.join(PUBLIC_DIR, "pf_shared_db.json")
+    SEED_DB_FILE = os.path.join(PUBLIC_DIR, "pf_shared_db.json")
+
+_ENV_DATA_DIR = os.environ.get("DATA_DIR", "").strip()
+if _ENV_DATA_DIR:
+    try:
+        os.makedirs(_ENV_DATA_DIR, exist_ok=True)
+        DATA_DIR = os.path.abspath(_ENV_DATA_DIR)
+        DB_FILE = os.path.join(DATA_DIR, "pf_shared_db.json")
+        if not os.path.exists(DB_FILE) and os.path.exists(SEED_DB_FILE):
+            import shutil
+            shutil.copy2(SEED_DB_FILE, DB_FILE)
+    except Exception:
+        DATA_DIR = SCRATCH_DIR
+        DB_FILE = SEED_DB_FILE
+else:
+    DATA_DIR = SCRATCH_DIR
+    DB_FILE = SEED_DB_FILE
 
 db_lock = threading.Lock()
 
@@ -434,9 +450,7 @@ def resolve_api_route(parsed_url):
     return parsed_url.path
 
 def get_pht_now():
-    if os.environ.get("RENDER"):
-        return datetime.now(timezone(timedelta(hours=8)))
-    return datetime.now()
+    return datetime.now(timezone(timedelta(hours=8)))
 
 ALL_18_SLOTS = [
     "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
@@ -655,6 +669,16 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path.startswith('/api/'):
             parsed = parsed._replace(path=resolve_api_route(parsed))
+        if parsed.path in ("/api/health", "/healthz"):
+            self._send_json({
+                "ok": True,
+                "status": "healthy",
+                "service": "pf-rally-ground",
+                "dataDir": DATA_DIR,
+                "dbFile": DB_FILE,
+                "phtTime": get_pht_now().strftime("%Y-%m-%d %H:%M:%S PHT")
+            })
+            return
         if parsed.path == "/api/state":
             db = load_db()
             qs = urllib.parse.parse_qs(parsed.query)
@@ -758,7 +782,7 @@ class UnifiedHandler(http.server.SimpleHTTPRequestHandler):
             self.path = "/open-play.html"
         elif parsed.path in ("/pricing", "/pricing/"):
             self.path = "/pricing.html"
-        elif parsed.path in ("/admin", "/admin/"):
+        elif parsed.path in ("/admin", "/admin/", "/admin.html"):
             if self.directory and os.path.basename(os.path.normpath(str(self.directory))).lower() == "admin":
                 self.path = "/index.html"
             else:

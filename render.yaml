@@ -5,3 +5,17 @@ services:
     plan: free
     buildCommand: "echo 'Build ready'"
     startCommand: "python sync_server_v2.py"
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATA_DIR
+        value: ./data
+    # Note: On a paid Render plan (Starter+), uncomment `disk` below and set DATA_DIR=/var/data
+    # On Render's Free tier, ./data + automatic Supabase Cloud sync (pf_cloud_state) persists all data across deploys.
+    # disk:
+    #   name: pf-rally-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

@@ -1,0 +1,14 @@
+{
+  "name": "pf-rally-ground",
+  "version": "2.0.0",
+  "description": "P&F Rally Ground Pickleball Club — Unified Public Booking & Admin/POS Production System",
+  "main": "sync_server_v2.py",
+  "scripts": {
+    "start": "python sync_server_v2.py",
+    "dev": "python sync_server_v2.py"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

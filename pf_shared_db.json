@@ -1,0 +1,1545 @@
+{
+  "sales": [
+    {
+      "ref": "PF-INV-997585",
+      "cost": 0,
+      "date": "2026-11-07 18:32",
+      "desc": "POS Order",
+      "type": "POS Retail",
+      "items": [],
+      "amount": 0,
+      "method": "Cash",
+      "profit": 0
+    },
+    {
+      "ref": "PF-TRN-752109",
+      "cost": 0,
+      "date": "2026-11-08 17:53",
+      "desc": "Court 1 (Michael Jay Juan & John) - Ref: PAY-AT-DESK",
+      "type": "Tournament Entry",
+      "amount": 850,
+      "method": "Pay at Counter",
+      "profit": 850
+    },
+    {
+      "ref": "PF-OP-999999",
+      "cost": 0,
+      "date": "2026-11-06 03:14",
+      "desc": "Open Play \u2022 Afternoon Social Open Play (Court 1, Court 2, Court 3, Court 4) (Michael Jay Jan) - Ref: 20267815",
+      "type": "Court Rental",
+      "amount": 150,
+      "method": "GCash",
+      "profit": 150
+    }
+  ],
+  "blocks": [
+    {
+      "id": "blk-1793907947323",
+      "date": "2026-11-06",
+      "court": "ALL",
+      "hours": "ALL",
+      "reason": "Open Court (All Day)",
+      "statusType": "OPEN"
+    },
+    {
+      "id": "blk-1793907949670-922",
+      "date": "2026-11-06",
+      "court": "ALL",
+      "hours": "03:00 PM",
+      "reason": "Open Play (3:00 PM \u2013 6:00 PM)",
+      "statusType": "OPEN_PLAY"
+    },
+    {
+      "id": "blk-1793907949670-864",
+      "date": "2026-11-06",
+      "court": "ALL",
+      "hours": "04:00 PM",
+      "reason": "Open Play (3:00 PM \u2013 6:00 PM)",
+      "statusType": "OPEN_PLAY"
+    },
+    {
+      "id": "blk-1793907949670-230",
+      "date": "2026-11-06",
+      "court": "ALL",
+      "hours": "05:00 PM",
+      "reason": "Open Play (3:00 PM \u2013 6:00 PM)",
+      "statusType": "OPEN_PLAY"
+    },
+    {
+      "id": "blk-1793907949670-436",
+      "date": "2026-11-06",
+      "court": "ALL",
+      "hours": "06:00 PM",
+      "reason": "Open Play (3:00 PM \u2013 6:00 PM)",
+      "statusType": "OPEN_PLAY"
+    },
+    {
+      "id": "blk-trn-trn-bicol-dupr-open-c1-1793980106545",
+      "date": "2026-11-21",
+      "court": "Court 01",
+      "hours": "ALL",
+      "reason": "\ud83c\udfc6 Bicol Open DUPR Pickleball Cup (08:00 AM \u2013 05:00 PM)",
+      "statusType": "TOURNAMENT"
+    },
+    {
+      "id": "blk-trn-trn-bicol-dupr-open-c3-179398011",
+      "date": "2026-11-21",
+      "court": "Court 03",
+      "hours": "ALL",
+      "reason": "\ud83c\udfc6 Bicol Open DUPR Pickleball Cup (08:00 AM \u2013 05:00 PM)",
+      "statusType": "TOURNAMENT"
+    },
+    {
+      "id": "blk-trn-trn-bicol-dupr-open-c4-179398011",
+      "date": "2026-11-21",
+      "court": "Court 04",
+      "hours": "ALL",
+      "reason": "\ud83c\udfc6 Bicol Open DUPR Pickleball Cup (08:00 AM \u2013 05:00 PM)",
+      "statusType": "TOURNAMENT"
+    }
+  ],
+  "bookings": [
+    {
+      "ref": "PF-TRN-752109",
+      "date": "2026-11-21",
+      "name": "Michael Jay Juan & John",
+      "time": "2026-11-21 \u2022 08:00 AM \u2013 05:00 PM",
+      "court": "Court 1",
+      "email": "tournament@pfrally.ph",
+      "items": [
+        "\ud83c\udfc6 Bicol Open DUPR Pickleball Cup \u2014 Seed #1: Michael Jay Juan & John (Intermediate (3.5))"
+      ],
+      "phone": "09610513361",
+      "total": 850,
+      "status": "CONFIRMED",
+      "players": 2,
+      "createdAt": "2026-11-06T15:47:39.020Z",
+      "paymentMode": "Pay at Counter",
+      "customerName": "Michael Jay Juan & John",
+      "customerEmail": "tournament@pfrally.ph",
+      "customerPhone": "09610513361",
+      "paymentMethod": "Pay at Counter",
+      "receiptDataUrl": "",
+      "transactionRef": "PAY-AT-DESK"
+    },
+    {
+      "ref": "PF-OP-999999",
+      "date": "2026-11-06",
+      "name": "Michael Jay Jan",
+      "time": "2026-11-06 \u2022 Daily \u2022 03:00 PM \u2013 06:00 PM",
+      "court": "Open Play \u2022 Afternoon Social Open Play (Court 1, Court 2, Court 3, Court 4)",
+      "email": "",
+      "items": [
+        "Open Play Entry (1x Player @ \u20b1150) \u2014 Afternoon Social Open Play (Michael Jay Jan)"
+      ],
+      "phone": "09610513391",
+      "total": 150,
+      "status": "CONFIRMED",
+      "players": 1,
+      "createdAt": "2026-11-06 19:12",
+      "isOpenPlay": true,
+      "paymentMode": "GCash",
+      "customerName": "Michael Jay Jan",
+      "customerEmail": "",
+      "customerPhone": "09610513391",
+      "paymentMethod": "GCash",
+      "receiptDataUrl": "",
+      "transactionRef": "20267815",
+      "openPlaySessionId": "op-afternoon-social"
+    }
+  ],
+  "expenses": [],
+  "inventory": [
+    {
+      "id": "inv-1794103624264",
+      "cat": "Refreshment",
+      "img": "assets/gear-water-500ml.jpg",
+      "name": "Mineral Water Small",
+      "price": 25,
+      "stock": 24,
+      "buyMode": "unit",
+      "costPrice": 10,
+      "pcsPerBox": 24,
+      "soldCount": 1,
+      "costPerBox": 240,
+      "rentedCount": 0,
+      "wholesaleUnit": "Box / Case",
+      "wholesaleBoxes": 1,
+      "totalCapitalInvested": 240
+    }
+  ],
+  "updatedAt": 1794113267602,
+  "categories": [
+    "Refreshment",
+    "Pro Shop"
+  ],
+  "siteConfig": {
+    "clubLat": 13.15543,
+    "clubLng": 123.72471,
+    "dayRate": 400,
+    "clubLogo": "assets/logo.png",
+    "clubName": "P&F Rally Ground",
+    "clubHours": "6:00 AM \u2013 12:00 AM",
+    "clubPhone": "0999 883 2346",
+    "court1Img": "assets/court-aerial-vertical.jpg",
+    "court2Img": "assets/court-aerial-angled.jpg",
+    "court3Img": "assets/hero.jpg",
+    "court4Img": "assets/court-aerial-angled.jpg",
+    "nightRate": 500,
+    "updatedAt": 1794008913141,
+    "court1Name": "Court 1",
+    "court2Name": "Court 2",
+    "court3Name": "Court 3",
+    "court4Name": "Court 4",
+    "gearStdImg": "assets/gear-composite-paddle.jpg",
+    "heroSlide1": "assets/hero-slide-1.jpg",
+    "heroSlide2": "assets/hero-slide-2.jpg",
+    "heroSlide3": "assets/hero-slide-3.jpg",
+    "clubAddress": "Velasco St., Phase 4, Do\u00f1a Maria Subd., Tagas, Daraga, Philippines, 4501",
+    "costMachine": 0,
+    "gearBallImg": "assets/gear-balls-x40.jpg",
+    "heroTagline": "PHILIPPINES \u2022 4 PRO PICKLEBALL COURTS",
+    "mapEmbedUrl": "https://maps.google.com/maps?ll=13.15543,123.72471&q=13.15543,123.72471+(P%26F+Rally+Ground+Pickleball+Club)&hl=en&t=k&z=18&output=embed",
+    "tournaments": [
+      {
+        "id": "trn-bicol-dupr-open",
+        "date": "2026-11-21",
+        "time": "08:00 AM \u2013 05:00 PM",
+        "title": "Bicol Open DUPR Pickleball Cup",
+        "courts": "All 4 Courts (Courts 1 \u2013 4)",
+        "format": "Round Robin + Medal Playoffs",
+        "status": "OPEN FOR REGISTRATION",
+        "bracket": [
+          {
+            "id": "QF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Quarterfinal 1",
+            "stage": "Quarterfinals",
+            "teamA": "Seed #1 \u2022 Michael Jay Juan & John (Intermediate (3.5))",
+            "teamB": "Seed #8 \u2022 Michael Jay Juan & John (Intermediate (3.5))",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "READY",
+            "winner": null,
+            "serverNum": 2,
+            "timeoutsA": 2,
+            "timeoutsB": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Quarterfinal 2",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #4 \u2014 Available",
+            "teamB": "Open Seed #5 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF3",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 3",
+            "label": "Quarterfinal 3",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #2 \u2014 Available",
+            "teamB": "Open Seed #7 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF4",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 4",
+            "label": "Quarterfinal 4",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #3 \u2014 Available",
+            "teamB": "Open Seed #6 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Semifinal 1",
+            "stage": "Semifinals",
+            "teamA": "Winner QF1",
+            "teamB": "Winner QF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Semifinal 2",
+            "stage": "Semifinals",
+            "teamA": "Winner QF3",
+            "teamB": "Winner QF4",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "FIN",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Gold Medal Final",
+            "stage": "Championship Final",
+            "teamA": "Winner SF1",
+            "teamB": "Winner SF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          }
+        ],
+        "players": [
+          "Seed #1 \u2022 Michael Jay Juan & John (Intermediate (3.5))",
+          "Seed #8 \u2022 Michael Jay Juan & John (Intermediate (3.5))",
+          "Open Seed #4 \u2014 Available",
+          "Open Seed #5 \u2014 Available",
+          "Open Seed #2 \u2014 Available",
+          "Open Seed #7 \u2014 Available",
+          "Open Seed #3 \u2014 Available",
+          "Open Seed #6 \u2014 Available"
+        ],
+        "approved": true,
+        "category": "Men's, Women's & Mixed Doubles",
+        "division": "Novice (2.5\u20133.0) \u2022 Intermediate (3.5) \u2022 Open (4.0+)",
+        "entryFee": 850,
+        "maxTeams": 24,
+        "formatKey": "ROUND_ROBIN",
+        "prizePool": "\u20b125,000 + Trophies & Official DUPR Submission",
+        "published": true,
+        "description": "Guaranteed Round-Robin pool matches (1 game to 11 pts) per team. Top 8 seeded pairs advance to the Quarterfinals, Semifinals, and Gold Medal Final across Courts 1 \u2013 4.",
+        "registrations": [
+          {
+            "id": "TRN-ENT-052513",
+            "phone": "09610513361",
+            "status": "RESERVED (PAY AT DESK)",
+            "partner": "John",
+            "player1": "Michael Jay Juan",
+            "division": "Intermediate (3.5)",
+            "teamName": "Michael Jay Juan & John",
+            "paymentRef": "PAY-AT-DESK",
+            "seedNumber": 1,
+            "registeredAt": "07:47 AM",
+            "paymentMethod": "Venue"
+          },
+          {
+            "id": "PF-TRN-058638",
+            "email": "",
+            "phone": "09610513361",
+            "status": "CONFIRMED",
+            "partner": "John",
+            "player1": "Michael Jay Juan",
+            "division": "Intermediate (3.5)",
+            "teamName": "Michael Jay Juan & John",
+            "bookingRef": "PF-TRN-058638",
+            "paymentRef": "PAY-AT-DESK",
+            "seedNumber": 8,
+            "registeredAt": "2026-11-06 11:47 PM",
+            "paymentMethod": "Venue"
+          }
+        ],
+        "scoringTarget": 11,
+        "registeredCount": 2,
+        "designatedCourts": [
+          "Court 1",
+          "Court 2",
+          "Court 3",
+          "Court 4"
+        ],
+        "showCourtsOnSite": true
+      },
+      {
+        "id": "trn-mayon-king-court",
+        "date": "2026-11-14",
+        "time": "05:00 PM \u2013 09:00 PM",
+        "title": "Mayon Smash: King & Queen of the Court",
+        "courts": "All 4 Courts (Courts 1 \u2013 4)",
+        "format": "Ladder Split Rotation (Individual Points)",
+        "status": "OPEN FOR REGISTRATION",
+        "bracket": [
+          {
+            "id": "QF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Quarterfinal 1",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #1 \u2014 Available",
+            "teamB": "Open Seed #8 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Quarterfinal 2",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #4 \u2014 Available",
+            "teamB": "Open Seed #5 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF3",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 3",
+            "label": "Quarterfinal 3",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #2 \u2014 Available",
+            "teamB": "Open Seed #7 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF4",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 4",
+            "label": "Quarterfinal 4",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #3 \u2014 Available",
+            "teamB": "Open Seed #6 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Semifinal 1",
+            "stage": "Semifinals",
+            "teamA": "Winner QF1",
+            "teamB": "Winner QF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Semifinal 2",
+            "stage": "Semifinals",
+            "teamA": "Winner QF3",
+            "teamB": "Winner QF4",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "FIN",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Gold Medal Final",
+            "stage": "Championship Final",
+            "teamA": "Winner SF1",
+            "teamB": "Winner SF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          }
+        ],
+        "players": [
+          "Open Seed #1 \u2014 Available",
+          "Open Seed #8 \u2014 Available",
+          "Open Seed #4 \u2014 Available",
+          "Open Seed #5 \u2014 Available",
+          "Open Seed #2 \u2014 Available",
+          "Open Seed #7 \u2014 Available",
+          "Open Seed #3 \u2014 Available",
+          "Open Seed #6 \u2014 Available"
+        ],
+        "approved": true,
+        "category": "Individual Entry (Rotating Doubles Partners)",
+        "division": "All-Levels Social & Competitive (3.0\u20133.8)",
+        "entryFee": 350,
+        "maxTeams": 24,
+        "formatKey": "KING_COURT",
+        "prizePool": "\u20b16,000 Cash + Carbon Pro Paddle & Medals",
+        "published": false,
+        "description": "Play 12-minute timed ladder rounds across Courts 1 \u2013 4: winners move UP a court and split partners. Top 8 cumulative point duos enter the Championship Knockout Bracket!",
+        "registrations": [],
+        "scoringTarget": 11,
+        "registeredCount": 0,
+        "designatedCourts": [
+          "Court 1",
+          "Court 2",
+          "Court 3",
+          "Court 4"
+        ],
+        "showCourtsOnSite": true
+      },
+      {
+        "id": "trn-daraga-mlp-rally",
+        "date": "2026-11-28",
+        "time": "09:00 AM \u2013 06:00 PM",
+        "title": "Daraga MLP-Style Team Rally Showdown",
+        "courts": "All 4 Courts (Courts 1 \u2013 4)",
+        "format": "MLP 4-Player Co-Ed Squad Format (Rally Scoring)",
+        "status": "OPEN FOR REGISTRATION",
+        "bracket": [
+          {
+            "id": "QF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Quarterfinal 1",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #1 \u2014 Available",
+            "teamB": "Open Seed #8 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Quarterfinal 2",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #4 \u2014 Available",
+            "teamB": "Open Seed #5 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF3",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 3",
+            "label": "Quarterfinal 3",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #2 \u2014 Available",
+            "teamB": "Open Seed #7 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF4",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 4",
+            "label": "Quarterfinal 4",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #3 \u2014 Available",
+            "teamB": "Open Seed #6 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Semifinal 1",
+            "stage": "Semifinals",
+            "teamA": "Winner QF1",
+            "teamB": "Winner QF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Semifinal 2",
+            "stage": "Semifinals",
+            "teamA": "Winner QF3",
+            "teamB": "Winner QF4",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "FIN",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Gold Medal Final",
+            "stage": "Championship Final",
+            "teamA": "Winner SF1",
+            "teamB": "Winner SF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          }
+        ],
+        "players": [
+          "Open Seed #1 \u2014 Available",
+          "Open Seed #8 \u2014 Available",
+          "Open Seed #4 \u2014 Available",
+          "Open Seed #5 \u2014 Available",
+          "Open Seed #2 \u2014 Available",
+          "Open Seed #7 \u2014 Available",
+          "Open Seed #3 \u2014 Available",
+          "Open Seed #6 \u2014 Available"
+        ],
+        "approved": true,
+        "category": "Co-Ed Team Event (WD, MD, XD1, XD2 + Dreambreaker)",
+        "division": "Club Squads (2 Men + 2 Women per Squad)",
+        "entryFee": 2000,
+        "maxTeams": 12,
+        "formatKey": "MLP_TEAM",
+        "prizePool": "\u20b118,000 Cash + Club Championship Banner",
+        "published": false,
+        "description": "Major League Pickleball 4-player squad format! Each clash features Women's Doubles, Men's Doubles, and Mixed Doubles to 21 points (rally scoring) plus Dreambreaker tiebreak.",
+        "registrations": [],
+        "scoringTarget": 21,
+        "registeredCount": 0,
+        "designatedCourts": [
+          "Court 1",
+          "Court 2",
+          "Court 3",
+          "Court 4"
+        ],
+        "showCourtsOnSite": true
+      },
+      {
+        "id": "trn-albay-double-elim",
+        "date": "2026-12-03",
+        "time": "08:00 AM \u2013 04:00 PM",
+        "title": "Albay Double-Elimination Knockout Classic",
+        "courts": "All 4 Courts (Courts 1 \u2013 4)",
+        "format": "USA Pickleball Double Elimination Bracket",
+        "status": "OPEN FOR REGISTRATION",
+        "bracket": [
+          {
+            "id": "QF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Quarterfinal 1",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #1 \u2014 Available",
+            "teamB": "Open Seed #8 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Quarterfinal 2",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #4 \u2014 Available",
+            "teamB": "Open Seed #5 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF3",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 3",
+            "label": "Quarterfinal 3",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #2 \u2014 Available",
+            "teamB": "Open Seed #7 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "QF4",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 4",
+            "label": "Quarterfinal 4",
+            "stage": "Quarterfinals",
+            "teamA": "Open Seed #3 \u2014 Available",
+            "teamB": "Open Seed #6 \u2014 Available",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF1",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Semifinal 1",
+            "stage": "Semifinals",
+            "teamA": "Winner QF1",
+            "teamB": "Winner QF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "SF2",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 2",
+            "label": "Semifinal 2",
+            "stage": "Semifinals",
+            "teamA": "Winner QF3",
+            "teamB": "Winner QF4",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          },
+          {
+            "id": "FIN",
+            "toA": 2,
+            "toB": 2,
+            "court": "Court 1",
+            "label": "Gold Medal Final",
+            "stage": "Championship Final",
+            "teamA": "Winner SF1",
+            "teamB": "Winner SF2",
+            "scoreA": 0,
+            "scoreB": 0,
+            "status": "PENDING",
+            "winner": null,
+            "serverNum": 2,
+            "serverSide": "A"
+          }
+        ],
+        "players": [
+          "Open Seed #1 \u2014 Available",
+          "Open Seed #8 \u2014 Available",
+          "Open Seed #4 \u2014 Available",
+          "Open Seed #5 \u2014 Available",
+          "Open Seed #2 \u2014 Available",
+          "Open Seed #7 \u2014 Available",
+          "Open Seed #3 \u2014 Available",
+          "Open Seed #6 \u2014 Available"
+        ],
+        "approved": true,
+        "category": "Men's Doubles & Mixed Doubles",
+        "division": "Intermediate (3.5) & Advanced (4.0+)",
+        "entryFee": 600,
+        "maxTeams": 24,
+        "formatKey": "DOUBLE_ELIM",
+        "prizePool": "\u20b115,000 Cash + Official Championship Medals",
+        "published": false,
+        "description": "Full USA Pickleball Championship Bracket across Courts 1 \u2013 4 (games to 15, win by 2). Every registered pair is seeded into the official bracket below.",
+        "registrations": [],
+        "scoringTarget": 15,
+        "registeredCount": 0,
+        "designatedCourts": [
+          "Court 1",
+          "Court 2",
+          "Court 3",
+          "Court 4"
+        ],
+        "showCourtsOnSite": true
+      }
+    ],
+    "clubSubtitle": "Pickleball Club \u2022 Daraga",
+    "heroSubtitle": "Welcome to P&F Rally Ground \u2014 your home court for great rallies, friendly competition, and community play. Check the live schedule below or book a court in seconds.",
+    "openPlayRate": 150,
+    "priceMachine": 100,
+    "clubMapPinUrl": "https://maps.google.com/maps?ll=13.15543,123.72471&q=13.15543,123.72471+(P%26F+Rally+Ground+Pickleball+Club)&hl=en&t=k&z=18&output=embed",
+    "costPaddleStd": 0,
+    "gearBucketImg": "assets/gear-balls-x40.jpg",
+    "gearCarbonImg": "assets/gear-carbon-paddle.jpg",
+    "openPlaySlots": [
+      "04:00 PM",
+      "05:00 PM",
+      "06:00 PM",
+      "07:00 PM"
+    ],
+    "costBallSingle": 30,
+    "extraPlayerFee": 100,
+    "gearBrandedImg": "assets/gear-carbon-paddle.jpg",
+    "gearMachineImg": "assets/gear-ball-machine.jpg",
+    "heroPrimaryBtn": "Reserve a court",
+    "heroTitleLine1": "PLAY.",
+    "heroTitleLine2": "COMPETE.",
+    "liveBannerText": "LIVE CLUB UPDATE: Courts 1 \u2013 4 Open Daily 6:00 AM \u2013 12:00 Midnight \u2022 Book Online via GCash, Maya, or Bank Transfer!",
+    "openPlayRoster": [],
+    "pricePaddleStd": 50,
+    "bentoSectionTag": "EXPERIENCE",
+    "costBallsBucket": 0,
+    "heroTitleAccent": "CONNECT.",
+    "includedPlayers": 6,
+    "openPlayEnabled": true,
+    "priceBallSingle": 50,
+    "scheduleHeading": "COURT TIMELINE",
+    "bentoSectionDesc": "Open daily 6:00 AM \u2013 12:00 midnight across Courts 1 \u2013 4. Check court hire rates, equipment rentals, and weekly Open Play hours below.",
+    "costCourtPerHour": 0,
+    "costPaddleCarbon": 0,
+    "heroSecondaryBtn": "Check my booking",
+    "liveBracketState": "{'tournamentType': 'singles', 'playersPool': [], 'teams': [{'id': 't0', 'name': 'Spin Doctor 64', 'tagline': 'I prescribe topspin', 'avatars': ['https://api.dicebear.com/7.x/bottts/svg?seed=Spin%20Doctor%2064&backgroundColor=b6e3f4']}, {'id': 't1', 'name': 'Court Jester 57', 'tagline': 'No laughing matter', 'avatars': ['https://api.dicebear.com/7.x/bottts/svg?seed=Court%20Jester%2057&backgroundColor=b6e3f4']}, {'id': 't2', 'name': 'Dink Machine 94', 'tagline': 'Dink dink goose!', 'avatars': ['https://api.dicebear.com/7.x/bottts/svg?seed=Dink%20Machine%2094&backgroundColor=b6e3f4']}, {'id': 't3', 'name': 'Ace AI 6', 'tagline': 'Calculated trajectory', 'avatars': ['https://api.dicebear.com/7.x/bottts/svg?seed=Ace%20AI%206&backgroundColor=b6e3f4']}, {'id': 't4', 'name': 'Court Jester 64', 'ta",
+    "openPlay24Roster": [
+      {
+        "id": "op-pl-914635",
+        "name": "Michael Jay Jan",
+        "phone": "09610513391",
+        "skill": "Beginner (2.0\u20132.5)",
+        "status": "CONFIRMED",
+        "joinedAt": "07:09 PM",
+        "bookingRef": "PF-OP-914635",
+        "paymentMethod": "GCash",
+        "transactionRef": "20267815"
+      }
+    ],
+    "openPlaySchedule": [
+      {
+        "court": "Court 1",
+        "teamA": [
+          {
+            "name": "Michael Jay Juan",
+            "status": "CONFIRMED",
+            "slotNum": 1
+          },
+          {
+            "name": "John",
+            "status": "CONFIRMED",
+            "slotNum": 2
+          }
+        ],
+        "teamB": [
+          {
+            "name": "Player #03 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 3
+          },
+          {
+            "name": "Player #04 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 4
+          }
+        ],
+        "courtNum": 1,
+        "timeSlot": "03:00 PM \u2013 03:30 PM",
+        "podNumber": 1
+      },
+      {
+        "court": "Court 1",
+        "teamA": [
+          {
+            "name": "Player #05 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 5
+          },
+          {
+            "name": "Player #06 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 6
+          }
+        ],
+        "teamB": [
+          {
+            "name": "Player #07 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 7
+          },
+          {
+            "name": "Player #08 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 8
+          }
+        ],
+        "courtNum": 1,
+        "timeSlot": "03:30 PM \u2013 04:00 PM",
+        "podNumber": 2
+      },
+      {
+        "court": "Court 1",
+        "teamA": [
+          {
+            "name": "Player #09 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 9
+          },
+          {
+            "name": "Player #10 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 10
+          }
+        ],
+        "teamB": [
+          {
+            "name": "Player #11 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 11
+          },
+          {
+            "name": "Player #12 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 12
+          }
+        ],
+        "courtNum": 1,
+        "timeSlot": "04:00 PM \u2013 04:30 PM",
+        "podNumber": 3
+      },
+      {
+        "court": "Court 1",
+        "teamA": [
+          {
+            "name": "Player #13 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 13
+          },
+          {
+            "name": "Player #14 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 14
+          }
+        ],
+        "teamB": [
+          {
+            "name": "Player #15 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 15
+          },
+          {
+            "name": "Player #16 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 16
+          }
+        ],
+        "courtNum": 1,
+        "timeSlot": "04:30 PM \u2013 05:00 PM",
+        "podNumber": 4
+      },
+      {
+        "court": "Court 1",
+        "teamA": [
+          {
+            "name": "Player #17 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 17
+          },
+          {
+            "name": "Player #18 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 18
+          }
+        ],
+        "teamB": [
+          {
+            "name": "Player #19 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 19
+          },
+          {
+            "name": "Player #20 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 20
+          }
+        ],
+        "courtNum": 1,
+        "timeSlot": "05:00 PM \u2013 05:30 PM",
+        "podNumber": 5
+      },
+      {
+        "court": "Court 1",
+        "teamA": [
+          {
+            "name": "Player #21 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 21
+          },
+          {
+            "name": "Player #22 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 22
+          }
+        ],
+        "teamB": [
+          {
+            "name": "Player #23 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 23
+          },
+          {
+            "name": "Player #24 (Open Slot)",
+            "status": "OPEN",
+            "slotNum": 24
+          }
+        ],
+        "courtNum": 1,
+        "timeSlot": "05:30 PM \u2013 06:00 PM",
+        "podNumber": 6
+      }
+    ],
+    "openPlaySessions": [
+      {
+        "id": "op-afternoon-social",
+        "title": "Tue \u2013 Thu Open Play (Drop In. Rally On.)",
+        "players": [
+          {
+            "id": "op-pl-914635",
+            "name": "Michael Jay Jan",
+            "phone": "09610513391",
+            "skill": "Beginner (2.0\u20132.5)",
+            "status": "CONFIRMED",
+            "joinedAt": "07:09 PM",
+            "bookingRef": "PF-OP-914635",
+            "paymentMethod": "GCash"
+          }
+        ],
+        "entryFee": 150,
+        "schedule": "Tuesday \u2013 Thursday \u2022 04:00 PM \u2013 08:00 PM",
+        "published": true,
+        "maxPlayers": 24,
+        "skillLevel": "All Skill Levels (Beginner \u2013 Advanced)",
+        "rotationRule": "4-Player Doubles Pods \u2022 Shuffle Players Every Round",
+        "shuffledOrder": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "lastShuffleTime": "07:26:17 AM",
+        "designatedCourts": [
+          "Court 1",
+          "Court 2",
+          "Court 3",
+          "Court 4"
+        ],
+        "showCourtsOnSite": true
+      },
+      {
+        "id": "op-evening-nightlights",
+        "title": "Fri \u2013 Sat Night Open Play (Drop In. Rally On.)",
+        "players": [
+          {
+            "id": "op-pl-914635",
+            "name": "Michael Jay Jan",
+            "phone": "09610513391",
+            "skill": "Beginner (2.0\u20132.5)",
+            "status": "CONFIRMED",
+            "joinedAt": "07:09 PM",
+            "bookingRef": "PF-OP-914635",
+            "paymentMethod": "GCash"
+          }
+        ],
+        "entryFee": 150,
+        "schedule": "Friday \u2013 Saturday \u2022 06:00 PM \u2013 10:00 PM",
+        "published": true,
+        "maxPlayers": 24,
+        "skillLevel": "All Skill Levels \u2022 Night-Lights Social Rally",
+        "rotationRule": "4-Player Doubles Pods \u2022 Winners Split Partners",
+        "shuffledOrder": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "lastShuffleTime": "Ready to Shuffle",
+        "designatedCourts": [
+          "Court 1",
+          "Court 2",
+          "Court 3",
+          "Court 4"
+        ],
+        "showCourtsOnSite": true
+      }
+    ],
+    "priceBallsBucket": 100,
+    "bentoSectionTitle": "PLAY THE CLUB",
+    "costPaddleBranded": 0,
+    "liveBannerEnabled": true,
+    "pricePaddleCarbon": 100,
+    "openPlayMaxPlayers": 24,
+    "pricePaddleBranded": 200,
+    "liveBracketApproved": "False",
+    "openPlayCourtsCount": 1,
+    "openPlaySlotMinutes": 30,
+    "openPlayScheduleText": "Tue\u2013Thu 4:00 PM \u2013 8:00 PM \u2022 Fri\u2013Sat 6:00 PM \u2013 10:00 PM (\u20b1150/Participant)",
+    "maxAdvanceBookingDays": 30,
+    "openPlayRateCustomized": true,
+    "openPlayDesignatedCourts": [
+      "Court 1",
+      "Court 2",
+      "Court 3",
+      "Court 4"
+    ],
+    "tournamentsPublishedOnHome": true
+  },
+  "gmailConfig": {
+    "adminEmail": "",
+    "appPassword": "",
+    "notifyOnNewBooking": true,
+    "sendCustomerReceipt": true
+  },
+  "salesLedger": [
+    {
+      "ref": "PF-INV-997585",
+      "cost": 0,
+      "date": "2026-11-07 18:32",
+      "desc": "POS Order",
+      "type": "POS Retail",
+      "items": [],
+      "amount": 0,
+      "method": "Cash",
+      "profit": 0
+    },
+    {
+      "ref": "PF-TRN-752109",
+      "cost": 0,
+      "date": "2026-11-08 17:53",
+      "desc": "Court 1 (Michael Jay Juan & John) - Ref: PAY-AT-DESK",
+      "type": "Tournament Entry",
+      "amount": 850,
+      "method": "Pay at Counter",
+      "profit": 850
+    },
+    {
+      "ref": "PF-OP-999999",
+      "cost": 0,
+      "date": "2026-11-06 03:14",
+      "desc": "Open Play \u2022 Afternoon Social Open Play (Court 1, Court 2, Court 3, Court 4) (Michael Jay Jan) - Ref: 20267815",
+      "type": "Court Rental",
+      "amount": 150,
+      "method": "GCash",
+      "profit": 150
+    }
+  ],
+  "securityLog": [
+    {
+      "time": "2026-11-08 17:53:24",
+      "event": "BOOKING_CONFIRMED",
+      "detail": "Booking PF-TRN-752109 marked CONFIRMED by Admin"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-08 04:47:42",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Club Owner (Key #1) unlocked workspace"
+    },
+    {
+      "time": "2026-11-07 20:47:41",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Admin unlocked via Club Owner (Key #1)"
+    },
+    {
+      "ip": "::ffff:127.0.0.1",
+      "time": "2026-11-07 18:55:56",
+      "event": "INVENTORY_RETURN_CHECKIN",
+      "detail": "Inventory updated (return_checkin)"
+    },
+    {
+      "ip": "::ffff:127.0.0.1",
+      "time": "2026-11-07 18:55:56",
+      "event": "INVENTORY_RENT_OUT",
+      "detail": "Inventory updated (rent_out)"
+    },
+    {
+      "ip": "::ffff:127.0.0.1",
+      "time": "2026-11-07 18:53:37",
+      "event": "INVENTORY_RENT_OUT",
+      "detail": "Inventory updated (rent_out)"
+    },
+    {
+      "ip": "::ffff:127.0.0.1",
+      "time": "2026-11-07 18:52:10",
+      "event": "INVENTORY_RENT_OUT",
+      "detail": "Inventory updated (rent_out)"
+    },
+    {
+      "ip": "::ffff:127.0.0.1",
+      "time": "2026-11-07 18:50:46",
+      "event": "INVENTORY_RENT_OUT",
+      "detail": "Inventory updated (rent_out)"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-07 18:13:31",
+      "event": "INVENTORY_UPDATE_STOCK",
+      "detail": "Inventory updated (update_stock)"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-07 18:07:47",
+      "event": "BOOKING_CREATED",
+      "detail": "New booking PF-INV-997585 by Michael Jay Juan (Live Inventory \u2022 1\u00d7 Mineral Water Small (\u20b125) \u2022 2026-11-07 \u2022 Front Desk / POS Counter Pickup)"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-07 18:07:04",
+      "event": "INVENTORY_ADD",
+      "detail": "Inventory updated (add)"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-07 10:22:32",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Club Owner (Key #1) unlocked workspace"
+    },
+    {
+      "ip": "180.191.211.162",
+      "time": "2026-11-07 07:46:55",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Club Owner (Key #1) unlocked workspace"
+    },
+    {
+      "time": "2026-11-07 07:46:55",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Admin unlocked via Club Owner (Key #1)"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 23:48:40",
+      "event": "SCHEDULE_OVERRIDE",
+      "detail": "Calendar schedule updated (set_slot)"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 23:48:36",
+      "event": "SCHEDULE_OVERRIDE",
+      "detail": "Calendar schedule updated (set_slot)"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 23:48:29",
+      "event": "SCHEDULE_OVERRIDE",
+      "detail": "Calendar schedule updated (set_slot)"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 23:47:42",
+      "event": "BOOKING_CREATED",
+      "detail": "New booking PF-TRN-752109 by Michael Jay Juan & John (Court 1 \u2022 2026-11-21 \u2022 08:00 AM \u2013 05:00 PM)"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 23:37:20",
+      "event": "BOOKING_DELETED",
+      "detail": "Booking PF-E2E-9991 removed from schedule & ledger by Admin"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 23:37:14",
+      "event": "BOOKING_CREATED",
+      "detail": "New booking PF-E2E-9991 by Maria Clara (Court 4 \u2022 2026-11-12 \u2022 09:00 AM (1 hr))"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 16:54:17",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Club Owner (Key #1) unlocked workspace"
+    },
+    {
+      "ip": "27.49.8.118",
+      "time": "2026-11-06 16:54:10",
+      "event": "LOGIN_REJECTED",
+      "detail": "Unauthorized login attempt #1 blocked"
+    },
+    {
+      "time": "2026-11-06 15:49:15",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Admin unlocked via Club Owner (Key #1)"
+    },
+    {
+      "time": "2026-11-06 03:14:23",
+      "event": "BOOKING_CONFIRMED",
+      "detail": "Booking PF-OP-999999 marked CONFIRMED by Admin"
+    },
+    {
+      "time": "2026-11-06 03:14:20",
+      "event": "BOOKING_DECLINED",
+      "detail": "Booking PF-OP-999999 marked DECLINED by Admin"
+    },
+    {
+      "time": "2026-11-06 03:10:17",
+      "event": "BOOKING_CONFIRMED",
+      "detail": "Booking PF-OP-892588 marked CONFIRMED by Admin"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-06 02:25:23",
+      "event": "INVENTORY_DELETE",
+      "detail": "Inventory updated (delete)"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-06 02:25:23",
+      "event": "INVENTORY_DELETED",
+      "detail": "Deleted product ID inv-qa-1793960723 from inventory"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-06 02:25:23",
+      "event": "INVENTORY_ADD",
+      "detail": "Inventory updated (add)"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-06 02:25:23",
+      "event": "BOOKING_DELETED",
+      "detail": "Booking PF-QA9901 removed from schedule & ledger by Admin"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-06 02:25:23",
+      "event": "BOOKING_CREATED",
+      "detail": "New booking PF-QA9901 by Carlos Mendoza (Court 1 \u2022 2026-11-28 \u2022 06:00 PM (1 hr))"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-06 02:20:21",
+      "event": "BOOKING_DELETED",
+      "detail": "Booking PF-QA9901 removed from schedule & ledger by Admin"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-06 02:20:21",
+      "event": "BOOKING_CREATED",
+      "detail": "New booking PF-QA9901 by Carlos Mendoza (Court 1 \u2022 2026-11-28 \u2022 06:00 PM (1 hr))"
+    },
+    {
+      "time": "2026-11-06 00:54:14",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Admin unlocked via Club Owner (Key #1)"
+    },
+    {
+      "time": "2026-11-05 23:49:08",
+      "event": "SHIELD_ACTIVE",
+      "detail": "Cybersecurity Shield & Intrusion Protection active (Brute-Force Guard, 15-Min Auto-Lock, Anti-XSS)"
+    },
+    {
+      "time": "2026-11-05 23:49:08",
+      "event": "AUTH_GATE_READY",
+      "detail": "5 Official Salted SHA-256 Staff/Owner Keys & Live Sync Engine initialized"
+    },
+    {
+      "ip": "::ffff:127.0.0.1",
+      "time": "2026-11-05 18:43:49",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Club Owner (Key #1) unlocked workspace"
+    },
+    {
+      "ip": "::ffff:127.0.0.1",
+      "time": "2026-11-05 17:56:43",
+      "event": "BOOKING_DELETED",
+      "detail": "Booking PF-QA9999 removed from schedule & ledger by Admin"
+    },
+    {
+      "ip": "::1",
+      "time": "2026-11-05 17:56:43",
+      "event": "BOOKING_CREATED",
+      "detail": "New booking PF-QA9999 by QA Verification Guest (Court 1 \u2022 2026-11-15 \u2022 09:00 AM (1 hr))"
+    },
+    {
+      "ip": "127.0.0.1",
+      "time": "2026-11-05 17:09:48",
+      "event": "KEY_LOGIN_SUCCESS",
+      "detail": "Club Owner (Key #1) unlocked workspace"
+    }
+  ],
+  "adminPassword": "",
+  "announcements": [
+    {
+      "id": "welcome-pf-2026",
+      "img": "",
+      "title": "Welcome to P&F Rally Ground Pickleball Club!",
+      "author": "P&F Rally Ground Admin",
+      "pinned": true,
+      "message": "All 4 championship cushion courts are open daily from 6:00 AM to 12:00 Midnight (Daytime: \u20b1400/hr \u2022 Evening: \u20b1500/hr). Open Play runs daily from 3:00 PM \u2013 6:00 PM across all courts (\u20b1150/player)!",
+      "category": "Club Update",
+      "createdAt": "Official Broadcast"
+    },
+    {
+      "id": "open-play-pf-2026",
+      "img": "",
+      "title": "Daily Open Play \u2022 3:00 PM \u2013 6:00 PM (\u20b1150/player)",
+      "author": "P&F Rally Ground Admin",
+      "pinned": false,
+      "message": "Join our daily community Open Play session across Courts 1 \u2013 4 from 3:00 PM to 6:00 PM! All skill levels are welcome \u2014 bring your paddle or rent pro gear at the club.",
+      "category": "Open Play Alert",
+      "createdAt": "Daily Schedule"
+    }
+  ],
+  "paymentConfig": {
+    "bdoName": "BDO Unibank \u2022 Dex",
+    "mayaName": "KATHERINE LIM",
+    "bankQrUrl": "assets/qr-bdo.png?v=20261029v10",
+    "bdoNumber": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20228678",
+    "bpiNumber": "0999 883 2346",
+    "gcashName": "KA******E L.",
+    "mayaQrUrl": "assets/qr-maya.png?v=20261029v10",
+    "updatedAt": 1793960723495,
+    "gcashQrUrl": "assets/qr-gcash.png?v=20261029v10",
+    "mayaNumber": "0999 883 2346",
+    "standeeUrl": "assets/qr-gcash.png?v=20261029v10",
+    "gcashNumber": "0999 883 2346"
+  },
+  "blocksUpdatedAt": 1793980117301,
+  "bookingsUpdatedAt": 1794113267602,
+  "deletedBookingRefs": [
+    "PF-E2E-9991",
+    "PF-924736",
+    "PF-TRN-TEST78844",
+    "PF-TEST4631",
+    "PF-932355",
+    "PF-966109",
+    "PF-TEST3803",
+    "PF-TEST4138",
+    "PF-388435",
+    "PF-522508",
+    "PF-750948",
+    "PF-OP-914635",
+    "PF-TEST999",
+    "PF-QA9901",
+    "PF-142894",
+    "PF-OP-TEST78843",
+    "PF-DELTEST01"
+  ],
+  "deletedInventoryIds": [
+    "inv-1793729578611",
+    "inv-1793729388813",
+    "inv-qa-1793960723"
+  ],
+  "announcementsUpdatedAt": 1793960723447
+}
